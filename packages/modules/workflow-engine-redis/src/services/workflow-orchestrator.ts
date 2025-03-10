@@ -253,8 +253,6 @@ export class WorkflowOrchestratorService {
       hasFailed,
     }
 
-    console.log({ acknowledgement })
-
     if (hasFinished) {
       const { result, errors } = ret
 

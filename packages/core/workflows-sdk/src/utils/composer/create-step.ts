@@ -192,8 +192,6 @@ export function applyStep<
       ret.__step__ = newStepName
       WorkflowManager.update(this.workflowId, this.flow, this.handlers)
 
-      //const confRef = proxify(ret)
-
       if (global[OrchestrationUtils.SymbolMedusaWorkflowComposerCondition]) {
         const flagSteps =
           global[OrchestrationUtils.SymbolMedusaWorkflowComposerCondition].steps

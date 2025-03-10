@@ -75,7 +75,9 @@ export class WorkflowsModuleService<
 
       await this.clearExpiredExecutions()
       this.clearTimeout_ = setInterval(async () => {
-        await this.clearExpiredExecutions()
+        try {
+          await this.clearExpiredExecutions()
+        } catch {}
       }, 1000 * 60 * 60)
     },
   }

@@ -210,7 +210,7 @@ export class InMemoryDistributedTransactionStorage
       })
 
     const latestUpdatedFlowLastCompensatingStepIndex = !latestUpdatedFlow.steps
-      ? 1 // There is no other execution, so the current execution is the latest
+      ? -1 // There is no other execution, so the current execution is the latest
       : Object.values(
           (latestUpdatedFlow.steps as Record<string, TransactionStep>) ?? {}
         )
@@ -231,11 +231,11 @@ export class InMemoryDistributedTransactionStorage
       currentFlowLastInvokingStepIndex !== isLatestExecutionFinishedIndex
 
     const compensateShouldBeSkipped =
-      (latestUpdatedFlowLastCompensatingStepIndex ===
-        isLatestExecutionFinishedIndex ||
-        currentFlowLastCompensatingStepIndex <
-          latestUpdatedFlowLastCompensatingStepIndex) &&
-      currentFlowLastCompensatingStepIndex !== isLatestExecutionFinishedIndex
+      currentFlowLastCompensatingStepIndex <
+        latestUpdatedFlowLastCompensatingStepIndex &&
+      currentFlowLastCompensatingStepIndex !== isLatestExecutionFinishedIndex &&
+      latestUpdatedFlowLastCompensatingStepIndex !==
+        isLatestExecutionFinishedIndex
 
     if (
       (data.flow.state !== TransactionState.COMPENSATING &&
@@ -243,9 +243,16 @@ export class InMemoryDistributedTransactionStorage
       (data.flow.state === TransactionState.COMPENSATING &&
         compensateShouldBeSkipped) ||
       (latestUpdatedFlow.state === TransactionState.COMPENSATING &&
-        currentFlow.state !== latestUpdatedFlow.state)
+        ![TransactionState.REVERTED, TransactionState.FAILED].includes(
+          currentFlow.state
+        ) &&
+        currentFlow.state !== latestUpdatedFlow.state) ||
+      (latestUpdatedFlow.state === TransactionState.REVERTED &&
+        currentFlow.state !== TransactionState.REVERTED) ||
+      (latestUpdatedFlow.state === TransactionState.FAILED &&
+        currentFlow.state !== TransactionState.FAILED)
     ) {
-      throw new SkipExecutionError("already finished by another execution")
+      throw new SkipExecutionError("Already finished by another execution")
     }
   }
 

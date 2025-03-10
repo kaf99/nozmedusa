@@ -266,7 +266,6 @@ class DistributedTransaction extends EventEmitter {
       return
     }
 
-    await this.saveCheckpoint()
     await DistributedTransaction.keyValueStore.scheduleTransactionTimeout(
       this,
       Date.now(),

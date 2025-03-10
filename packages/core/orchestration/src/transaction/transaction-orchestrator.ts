@@ -240,6 +240,7 @@ export class TransactionOrchestrator extends EventEmitter {
   ) {
     const flow = transaction.getFlow()
     let hasTimedOut = false
+
     if (!flow.timedOutAt && this.hasExpired({ transaction }, Date.now())) {
       flow.timedOutAt = Date.now()
 
@@ -484,11 +485,7 @@ export class TransactionOrchestrator extends EventEmitter {
     try {
       await transaction.saveCheckpoint()
     } catch (error) {
-      if (SkipExecutionError.isSkipExecutionError(error)) {
-        shouldEmit = false
-      } else {
-        throw error
-      }
+      shouldEmit = false
     }
 
     const cleaningUp: Promise<unknown>[] = []
@@ -721,7 +718,6 @@ export class TransactionOrchestrator extends EventEmitter {
       }
 
       const flow = transaction.getFlow()
-      const options = TransactionOrchestrator.getWorkflowOptions(flow.modelId)
       const nextSteps = await this.checkAllSteps(transaction)
       const execution: Promise<void | unknown>[] = []
 
@@ -739,11 +735,10 @@ export class TransactionOrchestrator extends EventEmitter {
           void transaction.clearTransactionTimeout()
         }
 
-        console.log("FINISH", transaction.getFlow().transactionId)
+        await transaction.saveCheckpoint()
         this.emit(DistributedTransactionEvent.FINISH, { transaction })
       }
 
-      let hasSyncSteps = false
       for (const step of nextSteps.next) {
         const curState = step.getStates()
         const type = step.isCompensating()
@@ -860,8 +855,6 @@ export class TransactionOrchestrator extends EventEmitter {
         ] as Parameters<TransactionStepHandler>
 
         if (!isAsync) {
-          hasSyncSteps = true
-
           const stepHandler = async () => {
             return await transaction.handler(...handlerArgs)
           }
@@ -1000,15 +993,13 @@ export class TransactionOrchestrator extends EventEmitter {
         }
       }
 
-      if (hasSyncSteps && options?.storeExecution) {
-        try {
-          await transaction.saveCheckpoint()
-        } catch (error) {
-          if (SkipExecutionError.isSkipExecutionError(error)) {
-            break
-          } else {
-            throw error
-          }
+      try {
+        await transaction.saveCheckpoint()
+      } catch (error) {
+        if (SkipExecutionError.isSkipExecutionError(error)) {
+          break
+        } else {
+          throw error
         }
       }
 
@@ -1043,11 +1034,9 @@ export class TransactionOrchestrator extends EventEmitter {
         flow.state = TransactionState.INVOKING
         flow.startedAt = Date.now()
 
-        if (this.getOptions().store) {
-          await transaction.saveCheckpoint(
-            flow.hasAsyncSteps ? 0 : TransactionOrchestrator.DEFAULT_TTL
-          )
-        }
+        await transaction.saveCheckpoint(
+          flow.hasAsyncSteps ? 0 : TransactionOrchestrator.DEFAULT_TTL
+        )
 
         if (transaction.hasTimeout()) {
           await transaction.scheduleTransactionTimeout(
