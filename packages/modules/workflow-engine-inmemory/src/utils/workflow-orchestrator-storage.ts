@@ -184,6 +184,16 @@ export class InMemoryDistributedTransactionStorage
     const { flow: latestUpdatedFlow } =
       (await this.get(key)) ?? ({ flow: {} } as { flow: TransactionFlow })
 
+    if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
+      /**
+       * the initial checkpoint expect no other checkpoint to have been stored.
+       * In case it is not the initial one and another checkpoint is trying to
+       * find if a concurrent execution has finished, we skip the execution.
+       * The already finished execution would have deleted the checkpoint already.
+       */
+      throw new SkipExecutionError("Already finished by another execution")
+    }
+
     const currentFlowLastInvokingStepIndex = Object.values(
       currentFlow.steps
     ).findIndex((step) => {
@@ -227,16 +237,6 @@ export class InMemoryDistributedTransactionStorage
               TransactionStepState.NOT_STARTED,
             ].includes(step.compensate?.state)
           })
-
-    if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
-      /**
-       * the initial checkpoint expect no other checkpoint to have been stored.
-       * In case it is not the initial one and another checkpoint is trying to
-       * find if a concurrent execution has finished, we skip the execution.
-       * The already finished execution would have deleted the checkpoint already.
-       */
-      throw new SkipExecutionError("Already finished by another execution")
-    }
 
     const isLatestExecutionFinishedIndex = -1
     const invokeShouldBeSkipped =
