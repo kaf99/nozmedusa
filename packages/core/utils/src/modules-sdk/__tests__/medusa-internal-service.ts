@@ -79,7 +79,7 @@ describe("Internal Module Service Factory", () => {
       containerMock[modelRepositoryName].find.mockResolvedValueOnce([])
 
       const err = await instance.retrieve("1").catch((e) => e)
-      expect(err.message).toBe('Model with id: "1" was not found')
+      expect(err.message).toBe("Model with id: 1 was not found")
     })
 
     it("should retrieve entity successfully", async () => {

@@ -154,13 +154,15 @@ export function MedusaInternalService<
       if (!entities?.length) {
         throw new MedusaError(
           MedusaError.Types.NOT_FOUND,
-          `${model.name} with ${primaryKeys.join(", ")}: ${JSON.stringify(
+          `${model.name} with ${primaryKeys.join(", ")}: ${
             Array.isArray(idOrObject)
               ? idOrObject.map((v) =>
                   [isString(v) ? v : Object.values(v)].join(", ")
                 )
+              : isObject(idOrObject)
+              ? Object.values(idOrObject).join(", ")
               : idOrObject
-          )} was not found`
+          } was not found`
         )
       }
 
