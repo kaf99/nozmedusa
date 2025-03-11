@@ -1118,7 +1118,6 @@ export class TransactionOrchestrator extends EventEmitter {
       isIdempotent
     ) {
       this.options.store = true
-      this.options.storeExecution = true
     }
 
     const parsedOptions = {
@@ -1311,11 +1310,7 @@ export class TransactionOrchestrator extends EventEmitter {
       existingTransaction?.context
     )
 
-    if (
-      newTransaction &&
-      this.getOptions().store &&
-      this.getOptions().storeExecution
-    ) {
+    if (newTransaction && this.getOptions().store) {
       await transaction.saveCheckpoint(
         modelFlow.hasAsyncSteps ? 0 : TransactionOrchestrator.DEFAULT_TTL
       )

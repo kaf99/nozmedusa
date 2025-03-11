@@ -111,20 +111,21 @@ export type TransactionModelOptions = {
 
   /**
    * If true, the state of the transaction will be persisted.
-   * 
+   *
    * Learn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/workflows/store-executions).
    */
   store?: boolean
 
   /**
    * The number of seconds that the workflow execution should be stored in the database.
-   * 
+   *
    * Learn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/workflows/store-executions).
    */
   retentionTime?: number
 
   /**
    * If true, the execution details of each step will be stored.
+   * @deprecated no longer needed.
    */
   storeExecution?: boolean
 

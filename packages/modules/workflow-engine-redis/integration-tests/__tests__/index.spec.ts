@@ -326,7 +326,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           ).toBe(true)
         })
 
-        it.only("should revert the entire transaction when a step timeout expires in a async step", async () => {
+        it("should revert the entire transaction when a step timeout expires in a async step", async () => {
           await workflowOrcModule.run("workflow_step_timeout_async", {
             input: {
               myInput: "123",
@@ -335,7 +335,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             throwOnError: false,
           })
 
-          await setTimeout(200)
+          await setTimeout(2000)
 
           const { transaction, result, errors } = (await workflowOrcModule.run(
             "workflow_step_timeout_async",
@@ -363,7 +363,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           ).toBe(true)
         })
 
-        it.skip("should revert the entire transaction when the transaction timeout expires in a transaction containing an async step", async () => {
+        it("should revert the entire transaction when the transaction timeout expires in a transaction containing an async step", async () => {
           await workflowOrcModule.run("workflow_transaction_timeout_async", {
             input: {},
             transactionId: "transaction_1",
@@ -569,8 +569,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           )
         })
 
-        // TODO: investigate why it fails intermittently
-        it.skip("the scheduled workflow should have access to the shared container", async () => {
+        it("the scheduled workflow should have access to the shared container", async () => {
           const wait = times(1)
           sharedContainer_.register("test-value", asValue("test"))
 

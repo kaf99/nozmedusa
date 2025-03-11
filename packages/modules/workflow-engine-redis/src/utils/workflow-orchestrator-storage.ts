@@ -200,10 +200,6 @@ export class RedisDistributedTransactionStorage
     key: string,
     options?: TransactionOptions
   ): Promise<TransactionCheckpoint | undefined> {
-    console.log({
-      key,
-      options,
-    })
     const data = await this.redisClient.get(key)
 
     if (data) {
@@ -226,16 +222,7 @@ export class RedisDistributedTransactionStorage
           select: ["execution", "context"],
         }
       )
-      .catch((e) => {
-        console.log({
-          e,
-        })
-        return undefined
-      })
-
-    console.log({
-      trx,
-    })
+      .catch(() => undefined)
 
     if (trx) {
       return {
@@ -304,10 +291,6 @@ export class RedisDistributedTransactionStorage
     if (hasFinished && !retentionTime && !idempotent) {
       await this.deleteFromDb(data)
     } else {
-      console.log("saving to db...... ********************", {
-        workflow_id: data.flow.modelId,
-        transaction_id: data.flow.transactionId,
-      })
       await this.saveToDb(data, retentionTime)
     }
 
