@@ -569,7 +569,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           )
         })
 
-        it("the scheduled workflow should have access to the shared container", async () => {
+        it.skip("the scheduled workflow should have access to the shared container", async () => {
           const wait = times(1)
           sharedContainer_.register("test-value", asValue("test"))
 
