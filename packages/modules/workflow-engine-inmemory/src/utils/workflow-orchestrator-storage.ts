@@ -21,6 +21,7 @@ import { CronExpression, parseExpression } from "cron-parser"
 export class InMemoryDistributedTransactionStorage
   implements IDistributedTransactionStorage, IDistributedSchedulerStorage
 {
+  private static TTL_AFTER_COMPLETED = 60 * 2 // 2 minutes
   private workflowExecutionService_: ModulesSdkTypes.IMedusaInternalService<any>
   private logger_: Logger
   private workflowOrchestratorService_: WorkflowOrchestratorService
@@ -156,10 +157,9 @@ export class InMemoryDistributedTransactionStorage
     }
 
     if (hasFinished) {
-      const tenMinutes = 10 * 60 * 1000
       setTimeout(() => {
         this.storage.delete(key)
-      }, tenMinutes)
+      }, InMemoryDistributedTransactionStorage.TTL_AFTER_COMPLETED)
     }
   }
 
