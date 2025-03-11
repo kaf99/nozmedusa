@@ -143,6 +143,7 @@ export class InMemoryDistributedTransactionStorage
     await this.#preventRaceConditionExecutionIfNecessary({
       data,
       key,
+      options,
     })
 
     Object.assign(data, {
@@ -166,9 +167,11 @@ export class InMemoryDistributedTransactionStorage
   async #preventRaceConditionExecutionIfNecessary({
     data,
     key,
+    options,
   }: {
     data: TransactionCheckpoint
     key: string
+    options?: TransactionOptions
   }) {
     let isInitialCheckpoint = false
 
@@ -182,7 +185,8 @@ export class InMemoryDistributedTransactionStorage
      */
     const currentFlow = data.flow
     const { flow: latestUpdatedFlow } =
-      (await this.get(key)) ?? ({ flow: {} } as { flow: TransactionFlow })
+      (await this.get(key, options)) ??
+      ({ flow: {} } as { flow: TransactionFlow })
 
     if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
       /**
