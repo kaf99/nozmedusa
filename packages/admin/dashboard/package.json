@@ -36,7 +36,6 @@
   "files": [
     "package.json",
     "src",
-    "index.html",
     "dist"
   ],
   "dependencies": {

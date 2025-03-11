@@ -33,7 +33,8 @@ export type UseChildDocsProps = {
   hideTitle?: boolean
   hideDescription?: boolean
   titleLevel?: number
-  childLevel?: number
+  startChildLevel?: number
+  endChildLevel?: number
   itemsPerRow?: number
   defaultItemsPerRow?: number
   search?: {
@@ -51,7 +52,8 @@ export const useChildDocs = ({
   hideTitle = false,
   hideDescription = false,
   titleLevel = 2,
-  childLevel = 1,
+  startChildLevel = 1,
+  endChildLevel = -1,
   itemsPerRow,
   defaultItemsPerRow,
   search: {
@@ -60,7 +62,7 @@ export const useChildDocs = ({
     ...searchProps
   } = { enable: false },
 }: UseChildDocsProps) => {
-  const { shownSidebar, activeItem } = useSidebar()
+  const { shownSidebar, activeItem, getSidebarFirstLinkChild } = useSidebar()
   const { isBrowser } = useIsBrowser()
   const [searchQuery, setSearchQuery] = useState("")
   const [localSearch, setLocalSearch] = useState<
@@ -135,21 +137,27 @@ export const useChildDocs = ({
     )
   }
 
-  const getChildrenForLevel = (
-    item: Sidebar.InteractiveSidebarItem,
-    currentLevel = 1
-  ): Sidebar.InteractiveSidebarItem[] | undefined => {
-    if (currentLevel === childLevel) {
-      return filterNonInteractiveItems(item.children)
-    }
-    if (!item.children) {
+  const getChildrenForLevel = ({
+    item,
+    currentLevel = 1,
+  }: {
+    item: Sidebar.InteractiveSidebarItem
+    currentLevel?: number
+  }): Sidebar.InteractiveSidebarItem[] | undefined => {
+    if ((endChildLevel > 0 && currentLevel > endChildLevel) || !item.children) {
       return
+    }
+    if (currentLevel >= startChildLevel) {
+      return filterNonInteractiveItems(item.children)
     }
 
     const childrenResult: Sidebar.InteractiveSidebarItem[] = []
 
     filterNonInteractiveItems(item.children).forEach((child) => {
-      const childChildren = getChildrenForLevel(child, currentLevel + 1)
+      const childChildren = getChildrenForLevel({
+        item: child,
+        currentLevel: currentLevel + 1,
+      })
 
       if (!childChildren) {
         return
@@ -196,7 +204,7 @@ export const useChildDocs = ({
     } else {
       filteredItems?.forEach((item) => {
         const childItems: Sidebar.SidebarItemLink[] =
-          (getChildrenForLevel(item)?.filter((childItem) => {
+          (getChildrenForLevel({ item })?.filter((childItem) => {
             return isSidebarItemLink(childItem)
           }) as Sidebar.SidebarItemLink[]) || []
         searchableItems.push(...childItems)
@@ -256,45 +264,70 @@ export const useChildDocs = ({
   }, [isBrowser, searchQuery, storageKey, enableSearch])
 
   const getTopLevelElms = (items?: Sidebar.InteractiveSidebarItem[]) => {
+    const itemsToShow: {
+      [k: string]: Sidebar.InteractiveSidebarItem
+    } = {}
+    items?.forEach((childItem) => {
+      const href = isSidebarItemLink(childItem)
+        ? childItem.path
+        : childItem.type === "sidebar"
+          ? getSidebarFirstLinkChild(childItem)?.path
+          : (
+              childItem.children?.find((item) =>
+                isSidebarItemLink(item)
+              ) as Sidebar.SidebarItemLink
+            )?.path
+
+      if (!href) {
+        return
+      }
+
+      itemsToShow[href] = childItem
+    })
+    const itemsToShowEntries = Object.entries(itemsToShow)
+    if (!itemsToShowEntries.length) {
+      return <></>
+    }
     return (
       <CardList
-        items={
-          items?.map((childItem) => {
-            const href = isSidebarItemLink(childItem)
-              ? childItem.path
-              : childItem.children?.length
-                ? (
-                    childItem.children.find((item) =>
-                      isSidebarItemLink(item)
-                    ) as Sidebar.SidebarItemLink
-                  )?.path
-                : "#"
-            return {
-              title: childItem.title,
-              href,
-              rightIcon:
-                childItem.type === "ref" ? ChevronDoubleRight : undefined,
-            }
-          }) || []
-        }
+        items={itemsToShowEntries.map(([href, childItem]) => {
+          return {
+            title: childItem.title,
+            href,
+            rightIcon:
+              childItem.type === "ref" ? ChevronDoubleRight : undefined,
+            text: childItem.description,
+          }
+        })}
         itemsPerRow={itemsPerRow}
         defaultItemsPerRow={defaultItemsPerRow}
       />
     )
   }
 
-  const getAllLevelsElms = (
-    items?: Sidebar.InteractiveSidebarItem[],
-    headerLevel = titleLevel
-  ) => {
+  const getAllLevelsElms = ({
+    items,
+    headerLevel = titleLevel,
+    currentLevel = 1,
+  }: {
+    items?: Sidebar.InteractiveSidebarItem[]
+    headerLevel?: number
+    currentLevel?: number
+  }) => {
     return items?.map((item, key) => {
-      const itemChildren = getChildrenForLevel(item)
+      const itemChildren = getChildrenForLevel({ item, currentLevel })
       const HeadingComponent = itemChildren?.length
         ? TitleHeaderComponent(headerLevel)
         : undefined
-      const isChildrenCategory = itemChildren?.every(
-        (child) => child.type === "category" || child.type === "sub-category"
-      )
+      const linkChildren =
+        itemChildren?.filter(
+          (item) => isSidebarItemLink(item) || item.type === "sidebar"
+        ) || []
+      const categoryChildren =
+        itemChildren?.filter(
+          (child) => child.type === "category" || child.type === "sub-category"
+        ) || []
+      const showLinkAsCard = !HeadingComponent && isSidebarItemLink(item)
 
       return (
         <React.Fragment key={key}>
@@ -314,29 +347,41 @@ export const useChildDocs = ({
                   )}
                 </>
               )}
-              {isChildrenCategory &&
-                getAllLevelsElms(itemChildren, headerLevel + 1)}
-              {!isChildrenCategory && (
+              {linkChildren.length > 0 && (
                 <CardList
                   items={
-                    itemChildren?.map((childItem) => ({
-                      title: childItem.title,
-                      href: isSidebarItemLink(childItem) ? childItem.path : "",
-                      text: childItem.description,
-                      rightIcon:
-                        childItem.type === "ref"
-                          ? ChevronDoubleRight
-                          : undefined,
-                    })) || []
+                    linkChildren.map((childItem) => {
+                      const href = isSidebarItemLink(childItem)
+                        ? childItem.path
+                        : getSidebarFirstLinkChild(
+                            childItem as Sidebar.SidebarItemSidebar
+                          )?.path
+                      return {
+                        title: childItem.title,
+                        href,
+                        text: childItem.description,
+                        rightIcon:
+                          childItem.type === "ref"
+                            ? ChevronDoubleRight
+                            : undefined,
+                      }
+                    }) || []
                   }
                   itemsPerRow={itemsPerRow}
                   defaultItemsPerRow={defaultItemsPerRow}
+                  className="mb-docs_1"
                 />
               )}
+              {categoryChildren.length > 0 &&
+                getAllLevelsElms({
+                  items: categoryChildren,
+                  headerLevel: headerLevel + 1,
+                  currentLevel: currentLevel + 1,
+                })}
               {key !== items.length - 1 && headerLevel === 2 && <Hr />}
             </>
           )}
-          {!HeadingComponent && isSidebarItemLink(item) && (
+          {showLinkAsCard && (
             <Card
               title={item.title}
               href={item.path}
@@ -398,7 +443,9 @@ export const useChildDocs = ({
           <>
             {onlyTopLevel
               ? getTopLevelElms(filteredItems)
-              : getAllLevelsElms(filteredItems)}
+              : getAllLevelsElms({
+                  items: filteredItems,
+                })}
           </>
         )}
       </>

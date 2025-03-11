@@ -21,7 +21,6 @@ export const taxSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -44,7 +43,6 @@ export const taxSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+tax",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -61,7 +59,6 @@ export const taxSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+tax,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -71,7 +68,6 @@ export const taxSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+tax,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -81,7 +77,6 @@ export const taxSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+tax",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -90,7 +85,6 @@ export const taxSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Tax Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

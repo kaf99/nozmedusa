@@ -16,7 +16,6 @@ export const productSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         autogenerate_tags: "concept+product",
         autogenerate_as_ref: true,
         children: [
@@ -41,7 +40,6 @@ export const productSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+product",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -68,7 +66,6 @@ export const productSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+product,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -78,7 +75,6 @@ export const productSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+product,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -88,7 +84,6 @@ export const productSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+product",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -97,7 +92,6 @@ export const productSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Product Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

@@ -21,7 +21,6 @@ export const authSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -49,7 +48,6 @@ export const authSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+auth",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -76,7 +74,6 @@ export const authSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+auth,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -86,7 +83,6 @@ export const authSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+auth,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -96,7 +92,6 @@ export const authSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+auth",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -105,7 +100,6 @@ export const authSidebar = [
       {
         type: "category",
         title: "Providers",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -127,7 +121,6 @@ export const authSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Auth Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

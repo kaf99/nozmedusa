@@ -18,7 +18,7 @@ export const SidebarItemCategory = ({
 }: SidebarItemCategoryProps) => {
   const [showLoading, setShowLoading] = useState(false)
   const [open, setOpen] = useState(
-    item.initialOpen !== undefined ? item.initialOpen : true
+    item.initialOpen !== undefined ? item.initialOpen : false
   )
   const {
     isItemActive,

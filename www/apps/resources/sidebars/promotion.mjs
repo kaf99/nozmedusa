@@ -16,7 +16,6 @@ export const promotionSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -49,7 +48,6 @@ export const promotionSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+promotion",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -66,7 +64,6 @@ export const promotionSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+promotion,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -76,7 +73,6 @@ export const promotionSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+promotion,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -86,7 +82,6 @@ export const promotionSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+promotion",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -95,7 +90,6 @@ export const promotionSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Promotion Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

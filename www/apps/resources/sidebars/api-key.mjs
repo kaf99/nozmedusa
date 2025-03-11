@@ -16,7 +16,6 @@ export const apiKeySidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -34,7 +33,6 @@ export const apiKeySidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+auth",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -43,7 +41,6 @@ export const apiKeySidebar = [
       {
         type: "category",
         title: "Storefront Guides",
-        initialOpen: false,
         autogenerate_tags: "storefront+apiKey,-jsSdk",
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
@@ -53,7 +50,6 @@ export const apiKeySidebar = [
       {
         type: "category",
         title: "Admin Guides",
-        initialOpen: false,
         autogenerate_tags: "admin+apiKey,-jsSdk",
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
@@ -63,7 +59,6 @@ export const apiKeySidebar = [
       {
         type: "category",
         title: "Admin User Guides",
-        initialOpen: false,
         autogenerate_tags: "userGuide+apiKey",
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
@@ -73,7 +68,6 @@ export const apiKeySidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the API Key Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

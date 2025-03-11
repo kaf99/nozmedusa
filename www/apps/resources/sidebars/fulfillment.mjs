@@ -21,7 +21,6 @@ export const fulfillmentSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         autogenerate_tags: "concept+fulfillment",
         autogenerate_as_ref: true,
         children: [
@@ -56,7 +55,6 @@ export const fulfillmentSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+fulfillment",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -78,7 +76,6 @@ export const fulfillmentSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+fulfillment,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -88,7 +85,6 @@ export const fulfillmentSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+fulfillment,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -98,7 +94,6 @@ export const fulfillmentSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+fulfillment",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -107,7 +102,6 @@ export const fulfillmentSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Fulfillment Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

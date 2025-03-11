@@ -16,7 +16,6 @@ export const currencySidebar = [
       {
         type: "sub-category",
         title: "Concepts",
-        initialOpen: false,
         children: [
           {
             type: "link",
@@ -29,7 +28,6 @@ export const currencySidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+currency",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -39,7 +37,6 @@ export const currencySidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+currency,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -49,7 +46,6 @@ export const currencySidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+currency,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -59,7 +55,6 @@ export const currencySidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+currency",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -68,7 +63,6 @@ export const currencySidebar = [
       {
         type: "sub-category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Currency Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

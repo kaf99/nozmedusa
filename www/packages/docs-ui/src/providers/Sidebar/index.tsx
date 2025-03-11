@@ -301,7 +301,7 @@ export const SidebarProvider = ({
   }, [scrollableElement, isBrowser])
 
   const activeMainSidebar = useMemo(() => {
-    if (!activePath) {
+    if (!activePath || sidebars.length === 1) {
       // set first sidebar as active
       return sidebars[0]
     }
@@ -311,6 +311,7 @@ export const SidebarProvider = ({
           findSidebarItem({
             sidebarItems: s.items,
             item: { type: "link", path: activePath, title: "" },
+            compareTitles: false,
           }) !== undefined
       ) || sidebars[0]
     )
@@ -356,7 +357,7 @@ export const SidebarProvider = ({
 
   const shownSidebar = useMemo(() => {
     if (!sidebarHistory.length) {
-      return
+      return sidebars.length === 1 ? sidebars[0] : undefined
     }
 
     return getSidebar(sidebarHistory[sidebarHistory.length - 1])
@@ -534,6 +535,12 @@ export const SidebarProvider = ({
       `${desktopSidebarOpen === false}`
     )
   }, [isBrowser, desktopSidebarOpen])
+
+  useEffect(() => {
+    if (initialSidebars[0].sidebar_id !== sidebars[0].sidebar_id) {
+      resetItems()
+    }
+  }, [initialSidebars])
 
   const updatePersistedCategoryState = (title: string, opened: boolean) => {
     const storageData = JSON.parse(

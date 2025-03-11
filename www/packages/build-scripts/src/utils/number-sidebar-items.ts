@@ -29,7 +29,6 @@ export default function numberSidebarItems(
       numberedItems.push(
         item.type === "category"
           ? {
-              initialOpen: false,
               ...item,
               title: item.chapterTitle,
             }
@@ -38,7 +37,6 @@ export default function numberSidebarItems(
               title: item.chapterTitle,
               children: [],
               loaded: true,
-              initialOpen: false,
             }
       )
 

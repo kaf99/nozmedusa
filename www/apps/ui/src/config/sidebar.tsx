@@ -19,6 +19,7 @@ export const sidebars: Sidebar.Sidebar[] = [
         type: "category",
         title: "Installation",
         loaded: true,
+        initialOpen: true,
         children: [
           {
             type: "link",
@@ -40,6 +41,7 @@ export const sidebars: Sidebar.Sidebar[] = [
         type: "category",
         title: "Colors",
         loaded: true,
+        initialOpen: true,
         children: [
           {
             type: "link",
@@ -64,6 +66,7 @@ export const sidebars: Sidebar.Sidebar[] = [
         type: "category",
         title: "Components",
         loaded: true,
+        initialOpen: true,
         children: [
           {
             type: "link",
@@ -330,6 +333,7 @@ export const sidebars: Sidebar.Sidebar[] = [
         type: "category",
         title: "Hooks",
         loaded: true,
+        initialOpen: true,
         children: [
           {
             type: "link",
@@ -351,6 +355,7 @@ export const sidebars: Sidebar.Sidebar[] = [
         type: "category",
         title: "Utils",
         loaded: true,
+        initialOpen: true,
         children: [
           {
             type: "link",

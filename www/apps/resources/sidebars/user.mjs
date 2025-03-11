@@ -22,7 +22,6 @@ export const userSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+user",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -39,7 +38,6 @@ export const userSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+user,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -49,7 +47,6 @@ export const userSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+user,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -59,7 +56,6 @@ export const userSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+user",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -68,7 +64,6 @@ export const userSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the User Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [

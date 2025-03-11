@@ -6,9 +6,8 @@ export const generatedSidebars = [
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
-        "title": "1. Get Started",
+        "title": "1. Getting Started",
         "children": [
           {
             "loaded": true,
@@ -41,13 +40,12 @@ export const generatedSidebars = [
             "number": "1.3."
           }
         ],
-        "chapterTitle": "1. Get Started",
+        "chapterTitle": "1. Getting Started",
         "number": "1."
       },
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "2. Customization Tutorial",
         "children": [
@@ -232,7 +230,6 @@ export const generatedSidebars = [
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "3. Framework",
         "children": [
@@ -409,9 +406,9 @@ export const generatedSidebars = [
                 "isPathHref": true,
                 "type": "link",
                 "path": "/learn/fundamentals/module-links/custom-columns",
-                "title": "Custom Columns",
+                "title": "Add Custom Columns",
                 "children": [],
-                "chapterTitle": "3.3.4. Custom Columns",
+                "chapterTitle": "3.3.4. Add Custom Columns",
                 "number": "3.3.4."
               },
               {
@@ -912,7 +909,6 @@ export const generatedSidebars = [
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "4. Admin Development",
         "children": [
@@ -1006,13 +1002,11 @@ export const generatedSidebars = [
             "children": [],
             "number": "5."
           }
-        ],
-        "initialOpen": false
+        ]
       },
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "6. Configurations",
         "children": [
@@ -1030,11 +1024,21 @@ export const generatedSidebars = [
             "loaded": true,
             "isPathHref": true,
             "type": "link",
+            "title": "Medusa Configuations",
+            "path": "/learn/configurations/medusa-config",
+            "children": [],
+            "chapterTitle": "6.2. Medusa Configuations",
+            "number": "6.2."
+          },
+          {
+            "loaded": true,
+            "isPathHref": true,
+            "type": "link",
             "title": "Type Aliases",
             "path": "/learn/conventions/ts-aliases",
             "children": [],
-            "chapterTitle": "6.2. Type Aliases",
-            "number": "6.2."
+            "chapterTitle": "6.3. Type Aliases",
+            "number": "6.3."
           }
         ],
         "chapterTitle": "6. Configurations",
@@ -1043,7 +1047,6 @@ export const generatedSidebars = [
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "7. Debugging & Testing",
         "children": [
@@ -1145,18 +1148,17 @@ export const generatedSidebars = [
             "type": "link",
             "path": "/learn/build",
             "title": "Build",
-            "chapterTitle": "8. Production",
+            "children": [],
+            "chapterTitle": "8.1. Build",
+            "number": "8.1."
+          },
+          {
+            "loaded": true,
+            "isPathHref": true,
+            "type": "link",
+            "path": "/learn/deployment",
+            "title": "Deployment Overview",
             "children": [
-              {
-                "loaded": true,
-                "isPathHref": true,
-                "type": "link",
-                "path": "/learn/deployment",
-                "title": "Deployment Overview",
-                "children": [],
-                "chapterTitle": "8.1. Deployment Overview",
-                "number": "8.1."
-              },
               {
                 "loaded": true,
                 "isPathHref": true,
@@ -1164,19 +1166,20 @@ export const generatedSidebars = [
                 "path": "/learn/deployment/general",
                 "title": "General Deployment",
                 "children": [],
-                "chapterTitle": "8.2. General Deployment",
-                "number": "8.2."
+                "chapterTitle": "8.2.1. General Deployment",
+                "number": "8.2.1."
               }
             ],
-            "number": "8."
+            "chapterTitle": "8.2. Deployment Overview",
+            "number": "8.2."
           }
         ],
-        "initialOpen": false
+        "chapterTitle": "8. Production",
+        "number": "8."
       },
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "9. Upgrade",
         "children": [
@@ -1207,7 +1210,6 @@ export const generatedSidebars = [
       {
         "loaded": true,
         "isPathHref": true,
-        "initialOpen": false,
         "type": "category",
         "title": "10. Resources",
         "children": [

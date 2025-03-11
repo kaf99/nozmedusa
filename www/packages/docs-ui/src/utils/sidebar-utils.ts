@@ -68,7 +68,7 @@ export const findSidebarItem = ({
 }): Sidebar.SidebarItem | undefined => {
   let foundItem: Sidebar.SidebarItem | undefined
   sidebarItems.some((i) => {
-    if (areSidebarItemsEqual({ itemA: i, itemB: item })) {
+    if (areSidebarItemsEqual({ itemA: i, itemB: item, compareTitles })) {
       foundItem = i
     } else if (checkChildren && "children" in i && i.children) {
       foundItem = findSidebarItem({

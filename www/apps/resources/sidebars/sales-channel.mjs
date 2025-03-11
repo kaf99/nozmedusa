@@ -16,7 +16,6 @@ export const salesChannelSidebar = [
       {
         type: "category",
         title: "Concepts",
-        initialOpen: false,
         autogenerate_tags: "concept+salesChannel",
         autogenerate_as_ref: true,
         children: [
@@ -36,7 +35,6 @@ export const salesChannelSidebar = [
         type: "category",
         title: "Server Guides",
         autogenerate_tags: "server+salesChannel",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -46,7 +44,6 @@ export const salesChannelSidebar = [
         type: "category",
         title: "Storefront Guides",
         autogenerate_tags: "storefront+salesChannel,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -56,7 +53,6 @@ export const salesChannelSidebar = [
         type: "category",
         title: "Admin Guides",
         autogenerate_tags: "admin+salesChannel,-jsSdk",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -66,7 +62,6 @@ export const salesChannelSidebar = [
         type: "category",
         title: "Admin User Guides",
         autogenerate_tags: "userGuide+salesChannel",
-        initialOpen: false,
         autogenerate_as_ref: true,
         sort_sidebar: "alphabetize",
         description:
@@ -75,7 +70,6 @@ export const salesChannelSidebar = [
       {
         type: "category",
         title: "References",
-        initialOpen: false,
         description:
           "Find references for tools and resources related to the Sales Channel Module, such as data models, methods, and more. These are useful for your customizations.",
         children: [
