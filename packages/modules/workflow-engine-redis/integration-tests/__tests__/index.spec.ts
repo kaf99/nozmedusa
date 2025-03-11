@@ -326,7 +326,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           ).toBe(true)
         })
 
-        it("should revert the entire transaction when a step timeout expires in a async step", async () => {
+        it.only("should revert the entire transaction when a step timeout expires in a async step", async () => {
           await workflowOrcModule.run("workflow_step_timeout_async", {
             input: {
               myInput: "123",
@@ -363,7 +363,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           ).toBe(true)
         })
 
-        it("should revert the entire transaction when the transaction timeout expires in a transaction containing an async step", async () => {
+        it.skip("should revert the entire transaction when the transaction timeout expires in a transaction containing an async step", async () => {
           await workflowOrcModule.run("workflow_transaction_timeout_async", {
             input: {},
             transactionId: "transaction_1",

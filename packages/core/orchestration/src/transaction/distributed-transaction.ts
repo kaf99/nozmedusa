@@ -229,6 +229,7 @@ class DistributedTransaction extends EventEmitter {
     )
 
     const options = TransactionOrchestrator.getWorkflowOptions(modelId)
+
     const loadedData = await DistributedTransaction.keyValueStore.get(
       key,
       options

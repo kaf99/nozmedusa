@@ -55,7 +55,7 @@ export class TransactionOrchestrator extends EventEmitter {
   } = {}
 
   public static getWorkflowOptions(modelId: string): TransactionOptions {
-    return this.workflowOptions[modelId]
+    return TransactionOrchestrator.workflowOptions[modelId]
   }
 
   /**

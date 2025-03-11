@@ -31,7 +31,6 @@ enum JobType {
 export class RedisDistributedTransactionStorage
   implements IDistributedTransactionStorage, IDistributedSchedulerStorage
 {
-  private static TTL_AFTER_COMPLETED = 60 * 2 // 2 minutes
   private workflowExecutionService_: ModulesSdkTypes.IMedusaInternalService<any>
   private logger_: Logger
   private workflowOrchestratorService_: WorkflowOrchestratorService
@@ -200,6 +199,10 @@ export class RedisDistributedTransactionStorage
     key: string,
     options?: TransactionOptions
   ): Promise<TransactionCheckpoint | undefined> {
+    console.log({
+      key,
+      options,
+    })
     const data = await this.redisClient.get(key)
 
     if (data) {
@@ -223,6 +226,10 @@ export class RedisDistributedTransactionStorage
         }
       )
       .catch(() => undefined)
+
+    console.log({
+      trx,
+    })
 
     if (trx) {
       return {
@@ -269,6 +276,7 @@ export class RedisDistributedTransactionStorage
     await this.#preventRaceConditionExecutionIfNecessary({
       data,
       key,
+      options,
     })
 
     if (hasFinished) {
@@ -290,16 +298,15 @@ export class RedisDistributedTransactionStorage
     if (hasFinished && !retentionTime && !idempotent) {
       await this.deleteFromDb(data)
     } else {
+      console.log("saving to db...... ********************", {
+        workflow_id: data.flow.modelId,
+        transaction_id: data.flow.transactionId,
+      })
       await this.saveToDb(data, retentionTime)
     }
 
     if (hasFinished) {
-      await this.redisClient.set(
-        key,
-        stringifiedData,
-        "EX",
-        RedisDistributedTransactionStorage.TTL_AFTER_COMPLETED
-      )
+      await this.redisClient.unlink(key)
     }
   }
 
@@ -469,9 +476,11 @@ export class RedisDistributedTransactionStorage
   async #preventRaceConditionExecutionIfNecessary({
     data,
     key,
+    options,
   }: {
     data: TransactionCheckpoint
     key: string
+    options?: TransactionOptions
   }) {
     /**
      * In case many execution can succeed simultaneously, we need to ensure that the latest
@@ -479,7 +488,8 @@ export class RedisDistributedTransactionStorage
      */
     const currentFlow = data.flow
     const { flow: latestUpdatedFlow } =
-      (await this.get(key)) ?? ({ flow: {} } as { flow: TransactionFlow })
+      (await this.get(key, options)) ??
+      ({ flow: {} } as { flow: TransactionFlow })
 
     const currentFlowLastInvokingStepIndex = Object.values(
       currentFlow.steps

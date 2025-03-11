@@ -42,6 +42,8 @@ createWorkflow(
 createWorkflow(
   {
     name: "workflow_step_timeout_async",
+    idempotent: true,
+    retentionTime: 5,
   },
   function (input) {
     const resp = step_1_async(input)

@@ -12,13 +12,9 @@ import {
   Logger,
   MedusaContainer,
 } from "@medusajs/framework/types"
+import { isString, TransactionState } from "@medusajs/framework/utils"
 import {
-  InjectSharedContext,
-  isString,
-  MedusaContext,
-  TransactionState,
-} from "@medusajs/framework/utils"
-import {
+  FlowCancelOptions,
   FlowRunOptions,
   MedusaWorkflow,
   resolveValue,
@@ -36,6 +32,11 @@ export type WorkflowOrchestratorRunOptions<T> = Omit<
   transactionId?: string
   container?: ContainerLike
 }
+
+export type WorkflowOrchestratorCancelOptions = Omit<
+  FlowCancelOptions,
+  "transaction"
+>
 
 type RegisterStepSuccessOptions<T> = Omit<
   WorkflowOrchestratorRunOptions<T>,
@@ -183,11 +184,9 @@ export class WorkflowOrchestratorService {
     }
   }
 
-  @InjectSharedContext()
   async run<T = unknown>(
     workflowIdOrWorkflow: string | ReturnWorkflow<any, any, any>,
-    options?: WorkflowOrchestratorRunOptions<T>,
-    @MedusaContext() sharedContext: Context = {}
+    options?: WorkflowOrchestratorRunOptions<T>
   ) {
     const {
       input,
@@ -272,12 +271,115 @@ export class WorkflowOrchestratorService {
     return { acknowledgement, ...ret }
   }
 
-  @InjectSharedContext()
+  async cancel(
+    workflowIdOrWorkflow: string | ReturnWorkflow<any, any, any>,
+    options?: WorkflowOrchestratorCancelOptions
+  ) {
+    const {
+      transactionId,
+      logOnError,
+      events: eventHandlers,
+      container,
+    } = options ?? {}
+
+    let { throwOnError, context } = options ?? {}
+
+    throwOnError ??= true
+    context ??= {}
+
+    const workflowId = isString(workflowIdOrWorkflow)
+      ? workflowIdOrWorkflow
+      : workflowIdOrWorkflow.getName()
+
+    if (!workflowId) {
+      throw new Error("Workflow ID is required")
+    }
+
+    if (!transactionId) {
+      throw new Error("Transaction ID is required")
+    }
+
+    const events: FlowRunOptions["events"] = this.buildWorkflowEvents({
+      customEventHandlers: eventHandlers,
+      workflowId,
+      transactionId: transactionId,
+    })
+
+    const exportedWorkflow = MedusaWorkflow.getWorkflow(workflowId)
+    if (!exportedWorkflow) {
+      throw new Error(`Workflow with id "${workflowId}" not found.`)
+    }
+
+    const originalOnFinishHandler = events.onFinish!
+    delete events.onFinish
+
+    const transaction = await this.getRunningTransaction(
+      workflowId,
+      transactionId,
+      options
+    )
+    if (!transaction) {
+      if (!throwOnError) {
+        return {
+          acknowledgement: {
+            transactionId,
+            workflowId,
+            exists: false,
+          },
+        }
+      }
+      throw new Error("Transaction not found")
+    }
+
+    const ret = await exportedWorkflow.cancel({
+      transaction,
+      throwOnError: false,
+      logOnError,
+      context,
+      events,
+      container: container ?? this.container_,
+    })
+
+    const hasFinished = ret.transaction.hasFinished()
+    const metadata = ret.transaction.getFlow().metadata
+    const { parentStepIdempotencyKey } = metadata ?? {}
+
+    const hasFailed = [TransactionState.FAILED].includes(
+      ret.transaction.getFlow().state
+    )
+
+    const acknowledgement = {
+      transactionId: context.transactionId,
+      workflowId: workflowId,
+      parentStepIdempotencyKey,
+      hasFinished,
+      hasFailed,
+      exists: true,
+    }
+
+    if (hasFinished) {
+      const { result, errors } = ret
+
+      await originalOnFinishHandler({
+        transaction: ret.transaction,
+        result,
+        errors,
+      })
+
+      await this.triggerParentStep(ret.transaction, result)
+    }
+
+    if (throwOnError && ret.thrownError) {
+      throw ret.thrownError
+    }
+
+    return { acknowledgement, ...ret }
+  }
+
   async getRunningTransaction(
     workflowId: string,
     transactionId: string,
-    options?: WorkflowOrchestratorRunOptions<undefined>,
-    @MedusaContext() sharedContext: Context = {}
+    options?: { context?: Context }
   ): Promise<DistributedTransactionType> {
     let { context } = options ?? {}
 
@@ -290,7 +392,6 @@ export class WorkflowOrchestratorService {
     }
 
     context ??= {}
-    context.transactionId ??= transactionId
 
     const exportedWorkflow: any = MedusaWorkflow.getWorkflow(workflowId)
     if (!exportedWorkflow) {
@@ -305,19 +406,15 @@ export class WorkflowOrchestratorService {
     return transaction
   }
 
-  @InjectSharedContext()
-  async setStepSuccess<T = unknown>(
-    {
-      idempotencyKey,
-      stepResponse,
-      options,
-    }: {
-      idempotencyKey: string | IdempotencyKeyParts
-      stepResponse: unknown
-      options?: RegisterStepSuccessOptions<T>
-    },
-    @MedusaContext() sharedContext: Context = {}
-  ) {
+  async setStepSuccess<T = unknown>({
+    idempotencyKey,
+    stepResponse,
+    options,
+  }: {
+    idempotencyKey: string | IdempotencyKeyParts
+    stepResponse: unknown
+    options?: RegisterStepSuccessOptions<T>
+  }) {
     const {
       context,
       logOnError,
@@ -376,19 +473,15 @@ export class WorkflowOrchestratorService {
     return ret
   }
 
-  @InjectSharedContext()
-  async setStepFailure<T = unknown>(
-    {
-      idempotencyKey,
-      stepResponse,
-      options,
-    }: {
-      idempotencyKey: string | IdempotencyKeyParts
-      stepResponse: unknown
-      options?: RegisterStepSuccessOptions<T>
-    },
-    @MedusaContext() sharedContext: Context = {}
-  ) {
+  async setStepFailure<T = unknown>({
+    idempotencyKey,
+    stepResponse,
+    options,
+  }: {
+    idempotencyKey: string | IdempotencyKeyParts
+    stepResponse: unknown
+    options?: RegisterStepSuccessOptions<T>
+  }) {
     const {
       context,
       logOnError,
@@ -447,11 +540,12 @@ export class WorkflowOrchestratorService {
     return ret
   }
 
-  @InjectSharedContext()
-  subscribe(
-    { workflowId, transactionId, subscriber, subscriberId }: SubscribeOptions,
-    @MedusaContext() sharedContext: Context = {}
-  ) {
+  subscribe({
+    workflowId,
+    transactionId,
+    subscriber,
+    subscriberId,
+  }: SubscribeOptions) {
     subscriber._id = subscriberId
     const subscribers = this.subscribers.get(workflowId) ?? new Map()
 
@@ -488,11 +582,11 @@ export class WorkflowOrchestratorService {
     this.subscribers.set(workflowId, subscribers)
   }
 
-  @InjectSharedContext()
-  unsubscribe(
-    { workflowId, transactionId, subscriberOrId }: UnsubscribeOptions,
-    @MedusaContext() sharedContext: Context = {}
-  ) {
+  unsubscribe({
+    workflowId,
+    transactionId,
+    subscriberOrId,
+  }: UnsubscribeOptions) {
     const subscribers = this.subscribers.get(workflowId) ?? new Map()
 
     const filterSubscribers = (handlers: SubscriberHandler[]) => {
