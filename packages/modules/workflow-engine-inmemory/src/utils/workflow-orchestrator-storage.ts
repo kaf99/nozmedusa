@@ -170,6 +170,12 @@ export class InMemoryDistributedTransactionStorage
     data: TransactionCheckpoint
     key: string
   }) {
+    let isInitialCheckpoint = false
+
+    if (data.flow.state === TransactionState.NOT_STARTED) {
+      isInitialCheckpoint = true
+    }
+
     /**
      * In case many execution can succeed simultaneously, we need to ensure that the latest
      * execution does continue if a previous execution is considered finished
@@ -221,6 +227,16 @@ export class InMemoryDistributedTransactionStorage
               TransactionStepState.NOT_STARTED,
             ].includes(step.compensate?.state)
           })
+
+    if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
+      /**
+       * the initial checkpoint expect no other checkpoint to have been stored.
+       * In case it is not the initial one and another checkpoint is trying to
+       * find if a concurrent execution has finished, we skip the execution.
+       * The already finished execution would have deleted the checkpoint already.
+       */
+      throw new SkipExecutionError("Already finished by another execution")
+    }
 
     const isLatestExecutionFinishedIndex = -1
     const invokeShouldBeSkipped =

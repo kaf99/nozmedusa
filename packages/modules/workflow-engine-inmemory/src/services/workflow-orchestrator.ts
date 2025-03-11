@@ -20,6 +20,7 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { ulid } from "ulid"
 import { InMemoryDistributedTransactionStorage } from "../utils"
+import { WorkflowOrchestratorCancelOptions } from "@types"
 
 export type WorkflowOrchestratorRunOptions<T> = Omit<
   FlowRunOptions<T>,
@@ -256,6 +257,7 @@ export class WorkflowOrchestratorService {
       transactionId,
       options
     )
+
     if (!transaction) {
       if (!throwOnError) {
         return {
@@ -317,7 +319,7 @@ export class WorkflowOrchestratorService {
   async getRunningTransaction(
     workflowId: string,
     transactionId: string,
-    options?: WorkflowOrchestratorRunOptions<undefined>
+    options?: WorkflowOrchestratorRunOptions<unknown>
   ): Promise<DistributedTransactionType> {
     let { context, container } = options ?? {}
 

@@ -137,9 +137,11 @@ export function MedusaInternalService<
         const idOrObject_ = Array.isArray(idOrObject)
           ? idOrObject
           : [idOrObject]
-        primaryKeysCriteria = idOrObject_.map((primaryKeyValue) => ({
-          $and: primaryKeys.map((key) => ({ [key]: primaryKeyValue[key] })),
-        }))
+        primaryKeysCriteria = {
+          $or: idOrObject_.map((primaryKeyValue) => ({
+            $and: primaryKeys.map((key) => ({ [key]: primaryKeyValue[key] })),
+          })),
+        }
       }
 
       const queryOptions = buildQuery(primaryKeysCriteria, config)
@@ -152,13 +154,13 @@ export function MedusaInternalService<
       if (!entities?.length) {
         throw new MedusaError(
           MedusaError.Types.NOT_FOUND,
-          `${model.name} with ${primaryKeys.join(", ")}: ${
+          `${model.name} with ${primaryKeys.join(", ")}: ${JSON.stringify(
             Array.isArray(idOrObject)
               ? idOrObject.map((v) =>
                   [isString(v) ? v : Object.values(v)].join(", ")
                 )
               : idOrObject
-          } was not found`
+          )} was not found`
         )
       }
 
