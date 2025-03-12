@@ -1,23 +1,25 @@
 import { createProductsWorkflow } from "@medusajs/core-flows"
-import { AdditionalData, HttpTypes } from "@medusajs/framework/types"
+import { featureFlagRouter } from "@medusajs/framework"
 import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
   refetchEntities,
   refetchEntity,
 } from "@medusajs/framework/http"
-import { remapKeysForProduct, remapProductResponse } from "./helpers"
-import IndexEngineFeatureFlag from "../../../loaders/feature-flags/index-engine"
-import { featureFlagRouter } from "@medusajs/framework"
+import { AdditionalData, HttpTypes } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, isPresent } from "@medusajs/framework/utils"
+import IndexEngineFeatureFlag from "../../../loaders/feature-flags/index-engine"
+import { remapKeysForProduct, remapProductResponse } from "./helpers"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminProductListParams>,
   res: MedusaResponse<HttpTypes.AdminProductListResponse>
 ) => {
   if (featureFlagRouter.isFeatureEnabled(IndexEngineFeatureFlag.key)) {
-    // TODO: These filters are not supported by the index engine yet
+    // Use regular list when no filters are provided
+    // TODO: Tags and categories are not supported by the index engine yet
     if (
+      Object.keys(req.filterableFields).length === 0 ||
       isPresent(req.filterableFields.tags) ||
       isPresent(req.filterableFields.categories)
     ) {
@@ -58,10 +60,19 @@ async function getProductsWithIndexEngine(
 ) {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
 
+  const transformedFilters = {}
+  for (const [key, value] of Object.entries(req.filterableFields)) {
+    if (key === "sales_channel_id") {
+      transformedFilters["sales_channels.id"] = value
+    } else {
+      transformedFilters[key] = value
+    }
+  }
+
   const { data: products, metadata } = await query.index({
     entity: "product",
     fields: req.queryConfig.fields ?? [],
-    filters: req.filterableFields,
+    filters: transformedFilters,
     pagination: req.queryConfig.pagination,
   })
 
