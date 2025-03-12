@@ -32,16 +32,6 @@ export default class LinkService<TEntity> {
   }
 
   @InjectManager("linkRepository_")
-  async count(
-    filters = {},
-    config: FindConfig<unknown> = {},
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<number> {
-    const queryOptions = ModulesSdkUtils.buildQuery<unknown>(filters, config)
-    return await this.linkRepository_.count(queryOptions, sharedContext)
-  }
-
-  @InjectManager("linkRepository_")
   async listAndCount(
     filters = {},
     config: FindConfig<unknown> = {},

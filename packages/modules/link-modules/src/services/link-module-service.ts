@@ -154,19 +154,6 @@ export default class LinkModuleService implements ILinkModule {
   }
 
   @InjectManager()
-  async count(
-    filters: Record<string, unknown> = {},
-    config: FindConfig<unknown> = {},
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<number> {
-    if (!isDefined(config.take)) {
-      config.take = null
-    }
-
-    return await this.linkService_.count(filters, config, sharedContext)
-  }
-
-  @InjectManager()
   async listAndCount(
     filters: Record<string, unknown> = {},
     config: FindConfig<unknown> = {},
