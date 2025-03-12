@@ -46,7 +46,7 @@ medusaIntegrationTestRunner({
               entity: "Currency",
               primaryKey: "code",
               foreignKey: "currency_code",
-              isList: false,
+              isList: true,
               alias: "currency",
               args: {
                 methodSuffix: "Currencies",
@@ -90,9 +90,9 @@ medusaIntegrationTestRunner({
               serviceName: "region",
               entity: "Region",
               fieldAlias: {
-                currency: {
+                currencies: {
                   path: "currency_link.currency",
-                  isList: false,
+                  isList: true,
                   forwardArgumentsOnPath: ["currency_link.currency"],
                 },
               },
@@ -102,7 +102,7 @@ medusaIntegrationTestRunner({
                 primaryKey: "region_id",
                 foreignKey: "id",
                 alias: "currency_link",
-                isList: false,
+                isList: true,
               },
             },
           ],
@@ -147,7 +147,7 @@ medusaIntegrationTestRunner({
               entity: "ProductVariant",
               primaryKey: "id",
               foreignKey: "product_variant_id",
-              isList: false,
+              isList: true,
               alias: "product_variant",
               args: {
                 methodSuffix: "ProductVariants",
@@ -191,9 +191,9 @@ medusaIntegrationTestRunner({
               serviceName: "region",
               entity: "Region",
               fieldAlias: {
-                product_variant: {
+                product_variants: {
                   path: "product_variant_link.product_variant",
-                  isList: false,
+                  isList: true,
                   forwardArgumentsOnPath: [
                     "product_variant_link.product_variant",
                   ],
@@ -205,7 +205,7 @@ medusaIntegrationTestRunner({
                 primaryKey: "region_id",
                 foreignKey: "id",
                 alias: "product_variant_link",
-                isList: false,
+                isList: true,
               },
             },
           ],
@@ -253,7 +253,7 @@ medusaIntegrationTestRunner({
               entity: "Currency",
               primaryKey: "code",
               foreignKey: "currency_code",
-              isList: false,
+              isList: true,
               alias: "currency",
               args: {
                 methodSuffix: "Currencies",
@@ -297,9 +297,9 @@ medusaIntegrationTestRunner({
               serviceName: "region",
               entity: "Region",
               fieldAlias: {
-                currency: {
+                currencies: {
                   path: "currency_link.currency",
-                  isList: false,
+                  isList: true,
                   forwardArgumentsOnPath: ["currency_link.currency"],
                 },
               },
@@ -309,7 +309,7 @@ medusaIntegrationTestRunner({
                 primaryKey: "region_id",
                 foreignKey: "id",
                 alias: "currency_link",
-                isList: false,
+                isList: true,
               },
             },
           ],
@@ -353,7 +353,7 @@ medusaIntegrationTestRunner({
               entity: "Currency",
               primaryKey: "code",
               foreignKey: "currency_code",
-              isList: false,
+              isList: true,
               alias: "currency",
               args: {
                 methodSuffix: "Currencies",
@@ -397,9 +397,9 @@ medusaIntegrationTestRunner({
               serviceName: "region",
               entity: "Region",
               fieldAlias: {
-                currency: {
+                currencies: {
                   path: "currency_link.currency",
-                  isList: false,
+                  isList: true,
                   forwardArgumentsOnPath: ["currency_link.currency"],
                 },
               },
@@ -409,7 +409,7 @@ medusaIntegrationTestRunner({
                 primaryKey: "region_id",
                 foreignKey: "id",
                 alias: "currency_link",
-                isList: false,
+                isList: true,
               },
             },
           ],
