@@ -487,11 +487,16 @@ export class Link {
     for (const [serviceName, data] of serviceLinks) {
       if (data.linksToValidateForUniqueness.filters.length) {
         const service = this.modulesMap.get(serviceName)!
-        const existingLinks = await service.count({
-          $or: data.linksToValidateForUniqueness.filters,
-        })
+        const existingLinks = await service.list(
+          {
+            $or: data.linksToValidateForUniqueness.filters,
+          },
+          {
+            take: 1,
+          }
+        )
 
-        if (existingLinks > 0) {
+        if (existingLinks.length > 0) {
           const serviceA = data.linksToValidateForUniqueness.services[0]
           const serviceB = data.linksToValidateForUniqueness.services[1]
 
