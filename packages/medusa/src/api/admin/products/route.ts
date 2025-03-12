@@ -60,19 +60,20 @@ async function getProductsWithIndexEngine(
 ) {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
 
-  const transformedFilters = {}
-  for (const [key, value] of Object.entries(req.filterableFields)) {
-    if (key === "sales_channel_id") {
-      transformedFilters["sales_channels.id"] = value
-    } else {
-      transformedFilters[key] = value
-    }
+  const filters: Record<string, any> = req.filterableFields
+  if (isPresent(filters.sales_channel_id)) {
+    const salesChannelIds = filters.sales_channel_id
+
+    filters["sales_channels"] ??= {}
+    filters["sales_channels"]["id"] = salesChannelIds
+
+    delete filters.sales_channel_id
   }
 
   const { data: products, metadata } = await query.index({
     entity: "product",
     fields: req.queryConfig.fields ?? [],
-    filters: transformedFilters,
+    filters: filters,
     pagination: req.queryConfig.pagination,
   })
 
