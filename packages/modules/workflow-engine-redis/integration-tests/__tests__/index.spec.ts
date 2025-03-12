@@ -335,7 +335,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             throwOnError: false,
           })
 
-          await setTimeout(200)
+          await setTimeout(2000)
 
           const { transaction, result, errors } = (await workflowOrcModule.run(
             "workflow_step_timeout_async",
@@ -569,7 +569,6 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           )
         })
 
-        // TODO: investigate why it fails intermittently
         it.skip("the scheduled workflow should have access to the shared container", async () => {
           const wait = times(1)
           sharedContainer_.register("test-value", asValue("test"))

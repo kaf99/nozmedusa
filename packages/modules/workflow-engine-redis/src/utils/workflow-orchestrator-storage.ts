@@ -4,15 +4,19 @@ import {
   IDistributedSchedulerStorage,
   IDistributedTransactionStorage,
   SchedulerOptions,
+  SkipExecutionError,
   TransactionCheckpoint,
+  TransactionFlow,
   TransactionOptions,
   TransactionStep,
 } from "@medusajs/framework/orchestration"
 import { Logger, ModulesSdkTypes } from "@medusajs/framework/types"
 import {
+  isPresent,
   MedusaError,
   promiseAll,
   TransactionState,
+  TransactionStepState,
 } from "@medusajs/framework/utils"
 import { WorkflowOrchestratorService } from "@services"
 import { Queue, Worker } from "bullmq"
@@ -28,7 +32,6 @@ enum JobType {
 export class RedisDistributedTransactionStorage
   implements IDistributedTransactionStorage, IDistributedSchedulerStorage
 {
-  private static TTL_AFTER_COMPLETED = 60 * 2 // 2 minutes
   private workflowExecutionService_: ModulesSdkTypes.IMedusaInternalService<any>
   private logger_: Logger
   private workflowOrchestratorService_: WorkflowOrchestratorService
@@ -263,6 +266,12 @@ export class RedisDistributedTransactionStorage
 
     const { retentionTime, idempotent } = options ?? {}
 
+    await this.#preventRaceConditionExecutionIfNecessary({
+      data,
+      key,
+      options,
+    })
+
     if (hasFinished) {
       Object.assign(data, {
         retention_time: retentionTime,
@@ -286,12 +295,7 @@ export class RedisDistributedTransactionStorage
     }
 
     if (hasFinished) {
-      await this.redisClient.set(
-        key,
-        stringifiedData,
-        "EX",
-        RedisDistributedTransactionStorage.TTL_AFTER_COMPLETED
-      )
+      await this.redisClient.unlink(key)
     }
   }
 
@@ -456,5 +460,117 @@ export class RedisDistributedTransactionStorage
     await promiseAll(
       repeatableJobs.map((job) => this.jobQueue?.removeRepeatableByKey(job.key))
     )
+  }
+
+  async #preventRaceConditionExecutionIfNecessary({
+    data,
+    key,
+    options,
+  }: {
+    data: TransactionCheckpoint
+    key: string
+    options?: TransactionOptions
+  }) {
+    let isInitialCheckpoint = false
+
+    if (data.flow.state === TransactionState.NOT_STARTED) {
+      isInitialCheckpoint = true
+    }
+
+    /**
+     * In case many execution can succeed simultaneously, we need to ensure that the latest
+     * execution does continue if a previous execution is considered finished
+     */
+    const currentFlow = data.flow
+    const { flow: latestUpdatedFlow } =
+      (await this.get(key, options)) ??
+      ({ flow: {} } as { flow: TransactionFlow })
+
+    if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
+      /**
+       * the initial checkpoint expect no other checkpoint to have been stored.
+       * In case it is not the initial one and another checkpoint is trying to
+       * find if a concurrent execution has finished, we skip the execution.
+       * The already finished execution would have deleted the checkpoint already.
+       */
+      throw new SkipExecutionError("Already finished by another execution")
+    }
+
+    const currentFlowLastInvokingStepIndex = Object.values(
+      currentFlow.steps
+    ).findIndex((step) => {
+      return [
+        TransactionStepState.INVOKING,
+        TransactionStepState.NOT_STARTED,
+      ].includes(step.invoke?.state)
+    })
+
+    const latestUpdatedFlowLastInvokingStepIndex = !latestUpdatedFlow.steps
+      ? 1 // There is no other execution, so the current execution is the latest
+      : Object.values(
+          (latestUpdatedFlow.steps as Record<string, TransactionStep>) ?? {}
+        ).findIndex((step) => {
+          return [
+            TransactionStepState.INVOKING,
+            TransactionStepState.NOT_STARTED,
+          ].includes(step.invoke?.state)
+        })
+
+    const currentFlowLastCompensatingStepIndex = Object.values(
+      currentFlow.steps
+    )
+      .reverse()
+      .findIndex((step) => {
+        return [
+          TransactionStepState.COMPENSATING,
+          TransactionStepState.NOT_STARTED,
+        ].includes(step.compensate?.state)
+      })
+
+    const latestUpdatedFlowLastCompensatingStepIndex = !latestUpdatedFlow.steps
+      ? -1
+      : Object.values(
+          (latestUpdatedFlow.steps as Record<string, TransactionStep>) ?? {}
+        )
+          .reverse()
+          .findIndex((step) => {
+            return [
+              TransactionStepState.COMPENSATING,
+              TransactionStepState.NOT_STARTED,
+            ].includes(step.compensate?.state)
+          })
+
+    const isLatestExecutionFinishedIndex = -1
+    const invokeShouldBeSkipped =
+      (latestUpdatedFlowLastInvokingStepIndex ===
+        isLatestExecutionFinishedIndex ||
+        currentFlowLastInvokingStepIndex <
+          latestUpdatedFlowLastInvokingStepIndex) &&
+      currentFlowLastInvokingStepIndex !== isLatestExecutionFinishedIndex
+
+    const compensateShouldBeSkipped =
+      currentFlowLastCompensatingStepIndex <
+        latestUpdatedFlowLastCompensatingStepIndex &&
+      currentFlowLastCompensatingStepIndex !== isLatestExecutionFinishedIndex &&
+      latestUpdatedFlowLastCompensatingStepIndex !==
+        isLatestExecutionFinishedIndex
+
+    if (
+      (data.flow.state !== TransactionState.COMPENSATING &&
+        invokeShouldBeSkipped) ||
+      (data.flow.state === TransactionState.COMPENSATING &&
+        compensateShouldBeSkipped) ||
+      (latestUpdatedFlow.state === TransactionState.COMPENSATING &&
+        ![TransactionState.REVERTED, TransactionState.FAILED].includes(
+          currentFlow.state
+        ) &&
+        currentFlow.state !== latestUpdatedFlow.state) ||
+      (latestUpdatedFlow.state === TransactionState.REVERTED &&
+        currentFlow.state !== TransactionState.REVERTED) ||
+      (latestUpdatedFlow.state === TransactionState.FAILED &&
+        currentFlow.state !== TransactionState.FAILED)
+    ) {
+      throw new SkipExecutionError("Already finished by another execution")
+    }
   }
 }

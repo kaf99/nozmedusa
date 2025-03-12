@@ -75,7 +75,9 @@ export class WorkflowsModuleService<
 
       await this.clearExpiredExecutions()
       this.clearTimeout_ = setInterval(async () => {
-        await this.clearExpiredExecutions()
+        try {
+          await this.clearExpiredExecutions()
+        } catch {}
       }, 1000 * 60 * 60)
     },
   }
@@ -90,11 +92,13 @@ export class WorkflowsModuleService<
     > = {},
     @MedusaContext() context: Context = {}
   ) {
+    options ??= {}
+    options.context ??= context
     const ret = await this.workflowOrchestratorService_.run<
       TWorkflow extends ReturnWorkflow<any, any, any>
         ? UnwrapWorkflowInputDataType<TWorkflow>
         : unknown
-    >(workflowIdOrWorkflow, options, context)
+    >(workflowIdOrWorkflow, options)
 
     return ret as any
   }
@@ -108,7 +112,7 @@ export class WorkflowsModuleService<
     return await this.workflowOrchestratorService_.getRunningTransaction(
       workflowId,
       transactionId,
-      context
+      { context }
     )
   }
 
@@ -125,14 +129,14 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    return await this.workflowOrchestratorService_.setStepSuccess(
-      {
-        idempotencyKey,
-        stepResponse,
-        options,
-      } as any,
-      context
-    )
+    options ??= {}
+    options.context ??= context
+
+    return await this.workflowOrchestratorService_.setStepSuccess({
+      idempotencyKey,
+      stepResponse,
+      options,
+    } as any)
   }
 
   @InjectSharedContext()
@@ -148,14 +152,14 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    return await this.workflowOrchestratorService_.setStepFailure(
-      {
-        idempotencyKey,
-        stepResponse,
-        options,
-      } as any,
-      context
-    )
+    options ??= {}
+    options.context ??= context
+
+    return await this.workflowOrchestratorService_.setStepFailure({
+      idempotencyKey,
+      stepResponse,
+      options,
+    } as any)
   }
 
   @InjectSharedContext()
@@ -168,7 +172,7 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    return this.workflowOrchestratorService_.subscribe(args as any, context)
+    return this.workflowOrchestratorService_.subscribe(args as any)
   }
 
   @InjectSharedContext()
@@ -180,7 +184,7 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    return this.workflowOrchestratorService_.unsubscribe(args as any, context)
+    return this.workflowOrchestratorService_.unsubscribe(args as any)
   }
 
   private async clearExpiredExecutions() {

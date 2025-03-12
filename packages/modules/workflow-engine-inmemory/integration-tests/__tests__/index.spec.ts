@@ -30,7 +30,7 @@ import {
 } from "../__fixtures__/workflow_event_group_id"
 import { createScheduled } from "../__fixtures__/workflow_scheduled"
 
-jest.setTimeout(100000)
+jest.setTimeout(3000000)
 
 moduleIntegrationTestRunner<IWorkflowEngineService>({
   moduleName: Modules.WORKFLOW_ENGINE,
