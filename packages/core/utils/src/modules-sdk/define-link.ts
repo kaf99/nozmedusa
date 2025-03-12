@@ -125,7 +125,8 @@ function buildFieldAlias(fieldAliases?: Shortcut | Shortcut[]) {
 }
 
 function prepareServiceConfig(
-  input: DefineLinkInputSource | DefineReadOnlyLinkInputSource
+  input: DefineLinkInputSource | DefineReadOnlyLinkInputSource,
+  defaultOptions?: { isList?: boolean }
 ) {
   let serviceConfig = {} as ModuleLinkableKeyConfig
 
@@ -137,7 +138,7 @@ function prepareServiceConfig(
       alias: source.alias ?? camelToSnakeCase(source.field ?? ""),
       field: input.field ?? source.field,
       primaryKey: source.primaryKey,
-      isList: false,
+      isList: defaultOptions?.isList ?? false,
       deleteCascade: false,
       module: source.serviceName,
       entity: source.entity,
@@ -152,7 +153,7 @@ function prepareServiceConfig(
       alias: source.alias ?? camelToSnakeCase(source.field ?? ""),
       field: input.field ?? source.field,
       primaryKey: source.primaryKey,
-      isList: input.isList ?? false,
+      isList: input.isList ?? defaultOptions?.isList ?? false,
       deleteCascade: input.deleteCascade ?? false,
       module: source.serviceName,
       entity: source.entity,
@@ -183,8 +184,8 @@ export function defineLink(
   rightService: DefineLinkInputSource | DefineReadOnlyLinkInputSource,
   linkServiceOptions?: ExtraOptions | ReadOnlyExtraOptions
 ): DefineLinkExport {
-  const serviceAObj = prepareServiceConfig(leftService)
-  const serviceBObj = prepareServiceConfig(rightService)
+  const serviceAObj = prepareServiceConfig(leftService, { isList: true })
+  const serviceBObj = prepareServiceConfig(rightService, { isList: false })
 
   if (linkServiceOptions?.readOnly) {
     return defineReadOnlyLink(
