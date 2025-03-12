@@ -102,6 +102,10 @@ export class RedisDistributedTransactionStorage
         this.redisWorkerConnection /*, runRetryDelay: 100000 for tests */,
     }
 
+    // TODO: Remove this once we have released to all clients (Added: v2.6+)
+    // Remove all repeatable jobs from the old queue since now we have a queue dedicated to scheduled jobs
+    await this.removeAllRepeatableJobs(this.queue)
+
     this.worker = new Worker(
       this.queueName,
       async (job) => {
@@ -456,9 +460,13 @@ export class RedisDistributedTransactionStorage
   }
 
   async removeAll(): Promise<void> {
-    const repeatableJobs = (await this.jobQueue?.getRepeatableJobs()) ?? []
+    return await this.removeAllRepeatableJobs(this.jobQueue!)
+  }
+
+  private async removeAllRepeatableJobs(queue: Queue): Promise<void> {
+    const repeatableJobs = (await queue.getRepeatableJobs()) ?? []
     await promiseAll(
-      repeatableJobs.map((job) => this.jobQueue?.removeRepeatableByKey(job.key))
+      repeatableJobs.map((job) => queue.removeRepeatableByKey(job.key))
     )
   }
 
