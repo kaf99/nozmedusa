@@ -19,7 +19,7 @@ import {
   TransactionStepState,
 } from "@medusajs/framework/utils"
 import { WorkflowOrchestratorService } from "@services"
-import { Queue, Worker } from "bullmq"
+import { Queue, RepeatOptions, Worker } from "bullmq"
 import Redis from "ioredis"
 
 enum JobType {
@@ -109,6 +109,11 @@ export class RedisDistributedTransactionStorage
     this.worker = new Worker(
       this.queueName,
       async (job) => {
+        this.logger_.debug(
+          `executing job ${job.name} from queue ${
+            this.queueName
+          } with the following data: ${JSON.stringify(job.data)}`
+        )
         if (allowedJobs.includes(job.name as JobType)) {
           await this.executeTransaction(
             job.data.workflowId,
@@ -128,7 +133,14 @@ export class RedisDistributedTransactionStorage
       this.jobWorker = new Worker(
         this.jobQueueName,
         async (job) => {
-          await this.executeScheduledJob(
+          this.logger_.debug(
+            `executing scheduled job ${job.data.jobId} from queue ${
+              this.jobQueueName
+            } with the following options: ${JSON.stringify(
+              job.data.schedulerOptions
+            )}`
+          )
+          return await this.executeScheduledJob(
             job.data.jobId,
             job.data.schedulerOptions
           )
@@ -182,9 +194,8 @@ export class RedisDistributedTransactionStorage
     try {
       // TODO: In the case of concurrency being forbidden, we want to generate a predictable transaction ID and rely on the idempotency
       // of the transaction to ensure that the transaction is only executed once.
-      return await this.workflowOrchestratorService_.run(jobId, {
+      await this.workflowOrchestratorService_.run(jobId, {
         logOnError: true,
-        throwOnError: false,
       })
     } catch (e) {
       if (e instanceof MedusaError && e.type === MedusaError.Types.NOT_FOUND) {
@@ -430,6 +441,23 @@ export class RedisDistributedTransactionStorage
     const jobId =
       typeof jobDefinition === "string" ? jobDefinition : jobDefinition.jobId
 
+    if ("cron" in schedulerOptions && "interval" in schedulerOptions) {
+      throw new Error(
+        `Unable to register a job with both scheduler options interval and cron.`
+      )
+    }
+
+    const repeatOptions: RepeatOptions = {
+      limit: schedulerOptions.numberOfExecutions,
+      key: `${JobType.SCHEDULE}_${jobId}`,
+    }
+
+    if ("cron" in schedulerOptions) {
+      repeatOptions.pattern = schedulerOptions.cron
+    } else {
+      repeatOptions.every = schedulerOptions.interval
+    }
+
     // If it is the same key (eg. the same workflow name), the old one will get overridden.
     await this.jobQueue?.add(
       JobType.SCHEDULE,
@@ -438,11 +466,7 @@ export class RedisDistributedTransactionStorage
         schedulerOptions,
       },
       {
-        repeat: {
-          pattern: schedulerOptions.cron,
-          limit: schedulerOptions.numberOfExecutions,
-          key: `${JobType.SCHEDULE}_${jobId}`,
-        },
+        repeat: repeatOptions,
         removeOnComplete: {
           age: 86400,
           count: 1000,

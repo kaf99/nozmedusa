@@ -145,10 +145,6 @@ export type TransactionModelOptions = {
 
 export type SchedulerOptions = {
   /**
-   * The cron expression to schedule the workflow execution.
-   */
-  cron: string
-  /**
    * Setting whether to allow concurrent executions (eg. if the previous execution is still running, should the new one be allowed to run or not)
    * By default concurrent executions are not allowed.
    */
@@ -158,7 +154,20 @@ export type SchedulerOptions = {
    * Optionally limit the number of executions for the scheduled workflow. If not set, the workflow will run indefinitely.
    */
   numberOfExecutions?: number
-}
+} & (
+  | {
+      /**
+       * The cron expression to schedule the workflow execution.
+       */
+      cron: string
+    }
+  | {
+      /**
+       * The interval (in ms) to schedule the workflow execution.
+       */
+      interval: number
+    }
+)
 
 export type TransactionModel = {
   id: string
