@@ -17,7 +17,10 @@ import type {
 } from "@medusajs/framework/workflows-sdk"
 import { SqlEntityManager } from "@mikro-orm/postgresql"
 import { WorkflowExecution } from "@models"
-import { WorkflowOrchestratorService } from "@services"
+import {
+  WorkflowOrchestratorCancelOptions,
+  WorkflowOrchestratorService,
+} from "@services"
 
 type InjectedDependencies = {
   manager: SqlEntityManager
@@ -112,7 +115,7 @@ export class WorkflowsModuleService<
     return await this.workflowOrchestratorService_.getRunningTransaction(
       workflowId,
       transactionId,
-      { context }
+      context
     )
   }
 
@@ -193,5 +196,14 @@ export class WorkflowsModuleService<
       WHERE retention_time IS NOT NULL AND
       updated_at <= (CURRENT_TIMESTAMP - INTERVAL '1 second' * retention_time);
     `)
+  }
+
+  @InjectSharedContext()
+  async cancel(
+    workflowId: string,
+    options: WorkflowOrchestratorCancelOptions,
+    @MedusaContext() context: Context = {}
+  ) {
+    return this.workflowOrchestratorService_.cancel(workflowId, options)
   }
 }

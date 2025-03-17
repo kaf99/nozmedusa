@@ -35,8 +35,11 @@ export type WorkflowOrchestratorRunOptions<T> = Omit<
 
 export type WorkflowOrchestratorCancelOptions = Omit<
   FlowCancelOptions,
-  "transaction"
->
+  "transaction" | "transactionId" | "container"
+> & {
+  transactionId: string
+  container?: ContainerLike
+}
 
 type RegisterStepSuccessOptions<T> = Omit<
   WorkflowOrchestratorRunOptions<T>,
@@ -379,10 +382,8 @@ export class WorkflowOrchestratorService {
   async getRunningTransaction(
     workflowId: string,
     transactionId: string,
-    options?: { context?: Context }
+    context?: Context
   ): Promise<DistributedTransactionType> {
-    let { context } = options ?? {}
-
     if (!workflowId) {
       throw new Error("Workflow ID is required")
     }
@@ -398,10 +399,9 @@ export class WorkflowOrchestratorService {
       throw new Error(`Workflow with id "${workflowId}" not found.`)
     }
 
-    const transaction = await exportedWorkflow.getRunningTransaction(
-      transactionId,
-      context
-    )
+    const flow = exportedWorkflow()
+
+    const transaction = await flow.getRunningTransaction(transactionId, context)
 
     return transaction
   }

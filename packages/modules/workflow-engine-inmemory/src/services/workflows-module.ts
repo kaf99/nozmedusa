@@ -18,6 +18,7 @@ import type {
 import { SqlEntityManager } from "@mikro-orm/postgresql"
 import { WorkflowExecution } from "@models"
 import { WorkflowOrchestratorService } from "@services"
+import { WorkflowOrchestratorCancelOptions } from "@types"
 
 type InjectedDependencies = {
   manager: SqlEntityManager
@@ -184,5 +185,17 @@ export class WorkflowsModuleService<
       WHERE retention_time IS NOT NULL AND
       updated_at <= (CURRENT_TIMESTAMP - INTERVAL '1 second' * retention_time);
     `)
+  }
+
+  @InjectSharedContext()
+  async cancel<TWorkflow extends string | ReturnWorkflow<any, any, any>>(
+    workflowIdOrWorkflow: TWorkflow,
+    options: WorkflowOrchestratorCancelOptions,
+    @MedusaContext() context: Context = {}
+  ) {
+    return this.workflowOrchestratorService_.cancel(
+      workflowIdOrWorkflow,
+      options
+    )
   }
 }

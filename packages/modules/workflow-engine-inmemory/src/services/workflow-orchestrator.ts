@@ -6,7 +6,11 @@ import {
   TransactionStep,
   WorkflowScheduler,
 } from "@medusajs/framework/orchestration"
-import { ContainerLike, MedusaContainer } from "@medusajs/framework/types"
+import {
+  ContainerLike,
+  Context,
+  MedusaContainer,
+} from "@medusajs/framework/types"
 import {
   isString,
   MedusaError,
@@ -18,9 +22,9 @@ import {
   resolveValue,
   ReturnWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import { WorkflowOrchestratorCancelOptions } from "@types"
 import { ulid } from "ulid"
 import { InMemoryDistributedTransactionStorage } from "../utils"
-import { WorkflowOrchestratorCancelOptions } from "@types"
 
 export type WorkflowOrchestratorRunOptions<T> = Omit<
   FlowRunOptions<T>,
@@ -319,10 +323,8 @@ export class WorkflowOrchestratorService {
   async getRunningTransaction(
     workflowId: string,
     transactionId: string,
-    options?: WorkflowOrchestratorRunOptions<unknown>
+    context?: Context
   ): Promise<DistributedTransactionType> {
-    let { context, container } = options ?? {}
-
     if (!workflowId) {
       throw new Error("Workflow ID is required")
     }
@@ -339,9 +341,7 @@ export class WorkflowOrchestratorService {
       throw new Error(`Workflow with id "${workflowId}" not found.`)
     }
 
-    const flow = exportedWorkflow(
-      (container as MedusaContainer) ?? this.container_
-    )
+    const flow = exportedWorkflow()
 
     const transaction = await flow.getRunningTransaction(transactionId, context)
 

@@ -8,7 +8,8 @@ export type InitializeModuleInjectableDependencies = {
 
 export type WorkflowOrchestratorCancelOptions = Omit<
   FlowCancelOptions,
-  "transaction" | "container"
+  "transaction" | "transactionId" | "container"
 > & {
+  transactionId: string
   container?: ContainerLike
 }

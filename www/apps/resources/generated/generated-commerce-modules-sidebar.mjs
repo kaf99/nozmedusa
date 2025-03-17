@@ -11139,6 +11139,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "title": "Get Variant Prices",
               "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/price",
               "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Implement Product Reviews in Medusa",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/product-reviews",
+              "children": []
             }
           ]
         },

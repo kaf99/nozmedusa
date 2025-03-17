@@ -300,6 +300,26 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           expect(onFinish).toHaveBeenCalledTimes(0)
         })
 
+        it("should cancel and revert a completed workflow", async () => {
+          const workflowId = "workflow_sync"
+
+          const { acknowledgement, transaction: trx } =
+            await workflowOrcModule.run(workflowId, {
+              input: {
+                value: "123",
+              },
+            })
+
+          expect(trx.getFlow().state).toEqual("done")
+          expect(acknowledgement.hasFinished).toBe(true)
+
+          const { transaction } = await workflowOrcModule.cancel(workflowId, {
+            transactionId: acknowledgement.transactionId,
+          })
+
+          expect(transaction.getFlow().state).toEqual("reverted")
+        })
+
         it("should run conditional steps if condition is true", (done) => {
           void workflowOrcModule.subscribe({
             workflowId: "workflow_conditional_step",
