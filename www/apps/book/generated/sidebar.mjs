@@ -415,11 +415,21 @@ export const generatedSidebars = [
                 "loaded": true,
                 "isPathHref": true,
                 "type": "link",
+                "path": "/learn/fundamentals/module-links/read-only",
+                "title": "Read-Only Links",
+                "children": [],
+                "chapterTitle": "3.3.5. Read-Only Links",
+                "number": "3.3.5."
+              },
+              {
+                "loaded": true,
+                "isPathHref": true,
+                "type": "link",
                 "path": "/learn/fundamentals/module-links/query-context",
                 "title": "Query Context",
                 "children": [],
-                "chapterTitle": "3.3.5. Query Context",
-                "number": "3.3.5."
+                "chapterTitle": "3.3.6. Query Context",
+                "number": "3.3.6."
               }
             ],
             "chapterTitle": "3.3. Module Links",

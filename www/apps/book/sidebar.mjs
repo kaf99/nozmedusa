@@ -222,6 +222,11 @@ export const sidebars = [
               },
               {
                 type: "link",
+                path: "/learn/fundamentals/module-links/read-only",
+                title: "Read-Only Links",
+              },
+              {
+                type: "link",
                 path: "/learn/fundamentals/module-links/query-context",
                 title: "Query Context",
               },

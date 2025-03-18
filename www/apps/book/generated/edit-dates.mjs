@@ -24,7 +24,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/admin/widgets/page.mdx": "2024-12-09T16:43:24.260Z",
   "app/learn/fundamentals/data-models/page.mdx": "2024-12-09T11:34:51.065Z",
   "app/learn/fundamentals/modules/remote-link/page.mdx": "2024-09-30T08:43:53.127Z",
-  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2024-12-09T16:44:32.277Z",
+  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2025-03-17T11:47:10.101Z",
   "app/learn/fundamentals/workflows/add-workflow-hook/page.mdx": "2024-12-09T14:42:39.693Z",
   "app/learn/fundamentals/events-and-subscribers/data-payload/page.mdx": "2024-10-21T13:30:21.369Z",
   "app/learn/fundamentals/data-models/default-properties/page.mdx": "2024-10-21T13:30:21.368Z",
@@ -71,7 +71,7 @@ export const generatedEditDates = {
   "app/learn/debugging-and-testing/testing-tools/modules-tests/module-example/page.mdx": "2025-01-31T13:19:02.586Z",
   "app/learn/debugging-and-testing/testing-tools/modules-tests/page.mdx": "2025-01-31T13:19:02.587Z",
   "app/learn/fundamentals/module-links/custom-columns/page.mdx": "2025-03-11T13:29:54.752Z",
-  "app/learn/fundamentals/module-links/directions/page.mdx": "2024-12-12T15:31:31.555Z",
+  "app/learn/fundamentals/module-links/directions/page.mdx": "2025-03-17T12:52:06.161Z",
   "app/learn/fundamentals/module-links/page.mdx": "2025-03-11T13:39:14.345Z",
   "app/learn/fundamentals/module-links/query/page.mdx": "2025-03-11T15:35:10.605Z",
   "app/learn/fundamentals/modules/db-operations/page.mdx": "2024-12-09T14:40:50.581Z",
@@ -121,5 +121,6 @@ export const generatedEditDates = {
   "app/learn/resources/usage/page.mdx": "2025-02-26T13:35:34.824Z",
   "app/learn/configurations/medusa-config/page.mdx": "2025-03-11T14:27:04.528Z",
   "app/learn/configurations/ts-aliases/page.mdx": "2025-02-11T16:57:46.683Z",
-  "app/learn/production/worker-mode/page.mdx": "2025-03-11T15:21:50.906Z"
+  "app/learn/production/worker-mode/page.mdx": "2025-03-11T15:21:50.906Z",
+  "app/learn/fundamentals/module-links/read-only/page.mdx": "2025-03-17T14:18:29.924Z"
 }

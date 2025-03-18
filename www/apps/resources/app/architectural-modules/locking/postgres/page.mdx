@@ -30,7 +30,7 @@ module.exports = defineConfig({
         providers: [
           {
             resolve: "@medusajs/medusa/locking-postgres",
-            id: "postgres-lock",
+            id: "locking-postgres",
             // set this if you want this provider to be used by default
             // and you have other Locking Module Providers registered.
             is_default: true,
@@ -72,7 +72,7 @@ module.exports = defineConfig({
         providers: [
           {
             resolve: "@medusajs/medusa/locking-postgres",
-            id: "postgres-lock",
+            id: "locking-postgres",
             is_default: true,
           },
         ]

@@ -6049,5 +6049,13 @@ export const generatedEditDates = {
   "app/architectural-modules/locking/redis/page.mdx": "2025-03-12T10:07:43.867Z",
   "references/locking/interfaces/locking.ILockingModule/page.mdx": "2025-03-12T12:28:30.425Z",
   "references/locking/interfaces/locking.ILockingProvider/page.mdx": "2025-03-12T12:28:30.422Z",
-  "references/modules/locking/page.mdx": "2025-03-12T12:28:30.419Z"
+  "references/modules/locking/page.mdx": "2025-03-12T12:28:30.419Z",
+  "references/cache/interfaces/cache.ICacheService/page.mdx": "2025-03-17T15:24:02.574Z",
+  "references/event/interfaces/event.IEventBusModuleService/page.mdx": "2025-03-17T15:24:03.025Z",
+  "references/file_service/interfaces/file_service.IFileModuleService/page.mdx": "2025-03-17T15:24:03.031Z",
+  "references/modules/cache/page.mdx": "2025-03-17T15:24:02.572Z",
+  "references/modules/event/page.mdx": "2025-03-17T15:24:03.021Z",
+  "references/modules/file_service/page.mdx": "2025-03-17T15:24:03.025Z",
+  "references/modules/notification_service/page.mdx": "2025-03-17T15:24:05.164Z",
+  "references/notification_service/interfaces/notification_service.INotificationModuleService/page.mdx": "2025-03-17T15:24:05.173Z"
 }

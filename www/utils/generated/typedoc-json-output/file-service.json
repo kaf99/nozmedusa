@@ -1,0 +1,1280 @@
+{
+	"id": 14,
+	"name": "file-service",
+	"variant": "project",
+	"kind": 1,
+	"flags": {},
+	"children": [
+		{
+			"id": 15,
+			"name": "IFileModuleService",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"comment": {
+				"summary": [
+					{
+						"kind": "text",
+						"text": "The main service interface for the File Module."
+					}
+				]
+			},
+			"children": [
+				{
+					"id": 16,
+					"name": "createFiles",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "file/service.ts",
+							"line": 25,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L25"
+						},
+						{
+							"fileName": "file/service.ts",
+							"line": 45,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L45"
+						}
+					],
+					"signatures": [
+						{
+							"id": 17,
+							"name": "createFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method uploads files to the designated file storage system."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The created files."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nconst [file] = await fileModuleService.createFiles([{\n  filename: \"product.png\",\n  mimeType: \"image/png\",\n  content: \"somecontent\" // base64 encoded\n}])\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 25,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L25"
+								}
+							],
+							"parameters": [
+								{
+									"id": 18,
+									"name": "data",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The files to be created."
+											}
+										]
+									},
+									"type": {
+										"type": "array",
+										"elementType": {
+											"type": "reference",
+											"target": {
+												"sourceFileName": "../../../../packages/core/types/src/file/mutations.ts",
+												"qualifiedName": "CreateFileDTO"
+											},
+											"name": "CreateFileDTO",
+											"package": "@medusajs/types"
+										}
+									}
+								},
+								{
+									"id": 19,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "array",
+										"elementType": {
+											"type": "reference",
+											"target": {
+												"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+												"qualifiedName": "FileDTO"
+											},
+											"name": "FileDTO",
+											"package": "@medusajs/types"
+										}
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						},
+						{
+							"id": 20,
+							"name": "createFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method uploads a file to the designated file storage system."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The created file."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nconst file = await fileModuleService.createFiles({\n  filename: \"product.png\",\n  mimeType: \"image/png\",\n  content: \"somecontent\" // base64 encoded\n})\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 45,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L45"
+								}
+							],
+							"parameters": [
+								{
+									"id": 21,
+									"name": "data",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The file to be created."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/file/mutations.ts",
+											"qualifiedName": "CreateFileDTO"
+										},
+										"name": "CreateFileDTO",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 22,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+											"qualifiedName": "FileDTO"
+										},
+										"name": "FileDTO",
+										"package": "@medusajs/types"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 23,
+					"name": "deleteFiles",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "file/service.ts",
+							"line": 57,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L57"
+						},
+						{
+							"fileName": "file/service.ts",
+							"line": 69,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L69"
+						}
+					],
+					"signatures": [
+						{
+							"id": 24,
+							"name": "deleteFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method deletes files by their IDs."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "Resolves when the files are deleted successfully."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nawait fileModuleService.deleteFiles([\"file_123\"])\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 57,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L57"
+								}
+							],
+							"parameters": [
+								{
+									"id": 25,
+									"name": "ids",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The IDs of the files."
+											}
+										]
+									},
+									"type": {
+										"type": "array",
+										"elementType": {
+											"type": "intrinsic",
+											"name": "string"
+										}
+									}
+								},
+								{
+									"id": 26,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "intrinsic",
+										"name": "void"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						},
+						{
+							"id": 27,
+							"name": "deleteFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method deletes a file by its ID."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "Resolves when the file is deleted successfully."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nawait fileModuleService.deleteFiles(\"file_123\")\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 69,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L69"
+								}
+							],
+							"parameters": [
+								{
+									"id": 28,
+									"name": "id",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The ID of the file."
+											}
+										]
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 29,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "intrinsic",
+										"name": "void"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 30,
+					"name": "retrieveFile",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "file/service.ts",
+							"line": 83,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L83"
+						}
+					],
+					"signatures": [
+						{
+							"id": 31,
+							"name": "retrieveFile",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method retrieves a file with a downloadable URL by its ID."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The retrieved file."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nconst file = await fileModuleService.retrieveFile(\"file_123\")\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 83,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L83"
+								}
+							],
+							"parameters": [
+								{
+									"id": 32,
+									"name": "id",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The ID of the file."
+											}
+										]
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 33,
+									"name": "config",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The configurations determining how the file is retrieved. Its properties, such as "
+											},
+											{
+												"kind": "code",
+												"text": "`select`"
+											},
+											{
+												"kind": "text",
+												"text": " or "
+											},
+											{
+												"kind": "code",
+												"text": "`relations`"
+											},
+											{
+												"kind": "text",
+												"text": ", accept the\nattributes or relations associated with a file."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
+											"qualifiedName": "FindConfig"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+													"qualifiedName": "FileDTO"
+												},
+												"name": "FileDTO",
+												"package": "@medusajs/types"
+											}
+										],
+										"name": "FindConfig",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 34,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+											"qualifiedName": "FileDTO"
+										},
+										"name": "FileDTO",
+										"package": "@medusajs/types"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 35,
+					"name": "listFiles",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "file/service.ts",
+							"line": 102,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L102"
+						}
+					],
+					"signatures": [
+						{
+							"id": 36,
+							"name": "listFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method is used to retrieve a file by ID, similarly to "
+									},
+									{
+										"kind": "code",
+										"text": "`retrieve`"
+									},
+									{
+										"kind": "text",
+										"text": ". It doesn't retrieve multiple files, but it's added to support retrieving files with [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query)."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The list of files. In this case, it will have at most one file."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nconst files = await fileModuleService.listFiles({ id: \"file_123\" })\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 102,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L102"
+								}
+							],
+							"parameters": [
+								{
+									"id": 37,
+									"name": "filters",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The filters to apply on the retrieved files."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+											"qualifiedName": "FilterableFileProps"
+										},
+										"name": "FilterableFileProps",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 38,
+									"name": "config",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The configurations determining how the files are retrieved. Its properties, such as "
+											},
+											{
+												"kind": "code",
+												"text": "`select`"
+											},
+											{
+												"kind": "text",
+												"text": " or "
+											},
+											{
+												"kind": "code",
+												"text": "`relations`"
+											},
+											{
+												"kind": "text",
+												"text": ", accept the\nattributes or relations associated with a file."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
+											"qualifiedName": "FindConfig"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+													"qualifiedName": "FileDTO"
+												},
+												"name": "FileDTO",
+												"package": "@medusajs/types"
+											}
+										],
+										"name": "FindConfig",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 39,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "array",
+										"elementType": {
+											"type": "reference",
+											"target": {
+												"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+												"qualifiedName": "FileDTO"
+											},
+											"name": "FileDTO",
+											"package": "@medusajs/types"
+										}
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 40,
+					"name": "listAndCountFiles",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "file/service.ts",
+							"line": 121,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L121"
+						}
+					],
+					"signatures": [
+						{
+							"id": 41,
+							"name": "listAndCountFiles",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method is used to retrieve a file by ID, similarly to "
+									},
+									{
+										"kind": "code",
+										"text": "`retrieve`"
+									},
+									{
+										"kind": "text",
+										"text": ". It doesn't retrieve multiple files, but it's added to support retrieving files with [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query)."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The list of files and their count. In this case, it will have at most one file."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "code",
+												"text": "```ts\nconst [files] = await fileModuleService.listAndCountFiles({ id: \"file_123\" })\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "file/service.ts",
+									"line": 121,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L121"
+								}
+							],
+							"parameters": [
+								{
+									"id": 42,
+									"name": "filters",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The filters to apply on the retrieved files."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+											"qualifiedName": "FilterableFileProps"
+										},
+										"name": "FilterableFileProps",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 43,
+									"name": "config",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The configurations determining how the files are retrieved. Its properties, such as "
+											},
+											{
+												"kind": "code",
+												"text": "`select`"
+											},
+											{
+												"kind": "text",
+												"text": " or "
+											},
+											{
+												"kind": "code",
+												"text": "`relations`"
+											},
+											{
+												"kind": "text",
+												"text": ", accept the\nattributes or relations associated with a file."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
+											"qualifiedName": "FindConfig"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+													"qualifiedName": "FileDTO"
+												},
+												"name": "FileDTO",
+												"package": "@medusajs/types"
+											}
+										],
+										"name": "FindConfig",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 44,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "tuple",
+										"elements": [
+											{
+												"type": "array",
+												"elementType": {
+													"type": "reference",
+													"target": {
+														"sourceFileName": "../../../../packages/core/types/src/file/common.ts",
+														"qualifiedName": "FileDTO"
+													},
+													"name": "FileDTO",
+													"package": "@medusajs/types"
+												}
+											},
+											{
+												"type": "intrinsic",
+												"name": "number"
+											}
+										]
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Methods",
+					"children": [
+						16,
+						23,
+						30,
+						35,
+						40
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "file/service.ts",
+					"line": 10,
+					"character": 17,
+					"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L10"
+				}
+			],
+			"extendedTypes": [
+				{
+					"type": "reference",
+					"target": {
+						"sourceFileName": "../../../../packages/core/types/src/modules-sdk/index.ts",
+						"qualifiedName": "IModuleService"
+					},
+					"name": "IModuleService",
+					"package": "@medusajs/types"
+				}
+			]
+		}
+	],
+	"groups": [
+		{
+			"title": "Interfaces",
+			"children": [
+				15
+			]
+		}
+	],
+	"packageName": "@medusajs/types",
+	"symbolIdMap": {
+		"14": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": ""
+		},
+		"15": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService"
+		},
+		"16": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.createFiles"
+		},
+		"17": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.createFiles"
+		},
+		"18": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "data"
+		},
+		"19": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"20": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.createFiles"
+		},
+		"21": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "data"
+		},
+		"22": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"23": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"24": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"25": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "ids"
+		},
+		"26": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"27": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"28": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "id"
+		},
+		"29": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"30": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.retrieveFile"
+		},
+		"31": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.retrieveFile"
+		},
+		"32": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "id"
+		},
+		"33": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"34": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"35": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listFiles"
+		},
+		"36": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listFiles"
+		},
+		"37": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "filters"
+		},
+		"38": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"39": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"40": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listAndCountFiles"
+		},
+		"41": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listAndCountFiles"
+		},
+		"42": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "filters"
+		},
+		"43": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"44": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		}
+	},
+	"files": {
+		"entries": {
+			"1": "../../../../packages/core/types/src/file/service.ts"
+		},
+		"reflections": {
+			"1": 14
+		}
+	}
+}
