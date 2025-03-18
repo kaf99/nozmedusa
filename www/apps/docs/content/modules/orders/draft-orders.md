@@ -38,7 +38,9 @@ A draft order is created using the `DraftOrderService`'s [create method](../../r
 
 Since the draft order is associated with a cart, the process implemented in the Medusa backend around completing the draft order is pretty similar to that of completing a cart.
 
-The payment must be authorized before the cart can be completed, which can be done using the `CartService`'s [authorizePayment method](../../references/services/classes/services.CartService.mdx#authorizepayment). Once the payment is authorized, the order can be created using the `OrderService`'s [createFromCart method](../../references/services/classes/services.OrderService.mdx#createfromcart).
+First initilize and set the payment session using `CartService`'s [setPaymentSessions method](../../references/services/classes/services.CartService.mdx#setpaymentsessions) and [authorizePayment method](../../references/services/classes/services.CartService.mdx#setpaymentsession) methods respectivly.
+
+The payment must then be authorized before the cart can be completed, which can be done using the `CartService`'s [authorizePayment method](../../references/services/classes/services.CartService.mdx#authorizepayment). Once the payment is authorized, the order can be created using the `OrderService`'s [createFromCart method](../../references/services/classes/services.OrderService.mdx#createfromcart).
 
 :::note
 
