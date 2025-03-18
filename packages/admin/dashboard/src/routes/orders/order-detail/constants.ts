@@ -9,8 +9,10 @@ const DEFAULT_PROPERTIES = [
   "metadata",
   // --- TOTALS ---
   "total",
+  "credit_line_total",
   "item_total",
   "shipping_subtotal",
+  "original_total",
   "subtotal",
   "discount_total",
   "discount_subtotal",
@@ -36,6 +38,7 @@ const DEFAULT_RELATIONS = [
   "*sales_channel",
   "*promotion",
   "*shipping_methods",
+  "*credit_lines",
   "*fulfillments",
   "+fulfillments.shipping_option.service_zone.fulfillment_set.type",
   "*fulfillments.items",
