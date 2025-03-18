@@ -3771,14 +3771,64 @@
             },
             "total": {
               "type": "string"
+            },
+            "creditOrDebit": {
+              "type": "string"
+            },
+            "createCreditLine": {
+              "type": "string"
+            },
+            "createCreditLineSuccess": {
+              "type": "string"
+            },
+            "createCreditLineError": {
+              "type": "string"
+            },
+            "createCreditLineDescription": {
+              "type": "string"
+            },
+            "operation": {
+              "type": "string"
+            },
+            "credit": {
+              "type": "string"
+            },
+            "debit": {
+              "type": "string"
+            },
+            "debitDescription": {
+              "type": "string"
+            },
+            "creditDescription": {
+              "type": "string"
             }
           }
         },
         "balanceSettlement": {
           "type": "object",
           "properties": {
-            "action": {
+            "title": {
               "type": "string"
+            },
+            "settlementType": {
+              "type": "string"
+            },
+            "settlementTypes": {
+              "type": "object",
+              "properties": {
+                "paymentMethod": {
+                  "type": "string"
+                },
+                "paymentMethodDescription": {
+                  "type": "string"
+                },
+                "creditLine": {
+                  "type": "string"
+                },
+                "creditLineDescription": {
+                  "type": "string"
+                }
+              }
             }
           }
         },

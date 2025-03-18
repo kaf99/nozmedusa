@@ -1021,7 +1021,6 @@
     },
     "balanceSettlement": {
       "title": "Balance settlement",
-      "action": "Settle balance: {{amount}}",
       "settlementType": "Settlement type",
       "settlementTypes": {
         "paymentMethod": "Payment method",
