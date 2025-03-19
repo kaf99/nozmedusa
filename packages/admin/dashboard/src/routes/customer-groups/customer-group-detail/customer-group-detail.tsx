@@ -9,6 +9,7 @@ import { customerGroupLoader } from "./loader"
 import { SingleColumnPageSkeleton } from "../../../components/common/skeleton"
 import { useExtension } from "../../../providers/extension-provider"
 import { CUSTOMER_GROUP_DETAIL_FIELDS } from "./constants"
+import { useCustomers } from "../../../hooks/api"
 
 export const CustomerGroupDetail = () => {
   const initialData = useLoaderData() as Awaited<
@@ -23,6 +24,9 @@ export const CustomerGroupDetail = () => {
     },
     { initialData }
   )
+
+  // don't fetch in loader so we don't block initial render
+  const { count } = useCustomers({ groups: [id], limit: 1 })
 
   const { getWidgets } = useExtension()
 
@@ -44,7 +48,7 @@ export const CustomerGroupDetail = () => {
       showMetadata
       data={customer_group}
     >
-      <CustomerGroupGeneralSection group={customer_group} />
+      <CustomerGroupGeneralSection group={customer_group} count={count} />
       <CustomerGroupCustomerSection group={customer_group} />
     </SingleColumnPage>
   )

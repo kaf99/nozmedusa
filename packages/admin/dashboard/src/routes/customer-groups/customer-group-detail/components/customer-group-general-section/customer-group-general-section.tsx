@@ -9,10 +9,12 @@ import { useDeleteCustomerGroup } from "../../../../../hooks/api/customer-groups
 
 type CustomerGroupGeneralSectionProps = {
   group: HttpTypes.AdminCustomerGroup
+  count?: number
 }
 
 export const CustomerGroupGeneralSection = ({
   group,
+  count,
 }: CustomerGroupGeneralSectionProps) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
@@ -82,7 +84,7 @@ export const CustomerGroupGeneralSection = ({
           {t("customers.domain")}
         </Text>
         <Text size="small" leading="compact">
-          {group.customers?.length || "-"}
+          {count || "-"}
         </Text>
       </div>
     </Container>
