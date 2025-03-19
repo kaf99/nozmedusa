@@ -24,7 +24,7 @@ export const InfiniteList = <
   renderItem,
   renderEmpty,
   responseKey,
-  pageSize = 20,
+  pageSize = 70,
 }: InfiniteListProps<TResponse, TEntity, TParams>) => {
   const {
     data,
@@ -80,9 +80,9 @@ export const InfiniteList = <
             fetchPreviousPage()
           }
         }
-        // {
-        //   threshold: 0.5,
-        // }
+        {
+          threshold: 0.5,
+        }
       )
 
       endObserver.current = new IntersectionObserver(
@@ -91,9 +91,9 @@ export const InfiniteList = <
             fetchNextPage()
           }
         }
-        // {
-        //   threshold: 0.5,
-        // }
+        {
+          threshold: 0.5,
+        }
       )
 
       // Register the new observers to observe the new first and last children
