@@ -79,7 +79,7 @@ export const InfiniteList = <
           if (entries[0].isIntersecting && hasPreviousPage) {
             fetchPreviousPage()
           }
-        }
+        },
         {
           threshold: 0.5,
         }
@@ -90,7 +90,7 @@ export const InfiniteList = <
           if (entries[0].isIntersecting && hasNextPage) {
             fetchNextPage()
           }
-        }
+        },
         {
           threshold: 0.5,
         }
