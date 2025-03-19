@@ -7,7 +7,7 @@ import {
   usePrompt,
 } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
@@ -21,12 +21,17 @@ import {
 import { useDate } from "../../../../../hooks/use-date"
 import { useQueryParams } from "../../../../../hooks/use-query-params"
 import { useExtension } from "../../../../../providers/extension-provider"
+import { sdk } from "../../../../../lib/client"
 
 const PAGE_SIZE = 10
 
 export const CustomerGroupListTable = () => {
   const { t } = useTranslation()
   const { getWidgets } = useExtension()
+
+  const [customerGroupCounts, setCustomerGroupCounts] = useState<
+    Record<string, number>
+  >({})
 
   const { q, order, offset, created_at, updated_at } = useQueryParams([
     "q",
@@ -48,12 +53,49 @@ export const CustomerGroupListTable = () => {
         limit: PAGE_SIZE,
         created_at: created_at ? JSON.parse(created_at) : undefined,
         updated_at: updated_at ? JSON.parse(updated_at) : undefined,
-        fields: "id,name,created_at,updated_at,customers.id",
+        fields: "id,name,created_at,updated_at",
       },
       {
         placeholderData: keepPreviousData,
       }
     )
+
+  useEffect(() => {
+    if (!customer_groups) {
+      return
+    }
+
+    const customerGroupIds = customer_groups.map((cg) => cg.id)
+    const promises = customerGroupIds.map((id) =>
+      sdk.admin.customer.list({
+        groups: [id],
+        fields: "id",
+        limit: 1,
+      })
+    )
+
+    Promise.all(promises)
+      .then((res) =>
+        res.reduce(
+          (acc, r, i) => {
+            acc[customerGroupIds[i]] = r.count
+            return acc
+          },
+
+          {} as Record<string, number>
+        )
+      )
+      .then((data) => {
+        setCustomerGroupCounts(data)
+      })
+  }, [customer_groups])
+
+  const customer_groups_data = useMemo(() => {
+    return customer_groups?.map((cg) => ({
+      ...cg,
+      customer_count: customerGroupCounts[cg.id],
+    }))
+  }, [customer_groups, customerGroupCounts])
 
   if (isError) {
     throw error
@@ -68,7 +110,7 @@ export const CustomerGroupListTable = () => {
     >
       <Container className="overflow-hidden p-0">
         <DataTable
-          data={customer_groups}
+          data={customer_groups_data}
           columns={columns}
           filters={filters}
           heading={t("customerGroups.domain")}
@@ -97,7 +139,9 @@ export const CustomerGroupListTable = () => {
   )
 }
 
-const columnHelper = createDataTableColumnHelper<HttpTypes.AdminCustomerGroup>()
+const columnHelper = createDataTableColumnHelper<
+  HttpTypes.AdminCustomerGroup & { customer_count?: number }
+>()
 
 const useColumns = () => {
   const { t } = useTranslation()
@@ -150,7 +194,7 @@ const useColumns = () => {
       columnHelper.accessor("customers", {
         header: t("customers.domain"),
         cell: ({ row }) => {
-          return <span>{row.original.customers?.length ?? 0}</span>
+          return <span>{row.original.customer_count ?? "-"}</span>
         },
       }),
       columnHelper.accessor("created_at", {

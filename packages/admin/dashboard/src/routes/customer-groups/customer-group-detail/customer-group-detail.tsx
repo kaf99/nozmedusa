@@ -26,7 +26,7 @@ export const CustomerGroupDetail = () => {
   )
 
   // don't fetch in loader so we don't block initial render
-  const { count } = useCustomers({ groups: [id], limit: 1 })
+  const { count } = useCustomers({ groups: [id], fields: "id", limit: 1 })
 
   const { getWidgets } = useExtension()
 
