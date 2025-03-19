@@ -44,7 +44,7 @@ export const InfiniteList = <
       } as TParams)
     },
     initialPageParam: 0,
-    maxPages: 2,
+    maxPages: 5,
     getNextPageParam: (lastPage) => {
       const moreItemsExist = lastPage.count > lastPage.offset + lastPage.limit
       return moreItemsExist ? lastPage.offset + lastPage.limit : undefined
