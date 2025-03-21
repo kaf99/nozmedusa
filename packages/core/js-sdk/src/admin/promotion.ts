@@ -135,7 +135,7 @@ export class Promotion {
     headers?: ClientHeaders
   ) {
     // eslint-disable-next-line max-len
-    return await this.client.fetch<HttpTypes.AdminRuleAttributeOptionsListResponse>(
+    return await this.client.fetch<HttpTypes.AdminPromotionRuleListResponse>(
       `/admin/promotions/${id}/${ruleType}`,
       {
         headers,
