@@ -1,7 +1,12 @@
 import { type ZodSchema } from "zod"
 import { OrchestrationUtils } from "@medusajs/utils"
 import type { CreateWorkflowComposerContext } from "./type"
-import { CompensateFn, createStep, InvokeFn } from "./create-step"
+import {
+  CompensateFn,
+  createStep,
+  InvokeFn,
+  wrapConditionalStep,
+} from "./create-step"
 import { createStepHandler } from "./helpers/create-step-handler"
 import { StepResponse } from "./helpers"
 
@@ -95,7 +100,7 @@ export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
      * We start by registering a new step within the workflow. This will be a noop
      * step that can be replaced (optionally) by the workflow consumer.
      */
-    createStep(
+    const step = createStep(
       name,
       (_: TInvokeInput) => new StepResponse(NOOP_RESULT),
       () => void 0
@@ -115,6 +120,11 @@ export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
         throw new Error(
           `Cannot define multiple hook handlers for the ${name} hook`
         )
+      }
+
+      const composeCondition = step as any
+      if (composeCondition.condition) {
+        wrapConditionalStep(input, composeCondition.condition, handlers)
       }
 
       this.hooks_.registered.push(name)

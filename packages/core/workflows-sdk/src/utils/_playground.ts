@@ -1,5 +1,6 @@
 import { z } from "zod"
 import {
+  when,
   createStep,
   createWorkflow,
   StepResponse,
@@ -27,19 +28,26 @@ const workflow = createWorkflow(
     step1()
     step2({ filters: { id: [] } })
 
-    let somethingHook = createHook(
-      "something",
-      { id: "1" },
-      {
-        resultValidator: z.object({
-          id: z.number(),
-        }),
+    const { hooks, result } = when({}, () => true).then(() => {
+      const somethingHook = createHook(
+        "something",
+        { id: "1" },
+        {
+          resultValidator: z.object({
+            id: z.number(),
+          }),
+        }
+      )
+
+      return {
+        hooks: { somethingHook },
+        result: somethingHook.getResult(),
       }
-    )
+    })
 
     return new WorkflowResponse(
-      { r: somethingHook.getResult(), step3: step3() },
-      { hooks: [somethingHook] }
+      { step3: step3(), ...result },
+      { hooks: [hooks.somethingHook] }
     )
   }
 )

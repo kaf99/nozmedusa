@@ -209,6 +209,8 @@ export function applyStep<
       input: any,
       condition: (...args: any) => boolean | WorkflowData
     ): WorkflowData<TInvokeResultOutput> => {
+      ;(refRet as any).condition = condition
+
       if (typeof condition !== "function") {
         throw new Error("Condition must be a function")
       }
@@ -293,7 +295,7 @@ function wrapAsyncHandler(
  * @param condition
  * @param handle
  */
-function wrapConditionalStep(
+export function wrapConditionalStep(
   input: any,
   condition: (...args: any) => boolean | WorkflowData,
   handle: {
