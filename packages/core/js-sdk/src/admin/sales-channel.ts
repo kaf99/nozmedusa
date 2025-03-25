@@ -86,6 +86,9 @@ export class SalesChannel {
     )
   }
 
+  /**
+   * @deprecated Use {@link batchProducts} instead
+   */
   async updateProducts(
     id: string,
     body: HttpTypes.AdminUpdateSalesChannelProducts,
@@ -103,7 +106,7 @@ export class SalesChannel {
 
   async batchProducts(
     id: string,
-    body: HttpTypes.AdminBatchLink,
+    body: HttpTypes.AdminUpdateSalesChannelProducts,
     headers?: ClientHeaders
   ) {
     return await this.client.fetch<HttpTypes.AdminSalesChannelResponse>(

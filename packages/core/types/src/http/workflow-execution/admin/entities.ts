@@ -26,7 +26,7 @@ export type TransactionStepState =
   | "skipped_failure"
   | "timeout"
 
-interface AdminWorkflowExecutionExecution {
+export interface AdminWorkflowExecutionExecution {
   steps: Record<string, AdminWorkflowExecutionStep>
 }
 
