@@ -1,4 +1,6 @@
 export const CartWorkflowEvents = {
+  ITEM_ADDED: "cart.item_added",
+  ITEM_REMOVED: "cart.item_removed",
   CREATED: "cart.created",
   UPDATED: "cart.updated",
   CUSTOMER_UPDATED: "cart.customer_updated",

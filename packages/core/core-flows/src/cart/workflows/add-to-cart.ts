@@ -196,8 +196,8 @@ export const addToCartWorkflow = createWorkflow(
     })
 
     emitEventStep({
-      eventName: CartWorkflowEvents.UPDATED,
-      data: { id: cart.id },
+      eventName: CartWorkflowEvents.ITEM_ADDED,
+      data: { id: cart.id, items: allItems },
     })
 
     return new WorkflowResponse(void 0, {
