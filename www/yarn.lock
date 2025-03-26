@@ -15567,6 +15567,7 @@ turbo@latest:
     "@types/react": "npm:types-react@rc"
     "@types/react-dom": "npm:types-react@rc"
     autoprefixer: 10.4.14
+    build-scripts: "*"
     clsx: ^2.0.0
     contentlayer: ^0.3.4
     date-fns: ^3.3.1

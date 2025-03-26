@@ -27,10 +27,14 @@ export type StepFunctionReturnConfig<TOutput> = {
 type KeysOfUnion<T> = T extends T ? keyof T : never
 export type HookHandler = (...args: any[]) => void | Promise<void>
 
-type ConvertHookToObject<THook> = THook extends Hook<infer Name, infer Input>
+type ConvertHookToObject<THook> = THook extends Hook<
+  infer Name,
+  infer Input,
+  infer Output
+>
   ? {
-      [K in Name]: <TOutput, TCompensateInput>(
-        invoke: InvokeFn<Input, TOutput, TCompensateInput>,
+      [K in Name]: <TCompensateInput>(
+        invoke: InvokeFn<Input, Output, TCompensateInput>,
         compensate?: CompensateFn<TCompensateInput>
       ) => void
     }
@@ -170,6 +174,14 @@ export interface StepExecutionContext {
    * A string indicating the ID of the current transaction.
    */
   transactionId?: string
+
+  /**
+   * Get access to the result returned by a named step. Returns undefined
+   * when step is not found or when nothing was returned.
+   *
+   * Adding a space hides the method from the autocomplete
+   */
+  " getStepResult"(stepId: string, action?: "invoke" | "compensate"): any
 }
 
 export type WorkflowTransactionContext = StepExecutionContext &

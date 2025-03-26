@@ -185,7 +185,6 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
         createdMethods,
         customPrice: input.custom_amount,
         orderChange,
-        input,
       },
       ({
         shippingOptions,
@@ -193,7 +192,6 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
         createdMethods,
         customPrice,
         orderChange,
-        input,
       }) => {
         const shippingOption = shippingOptions[0]
         const createdMethod = createdMethods[0]

@@ -51,7 +51,7 @@ export default defineLink(
   },
   ProductModule.linkable.product,
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -76,8 +76,8 @@ const { result } = await query.graph({
   entity: "post",
   fields: ["id", "product.*"],
   filters: {
-    id: "post_123"
-  }
+    id: "post_123",
+  },
 })
 ```
 
@@ -114,7 +114,7 @@ export default defineLink(
     primaryKey: "product_id",
   },
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -133,8 +133,8 @@ const { result } = await query.graph({
   entity: "product",
   fields: ["id", "post.*"],
   filters: {
-    id: "prod_123"
-  }
+    id: "prod_123",
+  },
 })
 ```
 
@@ -194,7 +194,7 @@ export default defineLink(
   },
   ProductModule.linkable.product,
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -229,7 +229,7 @@ export default defineLink(
   },
   ProductModule.linkable.product,
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -276,7 +276,7 @@ export default defineLink(
     primaryKey: "product_id",
   },
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -343,14 +343,14 @@ export default defineLink(
   {
     linkable: ProductModule.linkable.product,
     field: "id",
-    isList: true
+    isList: true,
   },
   {
     ...BlogModule.linkable.post.id,
-    primaryKey: "product_id"
+    primaryKey: "product_id",
   },
   {
-    readOnly: true
+    readOnly: true,
   }
 )
 ```
@@ -444,14 +444,14 @@ import { CMS_MODULE } from "../modules/cms"
 export default defineLink(
   {
     linkable: ProductModule.linkable.product,
-    field: "id"
+    field: "id",
   },
   {
     linkable: {
       serviceName: CMS_MODULE,
       alias: "cms_post",
       primaryKey: "product_id",
-    }
+    },
   },
   {
     readOnly: true,

@@ -1074,6 +1074,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
             {
               "loaded": true,
               "isPathHref": true,
+              "type": "ref",
+              "title": "Abandoned Cart Notification",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/abandoned-cart",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
               "type": "link",
               "path": "/commerce-modules/cart/extend",
               "title": "Extend Module",
