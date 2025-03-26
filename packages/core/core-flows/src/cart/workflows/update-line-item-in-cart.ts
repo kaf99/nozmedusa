@@ -1,5 +1,9 @@
 import { UpdateLineItemInCartWorkflowInputDTO } from "@medusajs/framework/types"
-import { isDefined, MedusaError } from "@medusajs/framework/utils"
+import {
+  CartWorkflowEvents,
+  isDefined,
+  MedusaError,
+} from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -8,7 +12,7 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { useQueryGraphStep } from "../../common"
+import { emitEventStep, useQueryGraphStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updateLineItemsStepWithSelector } from "../../line-item/steps"
 import { validateCartStep } from "../steps/validate-cart"
@@ -26,9 +30,9 @@ export const updateLineItemInCartWorkflowId = "update-line-item-in-cart"
 /**
  * This workflow updates a line item's details in a cart. You can update the line item's quantity, unit price, and more. This workflow is executed
  * by the [Update Line Item Store API Route](https://docs.medusajs.com/api/store#carts_postcartsidlineitemsline_id).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you to update a line item's details in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateLineItemInCartWorkflow(container)
  * .run({
@@ -40,9 +44,9 @@ export const updateLineItemInCartWorkflowId = "update-line-item-in-cart"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update a cart's line item.
  *
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
@@ -144,6 +148,15 @@ export const updateLineItemInCartWorkflow = createWorkflow(
 
     refreshCartItemsWorkflow.runAsStep({
       input: { cart_id: input.cart_id },
+    })
+
+    when({ input }, ({ input }) => {
+      return input.update.quantity === 0
+    }).then(() => {
+      emitEventStep({
+        eventName: CartWorkflowEvents.ITEM_REMOVED,
+        data: { id: input.cart_id, item: item },
+      })
     })
 
     return new WorkflowResponse(void 0, {
