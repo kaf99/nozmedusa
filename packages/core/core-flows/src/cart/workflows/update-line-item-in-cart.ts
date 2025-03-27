@@ -150,13 +150,14 @@ export const updateLineItemInCartWorkflow = createWorkflow(
       input: { cart_id: input.cart_id },
     })
 
+    // when the quantity is 0, we emit the item removed event
     when({ input }, ({ input }) => {
       return input.update.quantity === 0
     }).then(() => {
       emitEventStep({
         eventName: CartWorkflowEvents.ITEM_REMOVED,
         data: { id: input.cart_id, item: item },
-      })
+      }).config({ name: "emit-item-removed-event" })
     })
 
     return new WorkflowResponse(void 0, {
