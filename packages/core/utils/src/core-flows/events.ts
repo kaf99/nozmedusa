@@ -5,6 +5,7 @@ export const CartWorkflowEvents = {
   UPDATED: "cart.updated",
   CUSTOMER_UPDATED: "cart.customer_updated",
   REGION_UPDATED: "cart.region_updated",
+  SHIPPING_ADDRESS_ADDED: "cart.shipping_address_added",
 }
 
 export const CustomerWorkflowEvents = {
@@ -47,6 +48,11 @@ export const SalesChannelWorkflowEvents = {
   CREATED: "sales-channel.created",
   UPDATED: "sales-channel.updated",
   DELETED: "sales-channel.deleted",
+}
+
+export const PaymentSessionWorkflowEvents = {
+  CREATED: "payment-session.created",
+  DELETED: "payment-session.deleted",
 }
 
 export const ProductCategoryWorkflowEvents = {
