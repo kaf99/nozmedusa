@@ -4,6 +4,11 @@ import {
   PaymentSessionDTO,
 } from "@medusajs/framework/types"
 import {
+  Modules,
+  PaymentSessionWorkflowEvents,
+  isPresent,
+} from "@medusajs/framework/utils"
+import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
@@ -11,13 +16,16 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
-import { createRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import {
-  createPaymentSessionStep,
+  createRemoteLinkStep,
+  emitEventStep,
+  useRemoteQueryStep,
+} from "../../common"
+import {
   createPaymentAccountHolderStep,
+  createPaymentSessionStep,
 } from "../steps"
 import { deletePaymentSessionsWorkflow } from "./delete-payment-sessions"
-import { isPresent, Modules } from "@medusajs/framework/utils"
 
 /**
  * The data to create payment sessions.
@@ -198,6 +206,14 @@ export const createPaymentSessionsWorkflow = createWorkflow(
         input: deletePaymentSessionInput,
       })
     )
+
+    emitEventStep({
+      eventName: PaymentSessionWorkflowEvents.CREATED,
+      data: {
+        id: input.payment_collection_id,
+        payment_session: created,
+      },
+    }).config({ name: "emit-payment-session-created-event" })
 
     return new WorkflowResponse(created)
   }

@@ -1,8 +1,11 @@
+import { PaymentSessionWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
+  when,
 } from "@medusajs/framework/workflows-sdk"
+import { emitEventStep } from "../../common"
 import {
   deletePaymentSessionsStep,
   validateDeletedPaymentSessionsStep,
@@ -22,10 +25,10 @@ export const deletePaymentSessionsWorkflowId = "delete-payment-sessions"
 /**
  * This workflow deletes one or more payment sessions. It's used by other workflows, like
  * {@link refreshPaymentCollectionForCartWorkflow} to delete payment sessions when the cart's total changes.
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to delete payment sessions in your custom flows.
- * 
+ *
  * @example
  * const { result } = await deletePaymentSessionsWorkflow(container)
  * .run({
@@ -33,9 +36,9 @@ export const deletePaymentSessionsWorkflowId = "delete-payment-sessions"
  *     ids: ["payses_123"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Delete payment sessions.
  */
 export const deletePaymentSessionsWorkflow = createWorkflow(
@@ -46,6 +49,15 @@ export const deletePaymentSessionsWorkflow = createWorkflow(
     validateDeletedPaymentSessionsStep({
       idsToDelete: input.ids,
       idsDeleted,
+    })
+
+    when({ idsDeleted }, ({ idsDeleted }) => {
+      return idsDeleted.length > 0
+    }).then(() => {
+      emitEventStep({
+        eventName: PaymentSessionWorkflowEvents.DELETED,
+        data: { ids: idsDeleted },
+      }).config({ name: "emit-payment-session-deleted-event" })
     })
 
     return new WorkflowResponse(idsDeleted)
