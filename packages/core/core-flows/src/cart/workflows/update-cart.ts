@@ -253,8 +253,18 @@ export const updateCartWorkflow = createWorkflow(
       emitEventStep({
         eventName: CartWorkflowEvents.UPDATED,
         data: { id: input.id },
-      })
+      }).config({ name: "emit-cart-updated-event" })
     )
+
+    // when the shipping address is added, we emit the shipping address added event
+    when({ input }, ({ input }) => {
+      return isDefined(input.shipping_address)
+    }).then(() => {
+      emitEventStep({
+        eventName: CartWorkflowEvents.SHIPPING_ADDRESS_ADDED,
+        data: { id: input.id },
+      }).config({ name: "emit-shipping-address-added-event" })
+    })
 
     // In case the region is updated, we might have a new currency OR tax inclusivity setting
     // Therefore, we need to delete line items with a custom price for good measure
