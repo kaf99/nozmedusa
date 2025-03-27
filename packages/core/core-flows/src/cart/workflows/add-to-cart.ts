@@ -195,10 +195,18 @@ export const addToCartWorkflow = createWorkflow(
       input: { cart_id: cart.id, items: allItems },
     })
 
-    emitEventStep({
-      eventName: CartWorkflowEvents.ITEM_ADDED,
-      data: { id: cart.id, items: allItems },
-    })
+    parallelize(
+      // keeping the generic cart updated event for backwards compatibility
+      emitEventStep({
+        eventName: CartWorkflowEvents.UPDATED,
+        data: { id: cart.id },
+      }).config({ name: "emit-cart-updated-event" }),
+
+      emitEventStep({
+        eventName: CartWorkflowEvents.ITEM_ADDED,
+        data: { id: cart.id, items: allItems },
+      }).config({ name: "emit-item-added-event" })
+    )
 
     return new WorkflowResponse(void 0, {
       hooks: [validate],
