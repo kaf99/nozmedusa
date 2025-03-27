@@ -9,4 +9,4 @@ Adds the following emitted events to core flows:
 - cart.item_removed
 - cart.shipping_address_added
 - payment-session.created
-- payment-session.created
+- payment-session.deleted
