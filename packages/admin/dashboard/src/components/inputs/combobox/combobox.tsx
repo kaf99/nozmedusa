@@ -217,8 +217,6 @@ const ComboboxImpl = <T extends Value = string>(
     return isSearchControlled ? options : matches
   }, [matches, options, isSearchControlled])
 
-  console.log("hidePlaceholder", hidePlaceholder, placeholder, hideInput)
-
   return (
     <PrimitiveComboboxProvider
       open={open}
