@@ -136,7 +136,7 @@ If authenticated successfully, an object is returned in the response with the pr
 
 To use the JWT token, pass it in the authorization bearer header.
 
-If you're using the JS SDK, call the `client.setToken` method, passing it the token. The JS SDK will automatically pass the token in the authorization header for subsequent requests.
+If you're using the JS SDK, the `login` method automatically sets the token for you and passes it to subsequent requests. You can also set the token manually using the `client.setToken` method.
 
 <Note>
 
@@ -148,25 +148,9 @@ Make sure you've set the `auth.type` configuration of the JS SDK to `jwt` to use
 
 <DividedMarkdownCode>
 
-<CodeTabs group="request-examples">
-
-<CodeTab label="JS SDK" value="js-sdk">
-
-```js title="Use JWT token"
-sdk.client.setToken(jwt_token)
-```
-
-</CodeTab>
-
-<CodeTab label="cURL" value="curl">
-
 ```bash title="Use JWT token"
 Authorization: Bearer {jwt_token}
 ```
-
-</CodeTab>
-
-</CodeTabs>
 
 </DividedMarkdownCode>
 
@@ -321,7 +305,7 @@ To obtain a cookie session ID, you must have a [JWT token for bearer authenticat
 
 <DividedMarkdownContent>
 
-Then, if you're using the JS SDK, make sure the `auth.type` configuration is set to `session`, as explained in the [JS SDK configurations](!resources!/js-sdk#js-sdk-configurations) guide. After that, you only need to set the token using the `client.setToken` method, and the JS SDK will handle the rest.
+Then, if you're using the JS SDK, make sure the `auth.type` configuration is set to `session`, as explained in the [JS SDK configurations](!resources!/js-sdk#js-sdk-configurations) guide. The `auth.login` method will handle setting the session cookie and passing it in subsequent requests.
 
 If you're not using the JS SDK, send a request to the [session authentication API route](#auth_postsession). To view the cookie session ID, pass the `-v` option to the `curl` command.
 
@@ -329,26 +313,10 @@ If you're not using the JS SDK, send a request to the [session authentication AP
 
 <DividedMarkdownCode>
 
-<CodeTabs group="request-examples">
-
-<CodeTab label="JS SDK" value="js-sdk">
-
-```js title="Obtain cookie session"
-sdk.client.setToken(jwt_token)
-```
-
-</CodeTab>
-
-<CodeTab label="cURL" value="curl">
-
 ```bash title="Obtain cookie session"
 curl -v -X POST '{backend_url}/auth/session' \
 --header 'Authorization: Bearer {jwt_token}'
 ```
-
-</CodeTab>
-
-</CodeTabs>
 
 </DividedMarkdownCode>
 
@@ -379,7 +347,7 @@ Set-Cookie: connect.sid=s%3A2Bu8B...;
 
 #### How to Use the Cookie Session ID in cURL
 
-If you're using the JS SDK, it will pass the cookie session with every request automatically after you use the `client.setToken` method.
+If you're using the JS SDK, it will pass the cookie session with every request automatically after you use the `auth.login` method.
 
 If you're not using the JS SDK, copy the value after `connect.sid` (without the `;` at the end) and pass
 it as a cookie in subsequent requests.

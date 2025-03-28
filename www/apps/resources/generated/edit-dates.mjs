@@ -150,9 +150,9 @@ export const generatedEditDates = {
   "app/storefront-development/customers/addresses/page.mdx": "2025-03-27T14:47:14.252Z",
   "app/storefront-development/customers/context/page.mdx": "2025-03-27T14:47:14.248Z",
   "app/storefront-development/customers/log-out/page.mdx": "2025-03-27T14:45:23.360Z",
-  "app/storefront-development/customers/login/page.mdx": "2025-03-27T14:46:51.419Z",
+  "app/storefront-development/customers/login/page.mdx": "2025-03-28T08:38:37.694Z",
   "app/storefront-development/customers/profile/page.mdx": "2025-03-27T14:47:14.251Z",
-  "app/storefront-development/customers/register/page.mdx": "2025-03-27T14:46:51.415Z",
+  "app/storefront-development/customers/register/page.mdx": "2025-03-28T09:30:47.216Z",
   "app/storefront-development/customers/retrieve/page.mdx": "2025-03-27T14:41:39.996Z",
   "app/storefront-development/customers/page.mdx": "2024-06-13T12:21:54+03:00",
   "app/storefront-development/products/categories/list/page.mdx": "2025-03-27T14:46:51.437Z",
@@ -838,7 +838,7 @@ export const generatedEditDates = {
   "references/types/interfaces/types.BaseClaim/page.mdx": "2025-02-24T10:48:36.876Z",
   "app/commerce-modules/auth/auth-providers/github/page.mdx": "2025-01-13T11:31:35.361Z",
   "app/commerce-modules/auth/auth-providers/google/page.mdx": "2025-01-13T11:31:35.361Z",
-  "app/storefront-development/customers/third-party-login/page.mdx": "2025-03-27T14:46:51.417Z",
+  "app/storefront-development/customers/third-party-login/page.mdx": "2025-03-28T09:31:36.450Z",
   "references/types/HttpTypes/types/types.HttpTypes.AdminWorkflowRunResponse/page.mdx": "2024-12-09T13:21:34.761Z",
   "references/types/HttpTypes/types/types.HttpTypes.BatchResponse/page.mdx": "2024-12-09T13:21:33.549Z",
   "references/types/WorkflowsSdkTypes/types/types.WorkflowsSdkTypes.Acknowledgement/page.mdx": "2024-12-09T13:21:35.873Z",
@@ -2175,7 +2175,7 @@ export const generatedEditDates = {
   "app/commerce-modules/store/links-to-other-modules/page.mdx": "2025-03-17T06:52:04.187Z",
   "app/examples/page.mdx": "2025-03-18T15:19:46.808Z",
   "app/medusa-cli/commands/build/page.mdx": "2024-11-11T11:00:49.665Z",
-  "app/js-sdk/page.mdx": "2025-02-05T09:12:11.479Z",
+  "app/js-sdk/page.mdx": "2025-03-28T09:50:07.617Z",
   "references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.apiKey/page.mdx": "2025-01-13T18:05:58.463Z",
   "references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.campaign/page.mdx": "2024-12-26T11:37:18.121Z",
   "references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.claim/page.mdx": "2025-01-13T18:05:58.348Z",
@@ -6073,5 +6073,6 @@ export const generatedEditDates = {
   "app/troubleshooting/workflow-errors/when-then/page.mdx": "2025-03-21T08:35:45.145Z",
   "app/how-to-tutorials/tutorials/abandoned-cart/page.mdx": "2025-03-27T17:39:52.123Z",
   "app/integrations/guides/algolia/page.mdx": "2025-03-27T18:00:49.330Z",
-  "app/integrations/guides/magento/page.mdx": "2025-03-28T06:46:40.800Z"
+  "app/integrations/guides/magento/page.mdx": "2025-03-28T06:46:40.800Z",
+  "app/js-sdk/auth/overview/page.mdx": "2025-03-28T08:05:32.622Z"
 }

@@ -21,18 +21,18 @@ Assuming you already set up the [Auth Module Provider](../../../commerce-modules
 
 ![Diagram illustrating the authentication flow between the storefront, Medusa application, and the third-party service.](https://res.cloudinary.com/dza7lstvk/image/upload/v1725531068/Medusa%20Resources/Social_Media_Graphics_third-party-auth-customer_kfn3k3.jpg)
 
-1. Authenticate the customer with the [Authenticate Customer API route](!api!/store#auth_postactor_typeauth_provider).
-2. The auth route returns a URL to authenticate with third-party service, such as login with Google. The storefront, when it receives a `location` property in the response, must redirect to the returned location.
-3. Once the authentication with the third-party service finishes, it redirects back to the storefront with query parameters such as `code` and `state`. So, make sure your third-party service is configured to redirect to your storefront page after successful authentication.
-4. The storefront sends a request to the [Validate Authentication Callback API route](!api!/store#auth_postactor_typeauth_providercallback) passing the query parameters received from the third-party service.
-5. If the callback validation is successful, the storefront receives the authentication token.
-6. Decode the received token in the frontend using tools like [react-jwt](https://www.npmjs.com/package/react-jwt).
-    - If the decoded data has an `actor_id` property, then the user is already registered. So, use this token for subsequent authenticated requests.
+1. Authenticate the customer with the [Authenticate Customer API route](!api!/store#auth_postactor_typeauth_provider). It may return:
+    - A URL in a `location` property to authenticate with third-party service, such as login with Google. When you receive this property, you must redirect to the returned location.
+    - A token in a `token` property. In that case, the customer was previously logged in with the third-party service, such as Google, and no additional actions are required. You can use the token to send subsequent authenticated requests.
+2. Once the authentication with the third-party service finishes, it must redirect back to the storefront with query parameters such as `code` and `state`. So, make sure your third-party service is configured to redirect to your storefront's callback page after successful authentication.
+3. In the storefront's callback page, send a request to the [Validate Authentication Callback API route](!api!/store#auth_postactor_typeauth_providercallback) passing the query parameters (`code`, `state`, etc...) received from the third-party service.
+4. If the callback validation is successful, you'll receive the authentication token. Decode the received token in the storefront using tools like [react-jwt](https://www.npmjs.com/package/react-jwt).
+    - If the decoded data has an `actor_id` property, then the customer is already registered. So, use this token for subsequent authenticated requests.
     - If not, follow the rest of the steps.
-7. The storefront uses the authentication token to create the customer using the [Create Customer API route](!api!/store#customers_postcustomers).
-8. The storefront sends a request to the [Refresh Token Route](#add-the-function-to-refresh-the-token) to retrieve a new token for the customer.
+5. The customer is not registered yet, so use the received token from the Validate Authentication Callback API route to create the customer using the [Create Customer API route](!api!/store#customers_postcustomers).
+6. Send a request to the [Refresh Token Route](#add-the-function-to-refresh-the-token) to retrieve a new token for the customer, passing the token from the Validate Authentication Callback API in the header. You can then use the token returned by the Refresh Token request to send subsequent authenticated requests.
 
-You'll implement the flow in this guide using Google as an example.
+You'll implement the flow in this guide using Google as an example. The example snippets use the JS SDK, but you can follow a similar approach without it, as well.
 
 <Prerequisites
   items={[
@@ -70,8 +70,7 @@ export const reactHighlights = [
   ["7", "login", "Send a request to the Authenticate Customer API route"],
   ["9", "result.location", "If the request returns a location, redirect to that location to continue the authentication."],
   ["16", "", "If the token isn't returned, the authentication has failed."],
-  ["24", "setToken", "Set the token in the client to be used in subsequent requests."],
-  ["27", "retrieve", "Retrieve the customer's details as an example of testing authentication."]
+  ["23", "retrieve", "Retrieve the customer's details as an example of testing authentication."]
 ]
 
 ```tsx highlights={reactHighlights}
@@ -96,11 +95,7 @@ export default function Login() {
       return
     }
 
-    // authentication successful
-    // set the token in the client to be used in subsequent requests
-    sdk.client.setToken(result)
-
-    // retrieve the customer using the token
+    // all subsequent requests are authenticated
     const { customer } = await sdk.store.customer.retrieve()
 
     console.log(customer)
@@ -121,8 +116,7 @@ export const jsSdkHighlights = [
   ["2", "login", "Send a request to the Authenticate Customer API route"],
   ["4", "", "If the request returns a location, redirect to that location to continue the authentication."],
   ["11", "", "If the token isn't returned, the authentication has failed."],
-  ["19", "setToken", "Set the token in the client to be used in subsequent requests."],
-  ["22", "retrieve", "Retrieve the customer's details as an example of testing authentication."]
+  ["18", "retrieve", "Retrieve the customer's details as an example of testing authentication."]
 ]
 
 ```ts highlights={jsSdkHighlights}
@@ -142,11 +136,7 @@ const loginWithGoogle = async () => {
     return
   }
 
-  // authentication successful
-  // set the token in the client to be used in subsequent requests
-  sdk.client.setToken(result)
-
-  // retrieve the customer using the token
+  // all subsequent requests are authenticated
   const { customer } = await sdk.store.customer.retrieve()
 
   console.log(customer)
@@ -158,11 +148,11 @@ const loginWithGoogle = async () => {
 
 You define a `loginWithGoogle` function that:
 
-- Sends a request to the `/auth/customer/google` API route.
+- Sends a request to the `/auth/customer/google` API route using the JS SDK's `auth.login` method.
 - If the response is an object with a `location` property, then you redirect to the returned page for authentication with the third-party service.
-- If the response is a string, then the customer has been authenticated before. You can use the token for subsequent authenticated request.
-- To use the token for subsequent authenticated request, you must set it in the JS SDK using the `client.setToken` method.
-- Now, subsequent requests are authenticated. As an example, you can retrieve the customer's details using the `store.customer.retrieve` method.
+- If the response is a string, then the customer has been authenticated before and the method returns the customer's authentication token.
+- Now, all subsequent requests are authenticated. As an example, you can retrieve the customer's details using the `store.customer.retrieve` method.
+    - Notice that the JS SDK sets and passes the authentication headers or session cookies (based on your [configured authentication method](../../../js-sdk/auth/overview/page.mdx)) automatically. If you're not using the JS SDK, make sure to pass the necessary headers in your request as explained in the [API reference](!api!/store#authentication).
 
 <Note title="Tip">
 
@@ -205,7 +195,6 @@ export const sendCallbackReactHighlights = [
   ["12", "queryParams", "The query parameters received from Google, such as `code` and `state`."],
   ["21", "callback", "Send a request to the Validate Authentication Callback API route"],
   ["28", "catch", "If an error occurs, show an alert and exit execution."],
-  ["36", "setToken", "Set the token in the client to be used in subsequent requests."]
 ]
 
 ```tsx highlights={sendCallbackReactHighlights}
@@ -242,10 +231,6 @@ export default function GoogleCallback() {
       throw error
     }
 
-    // set the token in the client
-    // to be used in subsequent requests
-    sdk.client.setToken(token)
-
     return token
   }
 
@@ -266,8 +251,7 @@ export default function GoogleCallback() {
 export const sendCallbackFetchHighlights = [
   ["6", "queryParams", "The query parameters received from Google, such as `code` and `state`."],
   ["12", "callback", "Send a request to the Validate Authentication Callback API route"],
-  ["19", "catch", "If an error occurs, show an alert and exit execution."],
-  ["27", "setToken", "Set the token in the client to be used in subsequent requests."]
+  ["19", "catch", "If an error occurs, show an alert and exit execution."]
 ]
 
 ```ts highlights={sendCallbackFetchHighlights}
@@ -295,10 +279,6 @@ const sendCallback = async () => {
     throw error
   }
 
-  // set the token in the client
-  // to be used in subsequent requests
-  sdk.client.setToken(token)
-
   return token
 }
 
@@ -310,7 +290,7 @@ const sendCallback = async () => {
 
 This adds in the new page the function `sendCallback` which sends a request to the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback), passing it all query parameters received from Google. Those include the `code` and `state` parameters.
 
-After that, you set the token in the JS SDK using the `client.setToken` method. This ensures that the token is passed to subsequent requests, such as the request to create the customer.
+Notice that the JS SDK stores the JWT token returned by the Validate Callback API route automatically and attaches it to subsequent requests. If you're building this authentication flow without the JS SDK, you need to pass it manually to the next requests.
 
 ### Add the Function to Create a Customer
 
@@ -333,7 +313,7 @@ const createCustomer = async () => {
 
 This adds to the page the function `createCustomer` which creates a customer if this is the first time the customer is authenticating with the third-party service.
 
-Notice that this method assumes that the token received from the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback) is already set in the JS SDK, as done at the end of the `sendCallback` function. So, if you're implemeting this flow without using the JS SDK, make sure to pass the token in the authorization Bearer header.
+Notice that this method assumes that the token received from the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback) is already set in the JS SDK. So, if you're implemeting this flow without using the JS SDK, make sure to pass the token received from the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback) in the authorization Bearer header.
 
 ### Add the Function to Refresh the Token
 
@@ -347,9 +327,6 @@ export const refreshTokenHighlights = [
 const refreshToken = async () => {
   // refresh the token
   const result = await sdk.auth.refresh()
-  
-  // set the new token
-  sdk.client.setToken(result)
 }
 
 // TODO add more functions...
@@ -357,9 +334,9 @@ const refreshToken = async () => {
 
 This adds to the page the function `refreshToken` which is used after the new customer is created to refresh their authentication token. This ensures that the authentication token includes the details of the created customer.
 
-Notice that this method assumes that the token received from the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback) is already set in the JS SDK, as done at the end of the `sendCallback` function. So, if you're implemeting this flow without using the JS SDK, make sure to pass the token in the authorization Bearer header.
+Notice that this method assumes that the token received from the [Validate Callback API route](!api!/store#auth_postactor_typeauth_providercallback) is already set in the JS SDK. So, if you're implemeting this flow without using the JS SDK, make sure to pass the token in the authorization Bearer header.
 
-Then, this method also sets the new token in the JS SDK to be used in subsequent authenticated requests.
+The `refreshToken` method also updates the token stored by the JS SDK, ensuring that next requests use that token. So, if you're not using the JS SDK, make sure to pass the new token in the request header as explained in the [API reference](!api!/store#1-bearer-authorization-with-jwt-tokens).
 
 ### Add the Function to Validate the Callback
 
@@ -456,77 +433,6 @@ The customer is now authenticated, and you can redirect them to the home page or
 ### Full Code Example for Third-Party Login Callback Page
 
 <CodeTabs group="authenticated-request">
-  <CodeTab label="JS SDK" value="js-sdk">
-
-```ts
-import { decodeToken } from "react-jwt"
-
-// ...
-
-const queryParams = new URLSearchParams(window.location.search)
-const code = queryParams.get("code")
-const state = queryParams.get("state")
-
-
-const sendCallback = async () => {
-  let token = ""
-
-  try {
-    token = await sdk.auth.callback(
-      "customer", 
-      "google", 
-      // pass all query parameters received from the
-      // third party provider
-      queryParams
-    )
-  } catch (error) {
-    alert("Authentication Failed")
-    
-    throw error
-  }
-
-  // set the token in the client
-  // to be used in subsequent requests
-  sdk.client.setToken(token)
-
-  return token
-}
-
-const createCustomer = async () => {
-  // create customer
-  await sdk.store.customer.create({
-    email: "example@medusajs.com",
-  })
-}
-
-const refreshToken = async () => {
-  // refresh the token
-  const result = await sdk.auth.refresh()
-  
-  // set the new token
-  sdk.client.setToken(result)
-}
-
-const validateCallback = async () => {
-  const token = await sendCallback()
-
-  const shouldCreateCustomer = (decodeToken(token) as { actor_id: string }).actor_id === ""
-
-  if (shouldCreateCustomer) {
-    await createCustomer()
-
-    await refreshToken()
-  }
-
-  // use token to send authenticated requests
-  const { customer: customerData } =  await sdk.store.customer.retrieve()
-
-  setCustomer(customerData)
-  setLoading(false)
-}
-```
-
-  </CodeTab>
   <CodeTab label="React" value="react">
 
 ```tsx
@@ -563,10 +469,6 @@ export default function GoogleCallback() {
       throw error
     }
 
-    // set the token in the client
-    // to be used in subsequent requests
-    sdk.client.setToken(token)
-
     return token
   }
 
@@ -580,9 +482,6 @@ export default function GoogleCallback() {
   const refreshToken = async () => {
     // refresh the token
     const result = await sdk.auth.refresh()
-    
-    // set the new token
-    sdk.client.setToken(result)
   }
 
   const validateCallback = async () => {
@@ -596,7 +495,7 @@ export default function GoogleCallback() {
       await refreshToken()
     }
 
-    // use token to send authenticated requests
+    // all subsequent requests are authenticated
     const { customer: customerData } =  await sdk.store.customer.retrieve()
 
     setCustomer(customerData)
@@ -617,6 +516,70 @@ export default function GoogleCallback() {
       {customer && <span>Created customer {customer.email} with Google.</span>}
     </div>
   )
+}
+```
+
+  </CodeTab>
+  <CodeTab label="JS SDK" value="js-sdk">
+
+```ts
+import { decodeToken } from "react-jwt"
+
+// ...
+
+const queryParams = new URLSearchParams(window.location.search)
+const code = queryParams.get("code")
+const state = queryParams.get("state")
+
+
+const sendCallback = async () => {
+  let token = ""
+
+  try {
+    token = await sdk.auth.callback(
+      "customer", 
+      "google", 
+      // pass all query parameters received from the
+      // third party provider
+      queryParams
+    )
+  } catch (error) {
+    alert("Authentication Failed")
+    
+    throw error
+  }
+
+  return token
+}
+
+const createCustomer = async () => {
+  // create customer
+  await sdk.store.customer.create({
+    email: "example@medusajs.com",
+  })
+}
+
+const refreshToken = async () => {
+  // refresh the token
+  const result = await sdk.auth.refresh()
+}
+
+const validateCallback = async () => {
+  const token = await sendCallback()
+
+  const shouldCreateCustomer = (decodeToken(token) as { actor_id: string }).actor_id === ""
+
+  if (shouldCreateCustomer) {
+    await createCustomer()
+
+    await refreshToken()
+  }
+
+    // all subsequent requests are authenticated
+  const { customer: customerData } =  await sdk.store.customer.retrieve()
+
+  setCustomer(customerData)
+  setLoading(false)
 }
 ```
 
