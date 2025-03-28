@@ -1,4 +1,5 @@
 import {
+  AdditionalData,
   BigNumberInput,
   CalculatedRMAShippingContext,
   CalculateShippingOptionPriceDTO,
@@ -6,6 +7,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
+  createHook,
   createWorkflow,
   transform,
   when,
@@ -13,6 +15,7 @@ import {
 import { BigNumber, ShippingOptionPriceType } from "@medusajs/framework/utils"
 import { calculateShippingOptionsPricesStep } from "../../fulfillment/steps"
 import { useRemoteQueryStep } from "../../common"
+import { pricingContextResult } from "../../cart/utils/schemas"
 
 const COMMON_OPTIONS_FIELDS = [
   "id",
@@ -90,9 +93,7 @@ export const createOrderEditShippingMethodWorkflowId = "fetch-shipping-option"
  */
 export const fetchShippingOptionForOrderWorkflow = createWorkflow(
   createOrderEditShippingMethodWorkflowId,
-  function (
-    input: FetchShippingOptionForOrderWorkflowInput
-  ): WorkflowResponse<FetchShippingOptionForOrderWorkflowOutput> {
+  function (input: FetchShippingOptionForOrderWorkflowInput & AdditionalData) {
     const initialOption = useRemoteQueryStep({
       entry_point: "shipping_option",
       variables: { id: input.shipping_option_id },
@@ -170,6 +171,20 @@ export const fetchShippingOptionForOrderWorkflow = createWorkflow(
       return shippingOptionsWithPrice
     })
 
+    const setPricingContext = createHook("setPricingContext", input, {
+      resultValidator: pricingContextResult,
+    })
+    const setPricingContextResult = setPricingContext.getResult()
+    const pricingContext = transform(
+      { input, setPricingContextResult },
+      (data) => {
+        return {
+          ...(data.setPricingContextResult ? data.setPricingContextResult : {}),
+          currency_code: data.input.currency_code,
+        }
+      }
+    )
+
     const flatRateShippingOption = when(
       "option-flat",
       { isCalculatedPriceShippingOption },
@@ -186,7 +201,7 @@ export const fetchShippingOptionForOrderWorkflow = createWorkflow(
         variables: {
           id: input.shipping_option_id,
           calculated_price: {
-            context: { currency_code: input.currency_code },
+            context: pricingContext,
           },
         },
         list: false,
@@ -195,7 +210,7 @@ export const fetchShippingOptionForOrderWorkflow = createWorkflow(
       return shippingOption
     })
 
-    const result = transform(
+    const result: FetchShippingOptionForOrderWorkflowOutput = transform(
       {
         calculatedPriceShippingOption,
         flatRateShippingOption,
@@ -205,6 +220,6 @@ export const fetchShippingOptionForOrderWorkflow = createWorkflow(
       }
     )
 
-    return new WorkflowResponse(result)
+    return new WorkflowResponse(result, { hooks: [setPricingContext] as const })
   }
 )
