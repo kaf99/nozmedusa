@@ -848,6 +848,10 @@ export const filesMap = [
     "pathname": "/integrations"
   },
   {
+    "filePath": "/www/apps/resources/app/js-sdk/auth/overview/page.mdx",
+    "pathname": "/js-sdk/auth/overview"
+  },
+  {
     "filePath": "/www/apps/resources/app/js-sdk/page.mdx",
     "pathname": "/js-sdk"
   },

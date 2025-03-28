@@ -25,61 +25,20 @@ This guide covers login using email and password. For authentication with third-
 
 There are two ways to login a customer in your storefront:
 
-1. [Using a JWT token](#1-using-a-jwt-token). This JWT token is obtained from the `/auth/customer/emailpass` API route and is used as a bearer token in the authorization header of all requests.
-    - When using the JS SDK, you can set the token using the `client.setToken` method. Then, the JS SDK will use that token in the authorization header of all subsequent requests.
-2. [Using a cookie session](#2-using-a-cookie-session). This method uses the `/auth/session` API route to set the authenticated session ID in the cookies.
-    - When using the JS SDK, you can configure it to use sessions to manage authentication and pass the session ID cookie in all requests.
+1. Using a JWT token. This JWT token is obtained from the `/auth/customer/emailpass` API route and is used as a bearer token in the authorization header of all requests.
+2. Using a cookie session. This method uses the `/auth/session` API route to set the authenticated session ID in the cookies.
 
-The next sections explain how to implement each method.
+The JS SDK simplifies the login approach in a single `auth.login` method. The upcoming sections explain the authentication approach whether you're using the JS SDK or not.
 
-### Which Method Should You Use?
+### Which Authentication Method Should You Use?
 
 The authentication method you choose depends on your use case and the type of storefront you're building.
 
-When making a choice, consider the following:
-
-<Table>
-  <Table.Header>
-    <Table.Row>
-      <Table.HeaderCell>
-        Method
-      </Table.HeaderCell>
-      <Table.HeaderCell>
-        When to use
-      </Table.HeaderCell>
-    </Table.Row>
-  </Table.Header>
-  <Table.Body>
-    <Table.Row>
-      <Table.Cell>
-        JWT token
-      </Table.Cell>
-      <Table.Cell>
-        - You need stateless authentication. For example, you're building a mobile storefront with React Native.
-        - Keep in mind: when logging out, you must clear the token in the JS SDK using the `client.clearToken` method. If the user still has access to the token, they can still send authenticated requests.
-      </Table.Cell>
-    </Table.Row>
-    <Table.Row>
-      <Table.Cell>
-        Cookie session
-      </Table.Cell>
-      <Table.Cell>
-        - You need stateful authentication. For example, you're building a web storefront with Next.js.
-        - You want to ensure the session is revoked when the user logs out.
-      </Table.Cell>
-    </Table.Row>
-  </Table.Body>
-</Table>
+Refer to the [JS SDK Authentication](../../../js-sdk/auth/overview/page.mdx) guide to learn more about the differences between JWT and session authentication and which one is best for your use case.
 
 ### JS SDK Authentication Configuration
 
 Before implementing the login flow, you need to configure in the JS SDK the authentication method you're using in your storefront. This defines how the JS SDK will handle sending authenticated requests after the customer is authenticated.
-
-<Note>
-
-If you're not using the JS SDK, the next sections explain the general approach of how to pass the necessary authentication headers or cookies in your requests.
-
-</Note>
 
 For example, add the following configuration to your JS SDK initialization:
 
@@ -118,26 +77,23 @@ export const sdk = new Medusa({
 
 The JS SDK will now pass the JWT token or the session ID cookie in the authorization header of all subsequent requests based on the authentication method you've configured.
 
+Refer to the [JS SDK Authentication](../../../js-sdk/auth/overview/page.mdx#custom-authentication-storage-in-js-sdk) guide for more information about these configurations, as well as other authentication configurations.
+
 <Note title="Tip">
 
 By default, when you choose the `jwt` method, the JWT token is stored in the browser's `localStorage`. However, you can change how the token is stored, which is useful in environments where `localStorage` is not available. For example, in React Native.
 
-To learn how to change the storage method with an example for a React Native storefront, refer to the [JS SDK documentation](../../../js-sdk/page.mdx#custom-storage-methods).
+To learn how to change the storage method with an example for a React Native storefront, refer to the [JS SDK Authentication](../../../js-sdk/auth/overview/page.mdx#custom-authentication-storage-in-js-sdk) guide.
 
 </Note>
 
 ---
 
-## 1. Using a JWT Token
+## Authentication with JS SDK
 
-The first authentication approach is to pass an authenticated JWT token in the authorization header of all requests. You can do that by:
+The JS SDK provides an `auth.login` method that handles all authentication steps based on the configured authentication method. Then, all subsequent requests will have the necessary authentication headers or cookies.
 
-- Retrieving a JWT token from the `/auth/customer/emailpass` API route.
-- Passing the token in the authorization header of all subsequent requests, as explained in the [API reference](!api!/store#1-bearer-authorization-with-jwt-tokens).
-
-The JS SDK simplifies passing the JWT token by passing it in the authorization header of all subsequent requests if you configure the JS SDK to use JWT authentication.
-
-After [configuring the JS SDK](#js-sdk-authentication-configuration) to use JWT authentication, you can now implement the following login flow:
+For example, to implement the login flow in your storefront with the JS SDK:
 
 <CodeTabs group="store-request">
   <CodeTab label="React" value="react">
@@ -146,11 +102,10 @@ export const highlights = [
   ["24", "login", "Send a request to obtain a JWT token."],
   ["28", "catch", "If an error occurs, show an alert and exit execution."],
   ["33", "", "If the token is not a string, show an alert and exit execution."],
-  ["40", "setToken", "Set the token in the JS SDK to pass it in the header of subsequent requests."],
-  ["43", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
+  ["39", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
 ]
 
-  ```tsx highlights={highlights} collapsibleLines="55-79" expandButtonLabel="Show form"
+  ```tsx highlights={highlights} collapsibleLines="45-69" expandButtonLabel="Show form"
   "use client" // include with Next.js 13+
 
   import { useState } from "react"
@@ -188,11 +143,7 @@ export const highlights = [
         return
       }
 
-      // use token in the authorization header of 
-      // all follow up requests.
-      sdk.client.setToken(token)
-
-      // the next request will be authenticated
+      // all next requests will be authenticated
       const { customer } = await sdk.store.customer.retrieve()
 
       console.log(customer)
@@ -233,8 +184,7 @@ export const fetchHighlights = [
   ["5", "login", "Send a request to obtain a JWT token."],
   ["9", "catch", "If an error occurs, show an alert and exit execution."],
   ["14", "", "If the token is not a string, show an alert and exit execution."],
-  ["21", "setToken", "Set the token in the JS SDK to pass it in the header of subsequent requests."],
-  ["24", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
+  ["20", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
 ]
 
   ```ts highlights={fetchHighlights}
@@ -256,11 +206,7 @@ export const fetchHighlights = [
       return
     }
 
-    // use token in the authorization header of 
-    // all follow up requests.
-    sdk.client.setToken(token)
-
-    // the next request will be authenticated
+    // all next requests will be authenticated
     const { customer } = await sdk.store.customer.retrieve()
 
     console.log(customer)
@@ -273,164 +219,82 @@ export const fetchHighlights = [
 In the example above, you:
 
 1. Create a `handleLogin` function that logs in a customer.
-2. In the function, you obtain a JWT token by sending a request to the `/auth/customer/emailpass`.
+2. In the function, you log in the customer using the `sdk.auth.login` method.
     - If an error occurs, show an alert and exit execution.
-    - The request may return an object with a `location` property. This occurs when using third-party authentication providers. Learn more about implementing third-party authentication in the [Third-Party Login](../third-party-login/page.mdx) guide.
-3. To use the token in the authorization header of subsequent requests, you must set the token in the JS SDK using the `client.setToken` method.
-4. All subsequent requests are now authenticated. As an example, you send a request to obtain the logged-in customer's details.
+    - The method may return an object with a `location` property. This occurs when using third-party authentication providers. Learn more about implementing third-party authentication in the [Third-Party Login](../third-party-login/page.mdx) guide.
+    - Otherwise, the authentication was successful.
+3. All subsequent requests are now authenticated. As an example, you send a request to obtain the logged-in customer's details.
 
 ---
 
-## 2. Using a Cookie Session
+## Authentication without JS SDK
+
+If you're not using the JS SDK, the next sections cover the general flow for authenticating a customer in your storefront for both methods.
+
+## 1. Using a JWT Token
+
+The first authentication approach is to pass an authenticated JWT token in the authorization header of all requests. You can do that by:
+
+1. Retrieving a JWT token from the `/auth/customer/emailpass` [Authenticate Customer API route](!api!/store#auth_postactor_typeauth_provider):
+
+```bash
+curl -X POST '{backend_url}/auth/customer/emailpass' \
+-H 'Content-Type: application/json' \
+--data-raw '{
+  "email": "customer@gmail.com",
+  "password": "supersecret"
+}'
+```
+
+2. Passing the token in the authorization header of all subsequent requests, as explained in the [API reference](!api!/store#1-bearer-authorization-with-jwt-tokens):
+
+```bash
+Authorization: Bearer {jwt_token}
+```
+
+You can store the obtained JWT token based on your use case. For example, you can store it in the browser's `localStorage` or `sessionStorage`. This way, you can retrieve it later and pass it in the authorization header of all requests.
+
+### 2. Using a Cookie Session
 
 The second authentication approach is to authenticate the customer with a cookie session. You do that by:
 
-- Retrieving a JWT token from the `/auth/customer/emailpass` API route.
-- Sending a request to the `/auth/session` API route passing in the authorization header the token as a Bearer token. This sets the authenticated session ID in the cookies.
+1. Retrieving a JWT token from the `/auth/customer/emailpass` [Authenticate Customer API route](!api!/store#auth_postactor_typeauth_provider):
 
-Then, you must ensure that all subsequent requests include the session ID cookie.
+```bash
+curl -X POST '{backend_url}/auth/customer/emailpass' \
+-H 'Content-Type: application/json' \
+--data-raw '{
+  "email": "customer@gmail.com",
+  "password": "supersecret"
+}'
+```
 
-The JS SDK simplifies this by passing the session ID cookie in all requests if you configure the JS SDK to use sessions.
+2. Sending a request to the `/auth/session` [Authentication Session API route](!api!/store#auth_postsession) passing in the authorization header the token as a Bearer token. This sets the authenticated session ID in the cookies:
 
-After [configuring the JS SDK](#js-sdk-authentication-configuration) to use sessions, you can now implement the following login flow:
+```bash
+curl -X POST '{backend_url}/auth/session' \
+-H 'Authorization: Bearer {jwt_token}'
+```
 
-<CodeTabs group="store-request">
-  <CodeTab label="React" value="react">
+3. Passing the cookie session ID in all subsequent requests:
 
-export const sessionHighlights = [
-  ["24", "login", "Send a request to obtain a JWT token."],
-  ["28", "catch", "If an error occurs, show an alert and exit execution."],
-  ["33", "", "If the token is not a string, show an alert and exit execution."],
-  ["39", "setToken", "Set the token in the JS SDK, which will retrieve and pass the session ID cookie in all subsequent requests."],
-  ["43", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
-]
+<CodeTabs group="request-type">
+  <CodeTab label="cURL" value="curl">
 
-  ```tsx highlights={sessionHighlights} collapsibleLines="68-92" expandButtonLabel="Show form"
-  "use client" // include with Next.js 13+
-
-  import { useState } from "react"
-  import { sdk } from "@/lib/sdk"
-
-  export default function Login() {
-    const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    
-    const handleLogin = async (
-      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-      e.preventDefault()
-      if (!email || !password) {
-        return
-      }
-
-      setLoading(true)
-
-      let token: string | { location: string }
-
-      try {
-        token = await sdk.auth.login("customer", "emailpass", {
-          email,
-          password,
-        })
-      } catch (error) {
-        alert(`An error occured while logging in: ${error}`)
-        return
-      }
-
-      if (typeof token !== "string") {
-        alert("Authentication requires more actions, which isn't supported by this flow.")
-        return
-      }
-
-      // set session
-      sdk.client.setToken(token)
-
-      // customer is now authenticated using the
-      // cookie session. For example
-      const { customer } = await sdk.store.customer.retrieve()
-
-      console.log(customer)
-      setLoading(false)
-    }
-
-    return (
-      <form>
-        <input 
-          type="email" 
-          name="email"
-          value={email}
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-          type="password" 
-          name="password"
-          value={password}
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button
-          disabled={loading}
-          onClick={handleLogin}
-        >
-          Login
-        </button>
-      </form>
-    )
-  }
-  ```
-
+```bash
+curl '{backend_url}/store/products' \
+-H 'Cookie: connect.sid={sid}'
+```
+  
   </CodeTab>
-  <CodeTab label="JS SDK" value="js-sdk">
+  <CodeTab label="Fetch" value="fetch">
 
-export const fetchSessionHighlights = [
-  ["5", "login", "Send a request to obtain a JWT token."],
-  ["9", "catch", "If an error occurs, show an alert and exit execution."],
-  ["14", "", "If the token is not a string, show an alert and exit execution."],
-  ["20", "setToken", "Set the token in the JS SDK, which will retrieve and pass the session ID cookie in all subsequent requests."],
-  ["24", "retrieve", "Retrieve the customer's details as an example of testing authentication."],
-]
-
-  ```ts highlights={fetchSessionHighlights}
-  const handleLogin = async () => {
-    let token: string | { location: string }
-
-    try {
-      token = await sdk.auth.login("customer", "emailpass", {
-        email,
-        password,
-      })
-    } catch (error) {
-      alert(`An error occured while logging in: ${error}`)
-      return
-    }
-
-    if (typeof token !== "string") {
-      alert("Authentication requires more actions, which isn't supported by this flow.")
-      return
-    }
-
-    // set session
-    sdk.client.setToken(token)
-
-    // customer is now authenticated using the
-    // cookie session. For example
-    const { customer } = await sdk.store.customer.retrieve()
-
-    console.log(customer)
-  }
-  ```
-
+```ts highlights={["2", "", "Passes the cookie session ID in your request."]}
+fetch(`<BACKEND_URL>/store/products`, {
+  credentials: "include",
+})
+```
+  
   </CodeTab>
+
 </CodeTabs>
-
-In the example above, you:
-
-1. Create a `handleLogin` function that logs in a customer.
-2. In the function, you obtain a JWT token by sending a request to the `/auth/customer/emailpass` API route.
-    - If an error occurs, show an alert and exit execution.
-    - The request may return an object with a `location` property. This occurs when using third-party authentication providers. Learn more about implementing third-party authentication in the [Third-Party Login](../third-party-login/page.mdx) guide.
-3. To obtain the session ID cookie and ensure it's included in all subsequent requests, you must use the JS SDK's `client.setToken` method, passing it the JWT token.
-    - Because you set the JS SDK's authentication type to `session`, the `client.setToken` method will send a request to the `/auth/session` API route passing in the authorization header the token as a Bearer token. This sets the authenticated session ID in the cookies, which are then included in all subsequent requests.
-4. All subsequent requests are now authenticated. As an example, you send a request to obtain the logged-in customer's details.
