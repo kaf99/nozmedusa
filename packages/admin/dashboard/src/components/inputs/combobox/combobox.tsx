@@ -197,7 +197,7 @@ const ComboboxImpl = <T extends Value = string>(
   const showTag = hasValue && isArrayValue
   const showSelected = showTag && !searchValue && !open
 
-  const hideInput = !isArrayValue && !open
+  const hideInput = !isArrayValue && hasValue && !open
   const selectedLabel = options.find((o) => o.value === selectedValues)?.label
 
   const hidePlaceholder = showSelected || open
@@ -216,6 +216,8 @@ const ComboboxImpl = <T extends Value = string>(
   const results = useMemo(() => {
     return isSearchControlled ? options : matches
   }, [matches, options, isSearchControlled])
+
+  console.log("hidePlaceholder", hidePlaceholder, placeholder, hideInput)
 
   return (
     <PrimitiveComboboxProvider

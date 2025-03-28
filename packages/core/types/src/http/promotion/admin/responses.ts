@@ -61,12 +61,12 @@ export interface RuleValueOptionsResponse {
 /**
  * @experimental
  */
-export type AdminRuleValueOptionsListResponse = {
+export type AdminRuleValueOptionsListResponse = PaginatedResponse<{
   /**
    * The list of rule value options.
    */
   values: AdminRuleValueOption[]
-}
+}>
 
 export type AdminPromotionRuleBatchResponse = BatchResponse<AdminPromotionRule>
 
