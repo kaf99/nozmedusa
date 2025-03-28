@@ -3,7 +3,6 @@ import { Input } from "@medusajs/ui"
 import { useWatch } from "react-hook-form"
 import { Form } from "../../../../../../components/common/form"
 import { Combobox } from "../../../../../../components/inputs/combobox"
-import { usePromotionRuleValues } from "../../../../../../hooks/api/promotions"
 import { useStore } from "../../../../../../hooks/api/store"
 import { useComboboxData } from "../../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../../lib/client"
@@ -51,17 +50,6 @@ export const RuleValueFormField = ({
   )
 
   const { store, isLoading: isStoreLoading } = useStore()
-  const { values: options = [] } = usePromotionRuleValues(
-    ruleType,
-    attribute?.id!,
-    buildFilters(attribute?.id, store),
-    {
-      enabled:
-        !!attribute?.id &&
-        ["select", "multiselect"].includes(attribute.field_type) &&
-        !isStoreLoading,
-    }
-  )
 
   const comboboxData = useComboboxData({
     queryFn: async (params) => {
@@ -143,58 +131,6 @@ export const RuleValueFormField = ({
             </Form.Item>
           )
         }
-        // } else if (watchOperator === "eq") {
-        //   return (
-        //     <Form.Item className="basis-1/2">
-        //       <Form.Control>
-        //         <Select
-        //           {...field}
-        //           value={
-        //             Array.isArray(field.value) ? field.value[0] : field.value
-        //           }
-        //           onValueChange={onChange}
-        //           disabled={!fieldRule.attribute}
-        //         >
-        //           <Select.Trigger ref={ref} className="bg-ui-bg-base">
-        //             <Select.Value placeholder="Select Value" />
-        //           </Select.Trigger>
-
-        //           <Select.Content>
-        //             {options?.map((option, i) => (
-        //               <Select.Item
-        //                 key={`${identifier}-value-option-${i}`}
-        //                 value={option.value}
-        //               >
-        //                 <span className="text-ui-fg-subtle">
-        //                   {option.label}
-        //                 </span>
-        //               </Select.Item>
-        //             ))}
-        //           </Select.Content>
-        //         </Select>
-        //       </Form.Control>
-        //       <Form.ErrorMessage />
-        //     </Form.Item>
-        //   )
-        // } else {
-        //   return (
-        //     <Form.Item className="basis-1/2">
-        //       <Form.Control>
-        //         <Combobox
-        //           {...field}
-        //           ref={ref}
-        //           placeholder="Select Values"
-        //           options={options}
-        //           onChange={onChange}
-        //           className="bg-ui-bg-base"
-        //           disabled={!fieldRule.attribute}
-        //         />
-        //       </Form.Control>
-
-        //       <Form.ErrorMessage />
-        //     </Form.Item>
-        //   )
-        // }
       }}
     />
   )
