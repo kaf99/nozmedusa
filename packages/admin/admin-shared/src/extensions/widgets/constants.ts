@@ -134,6 +134,8 @@ const LOCATION_INJECTION_ZONES = [
   "location.details.side.after",
   "location.list.before",
   "location.list.after",
+  "location.list.side.before",
+  "location.list.side.after",
 ] as const
 
 const LOGIN_INJECTION_ZONES = ["login.before", "login.after"] as const

@@ -816,6 +816,22 @@ export const filesMap = [
     "pathname": "/how-to-tutorials"
   },
   {
+    "filePath": "/www/apps/resources/app/how-to-tutorials/tutorials/abandoned-cart/page.mdx",
+    "pathname": "/how-to-tutorials/tutorials/abandoned-cart"
+  },
+  {
+    "filePath": "/www/apps/resources/app/how-to-tutorials/tutorials/product-reviews/page.mdx",
+    "pathname": "/how-to-tutorials/tutorials/product-reviews"
+  },
+  {
+    "filePath": "/www/apps/resources/app/integrations/guides/algolia/page.mdx",
+    "pathname": "/integrations/guides/algolia"
+  },
+  {
+    "filePath": "/www/apps/resources/app/integrations/guides/magento/page.mdx",
+    "pathname": "/integrations/guides/magento"
+  },
+  {
     "filePath": "/www/apps/resources/app/integrations/guides/resend/page.mdx",
     "pathname": "/integrations/guides/resend"
   },
@@ -830,6 +846,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/app/integrations/page.mdx",
     "pathname": "/integrations"
+  },
+  {
+    "filePath": "/www/apps/resources/app/js-sdk/auth/overview/page.mdx",
+    "pathname": "/js-sdk/auth/overview"
   },
   {
     "filePath": "/www/apps/resources/app/js-sdk/page.mdx",
@@ -890,6 +910,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/app/nextjs-starter/guides/customize-stripe/page.mdx",
     "pathname": "/nextjs-starter/guides/customize-stripe"
+  },
+  {
+    "filePath": "/www/apps/resources/app/nextjs-starter/guides/revalidate-cache/page.mdx",
+    "pathname": "/nextjs-starter/guides/revalidate-cache"
   },
   {
     "filePath": "/www/apps/resources/app/nextjs-starter/page.mdx",
@@ -1040,6 +1064,10 @@ export const filesMap = [
     "pathname": "/storefront-development/cart/retrieve"
   },
   {
+    "filePath": "/www/apps/resources/app/storefront-development/cart/totals/page.mdx",
+    "pathname": "/storefront-development/cart/totals"
+  },
+  {
     "filePath": "/www/apps/resources/app/storefront-development/cart/update/page.mdx",
     "pathname": "/storefront-development/cart/update"
   },
@@ -1054,6 +1082,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/app/storefront-development/checkout/email/page.mdx",
     "pathname": "/storefront-development/checkout/email"
+  },
+  {
+    "filePath": "/www/apps/resources/app/storefront-development/checkout/order-confirmation/page.mdx",
+    "pathname": "/storefront-development/checkout/order-confirmation"
   },
   {
     "filePath": "/www/apps/resources/app/storefront-development/checkout/page.mdx",
@@ -1232,12 +1264,20 @@ export const filesMap = [
     "pathname": "/tools"
   },
   {
+    "filePath": "/www/apps/resources/app/troubleshooting/api-routes/page.mdx",
+    "pathname": "/troubleshooting/api-routes"
+  },
+  {
     "filePath": "/www/apps/resources/app/troubleshooting/cors-errors/page.mdx",
     "pathname": "/troubleshooting/cors-errors"
   },
   {
     "filePath": "/www/apps/resources/app/troubleshooting/create-medusa-app-errors/page.mdx",
     "pathname": "/troubleshooting/create-medusa-app-errors"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/data-models/default-fields/page.mdx",
+    "pathname": "/troubleshooting/data-models/default-fields"
   },
   {
     "filePath": "/www/apps/resources/app/troubleshooting/database-errors/page.mdx",
@@ -1264,24 +1304,52 @@ export const filesMap = [
     "pathname": "/troubleshooting/general-errors"
   },
   {
+    "filePath": "/www/apps/resources/app/troubleshooting/medusa-admin/blocked-request/page.mdx",
+    "pathname": "/troubleshooting/medusa-admin/blocked-request"
+  },
+  {
     "filePath": "/www/apps/resources/app/troubleshooting/medusa-admin/no-widget-route/page.mdx",
     "pathname": "/troubleshooting/medusa-admin/no-widget-route"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/nextjs-starter-rewrites/page.mdx",
+    "pathname": "/troubleshooting/nextjs-starter-rewrites"
   },
   {
     "filePath": "/www/apps/resources/app/troubleshooting/page.mdx",
     "pathname": "/troubleshooting"
   },
   {
+    "filePath": "/www/apps/resources/app/troubleshooting/query/filter-linked/page.mdx",
+    "pathname": "/troubleshooting/query/filter-linked"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/query/service-list/page.mdx",
+    "pathname": "/troubleshooting/query/service-list"
+  },
+  {
     "filePath": "/www/apps/resources/app/troubleshooting/s3/page.mdx",
     "pathname": "/troubleshooting/s3"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/storefront-missing-pak/page.mdx",
+    "pathname": "/troubleshooting/storefront-missing-pak"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/storefront-pak-sc/page.mdx",
+    "pathname": "/troubleshooting/storefront-pak-sc"
   },
   {
     "filePath": "/www/apps/resources/app/troubleshooting/test-errors/page.mdx",
     "pathname": "/troubleshooting/test-errors"
   },
   {
-    "filePath": "/www/apps/resources/app/troubleshooting/workflow-errors/page.mdx",
-    "pathname": "/troubleshooting/workflow-errors"
+    "filePath": "/www/apps/resources/app/troubleshooting/workflow-errors/step-x-defined/page.mdx",
+    "pathname": "/troubleshooting/workflow-errors/step-x-defined"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/workflow-errors/when-then/page.mdx",
+    "pathname": "/troubleshooting/workflow-errors/when-then"
   },
   {
     "filePath": "/www/apps/resources/references/api_key/IApiKeyModuleService/methods/api_key.IApiKeyModuleService.authenticate/page.mdx",

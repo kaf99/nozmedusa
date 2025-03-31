@@ -174,13 +174,21 @@ const generatedgeneratedToolsSidebarSidebar = {
               "children": []
             },
             {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "link",
+              "path": "/js-sdk/auth/overview",
+              "title": "Authentication",
+              "children": []
+            },
+            {
               "type": "separator"
             },
             {
               "loaded": true,
               "isPathHref": true,
               "type": "category",
-              "title": "Auth",
+              "title": "auth Methods",
               "autogenerate_path": "/references/js_sdk/auth/Auth/methods",
               "children": [
                 {
@@ -252,7 +260,7 @@ const generatedgeneratedToolsSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "category",
-              "title": "Store",
+              "title": "store Methods",
               "autogenerate_path": "/references/js_sdk/store/Store/properties",
               "children": [
                 {
@@ -342,7 +350,7 @@ const generatedgeneratedToolsSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "category",
-              "title": "Admin",
+              "title": "admin Methods",
               "autogenerate_path": "/references/js_sdk/admin/Admin/properties",
               "children": [
                 {
@@ -756,7 +764,7 @@ const generatedgeneratedToolsSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "category",
-              "title": "Payment",
+              "title": "How-to Guides",
               "initialOpen": true,
               "children": [
                 {
@@ -765,6 +773,14 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "type": "link",
                   "path": "/nextjs-starter/guides/customize-stripe",
                   "title": "Customize Stripe Integration",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
+                  "path": "/nextjs-starter/guides/revalidate-cache",
+                  "title": "Revalidate Cache",
                   "children": []
                 }
               ]

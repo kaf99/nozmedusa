@@ -150,7 +150,7 @@ You define the following properties for the `Vendor` data model:
 
 <Note>
 
-Learn more about data model [properties](!docs!/learn/fundamentals/data-models/property-types) and [relations](!docs!/learn/fundamentals/data-models/relationships).
+Learn more about data model [properties](!docs!/learn/fundamentals/data-models/properties) and [relations](!docs!/learn/fundamentals/data-models/relationships).
 
 </Note>
 
@@ -411,13 +411,15 @@ The workflow’s steps are:
         type: "step",
         name: "createVendorStep",
         description: "Create the vendor.",
-        depth: 1
+        depth: 1,
+        link: "#createvendorstep"
       },
       {
         type: "step",
         name: "createVendorAdminStep",
         description: "Create the vendor admin.",
-        depth: 1
+        depth: 1,
+        link: "#createvendoradminstep"
       },
       {
         type: "step",
@@ -585,7 +587,7 @@ export const vendorWorkflowHighlights = [
 ```ts title="src/workflows/marketplace/create-vendor/index.ts" highlights={vendorWorkflowHighlights}
 import { 
   createWorkflow,
-  WorkflowResponse
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   setAuthAppMetadataStep,
@@ -617,7 +619,7 @@ const createVendorWorkflow = createWorkflow(
 
     const vendorAdminData = transform({
       input,
-      vendor
+      vendor,
     }, (data) => {
       return {
         ...data.input.admin,
@@ -701,13 +703,13 @@ export const vendorRouteSchemaHighlights = [
 ```ts title="src/api/vendors/route.ts" highlights={vendorRouteSchemaHighlights}
 import { 
   AuthenticatedMedusaRequest, 
-  MedusaResponse
+  MedusaResponse,
 } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
 import { z } from "zod"
 import createVendorWorkflow, { 
-  CreateVendorWorkflowInput
-} from "../../workflows/marketplace/create-vendor";
+  CreateVendorWorkflowInput,
+} from "../../workflows/marketplace/create-vendor"
 
 export const PostVendorCreateSchema = z.object({
   name: z.string(),
@@ -716,8 +718,8 @@ export const PostVendorCreateSchema = z.object({
   admin: z.object({
     email: z.string(),
     first_name: z.string().optional(),
-    last_name: z.string().optional()
-  }).strict()
+    last_name: z.string().optional(),
+  }).strict(),
 }).strict()
 
 type RequestBody = z.infer<typeof PostVendorCreateSchema>
@@ -750,7 +752,7 @@ export const POST = async (
       input: {
         ...vendorData,
         authIdentityId: req.auth_context.auth_identity_id,
-      } as CreateVendorWorkflowInput
+      } as CreateVendorWorkflowInput,
     })
 
   res.json({
@@ -788,7 +790,7 @@ You define middlewares in Medusa in the `src/api/middlewares.ts` special file. S
 import { 
   defineMiddlewares, 
   authenticate, 
-  validateAndTransformBody
+  validateAndTransformBody,
 } from "@medusajs/framework/http"
 import { PostVendorCreateSchema } from "./vendors/route"
 
@@ -910,7 +912,7 @@ The workflow to create a product has the following steps:
 
 <WorkflowDiagram
   workflow={{
-    nam: "createVendorProductWorkflow",
+    name: "createVendorProductWorkflow",
     steps: [
       {
         type: "step",
@@ -960,12 +962,12 @@ import { CreateProductWorkflowInputDTO } from "@medusajs/framework/types"
 import { 
   createWorkflow, 
   transform, 
-  WorkflowResponse
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   createProductsWorkflow, 
   createRemoteLinkStep, 
-  useQueryGraphStep
+  useQueryGraphStep,
 } from "@medusajs/medusa/core-flows"
 import { MARKETPLACE_MODULE } from "../../../modules/marketplace"
 import { Modules } from "@medusajs/framework/utils"
@@ -988,22 +990,22 @@ const createVendorProductWorkflow = createWorkflow(
 
     const productData = transform({
       input,
-      stores
+      stores,
     }, (data) => {
       return {
         products: [{
           ...data.input.product,
           sales_channels: [
             {
-              id: data.stores[0].default_sales_channel_id
-            }
-          ]
-        }]
+              id: data.stores[0].default_sales_channel_id,
+            },
+          ],
+        }],
       }
     })
 
     const createdProducts = createProductsWorkflow.runAsStep({
-      input: productData
+      input: productData,
     })
     
     // TODO link vendor and products
@@ -1029,23 +1031,23 @@ const { data: vendorAdmins } = useQueryGraphStep({
   entity: "vendor_admin",
   fields: ["vendor.id"],
   filters: {
-    id: input.vendor_admin_id
-  }
+    id: input.vendor_admin_id,
+  },
 }).config({ name: "retrieve-vendor-admins" })
 
 const linksToCreate = transform({
   input,
   createdProducts,
-  vendorAdmins
+  vendorAdmins,
 }, (data) => {
   return data.createdProducts.map((product) => {
     return {
       [MARKETPLACE_MODULE]: {
-        vendor_id: data.vendorAdmins[0].vendor.id
+        vendor_id: data.vendorAdmins[0].vendor.id,
       },
       [Modules.PRODUCT]: {
-        product_id: product.id
-      }
+        product_id: product.id,
+      },
     }
   })
 })
@@ -1056,12 +1058,12 @@ const { data: products } = useQueryGraphStep({
   entity: "product",
   fields: ["*", "variants.*"],
   filters: {
-    id: createdProducts[0].id
-  }
+    id: createdProducts[0].id,
+  },
 }).config({ name: "retrieve-products" })
 
 return new WorkflowResponse({
-  product: products[0]
+  product: products[0],
 })
 ```
 
@@ -1086,8 +1088,8 @@ Create the file `src/api/vendors/products/route.ts` with the following content:
 ```ts title="src/api/vendors/products/route.ts"
 import { 
   AuthenticatedMedusaRequest, 
-  MedusaResponse
-} from "@medusajs/framework/http";
+  MedusaResponse,
+} from "@medusajs/framework/http"
 import { 
   HttpTypes,
 } from "@medusajs/framework/types"
@@ -1101,12 +1103,12 @@ export const POST = async (
     .run({
       input: {
         vendor_admin_id: req.auth_context.actor_id,
-        product: req.validatedBody
-      }
+        product: req.validatedBody,
+      },
     })
 
   res.json({
-    product: result.product
+    product: result.product,
   })
 }
 ```
@@ -1133,9 +1135,9 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         validateAndTransformBody(AdminCreateProduct),
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 })
 ```
 
@@ -1202,7 +1204,7 @@ To create the API route that retrieves the vendor’s products, add the followin
 ```ts title="src/api/vendors/products/route.ts"
 // other imports...
 import { 
-  ContainerRegistrationKeys
+  ContainerRegistrationKeys,
 } from "@medusajs/framework/utils"
 
 export const GET = async (
@@ -1217,13 +1219,13 @@ export const GET = async (
     filters: {
       id: [
         // ID of the authenticated vendor admin
-        req.auth_context.actor_id
+        req.auth_context.actor_id,
       ],
     },
   })
 
   res.json({
-    products: vendorAdmin.vendor.products
+    products: vendorAdmin.vendor.products,
   })
 }
 ```
@@ -1280,7 +1282,8 @@ In this step, you’ll create a workflow that’s executed when the customer pla
         type: "step",
         name: "groupVendorItemsStep",
         description: "Group the items by their vendor.",
-        depth: 1
+        depth: 1,
+        link: "#groupvendoritemssstep"
       },
       {
         type: "step",
@@ -1293,7 +1296,8 @@ In this step, you’ll create a workflow that’s executed when the customer pla
         type: "step",
         name: "createVendorOrdersStep", 
         description: "Create child orders for each vendor.",
-        depth: 1
+        depth: 1,
+        link: "#createvendorordersstep"
       },
       {
         type: "step",
@@ -1339,8 +1343,8 @@ const groupVendorItemsStep = createStep(
         entity: "product",
         fields: ["vendor.*"],
         filters: {
-          id: [item.product_id]
-        }
+          id: [item.product_id],
+        },
       })
 
       const vendorId = product.vendor?.id
@@ -1350,12 +1354,12 @@ const groupVendorItemsStep = createStep(
       }
       vendorsItems[vendorId] = [
         ...(vendorsItems[vendorId] || []),
-        item
+        item,
       ]
     }))
 
     return new StepResponse({
-      vendorsItems
+      vendorsItems,
     })
   }
 )
@@ -1815,7 +1819,7 @@ export const getOrderHighlights = [
 ]
 
 ```ts title="src/api/vendors/orders/route.ts" highlights={getOrderHighlights}
-import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { getOrdersListWorkflow } from "@medusajs/medusa/core-flows"
 
@@ -1829,8 +1833,8 @@ export const GET = async (
     entity: "vendor_admin",
     fields: ["vendor.orders.*"],
     filters: {
-      id: [req.auth_context.actor_id]
-    }
+      id: [req.auth_context.actor_id],
+    },
   })
 
   const { result: orders } = await getOrdersListWorkflow(req.scope)
@@ -1854,14 +1858,14 @@ export const GET = async (
         ],
         variables: {
           filters: {
-            id: vendorAdmin.vendor.orders.map((order) => order.id)
-          }
-        }
-      }
+            id: vendorAdmin.vendor.orders.map((order) => order.id),
+          },
+        },
+      },
     })
 
   res.json({
-    orders
+    orders,
   })
 }
 ```

@@ -60,21 +60,26 @@ export const toolsSidebar = [
             title: "Overview",
           },
           {
+            type: "link",
+            path: "/js-sdk/auth/overview",
+            title: "Authentication",
+          },
+          {
             type: "separator",
           },
           {
             type: "category",
-            title: "Auth",
+            title: "auth Methods",
             autogenerate_path: "/references/js_sdk/auth/Auth/methods",
           },
           {
             type: "category",
-            title: "Store",
+            title: "store Methods",
             autogenerate_path: "/references/js_sdk/store/Store/properties",
           },
           {
             type: "category",
-            title: "Admin",
+            title: "admin Methods",
             autogenerate_path: "/references/js_sdk/admin/Admin/properties",
           },
         ],
@@ -100,13 +105,18 @@ export const toolsSidebar = [
           },
           {
             type: "category",
-            title: "Payment",
+            title: "How-to Guides",
             initialOpen: true,
             children: [
               {
                 type: "link",
                 path: "/nextjs-starter/guides/customize-stripe",
                 title: "Customize Stripe Integration",
+              },
+              {
+                type: "link",
+                path: "/nextjs-starter/guides/revalidate-cache",
+                title: "Revalidate Cache",
               },
             ],
           },

@@ -16,8 +16,14 @@ const SearchProvider = ({ children }: SearchProviderProps) => {
         mainIndexName:
           process.env.NEXT_PUBLIC_DOCS_ALGOLIA_INDEX_NAME || "temp",
         indices: [
-          process.env.NEXT_PUBLIC_API_ALGOLIA_INDEX_NAME || "temp",
-          process.env.NEXT_PUBLIC_DOCS_ALGOLIA_INDEX_NAME || "temp",
+          {
+            name: process.env.NEXT_PUBLIC_DOCS_ALGOLIA_INDEX_NAME || "temp",
+            title: "Docs",
+          },
+          {
+            name: process.env.NEXT_PUBLIC_API_ALGOLIA_INDEX_NAME || "temp",
+            title: "Store & Admin API",
+          },
         ],
       }}
       searchProps={{
@@ -31,7 +37,6 @@ const SearchProvider = ({ children }: SearchProviderProps) => {
         checkInternalPattern: new RegExp(`^${absoluteUrl()}/ui`),
         filterOptions: searchFilters,
       }}
-      initialDefaultFilters={["ui"]}
     >
       {children}
     </UiSearchProvider>

@@ -1,27 +1,19 @@
 {
-	"id": 14,
+	"id": 37,
 	"name": "file-service",
 	"variant": "project",
 	"kind": 1,
 	"flags": {},
 	"children": [
 		{
-			"id": 15,
+			"id": 38,
 			"name": "IFileModuleService",
 			"variant": "declaration",
 			"kind": 256,
 			"flags": {},
-			"comment": {
-				"summary": [
-					{
-						"kind": "text",
-						"text": "The main service interface for the File Module."
-					}
-				]
-			},
 			"children": [
 				{
-					"id": 16,
+					"id": 39,
 					"name": "createFiles",
 					"variant": "declaration",
 					"kind": 2048,
@@ -29,20 +21,20 @@
 					"sources": [
 						{
 							"fileName": "file/service.ts",
-							"line": 25,
+							"line": 22,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L25"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L22"
 						},
 						{
 							"fileName": "file/service.ts",
-							"line": 45,
+							"line": 42,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L45"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L42"
 						}
 					],
 					"signatures": [
 						{
-							"id": 17,
+							"id": 40,
 							"name": "createFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -78,14 +70,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 25,
+									"line": 22,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L25"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L22"
 								}
 							],
 							"parameters": [
 								{
-									"id": 18,
+									"id": 41,
 									"name": "data",
 									"variant": "param",
 									"kind": 32768,
@@ -112,7 +104,7 @@
 									}
 								},
 								{
-									"id": 19,
+									"id": 42,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -163,7 +155,7 @@
 							}
 						},
 						{
-							"id": 20,
+							"id": 43,
 							"name": "createFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -199,14 +191,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 45,
+									"line": 42,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L45"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L42"
 								}
 							],
 							"parameters": [
 								{
-									"id": 21,
+									"id": 44,
 									"name": "data",
 									"variant": "param",
 									"kind": 32768,
@@ -230,7 +222,7 @@
 									}
 								},
 								{
-									"id": 22,
+									"id": 45,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -280,7 +272,7 @@
 					]
 				},
 				{
-					"id": 23,
+					"id": 46,
 					"name": "deleteFiles",
 					"variant": "declaration",
 					"kind": 2048,
@@ -288,20 +280,20 @@
 					"sources": [
 						{
 							"fileName": "file/service.ts",
-							"line": 57,
+							"line": 54,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L57"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L54"
 						},
 						{
 							"fileName": "file/service.ts",
-							"line": 69,
+							"line": 66,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L69"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L66"
 						}
 					],
 					"signatures": [
 						{
-							"id": 24,
+							"id": 47,
 							"name": "deleteFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -337,14 +329,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 57,
+									"line": 54,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L57"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L54"
 								}
 							],
 							"parameters": [
 								{
-									"id": 25,
+									"id": 48,
 									"name": "ids",
 									"variant": "param",
 									"kind": 32768,
@@ -366,7 +358,7 @@
 									}
 								},
 								{
-									"id": 26,
+									"id": 49,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -409,7 +401,7 @@
 							}
 						},
 						{
-							"id": 27,
+							"id": 50,
 							"name": "deleteFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -445,14 +437,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 69,
+									"line": 66,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L69"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L66"
 								}
 							],
 							"parameters": [
 								{
-									"id": 28,
+									"id": 51,
 									"name": "id",
 									"variant": "param",
 									"kind": 32768,
@@ -471,7 +463,7 @@
 									}
 								},
 								{
-									"id": 29,
+									"id": 52,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -516,7 +508,7 @@
 					]
 				},
 				{
-					"id": 30,
+					"id": 53,
 					"name": "retrieveFile",
 					"variant": "declaration",
 					"kind": 2048,
@@ -524,14 +516,14 @@
 					"sources": [
 						{
 							"fileName": "file/service.ts",
-							"line": 83,
+							"line": 80,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L83"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L80"
 						}
 					],
 					"signatures": [
 						{
-							"id": 31,
+							"id": 54,
 							"name": "retrieveFile",
 							"variant": "signature",
 							"kind": 4096,
@@ -567,14 +559,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 83,
+									"line": 80,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L83"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L80"
 								}
 							],
 							"parameters": [
 								{
-									"id": 32,
+									"id": 55,
 									"name": "id",
 									"variant": "param",
 									"kind": 32768,
@@ -593,7 +585,7 @@
 									}
 								},
 								{
-									"id": 33,
+									"id": 56,
 									"name": "config",
 									"variant": "param",
 									"kind": 32768,
@@ -646,7 +638,7 @@
 									}
 								},
 								{
-									"id": 34,
+									"id": 57,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -696,7 +688,7 @@
 					]
 				},
 				{
-					"id": 35,
+					"id": 58,
 					"name": "listFiles",
 					"variant": "declaration",
 					"kind": 2048,
@@ -704,14 +696,14 @@
 					"sources": [
 						{
 							"fileName": "file/service.ts",
-							"line": 102,
+							"line": 99,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L102"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L99"
 						}
 					],
 					"signatures": [
 						{
-							"id": 36,
+							"id": 59,
 							"name": "listFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -755,14 +747,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 102,
+									"line": 99,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L102"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L99"
 								}
 							],
 							"parameters": [
 								{
-									"id": 37,
+									"id": 60,
 									"name": "filters",
 									"variant": "param",
 									"kind": 32768,
@@ -788,7 +780,7 @@
 									}
 								},
 								{
-									"id": 38,
+									"id": 61,
 									"name": "config",
 									"variant": "param",
 									"kind": 32768,
@@ -841,7 +833,7 @@
 									}
 								},
 								{
-									"id": 39,
+									"id": 62,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -894,7 +886,7 @@
 					]
 				},
 				{
-					"id": 40,
+					"id": 63,
 					"name": "listAndCountFiles",
 					"variant": "declaration",
 					"kind": 2048,
@@ -902,14 +894,14 @@
 					"sources": [
 						{
 							"fileName": "file/service.ts",
-							"line": 121,
+							"line": 118,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L121"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L118"
 						}
 					],
 					"signatures": [
 						{
-							"id": 41,
+							"id": 64,
 							"name": "listAndCountFiles",
 							"variant": "signature",
 							"kind": 4096,
@@ -953,14 +945,14 @@
 							"sources": [
 								{
 									"fileName": "file/service.ts",
-									"line": 121,
+									"line": 118,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L121"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L118"
 								}
 							],
 							"parameters": [
 								{
-									"id": 42,
+									"id": 65,
 									"name": "filters",
 									"variant": "param",
 									"kind": 32768,
@@ -986,7 +978,7 @@
 									}
 								},
 								{
-									"id": 43,
+									"id": 66,
 									"name": "config",
 									"variant": "param",
 									"kind": 32768,
@@ -1039,7 +1031,7 @@
 									}
 								},
 								{
-									"id": 44,
+									"id": 67,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -1105,20 +1097,20 @@
 				{
 					"title": "Methods",
 					"children": [
-						16,
-						23,
-						30,
-						35,
-						40
+						39,
+						46,
+						53,
+						58,
+						63
 					]
 				}
 			],
 			"sources": [
 				{
 					"fileName": "file/service.ts",
-					"line": 10,
+					"line": 7,
 					"character": 17,
-					"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/file/service.ts#L10"
+					"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/file/service.ts#L7"
 				}
 			],
 			"extendedTypes": [
@@ -1138,133 +1130,133 @@
 		{
 			"title": "Interfaces",
 			"children": [
-				15
+				38
 			]
 		}
 	],
 	"packageName": "@medusajs/types",
 	"symbolIdMap": {
-		"14": {
+		"37": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
 			"qualifiedName": ""
 		},
-		"15": {
+		"38": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
 			"qualifiedName": "IFileModuleService"
 		},
-		"16": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.createFiles"
-		},
-		"17": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.createFiles"
-		},
-		"18": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "data"
-		},
-		"19": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"20": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.createFiles"
-		},
-		"21": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "data"
-		},
-		"22": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"23": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.deleteFiles"
-		},
-		"24": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.deleteFiles"
-		},
-		"25": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "ids"
-		},
-		"26": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"27": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.deleteFiles"
-		},
-		"28": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "id"
-		},
-		"29": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"30": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.retrieveFile"
-		},
-		"31": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.retrieveFile"
-		},
-		"32": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "id"
-		},
-		"33": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "config"
-		},
-		"34": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"35": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.listFiles"
-		},
-		"36": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.listFiles"
-		},
-		"37": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "filters"
-		},
-		"38": {
-			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "config"
-		},
 		"39": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "sharedContext"
+			"qualifiedName": "IFileModuleService.createFiles"
 		},
 		"40": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.listAndCountFiles"
+			"qualifiedName": "IFileModuleService.createFiles"
 		},
 		"41": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "IFileModuleService.listAndCountFiles"
+			"qualifiedName": "data"
 		},
 		"42": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "filters"
+			"qualifiedName": "sharedContext"
 		},
 		"43": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
-			"qualifiedName": "config"
+			"qualifiedName": "IFileModuleService.createFiles"
 		},
 		"44": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "data"
+		},
+		"45": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"46": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"47": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"48": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "ids"
+		},
+		"49": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"50": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.deleteFiles"
+		},
+		"51": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "id"
+		},
+		"52": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"53": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.retrieveFile"
+		},
+		"54": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.retrieveFile"
+		},
+		"55": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "id"
+		},
+		"56": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"57": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"58": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listFiles"
+		},
+		"59": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listFiles"
+		},
+		"60": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "filters"
+		},
+		"61": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"62": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "sharedContext"
+		},
+		"63": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listAndCountFiles"
+		},
+		"64": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "IFileModuleService.listAndCountFiles"
+		},
+		"65": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "filters"
+		},
+		"66": {
+			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
+			"qualifiedName": "config"
+		},
+		"67": {
 			"sourceFileName": "../../../../packages/core/types/src/file/service.ts",
 			"qualifiedName": "sharedContext"
 		}
@@ -1274,7 +1266,7 @@
 			"1": "../../../../packages/core/types/src/file/service.ts"
 		},
 		"reflections": {
-			"1": 14
+			"1": 37
 		}
 	}
 }

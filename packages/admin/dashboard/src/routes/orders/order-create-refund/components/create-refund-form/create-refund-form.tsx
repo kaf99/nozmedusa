@@ -8,7 +8,8 @@ import {
   Textarea,
   toast,
 } from "@medusajs/ui"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
+import { formatValue } from "react-currency-input-field"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useNavigate, useSearchParams } from "react-router-dom"
@@ -17,7 +18,7 @@ import { Form } from "../../../../../components/common/form"
 import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useRefundPayment } from "../../../../../hooks/api"
-import { getCurrencySymbol } from "../../../../../lib/data/currencies"
+import { currencies } from "../../../../../lib/data/currencies"
 import { formatCurrency } from "../../../../../lib/format-currency"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import { getPaymentsFromOrder } from "../../../../../lib/orders"
@@ -27,7 +28,7 @@ type CreateRefundFormProps = {
 }
 
 const CreateRefundSchema = zod.object({
-  amount: zod.number(),
+  amount: zod.string().or(zod.number()),
   note: zod.string().optional(),
 })
 
@@ -40,6 +41,11 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
   const payments = getPaymentsFromOrder(order)
   const payment = payments.find((p) => p.id === paymentId)!
   const paymentAmount = payment?.amount || 0
+
+  const currency = useMemo(
+    () => currencies[order.currency_code.toUpperCase()],
+    [order.currency_code]
+  )
 
   const form = useForm<zod.infer<typeof CreateRefundSchema>>({
     defaultValues: {
@@ -68,14 +74,17 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
   const handleSubmit = form.handleSubmit(async (data) => {
     await mutateAsync(
       {
-        amount: data.amount,
+        amount: parseFloat(data.amount as string),
         note: data.note,
       },
       {
         onSuccess: () => {
           toast.success(
             t("orders.payment.refundPaymentSuccess", {
-              amount: formatCurrency(data.amount, payment?.currency_code!),
+              amount: formatCurrency(
+                data.amount as number,
+                payment?.currency_code!
+              ),
             })
           )
 
@@ -147,11 +156,6 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
             <Form.Field
               control={form.control}
               name="amount"
-              rules={{
-                required: true,
-                min: 0,
-                max: paymentAmount,
-              }}
               render={({ field: { onChange, ...field } }) => {
                 return (
                   <Form.Item>
@@ -161,28 +165,18 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
                       <CurrencyInput
                         {...field}
                         min={0}
-                        onValueChange={(value) => {
-                          const fieldValue = value ? parseInt(value) : ""
-
-                          if (fieldValue && !isNaN(fieldValue)) {
-                            if (fieldValue < 0 || fieldValue > paymentAmount) {
-                              form.setError(`amount`, {
-                                type: "manual",
-                                message: t(
-                                  "orders.payment.createRefundWrongQuantity",
-                                  { number: paymentAmount }
-                                ),
-                              })
-                            } else {
-                              form.clearErrors(`amount`)
-                            }
-                          }
-
-                          onChange(fieldValue)
-                        }}
-                        code={order.currency_code}
-                        symbol={getCurrencySymbol(order.currency_code)}
+                        placeholder={formatValue({
+                          value: "0",
+                          decimalScale: currency.decimal_digits,
+                        })}
+                        decimalScale={currency.decimal_digits}
+                        symbol={currency.symbol_native}
+                        code={currency.code}
                         value={field.value}
+                        onValueChange={(_value, _name, values) =>
+                          onChange(values?.value ? values?.value : "")
+                        }
+                        autoFocus
                       />
                     </Form.Control>
 

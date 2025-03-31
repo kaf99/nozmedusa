@@ -244,23 +244,8 @@ export const sidebars = [
               },
               {
                 type: "link",
-                path: "/learn/fundamentals/data-models/property-types",
-                title: "Property Types",
-              },
-              {
-                type: "link",
-                path: "/learn/fundamentals/data-models/primary-key",
-                title: "Primary Key",
-              },
-              {
-                type: "link",
-                path: "/learn/fundamentals/data-models/default-properties",
-                title: "Default Properties",
-              },
-              {
-                type: "link",
-                path: "/learn/fundamentals/data-models/configure-properties",
-                title: "Configure Properties",
+                path: "/learn/fundamentals/data-models/properties",
+                title: "Properties",
               },
               {
                 type: "link",
@@ -284,13 +269,8 @@ export const sidebars = [
               },
               {
                 type: "link",
-                path: "/learn/fundamentals/data-models/searchable-property",
-                title: "Searchable Property",
-              },
-              {
-                type: "link",
                 path: "/learn/fundamentals/data-models/write-migration",
-                title: "Write Migration",
+                title: "Migrations",
               },
             ],
           },
@@ -547,7 +527,7 @@ export const sidebars = [
           {
             type: "link",
             title: "Type Aliases",
-            path: "/learn/conventions/ts-aliases",
+            path: "/learn/configurations/ts-aliases",
           },
         ],
       },
@@ -660,7 +640,7 @@ export const sidebars = [
               },
               {
                 type: "link",
-                path: "/learn/resources//contribution-guidelines/admin-translations",
+                path: "/learn/resources/contribution-guidelines/admin-translations",
                 title: "Admin Translations",
               },
             ],

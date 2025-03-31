@@ -12,6 +12,10 @@ export const cart = [
     "path": "https://docs.medusajs.com/resources/examples/guides/quote-management"
   },
   {
+    "title": "Send Abandoned Cart Notification",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/abandoned-cart"
+  },
+  {
     "title": "Create Cart Context in Storefront",
     "path": "https://docs.medusajs.com/resources/storefront-development/cart/context"
   },
@@ -26,6 +30,10 @@ export const cart = [
   {
     "title": "Retrieve Cart in Storefront",
     "path": "https://docs.medusajs.com/resources/storefront-development/cart/retrieve"
+  },
+  {
+    "title": "Show Cart Totals",
+    "path": "https://docs.medusajs.com/resources/storefront-development/cart/totals"
   },
   {
     "title": "Update Cart in Storefront",

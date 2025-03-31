@@ -11,14 +11,6 @@
 			"variant": "declaration",
 			"kind": 256,
 			"flags": {},
-			"comment": {
-				"summary": [
-					{
-						"kind": "text",
-						"text": "The main service interface for the Notification Module."
-					}
-				]
-			},
 			"children": [
 				{
 					"id": 83,
@@ -29,15 +21,15 @@
 					"sources": [
 						{
 							"fileName": "notification/service.ts",
-							"line": 32,
+							"line": 29,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L32"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L29"
 						},
 						{
 							"fileName": "notification/service.ts",
-							"line": 51,
+							"line": 48,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L51"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L48"
 						}
 					],
 					"signatures": [
@@ -78,9 +70,9 @@
 							"sources": [
 								{
 									"fileName": "notification/service.ts",
-									"line": 32,
+									"line": 29,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L32"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L29"
 								}
 							],
 							"parameters": [
@@ -199,9 +191,9 @@
 							"sources": [
 								{
 									"fileName": "notification/service.ts",
-									"line": 51,
+									"line": 48,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L51"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L48"
 								}
 							],
 							"parameters": [
@@ -288,9 +280,9 @@
 					"sources": [
 						{
 							"fileName": "notification/service.ts",
-							"line": 85,
+							"line": 82,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L85"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L82"
 						}
 					],
 					"signatures": [
@@ -343,9 +335,9 @@
 							"sources": [
 								{
 									"fileName": "notification/service.ts",
-									"line": 85,
+									"line": 82,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L85"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L82"
 								}
 							],
 							"parameters": [
@@ -480,9 +472,9 @@
 					"sources": [
 						{
 							"fileName": "notification/service.ts",
-							"line": 138,
+							"line": 135,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L138"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L135"
 						}
 					],
 					"signatures": [
@@ -575,9 +567,9 @@
 							"sources": [
 								{
 									"fileName": "notification/service.ts",
-									"line": 138,
+									"line": 135,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L138"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L135"
 								}
 							],
 							"parameters": [
@@ -722,9 +714,9 @@
 					"sources": [
 						{
 							"fileName": "notification/service.ts",
-							"line": 194,
+							"line": 191,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L194"
+							"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L191"
 						}
 					],
 					"signatures": [
@@ -817,9 +809,9 @@
 							"sources": [
 								{
 									"fileName": "notification/service.ts",
-									"line": 194,
+									"line": 191,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L194"
+									"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L191"
 								}
 							],
 							"parameters": [
@@ -979,9 +971,9 @@
 			"sources": [
 				{
 					"fileName": "notification/service.ts",
-					"line": 10,
+					"line": 7,
 					"character": 17,
-					"url": "https://github.com/medusajs/medusa/blob/cb6249320e7322e8eabfec8434f1278f8d63e96c/packages/core/types/src/notification/service.ts#L10"
+					"url": "https://github.com/medusajs/medusa/blob/2b2b65f5f78ce8f44c661cf85efcfd5fa50a27e4/packages/core/types/src/notification/service.ts#L7"
 				}
 			],
 			"extendedTypes": [

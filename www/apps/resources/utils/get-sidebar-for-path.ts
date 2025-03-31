@@ -57,6 +57,7 @@ const sidebarMappings: {
       "/medusa-cli",
       "/js-sdk",
       "/nextjs-starter",
+      "/references/js-sdk",
     ],
   },
   {
