@@ -156,6 +156,11 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
             <Form.Field
               control={form.control}
               name="amount"
+              rules={{
+                required: true,
+                min: 0,
+                max: paymentAmount,
+              }}
               render={({ field: { onChange, ...field } }) => {
                 return (
                   <Form.Item>

@@ -12,7 +12,8 @@ import {
   Textarea,
   toast,
 } from "@medusajs/ui"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { formatValue } from "react-currency-input-field"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import * as zod from "zod"
@@ -23,7 +24,7 @@ import {
   useCreateOrderCreditLine,
   useRefundPayment,
 } from "../../../../../hooks/api"
-import { getCurrencySymbol } from "../../../../../lib/data/currencies"
+import { currencies } from "../../../../../lib/data/currencies"
 import { formatCurrency } from "../../../../../lib/format-currency"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import { getPaymentsFromOrder } from "../../../../../lib/orders"
@@ -32,13 +33,13 @@ const OrderBalanceSettlementSchema = zod.object({
   settlement_type: zod.enum(["credit_line", "refund"]),
   refund: zod
     .object({
-      amount: zod.number().optional(),
+      amount: zod.string().or(zod.number()).optional(),
       note: zod.string().optional(),
     })
     .optional(),
   credit_line: zod
     .object({
-      amount: zod.number().optional(),
+      amount: zod.string().or(zod.number()).optional(),
       reference: zod.string().optional(),
       reference_id: zod.string().optional(),
       note: zod.string().optional(),
@@ -82,7 +83,7 @@ export const OrderBalanceSettlementForm = ({
     if (data.settlement_type === "credit_line") {
       await createCreditLine(
         {
-          amount: data.credit_line!.amount! * -1,
+          amount: parseFloat(data.credit_line!.amount! as string) * -1,
           reference: data.credit_line!.reference ?? "order",
           reference_id: data.credit_line!.reference_id ?? order.id,
         },
@@ -102,7 +103,7 @@ export const OrderBalanceSettlementForm = ({
     if (data.settlement_type === "refund") {
       await createRefund(
         {
-          amount: data.refund!.amount,
+          amount: parseFloat(data.refund!.amount! as string),
           note: data.refund!.note,
         },
         {
@@ -110,7 +111,7 @@ export const OrderBalanceSettlementForm = ({
             toast.success(
               t("orders.payment.refundPaymentSuccess", {
                 amount: formatCurrency(
-                  data.refund!.amount!,
+                  parseFloat(data.refund!.amount! as string),
                   order.currency_code!
                 ),
               })
@@ -125,6 +126,11 @@ export const OrderBalanceSettlementForm = ({
       )
     }
   })
+
+  const currency = useMemo(
+    () => currencies[order.currency_code.toUpperCase()],
+    [order.currency_code]
+  )
 
   useEffect(() => {
     form.clearErrors()
@@ -250,33 +256,19 @@ export const OrderBalanceSettlementForm = ({
                         <Form.Control>
                           <CurrencyInput
                             {...field}
-                            onValueChange={(value) => {
-                              const fieldValue = value ? parseFloat(value) : ""
-
-                              if (fieldValue && !isNaN(fieldValue)) {
-                                if (
-                                  fieldValue < 0 ||
-                                  fieldValue > pendingDifference
-                                ) {
-                                  form.setError(`refund.amount`, {
-                                    type: "manual",
-                                    message: t(
-                                      "orders.payment.createRefundWrongQuantity",
-                                      {
-                                        number: pendingDifference,
-                                      }
-                                    ),
-                                  })
-                                } else {
-                                  form.clearErrors(`refund.amount`)
-                                }
-                              }
-
-                              onChange(fieldValue)
-                            }}
-                            code={order.currency_code}
-                            symbol={getCurrencySymbol(order.currency_code)}
+                            min={0}
+                            placeholder={formatValue({
+                              value: "0",
+                              decimalScale: currency.decimal_digits,
+                            })}
+                            decimalScale={currency.decimal_digits}
+                            symbol={currency.symbol_native}
+                            code={currency.code}
                             value={field.value}
+                            onValueChange={(_value, _name, values) =>
+                              onChange(values?.value ? values?.value : "")
+                            }
+                            autoFocus
                           />
                         </Form.Control>
 
@@ -319,33 +311,19 @@ export const OrderBalanceSettlementForm = ({
                         <Form.Control>
                           <CurrencyInput
                             {...field}
-                            onValueChange={(value) => {
-                              const fieldValue = value ? parseFloat(value) : ""
-
-                              if (fieldValue && !isNaN(fieldValue)) {
-                                if (
-                                  fieldValue < 0 ||
-                                  fieldValue > pendingDifference
-                                ) {
-                                  form.setError(`credit_line.amount`, {
-                                    type: "manual",
-                                    message: t(
-                                      "orders.payment.createRefundWrongQuantity",
-                                      {
-                                        number: pendingDifference,
-                                      }
-                                    ),
-                                  })
-                                } else {
-                                  form.clearErrors(`credit_line.amount`)
-                                }
-                              }
-
-                              onChange(fieldValue)
-                            }}
-                            code={order.currency_code}
-                            symbol={getCurrencySymbol(order.currency_code)}
+                            min={0}
+                            placeholder={formatValue({
+                              value: "0",
+                              decimalScale: currency.decimal_digits,
+                            })}
+                            decimalScale={currency.decimal_digits}
+                            symbol={currency.symbol_native}
+                            code={currency.code}
                             value={field.value}
+                            onValueChange={(_value, _name, values) =>
+                              onChange(values?.value ? values?.value : "")
+                            }
+                            autoFocus
                           />
                         </Form.Control>
 
