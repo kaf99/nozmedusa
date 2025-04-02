@@ -318,32 +318,7 @@ export class RemoteJoiner {
         }
 
         // Multiple "fieldAlias" w/ same name need the entity to handle different paths
-        for (const [alias, fieldAlias] of Object.entries(
-          extend.fieldAlias ?? {}
-        )) {
-          const objAlias = isString(fieldAlias)
-            ? { path: fieldAlias }
-            : fieldAlias
-
-          if (service_.fieldAlias[alias]) {
-            if (!Array.isArray(service_.fieldAlias[alias])) {
-              service_.fieldAlias[alias] = [service_.fieldAlias[alias]]
-            }
-
-            if (
-              service_.fieldAlias[alias].some((f) => f.entity === extend.entity)
-            ) {
-              throw new Error(
-                `Cannot add alias "${alias}" for "${extend.serviceName}". It is already defined for Entity "${extend.entity}".`
-              )
-            }
-          } else {
-            service_.fieldAlias[alias] = {
-              ...objAlias,
-              entity: extend.entity,
-            }
-          }
-        }
+        this.mergeFieldAlias(service_, extend)
       }
     }
 
@@ -388,6 +363,33 @@ export class RemoteJoiner {
     }
 
     return serviceConfigs
+  }
+
+  private mergeFieldAlias(service_, extend) {
+    for (const [alias, fieldAlias] of Object.entries(extend.fieldAlias ?? {})) {
+      const objAlias = isString(fieldAlias)
+        ? { path: fieldAlias }
+        : (fieldAlias as object)
+
+      if (service_.fieldAlias[alias]) {
+        if (!Array.isArray(service_.fieldAlias[alias])) {
+          service_.fieldAlias[alias] = [service_.fieldAlias[alias]]
+        }
+
+        if (
+          service_.fieldAlias[alias].some((f) => f.entity === extend.entity)
+        ) {
+          throw new Error(
+            `Cannot add alias "${alias}" for "${extend.serviceName}". It is already defined for Entity "${extend.entity}".`
+          )
+        }
+      } else {
+        service_.fieldAlias[alias] = {
+          ...objAlias,
+          entity: extend.entity,
+        }
+      }
+    }
   }
 
   private getServiceConfig({
