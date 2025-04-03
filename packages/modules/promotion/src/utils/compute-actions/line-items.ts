@@ -38,6 +38,7 @@ export function getComputedActionsForItems(
   return applyPromotionToItems(
     promotion,
     items,
+    TargetType.ITEMS,
     appliedPromotionsMap,
     allocationOverride
   )
@@ -50,7 +51,12 @@ export function getComputedActionsForShippingMethods(
 ): PromotionTypes.ComputeActions[] {
   validateContext("shipping_methods", shippingMethods)
 
-  return applyPromotionToItems(promotion, shippingMethods, appliedPromotionsMap)
+  return applyPromotionToItems(
+    promotion,
+    shippingMethods,
+    TargetType.SHIPPING_METHODS,
+    appliedPromotionsMap
+  )
 }
 
 export function getComputedActionsForOrder(
@@ -71,18 +77,18 @@ function applyPromotionToItems(
   items:
     | PromotionTypes.ComputeActionContext[TargetType.ITEMS]
     | PromotionTypes.ComputeActionContext[TargetType.SHIPPING_METHODS],
+  targetType: TargetType,
   appliedPromotionsMap: Map<string, BigNumberInput>,
   allocationOverride?: ApplicationMethodAllocationValues
 ): PromotionTypes.ComputeActions[] {
   const { application_method: applicationMethod } = promotion
   const allocation = applicationMethod?.allocation! || allocationOverride
   const computedActions: PromotionTypes.ComputeActions[] = []
-  const applicableItems = getValidItemsForPromotion(items, promotion)
-  const target = applicationMethod?.target_type
-
-  const isTargetShippingMethod = target === TargetType.SHIPPING_METHODS
-  const isTargetLineItems = target === TargetType.ITEMS
-  const isTargetOrder = target === TargetType.ORDER
+  const applicableItems = getValidItemsForPromotion(
+    items,
+    promotion,
+    targetType
+  )
 
   let lineItemsTotal = MathBN.convert(0)
 
@@ -99,11 +105,12 @@ function applyPromotionToItems(
 
   for (const item of applicableItems!) {
     const appliedPromoValue = appliedPromotionsMap.get(item.id) ?? 0
-    const maxQuantity = isTargetShippingMethod
-      ? 1
-      : applicationMethod?.max_quantity!
+    const maxQuantity =
+      targetType === TargetType.SHIPPING_METHODS
+        ? 1
+        : applicationMethod?.max_quantity!
 
-    if (isTargetShippingMethod) {
+    if (targetType === TargetType.SHIPPING_METHODS) {
       item.quantity = 1
     }
 
@@ -136,7 +143,7 @@ function applyPromotionToItems(
 
     appliedPromotionsMap.set(item.id, MathBN.add(appliedPromoValue, amount))
 
-    if (isTargetLineItems || isTargetOrder) {
+    if (targetType === TargetType.ITEMS) {
       computedActions.push({
         action: ComputedActions.ADD_ITEM_ADJUSTMENT,
         item_id: item.id,
@@ -145,7 +152,7 @@ function applyPromotionToItems(
       })
     }
 
-    if (isTargetShippingMethod) {
+    if (targetType === TargetType.SHIPPING_METHODS) {
       computedActions.push({
         action: ComputedActions.ADD_SHIPPING_METHOD_ADJUSTMENT,
         shipping_method_id: item.id,
@@ -162,10 +169,10 @@ function getValidItemsForPromotion(
   items:
     | PromotionTypes.ComputeActionContext[TargetType.ITEMS]
     | PromotionTypes.ComputeActionContext[TargetType.SHIPPING_METHODS],
-  promotion: PromotionTypes.PromotionDTO
+  promotion: PromotionTypes.PromotionDTO,
+  targetType: TargetType
 ) {
-  const isTargetShippingMethod =
-    promotion.application_method?.target_type === TargetType.SHIPPING_METHODS
+  const isTargetShippingMethod = targetType === TargetType.SHIPPING_METHODS
 
   return (
     items?.filter((item) => {

@@ -550,7 +550,7 @@ export default class PromotionModuleService
           computedActions.push(...computedActionsForItems)
         }
 
-        if (isTargetShipping) {
+        if (isTargetOrder || isTargetShipping) {
           const computedActionsForShippingMethods =
             ComputeActionUtils.getComputedActionsForShippingMethods(
               promotion,
