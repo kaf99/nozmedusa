@@ -2001,6 +2001,207 @@ medusaIntegrationTestRunner({
           )
         })
 
+        describe("with promotions", () => {
+          beforeEach(async () => {
+            const stockLocation = (
+              await api.post(
+                `/admin/stock-locations`,
+                { name: "test location" },
+                adminHeaders
+              )
+            ).data.stock_location
+
+            await api.post(
+              `/admin/stock-locations/${stockLocation.id}/sales-channels`,
+              { add: [salesChannel.id] },
+              adminHeaders
+            )
+
+            await api.post(
+              `/admin/stock-locations/${stockLocation.id}/fulfillment-providers`,
+              { add: ["manual_test-provider"] },
+              adminHeaders
+            )
+
+            const shippingProfile = (
+              await api.post(
+                `/admin/shipping-profiles`,
+                { name: `test-${stockLocation.id}`, type: "default" },
+                adminHeaders
+              )
+            ).data.shipping_profile
+
+            const fulfillmentSets = (
+              await api.post(
+                `/admin/stock-locations/${stockLocation.id}/fulfillment-sets?fields=*fulfillment_sets`,
+                {
+                  name: `Test-${shippingProfile.id}`,
+                  type: "test-type",
+                },
+                adminHeaders
+              )
+            ).data.stock_location.fulfillment_sets
+
+            const fulfillmentSet = (
+              await api.post(
+                `/admin/fulfillment-sets/${fulfillmentSets[0].id}/service-zones`,
+                {
+                  name: `Test-${shippingProfile.id}`,
+                  geo_zones: [{ type: "country", country_code: "US" }],
+                },
+                adminHeaders
+              )
+            ).data.fulfillment_set
+
+            const shippingOptionPayload = {
+              name: `Shipping`,
+              service_zone_id: fulfillmentSet.service_zones[0].id,
+              shipping_profile_id: shippingProfile.id,
+              provider_id: "manual_test-provider",
+              price_type: "flat",
+              type: {
+                label: "Test type",
+                description: "Test description",
+                code: "test-code",
+              },
+              prices: [{ currency_code: "usd", amount: 100 }],
+            }
+
+            const shippingOption = (
+              await api.post(
+                `/admin/shipping-options`,
+                shippingOptionPayload,
+                adminHeaders
+              )
+            ).data.shipping_option
+
+            const cartData = {
+              currency_code: "usd",
+              sales_channel_id: salesChannel.id,
+              region_id: region.id,
+              shipping_address: shippingAddressData,
+              items: [{ variant_id: product.variants[0].id, quantity: 1 }],
+            }
+
+            cart = (await api.post(`/store/carts`, cartData, storeHeaders)).data
+              .cart
+
+            await api.post(
+              `/store/carts/${cart.id}/shipping-methods`,
+              { option_id: shippingOption.id },
+              storeHeaders
+            )
+          })
+
+          it("should apply order promotion to items and shipping", async () => {
+            const tenPercentOffOnOrderPromo = (
+              await api.post(
+                `/admin/promotions`,
+                {
+                  code: "TEST_10",
+                  type: PromotionType.STANDARD,
+                  status: PromotionStatus.ACTIVE,
+                  application_method: {
+                    type: "percentage",
+                    target_type: "order",
+                    allocation: "across",
+                    currency_code: "usd",
+                    value: 10,
+                  },
+                },
+                adminHeaders
+              )
+            ).data.promotion
+
+            await api.post(
+              `/store/carts/${cart.id}/line-items`,
+              {
+                variant_id: product.variants[0].id,
+                quantity: 1,
+              },
+              storeHeaders
+            )
+
+            updated = await api.post(
+              `/store/carts/${cart.id}?fields=+totals`,
+              { promo_codes: [tenPercentOffOnOrderPromo.code] },
+              storeHeaders
+            )
+
+            expect(updated.status).toEqual(200)
+            expect(updated.data.cart).toEqual(
+              expect.objectContaining({
+                id: cart.id,
+                original_item_total: 3000,
+                item_total: 2700,
+                shipping_total: 90,
+                original_shipping_total: 100,
+                total: 2790,
+                items: [
+                  expect.objectContaining({
+                    quantity: 2,
+                    adjustments: [
+                      expect.objectContaining({
+                        code: tenPercentOffOnOrderPromo.code,
+                      }),
+                    ],
+                  }),
+                ],
+                shipping_methods: [
+                  expect.objectContaining({
+                    adjustments: [
+                      expect.objectContaining({
+                        code: tenPercentOffOnOrderPromo.code,
+                      }),
+                    ],
+                  }),
+                ],
+              })
+            )
+
+            // Add another item to the cart and check that the promotion is recomputed corectly
+            updated = await api.post(
+              `/store/carts/${cart.id}/line-items`,
+              {
+                variant_id: product.variants[0].id,
+                quantity: 1,
+              },
+              storeHeaders
+            )
+
+            expect(updated.status).toEqual(200)
+            expect(updated.data.cart).toEqual(
+              expect.objectContaining({
+                id: cart.id,
+                original_item_total: 4500,
+                item_total: 4050,
+                shipping_total: 90,
+                original_shipping_total: 100,
+                total: 4140,
+                items: [
+                  expect.objectContaining({
+                    quantity: 3,
+                    adjustments: [
+                      expect.objectContaining({
+                        code: tenPercentOffOnOrderPromo.code,
+                      }),
+                    ],
+                  }),
+                ],
+                shipping_methods: [
+                  expect.objectContaining({
+                    adjustments: [
+                      expect.objectContaining({
+                        code: tenPercentOffOnOrderPromo.code,
+                      }),
+                    ],
+                  }),
+                ],
+              })
+            )
+          })
+        })
+
         it("should not generate tax lines for gift card products", async () => {
           const giftCardProduct = (
             await api.post(
