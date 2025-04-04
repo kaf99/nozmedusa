@@ -9,6 +9,7 @@ export type PaymentCollectionStatus =
   | "awaiting"
   | "authorized"
   | "partially_authorized"
+  | "partially_captured"
   | "canceled"
   | "failed"
   | "completed"

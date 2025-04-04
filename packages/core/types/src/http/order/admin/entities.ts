@@ -4,7 +4,7 @@ import { AdminCustomer } from "../../customer"
 import { AdminExchange } from "../../exchange"
 import { AdminPaymentCollection } from "../../payment/admin"
 import { AdminProduct, AdminProductVariant } from "../../product"
-import { AdminRegionCountry } from "../../region"
+import { AdminRegion, AdminRegionCountry } from "../../region"
 import { AdminReturn } from "../../return"
 import { AdminSalesChannel } from "../../sales-channel"
 import {
@@ -30,6 +30,10 @@ export interface AdminOrder extends Omit<BaseOrder, "items"> {
    * The associated sales channel's details.
    */
   sales_channel?: AdminSalesChannel
+  /**
+   * The order's region.
+   */
+  region?: AdminRegion
   /**
    * The details of the customer that placed the order.
    */

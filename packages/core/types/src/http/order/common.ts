@@ -939,6 +939,7 @@ export interface BaseOrderChange {
     | "edit"
     | "return_request"
     | "transfer"
+    | "update_order"
 
   /**
    * The ID of the associated order

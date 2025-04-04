@@ -21,12 +21,15 @@ export type ChangeActionType =
   | "RETURN_ITEM"
   | "SHIPPING_ADD"
   | "SHIPPING_REMOVE"
+  | "SHIPPING_UPDATE"
   | "SHIP_ITEM"
   | "WRITE_OFF_ITEM"
   | "REINSTATE_ITEM"
   | "TRANSFER_CUSTOMER"
   | "UPDATE_ORDER_PROPERTIES"
   | "CREDIT_LINE_ADD"
+  | "PROMOTION_ADD"
+  | "PROMOTION_REMOVE"
 
 export type OrderChangeStatus =
   | "confirmed"
@@ -790,6 +793,11 @@ export interface OrderLineItemDTO extends OrderLineItemTotalsDTO {
   is_discountable: boolean
 
   /**
+   * Indicates whether the line item is a gift card.
+   */
+  is_giftcard: boolean
+
+  /**
    * Indicates whether the line item price is tax inclusive.
    */
   is_tax_inclusive: boolean
@@ -1113,6 +1121,11 @@ export interface OrderDTO {
    * @expandable
    */
   summary?: OrderSummaryDTO
+
+  /**
+   * Whether the order is a draft order.
+   */
+  is_draft_order?: boolean
 
   /**
    * Holds custom data in key-value pairs.

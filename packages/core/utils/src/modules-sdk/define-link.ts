@@ -85,6 +85,7 @@ type ModuleLinkableKeyConfig = {
   deleteCascade?: boolean
   primaryKey: string
   alias: string
+  hasMany?: boolean
   shortcut?: Shortcut | Shortcut[]
 }
 
@@ -125,8 +126,7 @@ function buildFieldAlias(fieldAliases?: Shortcut | Shortcut[]) {
 }
 
 function prepareServiceConfig(
-  input: DefineLinkInputSource | DefineReadOnlyLinkInputSource,
-  defaultOptions?: { isList?: boolean }
+  input: DefineLinkInputSource | DefineReadOnlyLinkInputSource
 ) {
   let serviceConfig = {} as ModuleLinkableKeyConfig
 
@@ -138,7 +138,8 @@ function prepareServiceConfig(
       alias: source.alias ?? camelToSnakeCase(source.field ?? ""),
       field: input.field ?? source.field,
       primaryKey: source.primaryKey,
-      isList: defaultOptions?.isList ?? false,
+      isList: false,
+      hasMany: false,
       deleteCascade: false,
       module: source.serviceName,
       entity: source.entity,
@@ -148,12 +149,15 @@ function prepareServiceConfig(
       ? input.linkable.toJSON()
       : input.linkable
 
+    const hasMany = !!input.isList
+
     serviceConfig = {
       key: source.linkable,
       alias: source.alias ?? camelToSnakeCase(source.field ?? ""),
       field: input.field ?? source.field,
       primaryKey: source.primaryKey,
-      isList: input.isList ?? defaultOptions?.isList ?? false,
+      isList: input.isList ?? false,
+      hasMany,
       deleteCascade: input.deleteCascade ?? false,
       module: source.serviceName,
       entity: source.entity,
@@ -184,8 +188,8 @@ export function defineLink(
   rightService: DefineLinkInputSource | DefineReadOnlyLinkInputSource,
   linkServiceOptions?: ExtraOptions | ReadOnlyExtraOptions
 ): DefineLinkExport {
-  const serviceAObj = prepareServiceConfig(leftService, { isList: true })
-  const serviceBObj = prepareServiceConfig(rightService, { isList: false })
+  const serviceAObj = prepareServiceConfig(leftService)
+  const serviceBObj = prepareServiceConfig(rightService)
 
   if (linkServiceOptions?.readOnly) {
     return defineReadOnlyLink(
@@ -374,7 +378,7 @@ ${serviceBObj.module}: {
             methodSuffix: serviceAMethodSuffix,
           },
           deleteCascade: serviceAObj.deleteCascade,
-          isList: serviceAObj.isList,
+          hasMany: serviceAObj.hasMany,
         },
         {
           serviceName: serviceBObj.module,
@@ -386,7 +390,7 @@ ${serviceBObj.module}: {
             methodSuffix: serviceBMethodSuffix,
           },
           deleteCascade: serviceBObj.deleteCascade,
-          isList: serviceBObj.isList,
+          hasMany: serviceBObj.hasMany,
         },
       ],
       extends: [
