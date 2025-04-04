@@ -23,7 +23,9 @@ export const AdminGetPromotionParams = createSelectParams()
 
 export const AdminGetPromotionsParamsFields = z.object({
   q: z.string().optional(),
-  code: z.union([z.string(), z.array(z.string())]).optional(),
+  code: z
+    .union([z.string(), z.array(z.string()), createOperatorMap()])
+    .optional(),
   campaign_id: z.union([z.string(), z.array(z.string())]).optional(),
   application_method: z
     .object({

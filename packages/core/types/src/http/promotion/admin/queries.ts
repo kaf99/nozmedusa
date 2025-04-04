@@ -13,7 +13,7 @@ export interface AdminGetPromotionsParams
   /**
    * Filter by promotion code.
    */
-  code?: string | string[]
+  code?: string | string[] | OperatorMap<string>
   /**
    * Filter by campaign ID to retrieve promotions by campaign.
    */

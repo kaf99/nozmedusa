@@ -30,7 +30,7 @@ import { pricingContextResult } from "../../cart/utils/schemas"
 
 function prepareLineItems(data) {
   const items = (data.input.items ?? []).map((item) => {
-    const variant = data.variants.find((v) => v.id === item.variant_id)!
+    const variant = data.variants?.find((v) => v.id === item.variant_id)!
 
     const input: PrepareLineItemDataInput = {
       item,

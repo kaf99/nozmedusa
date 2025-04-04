@@ -1,6 +1,6 @@
 import {
   getOrderDetailWorkflow,
-  updateOrderWorkflow,
+  updateDraftOrderWorkflow,
 } from "@medusajs/core-flows"
 import {
   AuthenticatedMedusaRequest,
@@ -36,7 +36,7 @@ export const POST = async (
 ) => {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
 
-  await updateOrderWorkflow(req.scope).run({
+  await updateDraftOrderWorkflow(req.scope).run({
     input: {
       ...req.validatedBody,
       user_id: req.auth_context.actor_id,

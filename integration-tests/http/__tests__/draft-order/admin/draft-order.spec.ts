@@ -102,5 +102,18 @@ medusaIntegrationTestRunner({
         expect(response.data.draft_order.email).toBe("test_new@test.com")
       })
     })
+
+    describe("POST /draft-orders/:id/convert-to-order", () => {
+      it("should convert a draft order to an order", async () => {
+        const response = await api.post(
+          `/admin/draft-orders/${testDraftOrder.id}/convert-to-order`,
+          {},
+          adminHeaders
+        )
+
+        expect(response.status).toBe(200)
+        expect(response.data.order.status).toBe("pending")
+      })
+    })
   },
 })

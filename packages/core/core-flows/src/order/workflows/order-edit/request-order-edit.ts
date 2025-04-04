@@ -17,7 +17,6 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
-import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
 
 function getOrderChangesData({
   input,
@@ -55,14 +54,14 @@ export type RequestOrderEditRequestValidationStepInput = {
 /**
  * This step validates that a order edit can be requested.
  * If the order is canceled or the order change is not active, the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = requestOrderEditRequestValidationStep({
  *   order: {
@@ -104,10 +103,10 @@ export const requestOrderEditRequestWorkflowId = "order-edit-request"
 /**
  * This workflow requests a previously created order edit request by {@link beginOrderEditOrderWorkflow}. This workflow is used by
  * the [Request Order Edit Admin API Route](https://docs.medusajs.com/api/admin#order-edits_postordereditsidrequest).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to request an order edit
  * in your custom flows.
- * 
+ *
  * @example
  * const { result } = await requestOrderEditRequestWorkflow(container)
  * .run({
@@ -115,9 +114,9 @@ export const requestOrderEditRequestWorkflowId = "order-edit-request"
  *     order_id: "order_123",
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Request an order edit.
  */
 export const requestOrderEditRequestWorkflow = createWorkflow(
@@ -152,12 +151,6 @@ export const requestOrderEditRequestWorkflow = createWorkflow(
 
     const updateOrderChangesData = getOrderChangesData({ input, orderChange })
     updateOrderChangesStep(updateOrderChangesData)
-
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
-      input: {
-        order_id: order.id,
-      },
-    })
 
     return new WorkflowResponse(previewOrderChangeStep(order.id))
   }

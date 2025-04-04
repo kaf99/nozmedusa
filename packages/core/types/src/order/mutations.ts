@@ -6,6 +6,7 @@ import {
   OrderItemDTO,
   OrderLineItemDTO,
   OrderReturnReasonDTO,
+  OrderStatus,
   OrderTransactionDTO,
   ReturnDTO,
 } from "./common"
@@ -222,6 +223,16 @@ export interface UpdateOrderDTO {
    * The associated sales channel's ID.
    */
   sales_channel_id?: string
+
+  /**
+   * The status of the order.
+   */
+  status?: OrderStatus
+
+  /**
+   * Whether the order is a draft order.
+   */
+  is_draft_order?: boolean
 
   /**
    * The items of the order.
