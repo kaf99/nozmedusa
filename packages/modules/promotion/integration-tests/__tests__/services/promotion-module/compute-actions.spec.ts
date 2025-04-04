@@ -1170,7 +1170,6 @@ moduleIntegrationTestRunner({
                   },
                 },
               ],
-              shipping_methods: [],
             })
 
             expect(JSON.parse(JSON.stringify(result))).toEqual([
@@ -1271,7 +1270,6 @@ moduleIntegrationTestRunner({
                     },
                   },
                 ],
-                shipping_methods: [],
               }
             )
 
@@ -1385,7 +1383,6 @@ moduleIntegrationTestRunner({
                     },
                   },
                 ],
-                shipping_methods: [],
               }
             )
 
@@ -4170,6 +4167,7 @@ moduleIntegrationTestRunner({
                 },
               },
             ],
+            shipping_methods: [],
           } as any)
 
           expect(JSON.parse(JSON.stringify(result))).toEqual([
@@ -4237,6 +4235,7 @@ moduleIntegrationTestRunner({
                 },
               },
             ],
+            shipping_methods: [],
           })
 
           expect(JSON.parse(JSON.stringify(result))).toEqual([
@@ -4324,6 +4323,7 @@ moduleIntegrationTestRunner({
                   },
                 },
               ],
+              shipping_methods: [],
             }
           )
 
@@ -4424,6 +4424,7 @@ moduleIntegrationTestRunner({
                   },
                 },
               ],
+              shipping_methods: [],
             }
           )
 
