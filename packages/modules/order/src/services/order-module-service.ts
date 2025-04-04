@@ -2326,6 +2326,9 @@ export default class OrderModuleService
         const compareAtUnitPrice =
           newItem?.compare_at_unit_price ?? item.compare_at_unit_price
 
+        delete lineItem.raw_unit_price
+        delete lineItem.raw_compare_at_unit_price
+
         order.items[idx] = {
           ...lineItem,
           actions,
