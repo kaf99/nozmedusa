@@ -2122,7 +2122,7 @@ medusaIntegrationTestRunner({
               storeHeaders
             )
 
-            updated = await api.post(
+            let updated = await api.post(
               `/store/carts/${cart.id}?fields=+totals`,
               { promo_codes: [tenPercentOffOnOrderPromo.code] },
               storeHeaders
