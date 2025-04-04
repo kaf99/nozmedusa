@@ -377,8 +377,8 @@ export default class PromotionModuleService
     const computedActions: PromotionTypes.ComputeActions[] = []
     const { items = [], shipping_methods: shippingMethods = [] } =
       applicationContext
-    const appliedItemCodes: string[] = []
-    const appliedShippingCodes: string[] = []
+    const appliedItemCodes: Set<string> = new Set()
+    const appliedShippingCodes: Set<string> = new Set()
     const codeAdjustmentMap = new Map<
       string,
       PromotionTypes.ComputeActionAdjustmentLine[]
@@ -418,7 +418,7 @@ export default class PromotionModuleService
           adjustments.push(adjustment)
 
           codeAdjustmentMap.set(adjustment.code, adjustments)
-          appliedItemCodes.push(adjustment.code)
+          appliedItemCodes.add(adjustment.code)
         }
       })
     })
@@ -431,7 +431,7 @@ export default class PromotionModuleService
           adjustments.push(adjustment)
 
           codeAdjustmentMap.set(adjustment.code, adjustments)
-          appliedShippingCodes.push(adjustment.code)
+          appliedShippingCodes.add(adjustment.code)
         }
       })
     })
@@ -440,8 +440,8 @@ export default class PromotionModuleService
       {
         code: [
           ...promotionCodesToApply,
-          ...appliedItemCodes,
-          ...appliedShippingCodes,
+          ...Array.from(appliedItemCodes),
+          ...Array.from(appliedShippingCodes),
         ],
       },
       {
@@ -468,17 +468,23 @@ export default class PromotionModuleService
     // We look at any existing promo codes applied in the context and recommend
     // them to be removed to start calculations from the beginning and refresh
     // the adjustments if they are requested to be applied again
-    const appliedCodes = [...appliedShippingCodes, ...appliedItemCodes]
 
-    for (const appliedCode of appliedCodes) {
+    for (const appliedCode of appliedShippingCodes) {
       const adjustments = codeAdjustmentMap.get(appliedCode) || []
-      const action = appliedShippingCodes.includes(appliedCode)
-        ? ComputedActions.REMOVE_SHIPPING_METHOD_ADJUSTMENT
-        : ComputedActions.REMOVE_ITEM_ADJUSTMENT
-
       adjustments.forEach((adjustment) =>
         computedActions.push({
-          action,
+          action: ComputedActions.REMOVE_SHIPPING_METHOD_ADJUSTMENT,
+          adjustment_id: adjustment.id,
+          code: appliedCode,
+        })
+      )
+    }
+
+    for (const appliedCode of appliedItemCodes) {
+      const adjustments = codeAdjustmentMap.get(appliedCode) || []
+      adjustments.forEach((adjustment) =>
+        computedActions.push({
+          action: ComputedActions.REMOVE_ITEM_ADJUSTMENT,
           adjustment_id: adjustment.id,
           code: appliedCode,
         })
