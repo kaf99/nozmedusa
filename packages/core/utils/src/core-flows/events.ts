@@ -1,11 +1,6 @@
 export const CartWorkflowEvents = {
-  ITEM_ADDED: "cart.item_added",
-  ITEM_REMOVED: "cart.item_removed",
   CREATED: "cart.created",
   UPDATED: "cart.updated",
-  CUSTOMER_UPDATED: "cart.customer_updated",
-  REGION_UPDATED: "cart.region_updated",
-  SHIPPING_ADDRESS_ADDED: "cart.shipping_address_added",
 }
 
 export const CustomerWorkflowEvents = {

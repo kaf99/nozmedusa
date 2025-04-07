@@ -218,16 +218,25 @@ export const updateCartWorkflow = createWorkflow(
       cart: cartToUpdate,
     })
 
-    /*
     when({ cartInput }, ({ cartInput }) => {
       return isDefined(cartInput.customer_id) || isDefined(cartInput.email)
     }).then(() => {
       emitEventStep({
-        eventName: CartWorkflowEvents.CUSTOMER_UPDATED,
-        data: { id: input.id },
+        eventName: CartWorkflowEvents.UPDATED,
+        data: {
+          id: input.id,
+          changes: {
+            customer: {
+              action: "updated",
+              value: {
+                customer_id: cartInput.customer_id,
+                email: cartInput.email,
+              },
+            },
+          },
+        },
       }).config({ name: "emit-customer-updated" })
     })
-    */
 
     const regionUpdated = transform(
       { input, cartToUpdate },
@@ -243,27 +252,37 @@ export const updateCartWorkflow = createWorkflow(
       return !!regionUpdated
     }).then(() => {
       emitEventStep({
-        eventName: CartWorkflowEvents.REGION_UPDATED,
-        data: { id: input.id },
+        eventName: CartWorkflowEvents.UPDATED,
+        data: {
+          id: input.id,
+          changes: {
+            region: {
+              action: "updated",
+              value: input.region_id,
+            },
+          },
+        },
       }).config({ name: "emit-region-updated" })
     })
 
-    parallelize(
-      updateCartsStep([cartInput]),
-      emitEventStep({
-        eventName: CartWorkflowEvents.UPDATED,
-        data: { id: input.id },
-      }).config({ name: "emit-cart-updated-event" })
-    )
+    updateCartsStep([cartInput])
 
     // when the shipping address is added, we emit the shipping address added event
     when({ input }, ({ input }) => {
       return isDefined(input.shipping_address)
     }).then(() => {
       emitEventStep({
-        eventName: CartWorkflowEvents.SHIPPING_ADDRESS_ADDED,
-        data: { id: input.id },
-      }).config({ name: "emit-shipping-address-added-event" })
+        eventName: CartWorkflowEvents.UPDATED,
+        data: {
+          id: input.id,
+          changes: {
+            shipping_address: {
+              action: "added",
+              value: input.shipping_address,
+            },
+          },
+        },
+      }).config({ name: "emit-shipping-address-added" })
     })
 
     // In case the region is updated, we might have a new currency OR tax inclusivity setting

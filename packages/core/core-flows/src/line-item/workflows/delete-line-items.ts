@@ -57,8 +57,13 @@ export const deleteLineItemsWorkflow = createWorkflow(
     })
 
     emitEventStep({
-      eventName: CartWorkflowEvents.ITEM_REMOVED,
-      data: { id: input.cart_id, items },
+      eventName: CartWorkflowEvents.UPDATED,
+      data: {
+        id: input.cart_id,
+        changes: {
+          line_items: { action: "deleted", value: items },
+        },
+      },
     })
   }
 )

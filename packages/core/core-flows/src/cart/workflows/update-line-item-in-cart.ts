@@ -1,9 +1,5 @@
 import { UpdateLineItemInCartWorkflowInputDTO } from "@medusajs/framework/types"
-import {
-  CartWorkflowEvents,
-  isDefined,
-  MedusaError,
-} from "@medusajs/framework/utils"
+import { isDefined, MedusaError } from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -12,9 +8,10 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { emitEventStep, useQueryGraphStep } from "../../common"
+import { useQueryGraphStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updateLineItemsStepWithSelector } from "../../line-item/steps"
+import { emitLineItemUpdateEventStep } from "../steps/emit-line-item-update-event"
 import { validateCartStep } from "../steps/validate-cart"
 import { validateVariantPricesStep } from "../steps/validate-variant-prices"
 import {
@@ -150,14 +147,12 @@ export const updateLineItemInCartWorkflow = createWorkflow(
       input: { cart_id: input.cart_id },
     })
 
-    // when the quantity is 0, we emit the item removed event
-    when({ input }, ({ input }) => {
-      return input.update.quantity === 0
-    }).then(() => {
-      emitEventStep({
-        eventName: CartWorkflowEvents.ITEM_REMOVED,
-        data: { id: input.cart_id, item: item },
-      }).config({ name: "emit-item-removed-event" })
+    emitLineItemUpdateEventStep({
+      cart_id: input.cart_id,
+      line_item: {
+        old_quantity: item.quantity as number,
+        ...item,
+      },
     })
 
     return new WorkflowResponse(void 0, {
