@@ -153,6 +153,11 @@ const redirects = async () => {
       destination: "/learn/fundamentals/data-models/properties",
       permanent: true,
     },
+    {
+      source: "/starters/nextjs-medusa-starter",
+      destination: "/resources/nextjs-starter",
+      permanent: true,
+    },
   ]
 }
 
