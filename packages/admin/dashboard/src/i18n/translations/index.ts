@@ -21,6 +21,7 @@ import cs from "./cs.json"
 import ru from "./ru.json"
 import lt from "./lt.json"
 import vi from "./vi.json"
+import ko from "./ko.json"
 
 export default {
   bg: {
@@ -91,5 +92,8 @@ export default {
   },
   vi: {
     translation: vi,
+  },
+  ko: {
+    translation: ko,
   },
 }

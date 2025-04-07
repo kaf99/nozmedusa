@@ -486,6 +486,11 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *   ): Promise<UpdatePaymentOutput> {
    *     const { amount, currency_code, context } = input
    *     const externalId = input.data?.id
+   * 
+   *     // Validate context.customer
+   *     if (!context || !context.customer) {
+   *       throw new Error("Context must include a valid customer.");
+   *     }
    *
    *     // assuming you have a client that updates the payment
    *     const response = await this.client.update(

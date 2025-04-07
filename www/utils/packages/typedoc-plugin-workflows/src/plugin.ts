@@ -493,12 +493,32 @@ class WorkflowsPlugin {
     workflowComments?: CommentTag[]
     workflowReflection: DeclarationReflection
   }): DeclarationReflection {
-    const declarationReflection = context.createDeclarationReflection(
-      ReflectionKind.Function,
-      undefined,
-      undefined,
-      stepId
-    )
+    const hooksProperty = workflowReflection.getChildByName("hooks")
+    let declarationReflection: DeclarationReflection | undefined
+    if (
+      hooksProperty?.isDeclaration() &&
+      hooksProperty.type?.type === "intersection"
+    ) {
+      hooksProperty.type.types.some((hookType) => {
+        if (hookType.type !== "reflection") {
+          return
+        }
+
+        declarationReflection = hookType.declaration.children?.find((child) => {
+          return child.name === stepId
+        })
+
+        return declarationReflection !== undefined
+      })
+    }
+    if (!declarationReflection) {
+      declarationReflection = context.createDeclarationReflection(
+        ReflectionKind.Function,
+        undefined,
+        undefined,
+        stepId
+      )
+    }
 
     declarationReflection.comment = new Comment()
 
@@ -579,7 +599,6 @@ class WorkflowsPlugin {
       ])
     )
 
-    const hooksProperty = workflowReflection.getChildByName("hooks")
     if (
       hooksProperty?.isDeclaration() &&
       hooksProperty.type?.type === "reflection"
