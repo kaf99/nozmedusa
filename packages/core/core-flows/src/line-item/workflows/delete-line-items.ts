@@ -42,7 +42,7 @@ export const deleteLineItemsWorkflowId = "delete-line-items"
 export const deleteLineItemsWorkflow = createWorkflow(
   deleteLineItemsWorkflowId,
   (input: WorkflowData<DeleteLineItemsWorkflowInput>) => {
-    const items = useQueryGraphStep({
+    const { data: items } = useQueryGraphStep({
       entity: "line_item",
       fields: ["*"],
       filters: {

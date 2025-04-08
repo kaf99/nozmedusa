@@ -1,5 +1,9 @@
 import { UpdateLineItemInCartWorkflowInputDTO } from "@medusajs/framework/types"
-import { isDefined, MedusaError } from "@medusajs/framework/utils"
+import {
+  CartWorkflowEvents,
+  isDefined,
+  MedusaError,
+} from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -8,10 +12,10 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { useQueryGraphStep } from "../../common"
+import { emitEventStep, useQueryGraphStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updateLineItemsStepWithSelector } from "../../line-item/steps"
-import { emitLineItemUpdateEventStep } from "../steps/emit-line-item-update-event"
+import { getLineItemUpdateEventPayload } from "../steps/get-line-item-update-event-payload"
 import { validateCartStep } from "../steps/validate-cart"
 import { validateVariantPricesStep } from "../steps/validate-variant-prices"
 import {
@@ -147,12 +151,24 @@ export const updateLineItemInCartWorkflow = createWorkflow(
       input: { cart_id: input.cart_id },
     })
 
-    emitLineItemUpdateEventStep({
-      cart_id: input.cart_id,
-      line_item: {
+    when({ lineItemUpdate }, ({ lineItemUpdate }) => {
+      return !!lineItemUpdate.data.quantity
+    }).then(() => {
+      const payload = getLineItemUpdateEventPayload({
+        line_item: item,
         old_quantity: item.quantity as number,
-        ...item,
-      },
+        new_quantity: (lineItemUpdate.data.quantity as number) || 0,
+      })
+
+      emitEventStep({
+        eventName: CartWorkflowEvents.UPDATED,
+        data: {
+          id: input.cart_id,
+          changes: {
+            line_items: payload,
+          },
+        },
+      })
     })
 
     return new WorkflowResponse(void 0, {
