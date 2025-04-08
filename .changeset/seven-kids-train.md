@@ -3,10 +3,24 @@
 "@medusajs/utils": minor
 ---
 
-Adds the following emitted events to core flows:
+Introduces (breaking changes to) the following events emitted from core flows:
 
-- cart.item_added
-- cart.item_removed
-- cart.shipping_address_added
-- payment-session.created
-- payment-session.deleted
+- cart.updated (refactored)
+- payment-session.created (added)
+- payment-session.deleted(added)
+- cart.customer_updated (removed)
+- cart.region_updated (removed)
+
+All cart updates now emit a cart.updated event with the following payload:
+
+```
+{
+  id: string; // Cart ID
+  changes: {
+    [field: string]: {
+      action: "added" | "updated" | "deleted"; // What happened
+      value?: any; // Input value
+    };
+  };
+}
+```
