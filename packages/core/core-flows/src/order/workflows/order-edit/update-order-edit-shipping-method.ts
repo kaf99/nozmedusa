@@ -119,6 +119,41 @@ export const updateOrderEditShippingMethodWorkflowId =
  * @summary
  *
  * Update a shipping method of an order edit.
+ * 
+ * @property hooks.setPricingContext - This hook is executed before the shipping method's option is retrieved. You can consume this hook to return any custom context useful for the prices retrieval of shipping method's option.
+ * 
+ * For example, assuming you have the following custom pricing rule:
+ * 
+ * ```json
+ * {
+ *   "attribute": "location_id",
+ *   "operator": "eq",
+ *   "value": "sloc_123",
+ * }
+ * ```
+ * 
+ * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
+ * 
+ * ```ts
+ * import { updateOrderEditShippingMethodWorkflow } from "@medusajs/medusa/core-flows";
+ * import { StepResponse } from "@medusajs/workflows-sdk";
+ * 
+ * updateOrderEditShippingMethodWorkflow.hooks.setPricingContext((
+ *   { order, order_change, additional_data }, { container }
+ * ) => {
+ *   return new StepResponse({
+ *     location_id: "sloc_123", // Special price for in-store purchases
+ *   });
+ * });
+ * ```
+ * 
+ * The price of the shipping method's option will now be retrieved using the context you return.
+ * 
+ * :::note
+ * 
+ * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
+ * 
+ * :::
  */
 export const updateOrderEditShippingMethodWorkflow = createWorkflow(
   updateOrderEditShippingMethodWorkflowId,

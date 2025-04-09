@@ -1003,12 +1003,12 @@ export default class PricingModuleService
     })
 
     // Bulk create price sets
-    const createdPriceSets = await this.priceSetService_.create(
+    const priceSets = await this.priceSetService_.create(
       toCreate,
       sharedContext
     )
 
-    const eventsData = createdPriceSets.reduce(
+    const eventsData = priceSets.reduce(
       (eventsData, priceSet) => {
         eventsData.priceSets.push({
           id: priceSet.id,
@@ -1051,7 +1051,7 @@ export default class PricingModuleService
       sharedContext,
     })
 
-    return createdPriceSets
+    return priceSets
   }
 
   @InjectTransactionManager()

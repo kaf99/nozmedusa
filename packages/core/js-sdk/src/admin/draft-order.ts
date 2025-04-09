@@ -29,7 +29,7 @@ export class DraftOrder {
    * To retrieve a draft order by its ID:
    *
    * ```ts
-   * sdk.admin.draftOrder.retrieve("draft_order_123")
+   * sdk.admin.draftOrder.retrieve("order_123")
    * .then(({ draft_order }) => {
    *   console.log(draft_order)
    * })
@@ -38,7 +38,7 @@ export class DraftOrder {
    * To specify the fields and relations to retrieve:
    *
    * ```ts
-   * sdk.admin.draftOrder.retrieve("draft_order_123", {
+   * sdk.admin.draftOrder.retrieve("order_123", {
    *   fields: "id,*items"
    * })
    * .then(({ draft_order }) => {
@@ -142,7 +142,7 @@ export class DraftOrder {
    *     },
    *   ],
    *   region_id: "region_123",
-   *   sales_channel_id: "sales_channel_123",
+   *   sales_channel_id: "sc_123",
    * })
    * .then(({ draft_order }) => {
    *   console.log(draft_order)
@@ -178,7 +178,7 @@ export class DraftOrder {
    * To update a draft order:
    *
    * ```ts
-   * sdk.admin.draftOrder.update("draft_order_123", {
+   * sdk.admin.draftOrder.update("order_123", {
    *   email: "test@test.com",
    * })
    * .then(({ draft_order }) => {
@@ -215,7 +215,7 @@ export class DraftOrder {
    * To convert a draft order to an order:
    *
    * ```ts
-   * sdk.admin.draftOrder.convertToOrder("draft_order_123")
+   * sdk.admin.draftOrder.convertToOrder("order_123")
    * .then(({ order }) => {
    *   console.log(order)
    * })

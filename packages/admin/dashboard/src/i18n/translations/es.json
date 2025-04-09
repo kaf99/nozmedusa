@@ -772,6 +772,7 @@
     "manageLocations": "Gestionar ubicaciones",
     "deleteWarning": "Estás a punto de eliminar un ítem de inventario. Esta acción no puede deshacerse.",
     "editItemDetails": "Editar detalles del ítem",
+    "quantityAcrossLocations": "{{quantity}} en {{locations}} ubicaciones",
     "create": {
       "title": "Crear Ítem de Inventario",
       "details": "Detalles",

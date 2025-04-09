@@ -163,6 +163,11 @@ const nextConfig = {
         destination: "/troubleshooting/workflow-errors/when-then",
         permanent: true,
       },
+      {
+        source: "/medusa-cli/commands/start-cluster",
+        destination: "/medusa-cli/commands/start",
+        permanent: true,
+      },
     ]
   },
   outputFileTracingExcludes: {

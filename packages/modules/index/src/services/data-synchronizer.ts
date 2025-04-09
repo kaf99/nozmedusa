@@ -290,7 +290,7 @@ export class DataSynchronizer {
         filters["updated_at"] = { $gt: pagination.updated_at }
       }
 
-      const { data } = await this.#query.graph({
+      const queryResult = await this.#query.graph({
         entity: alias,
         fields: [entityPrimaryKey],
         filters,
@@ -302,9 +302,11 @@ export class DataSynchronizer {
         },
       })
 
-      if (!data.length) {
+      if (!queryResult?.data?.length) {
         break
       }
+
+      const data = queryResult.data
 
       const envelop: Event = {
         data,

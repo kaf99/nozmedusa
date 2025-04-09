@@ -20,6 +20,8 @@ import fa from "./fa.json"
 import cs from "./cs.json"
 import ru from "./ru.json"
 import lt from "./lt.json"
+import vi from "./vi.json"
+import ko from "./ko.json"
 
 export default {
   bg: {
@@ -87,5 +89,11 @@ export default {
   },
   lt: {
     translation: lt,
+  },
+  vi: {
+    translation: vi,
+  },
+  ko: {
+    translation: ko,
   },
 }

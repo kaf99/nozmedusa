@@ -53,11 +53,19 @@ export const sidebars: Sidebar.Sidebar[] = [
         ],
       },
       {
-        type: "link",
+        type: "category",
         title: "Icons",
-        path: "/icons/overview",
-        isPathHref: true,
         loaded: true,
+        initialOpen: true,
+        children: [
+          {
+            type: "link",
+            title: "Overview",
+            path: "/icons/overview",
+            isPathHref: true,
+            loaded: true,
+          },
+        ],
       },
       {
         type: "separator",
