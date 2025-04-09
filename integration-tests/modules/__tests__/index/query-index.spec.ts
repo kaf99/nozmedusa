@@ -253,8 +253,7 @@ medusaIntegrationTestRunner({
         ])
       })
 
-      // TODO: Investigate why this test is flacky
-      it.skip("should use query.index to query the index module sorting by price desc", async () => {
+      it("should use query.index to query the index module sorting by price desc", async () => {
         await populateData(api)
 
         const query = appContainer.resolve(

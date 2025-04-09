@@ -198,9 +198,25 @@ export const dbTestUtilFactory = (): any => ({
                                             FROM information_schema.tables
                                             WHERE table_schema = '${schema}';`)
 
+    const skipIndexPartitionPrefix = "cat_"
+    let hasIndexTables = false
     for (const { table_name } of tableNames) {
+      // Skipping index partition tables.
+      if (table_name.startsWith(skipIndexPartitionPrefix)) {
+        continue
+      }
+
+      if (table_name === "index_data" || table_name === "index_relation") {
+        hasIndexTables = true
+      }
+
       await runRawQuery(`DELETE
                            FROM ${schema}."${table_name}";`)
+    }
+
+    if (hasIndexTables) {
+      await runRawQuery(`TRUNCATE TABLE ${schema}.index_data;`)
+      await runRawQuery(`TRUNCATE TABLE ${schema}.index_relation;`)
     }
 
     await runRawQuery(`SET session_replication_role = 'origin';`)
