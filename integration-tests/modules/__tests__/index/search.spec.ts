@@ -6,6 +6,7 @@ import {
   adminHeaders,
   createAdminUser,
 } from "../../../helpers/create-admin-user"
+import { fetchAndRetry } from "../../../helpers/retry"
 
 jest.setTimeout(100000)
 
@@ -67,33 +68,41 @@ medusaIntegrationTestRunner({
         // Timeout to allow indexing to finish
         await setTimeout(4000)
 
-        const { data: results } = await indexEngine.query<"product">({
-          fields: [
-            "product.*",
-            "product.variants.*",
-            "product.variants.prices.*",
-          ],
-          filters: {
-            product: {
-              variants: {
-                prices: {
-                  amount: { $gt: 50 },
-                },
-              },
-            },
-          },
-          pagination: {
-            order: {
-              product: {
-                variants: {
-                  prices: {
-                    amount: "DESC",
+        const { data: results } = await fetchAndRetry(
+          async () =>
+            indexEngine.query<"product">({
+              fields: [
+                "product.*",
+                "product.variants.*",
+                "product.variants.prices.*",
+              ],
+              filters: {
+                product: {
+                  variants: {
+                    prices: {
+                      amount: { $gt: 50 },
+                    },
                   },
                 },
               },
-            },
-          },
-        })
+              pagination: {
+                order: {
+                  product: {
+                    variants: {
+                      prices: {
+                        amount: "DESC",
+                      },
+                    },
+                  },
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
 
         expect(results.length).toBe(1)
 
@@ -146,34 +155,42 @@ medusaIntegrationTestRunner({
         // Timeout to allow indexing to finish
         await setTimeout(4000)
 
-        const { data: results } = await indexEngine.query<"product">({
-          fields: [
-            "product.*",
-            "product.variants.*",
-            "product.variants.prices.*",
-          ],
-          filters: {
-            product: {
-              variants: {
-                prices: {
-                  amount: { $gt: 50 },
-                  currency_code: { $eq: "AUD" },
-                },
-              },
-            },
-          },
-          pagination: {
-            order: {
-              product: {
-                variants: {
-                  prices: {
-                    amount: "DESC",
+        const { data: results } = await fetchAndRetry(
+          async () =>
+            indexEngine.query<"product">({
+              fields: [
+                "product.*",
+                "product.variants.*",
+                "product.variants.prices.*",
+              ],
+              filters: {
+                product: {
+                  variants: {
+                    prices: {
+                      amount: { $gt: 50 },
+                      currency_code: { $eq: "AUD" },
+                    },
                   },
                 },
               },
-            },
-          },
-        })
+              pagination: {
+                order: {
+                  product: {
+                    variants: {
+                      prices: {
+                        amount: "DESC",
+                      },
+                    },
+                  },
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
 
         expect(results.length).toBe(1)
 
