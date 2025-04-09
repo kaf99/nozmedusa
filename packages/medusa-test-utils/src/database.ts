@@ -199,15 +199,19 @@ export const dbTestUtilFactory = (): any => ({
                                             WHERE table_schema = '${schema}';`)
 
     const skipIndexPartitionPrefix = "cat_"
+    const mainPartitionTables = ["index_data", "index_relation"]
     let hasIndexTables = false
     for (const { table_name } of tableNames) {
-      // Skipping index partition tables.
-      if (table_name.startsWith(skipIndexPartitionPrefix)) {
-        continue
+      if (mainPartitionTables.includes(table_name)) {
+        hasIndexTables = true
       }
 
-      if (table_name === "index_data" || table_name === "index_relation") {
-        hasIndexTables = true
+      // Skipping index partition tables.
+      if (
+        table_name.startsWith(skipIndexPartitionPrefix) ||
+        mainPartitionTables.includes(table_name)
+      ) {
+        continue
       }
 
       await runRawQuery(`DELETE
