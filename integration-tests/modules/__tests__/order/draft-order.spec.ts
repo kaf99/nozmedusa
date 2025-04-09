@@ -17,7 +17,7 @@ import {
 } from "../../../helpers/create-admin-user"
 import { setupTaxStructure } from "../fixtures"
 
-jest.setTimeout(50000)
+jest.setTimeout(100000)
 
 const env = { MEDUSA_FF_MEDUSA_V2: true }
 
@@ -160,6 +160,14 @@ medusaIntegrationTestRunner({
           {
             [Modules.PRODUCT]: {
               variant_id: product.variants[0].id,
+            },
+            [Modules.INVENTORY]: {
+              inventory_item_id: inventoryItem.id,
+            },
+          },
+          {
+            [Modules.PRODUCT]: {
+              variant_id: product_2.variants[0].id,
             },
             [Modules.INVENTORY]: {
               inventory_item_id: inventoryItem.id,

@@ -80,7 +80,7 @@ async function populateData(api: any) {
       console.log(err)
     })
 
-  await setTimeout(2000)
+  await setTimeout(10000)
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"

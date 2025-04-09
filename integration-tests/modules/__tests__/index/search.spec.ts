@@ -153,7 +153,7 @@ medusaIntegrationTestRunner({
           })
 
         // Timeout to allow indexing to finish
-        await setTimeout(4000)
+        await setTimeout(10000)
 
         const { data: results } = await fetchAndRetry(
           async () =>
