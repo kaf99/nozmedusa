@@ -196,6 +196,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
             transactionId:
               step.__step__ + "-" + (stepContext.transactionId ?? ulid()),
             parentStepIdempotencyKey: stepContext.idempotencyKey,
+            preventReleaseEvents: true,
           },
         })
 
@@ -207,15 +208,12 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
         )
       },
       async (transaction, stepContext) => {
-        if (!transaction) {
-          return
-        }
-
         const { container, ...sharedContext } = stepContext
 
+        const transactionId = step.__step__ + "-" + stepContext.transactionId
         await workflow(container).cancel({
-          transaction: (transaction as WorkflowResult<any>).transaction,
-          transactionId: isString(transaction) ? transaction : undefined,
+          transaction: (transaction as WorkflowResult<any>)?.transaction,
+          transactionId,
           container,
           context: {
             ...sharedContext,

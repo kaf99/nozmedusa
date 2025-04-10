@@ -884,10 +884,6 @@ export const filesMap = [
     "pathname": "/medusa-cli/commands/start"
   },
   {
-    "filePath": "/www/apps/resources/app/medusa-cli/commands/start-cluster/page.mdx",
-    "pathname": "/medusa-cli/commands/start-cluster"
-  },
-  {
     "filePath": "/www/apps/resources/app/medusa-cli/commands/telemtry/page.mdx",
     "pathname": "/medusa-cli/commands/telemtry"
   },

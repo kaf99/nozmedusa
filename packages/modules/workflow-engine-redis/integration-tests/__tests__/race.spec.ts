@@ -12,7 +12,7 @@ import { setTimeout as setTimeoutSync } from "timers"
 import { setTimeout } from "timers/promises"
 import "../__fixtures__"
 
-jest.setTimeout(999900000)
+jest.setTimeout(300000)
 
 const failTrap = (done) => {
   setTimeoutSync(() => {

@@ -14,6 +14,7 @@ import {
   MedusaError,
   TransactionState,
   TransactionStepState,
+  isDefined,
   isPresent,
 } from "@medusajs/framework/utils"
 import { WorkflowOrchestratorService } from "@services"
@@ -115,8 +116,8 @@ export class InMemoryDistributedTransactionStorage
       return data
     }
 
-    const { idempotent } = options ?? {}
-    if (!idempotent) {
+    const { idempotent, store, retentionTime } = options ?? {}
+    if (!idempotent && !(store && isDefined(retentionTime))) {
       return
     }
 

@@ -129,15 +129,6 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
-                  "path": "/medusa-cli/commands/start-cluster",
-                  "title": "start-cluster",
-                  "description": "",
-                  "children": []
-                },
-                {
-                  "loaded": true,
-                  "isPathHref": true,
-                  "type": "link",
                   "path": "/medusa-cli/commands/telemtry",
                   "title": "telemetry",
                   "description": "",

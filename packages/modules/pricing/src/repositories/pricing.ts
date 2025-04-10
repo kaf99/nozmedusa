@@ -16,6 +16,8 @@ import {
 } from "@medusajs/framework/types"
 import { Knex, SqlEntityManager } from "@mikro-orm/postgresql"
 
+// Simple cache implementation
+
 export class PricingRepository
   extends MikroOrmBase
   implements PricingRepositoryService
@@ -35,14 +37,11 @@ export class PricingRepository
     const knex = manager.getKnex()
     const context = pricingContext.context || {}
 
-    // Quantity is used to scope money amounts based on min_quantity and max_quantity.
-    // We should potentially think of reserved words in pricingContext that can't be used in rules
-    // or have a separate pricing options that accept things like quantity, price_list_id and other
-    // pricing module features
+    // Extract quantity and currency from context
     const quantity = context.quantity
     delete context.quantity
 
-    // Currency code here is a required param.
+    // Currency code is required
     const currencyCode = context.currency_code
     delete context.currency_code
 
@@ -53,28 +52,9 @@ export class PricingRepository
       )
     }
 
-    const isContextPresent = Object.entries(context).length || !!currencyCode
-
-    // Only if the context is present do we need to query the database.
-    // We don't get anything from the db otherwise.
-    if (!isContextPresent) {
-      return []
-    }
-
-    // We query the rule tables to get all whitelisted rule attributes
-    // This will help cleanup the query and do a db query on only necessary rule attributes.
-    const priceRuleAttributesQuery = knex("price_rule")
-      .distinct("attribute")
-      .pluck("attribute")
-
-    const priceListRuleAttributesQuery = knex("price_list_rule")
-      .distinct("attribute")
-      .pluck("attribute")
-
-    const [ruleAttributes, priceListRuleAttributes] = await promiseAll([
-      priceRuleAttributesQuery,
-      priceListRuleAttributesQuery,
-    ])
+    // Generate flatten key-value pairs for rule matching
+    const [ruleAttributes, priceListRuleAttributes] =
+      await this.getAttributesFromRuleTables(knex)
 
     const allowedRuleAttributes = [
       ...ruleAttributes,
@@ -95,198 +75,197 @@ export class PricingRepository
       }
     )
 
-    // Gets all the prices where rules match for each of the contexts
-    // that the price set is configured for
-    const priceSubQueryKnex = knex({
-      price: "price",
-    })
+    const hasComplexContext = flattenedContext.length > 0
+
+    // Base query with efficient index lookups
+    const query = knex
       .select({
         id: "price.id",
-        amount: "price.amount",
-        raw_amount: "price.raw_amount",
-        min_quantity: "price.min_quantity",
-        max_quantity: "price.max_quantity",
-        currency_code: "price.currency_code",
-        deleted_at: "price.deleted_at",
         price_set_id: "price.price_set_id",
-        rules_count: "price.rules_count",
-        price_list_id: "price.price_list_id",
-        pl_rules_count: "pl.rules_count",
-        pl_type: "pl.type",
-        has_price_list: knex.raw(
-          "case when price.price_list_id IS NULL then False else True end"
-        ),
-      })
-      .leftJoin("price_rule as pr", "pr.price_id", "price.id")
-      .leftJoin("price_list as pl", function () {
-        this.on("pl.id", "price.price_list_id").andOn(
-          "pl.status",
-          knex.raw("?", [PriceListStatus.ACTIVE])
-        )
-      })
-      .leftJoin("price_list_rule as plr", "plr.price_list_id", "pl.id")
-      .groupBy("price.id", "pl.id")
-      .having(
-        knex.raw(
-          "count(pr.attribute) = price.rules_count AND price.price_list_id IS NULL"
-        )
-      )
-      .orHaving(
-        knex.raw(
-          "count(DISTINCT plr.attribute) = pl.rules_count AND price.price_list_id IS NOT NULL"
-        )
-      )
-
-    const buildOperatorQueries = (
-      operatorGroupBuilder: Knex.QueryBuilder,
-      value
-    ) => {
-      operatorGroupBuilder
-        .where((operatorBuilder) => {
-          operatorBuilder
-            .where("pr.operator", "gte")
-            .whereRaw("? >= pr.value::numeric", [value])
-        })
-        .orWhere((operatorBuilder) => {
-          operatorBuilder
-            .where("pr.operator", "gt")
-            .whereRaw("? > pr.value::numeric", [value])
-        })
-        .orWhere((operatorBuilder) => {
-          operatorBuilder
-            .where("pr.operator", "lt")
-            .whereRaw("? < pr.value::numeric", [value])
-        })
-        .orWhere((operatorBuilder) => {
-          operatorBuilder
-            .where("pr.operator", "lte")
-            .whereRaw("? <= pr.value::numeric", [value])
-        })
-        .orWhere((operatorBuilder) => {
-          operatorBuilder
-            .where("pr.operator", "eq")
-            .whereRaw("? = pr.value::numeric", [value])
-        })
-    }
-
-    priceSubQueryKnex.orWhere((priceBuilder) => {
-      priceBuilder
-        .whereNull("price.price_list_id")
-        .andWhere((withoutPriceListBuilder) => {
-          for (const [key, value] of flattenedContext) {
-            withoutPriceListBuilder.orWhere((orBuilder) => {
-              orBuilder.where("pr.attribute", key)
-
-              if (typeof value === "number") {
-                buildOperatorQueries(orBuilder, value)
-              } else {
-                const normalizeValue = Array.isArray(value) ? value : [value]
-
-                orBuilder.whereIn("pr.value", normalizeValue)
-              }
-            })
-          }
-
-          withoutPriceListBuilder.orWhere("price.rules_count", "=", 0)
-        })
-    })
-
-    priceSubQueryKnex.orWhere((q) => {
-      q.whereNotNull("price.price_list_id")
-        .whereNull("pl.deleted_at")
-        .andWhere(function () {
-          this.whereNull("pl.starts_at").orWhere(
-            "pl.starts_at",
-            "<=",
-            knex.fn.now()
-          )
-        })
-        .andWhere(function () {
-          this.whereNull("pl.ends_at").orWhere(
-            "pl.ends_at",
-            ">=",
-            knex.fn.now()
-          )
-        })
-        .andWhere(function () {
-          this.andWhere(function () {
-            for (const [key, value] of flattenedContext) {
-              this.orWhere({ "plr.attribute": key })
-              this.where(
-                "plr.value",
-                "@>",
-                JSON.stringify(Array.isArray(value) ? value : [value])
-              )
-            }
-
-            this.orWhere("pl.rules_count", "=", 0)
-          })
-
-          this.andWhere(function () {
-            this.andWhere((contextBuilder) => {
-              for (const [key, value] of flattenedContext) {
-                contextBuilder.orWhere((orBuilder) => {
-                  orBuilder.where("pr.attribute", key)
-
-                  if (typeof value === "number") {
-                    buildOperatorQueries(orBuilder, value)
-                  } else {
-                    const normalizeValue = Array.isArray(value)
-                      ? value
-                      : [value]
-
-                    orBuilder.whereIn("pr.value", normalizeValue)
-                  }
-                })
-              }
-
-              contextBuilder.andWhere("price.rules_count", ">", 0)
-            })
-            this.orWhere("price.rules_count", "=", 0)
-          })
-        })
-    })
-
-    const priceSetQueryKnex = knex({
-      ps: "price_set",
-    })
-      .select({
-        id: "price.id",
-        price_set_id: "ps.id",
         amount: "price.amount",
         raw_amount: "price.raw_amount",
         min_quantity: "price.min_quantity",
         max_quantity: "price.max_quantity",
         currency_code: "price.currency_code",
-        rules_count: "price.rules_count",
-        pl_rules_count: "price.pl_rules_count",
-        price_list_type: "price.pl_type",
         price_list_id: "price.price_list_id",
-        all_rules_count: knex.raw(
-          "COALESCE(price.rules_count, 0) + COALESCE(price.pl_rules_count, 0)"
-        ),
+        price_list_type: "pl.type",
+        rules_count: "price.rules_count",
+        price_list_rules_count: "pl.rules_count",
       })
-      .join(priceSubQueryKnex.as("price"), "price.price_set_id", "ps.id")
-      .whereIn("ps.id", pricingFilters.id)
-      .andWhere("price.currency_code", "=", currencyCode)
+      .from("price")
+      .whereIn("price.price_set_id", pricingFilters.id)
+      .andWhere("price.currency_code", currencyCode)
       .whereNull("price.deleted_at")
-      .orderBy([
-        { column: "price.has_price_list", order: "asc" },
-        { column: "all_rules_count", order: "desc" },
-        { column: "amount", order: "asc" },
-      ])
 
-    if (quantity) {
-      priceSetQueryKnex.where("price.min_quantity", "<=", quantity)
-      priceSetQueryKnex.andWhere("price.max_quantity", ">=", quantity)
+    // Apply quantity filter
+    if (quantity !== undefined) {
+      query.andWhere(function (this: Knex.QueryBuilder) {
+        this.where(function (this: Knex.QueryBuilder) {
+          this.where("price.min_quantity", "<=", quantity).andWhere(
+            "price.max_quantity",
+            ">=",
+            quantity
+          )
+        }).orWhere(function (this: Knex.QueryBuilder) {
+          this.whereNull("price.min_quantity").whereNull("price.max_quantity")
+        })
+      })
     } else {
-      priceSetQueryKnex.andWhere(function () {
-        this.andWhere("price.min_quantity", "<=", "1").orWhereNull(
+      query.andWhere(function (this: Knex.QueryBuilder) {
+        this.where("price.min_quantity", "<=", 1).orWhereNull(
           "price.min_quantity"
         )
       })
     }
 
-    return await priceSetQueryKnex
+    // Efficient price list join with index usage
+    query.leftJoin("price_list as pl", function (this: Knex.JoinClause) {
+      this.on("pl.id", "=", "price.price_list_id")
+        .andOn("pl.status", "=", knex.raw("?", [PriceListStatus.ACTIVE]))
+        .andOn(function (this: Knex.JoinClause) {
+          this.onNull("pl.deleted_at")
+        })
+        .andOn(function (this: Knex.JoinClause) {
+          this.onNull("pl.starts_at").orOn("pl.starts_at", "<=", knex.fn.now())
+        })
+        .andOn(function (this: Knex.JoinClause) {
+          this.onNull("pl.ends_at").orOn("pl.ends_at", ">=", knex.fn.now())
+        })
+    })
+
+    // OPTIMIZATION: Only add complex rule filtering when necessary
+    if (hasComplexContext) {
+      // For price rules - direct check that ALL rules match
+      const priceRuleConditions = knex.raw(
+        `
+        (
+          price.rules_count = 0 OR
+          (
+            /* Count all matching rules and compare to total rule count */
+            SELECT COUNT(*) 
+            FROM price_rule pr
+            WHERE pr.price_id = price.id 
+            AND pr.deleted_at IS NULL
+            AND (
+              ${flattenedContext
+                .map(([key, value]) => {
+                  if (typeof value === "number") {
+                    return `
+                    (pr.attribute = ? AND (
+                      (pr.operator = 'eq' AND pr.value = ?) OR
+                      (pr.operator = 'gt' AND ? > pr.value::numeric) OR
+                      (pr.operator = 'gte' AND ? >= pr.value::numeric) OR
+                      (pr.operator = 'lt' AND ? < pr.value::numeric) OR
+                      (pr.operator = 'lte' AND ? <= pr.value::numeric)
+                    ))
+                    `
+                  } else {
+                    const normalizeValue = Array.isArray(value)
+                      ? value
+                      : [value]
+                    const placeholders = normalizeValue.map(() => "?").join(",")
+                    return `(pr.attribute = ? AND pr.value IN (${placeholders}))`
+                  }
+                })
+                .join(" OR ")}
+            )
+          ) = (
+            /* Get total rule count */
+            SELECT COUNT(*) 
+            FROM price_rule pr
+            WHERE pr.price_id = price.id 
+            AND pr.deleted_at IS NULL
+          )
+        )
+        `,
+        flattenedContext.flatMap(([key, value]) => {
+          if (typeof value === "number") {
+            return [key, value.toString(), value, value, value, value]
+          } else {
+            const normalizeValue = Array.isArray(value) ? value : [value]
+            return [key, ...normalizeValue]
+          }
+        })
+      )
+
+      // For price list rules - direct check that ALL rules match
+      const priceListRuleConditions = knex.raw(
+        `
+        (
+          pl.rules_count = 0 OR
+          (
+            /* Count all matching rules and compare to total rule count */
+            SELECT COUNT(*) 
+            FROM price_list_rule plr
+            WHERE plr.price_list_id = pl.id
+              AND plr.deleted_at IS NULL
+              AND (
+                ${flattenedContext
+                  .map(([key, value]) => {
+                    return `(plr.attribute = ? AND plr.value @> ?)`
+                  })
+                  .join(" OR ")}
+              )
+          ) = (
+            /* Get total rule count */
+            SELECT COUNT(*) 
+            FROM price_list_rule plr
+            WHERE plr.price_list_id = pl.id
+              AND plr.deleted_at IS NULL
+          )
+        )
+        `,
+        flattenedContext.flatMap(([key, value]) => {
+          return [key, JSON.stringify(Array.isArray(value) ? value : [value])]
+        })
+      )
+
+      query.where((qb) => {
+        qb.whereNull("price.price_list_id")
+          .andWhereRaw(priceRuleConditions)
+          .orWhere((qb2) => {
+            qb2
+              .whereNotNull("price.price_list_id")
+              .whereRaw(priceListRuleConditions)
+              .andWhereRaw(priceRuleConditions)
+          })
+      })
+    } else {
+      // Simple case - just get prices with no rules or price lists with no rules
+      query.where(function (this: Knex.QueryBuilder) {
+        this.where("price.rules_count", 0).orWhere(function (
+          this: Knex.QueryBuilder
+        ) {
+          this.whereNotNull("price.price_list_id").where("pl.rules_count", 0)
+        })
+      })
+    }
+
+    // Optimized ordering to help query planner and preserve price list precedence
+    query
+      .orderByRaw("price.price_list_id IS NOT NULL DESC")
+      .orderByRaw("price.rules_count + COALESCE(pl.rules_count, 0) DESC") // More specific rules first
+      .orderBy("pl.id", "asc") // Order by price list ID to ensure first created price list takes precedence
+      .orderBy("price.amount", "asc") // For non-price list prices, cheaper ones first
+
+    // Execute the optimized query
+    return await query
+  }
+
+  // Helper method to get attributes from rule tables
+  private async getAttributesFromRuleTables(knex: Knex) {
+    // Using distinct queries for better performance
+    const priceRuleAttributesQuery = knex("price_rule")
+      .distinct("attribute")
+      .pluck("attribute")
+
+    const priceListRuleAttributesQuery = knex("price_list_rule")
+      .distinct("attribute")
+      .pluck("attribute")
+
+    return await promiseAll([
+      priceRuleAttributesQuery,
+      priceListRuleAttributesQuery,
+    ])
   }
 }

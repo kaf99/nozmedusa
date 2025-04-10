@@ -31,7 +31,7 @@ import {
 import { setTimeout as setTimeoutSync } from "timers"
 import { createScheduled } from "../__fixtures__/workflow_scheduled"
 
-jest.setTimeout(3000000)
+jest.setTimeout(300000)
 
 const failTrap = (done) => {
   setTimeoutSync(() => {

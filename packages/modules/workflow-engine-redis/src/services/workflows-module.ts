@@ -96,7 +96,18 @@ export class WorkflowsModuleService<
     @MedusaContext() context: Context = {}
   ) {
     options ??= {}
-    options.context ??= context
+    const {
+      manager,
+      transactionManager,
+      preventReleaseEvents,
+      ...restContext
+    } = context
+
+    options.context ??= restContext
+    options.context.preventReleaseEvents ??=
+      !!options.context.parentStepIdempotencyKey
+    delete options.context.parentStepIdempotencyKey
+
     const ret = await this.workflowOrchestratorService_.run<
       TWorkflow extends ReturnWorkflow<any, any, any>
         ? UnwrapWorkflowInputDataType<TWorkflow>

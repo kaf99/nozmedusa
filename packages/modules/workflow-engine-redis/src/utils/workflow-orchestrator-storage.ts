@@ -12,6 +12,7 @@ import {
 } from "@medusajs/framework/orchestration"
 import { Logger, ModulesSdkTypes } from "@medusajs/framework/types"
 import {
+  isDefined,
   isPresent,
   MedusaError,
   promiseAll,
@@ -221,8 +222,8 @@ export class RedisDistributedTransactionStorage
       return JSON.parse(data)
     }
 
-    const { idempotent } = options ?? {}
-    if (!idempotent) {
+    const { idempotent, store, retentionTime } = options ?? {}
+    if (!idempotent && !(store && isDefined(retentionTime))) {
       return
     }
 
