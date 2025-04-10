@@ -20,8 +20,10 @@ export const waitSubscribersExecution = (
     subscriberPromises.push(promise)
     eventEmitter.on(eventName, ok)
   } else {
+    console.log({ eventName })
     eventEmitter.listeners(eventName).forEach((listener: any) => {
       eventEmitter.removeListener(eventName, listener)
+      console.log({ listener })
 
       let ok, nok
       const promise = new Promise((resolve, reject) => {
