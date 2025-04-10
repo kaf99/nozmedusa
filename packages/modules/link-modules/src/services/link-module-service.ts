@@ -11,7 +11,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   CommonEvents,
-  EmitEvents,
+  // EmitEvents,
   InjectManager,
   InjectTransactionManager,
   isDefined,
@@ -19,7 +19,7 @@ import {
   MapToConfig,
   MedusaContext,
   MedusaError,
-  moduleEventBuilderFactory,
+  // moduleEventBuilderFactory,
   Modules,
   ModulesSdkUtils,
 } from "@medusajs/framework/utils"
@@ -177,7 +177,7 @@ export default class LinkModuleService implements ILinkModule {
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
+  // @EmitEvents()
   async create(
     primaryKeyOrBulkData:
       | string
@@ -210,15 +210,27 @@ export default class LinkModuleService implements ILinkModule {
 
     const links = await this.linkService_.create(data, sharedContext)
 
-    moduleEventBuilderFactory({
-      action: CommonEvents.ATTACHED,
-      object: this.entityName_,
-      source: this.serviceName_,
-      eventName: this.entityName_ + "." + CommonEvents.ATTACHED,
-    })({
-      data: data as { id: string }[],
-      sharedContext,
-    })
+    await this.eventBusModuleService_?.emit<Record<string, unknown>>(
+      (data as { id: unknown }[]).map(({ id }) => ({
+        name: this.entityName_ + "." + CommonEvents.ATTACHED,
+        metadata: {
+          source: this.serviceName_,
+          action: CommonEvents.ATTACHED,
+          object: this.entityName_,
+          eventGroupId: sharedContext.eventGroupId,
+        },
+        data: { id },
+      }))
+    )
+    // moduleEventBuilderFactory({
+    //   action: CommonEvents.ATTACHED,
+    //   object: this.entityName_,
+    //   source: this.serviceName_,
+    //   eventName: this.entityName_ + "." + CommonEvents.ATTACHED,
+    // })({
+    //   data: data as { id: string }[],
+    //   sharedContext,
+    // })
 
     return (await this.baseRepository_.serialize(links)) as unknown[]
   }
@@ -249,7 +261,7 @@ export default class LinkModuleService implements ILinkModule {
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
+  // @EmitEvents()
   async delete(
     data: any,
     @MedusaContext() sharedContext: Context = {}
@@ -259,19 +271,31 @@ export default class LinkModuleService implements ILinkModule {
     await this.linkService_.delete(data, sharedContext)
 
     const allData = Array.isArray(data) ? data : [data]
-    moduleEventBuilderFactory({
-      action: CommonEvents.DETACHED,
-      object: this.entityName_,
-      source: this.serviceName_,
-      eventName: this.entityName_ + "." + CommonEvents.DETACHED,
-    })({
-      data: allData as { id: string }[],
-      sharedContext,
-    })
+    await this.eventBusModuleService_?.emit<Record<string, unknown>>(
+      allData.map(({ id }) => ({
+        name: this.entityName_ + "." + CommonEvents.DETACHED,
+        metadata: {
+          source: this.serviceName_,
+          action: CommonEvents.DETACHED,
+          object: this.entityName_,
+          eventGroupId: sharedContext.eventGroupId,
+        },
+        data: { id },
+      }))
+    )
+    // moduleEventBuilderFactory({
+    //   action: CommonEvents.DETACHED,
+    //   object: this.entityName_,
+    //   source: this.serviceName_,
+    //   eventName: this.entityName_ + "." + CommonEvents.DETACHED,
+    // })({
+    //   data: allData as { id: string }[],
+    //   sharedContext,
+    // })
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
+  // @EmitEvents()
   async softDelete(
     data: any,
     { returnLinkableKeys }: SoftDeleteReturn = {},
@@ -307,15 +331,27 @@ export default class LinkModuleService implements ILinkModule {
       )
     }
 
-    moduleEventBuilderFactory({
-      action: CommonEvents.DETACHED,
-      object: this.entityName_,
-      source: this.serviceName_,
-      eventName: this.entityName_ + "." + CommonEvents.DETACHED,
-    })({
-      data: deletedEntities as { id: string }[],
-      sharedContext,
-    })
+    await this.eventBusModuleService_?.emit<Record<string, unknown>>(
+      (deletedEntities as { id: string }[]).map(({ id }) => ({
+        name: this.entityName_ + "." + CommonEvents.DETACHED,
+        metadata: {
+          source: this.serviceName_,
+          action: CommonEvents.DETACHED,
+          object: this.entityName_,
+          eventGroupId: sharedContext.eventGroupId,
+        },
+        data: { id },
+      }))
+    )
+    // moduleEventBuilderFactory({
+    //   action: CommonEvents.DETACHED,
+    //   object: this.entityName_,
+    //   source: this.serviceName_,
+    //   eventName: this.entityName_ + "." + CommonEvents.DETACHED,
+    // })({
+    //   data: deletedEntities as { id: string }[],
+    //   sharedContext,
+    // })
 
     return mappedCascadedEntitiesMap ? mappedCascadedEntitiesMap : void 0
   }
@@ -329,7 +365,7 @@ export default class LinkModuleService implements ILinkModule {
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
+  // @EmitEvents()
   async restore(
     data: any,
     { returnLinkableKeys }: RestoreReturn = {},
@@ -364,15 +400,27 @@ export default class LinkModuleService implements ILinkModule {
       )
     }
 
-    moduleEventBuilderFactory({
-      action: CommonEvents.ATTACHED,
-      object: this.entityName_,
-      source: this.serviceName_,
-      eventName: this.entityName_ + "." + CommonEvents.ATTACHED,
-    })({
-      data: restoredEntities as { id: string }[],
-      sharedContext,
-    })
+    await this.eventBusModuleService_?.emit<Record<string, unknown>>(
+      (restoredEntities as { id: string }[]).map(({ id }) => ({
+        name: this.entityName_ + "." + CommonEvents.ATTACHED,
+        metadata: {
+          source: this.serviceName_,
+          action: CommonEvents.ATTACHED,
+          object: this.entityName_,
+          eventGroupId: sharedContext.eventGroupId,
+        },
+        data: { id },
+      }))
+    )
+    // moduleEventBuilderFactory({
+    //   action: CommonEvents.ATTACHED,
+    //   object: this.entityName_,
+    //   source: this.serviceName_,
+    //   eventName: this.entityName_ + "." + CommonEvents.ATTACHED,
+    // })({
+    //   data: restoredEntities as { id: string }[],
+    //   sharedContext,
+    // })
 
     return mappedCascadedEntitiesMap ? mappedCascadedEntitiesMap : void 0
   }
