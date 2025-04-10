@@ -33,7 +33,12 @@ export const waitSubscribersExecution = (
       subscriberPromises.push(promise)
 
       const newListener = async (...args2) => {
-        return await listener.apply(eventBus, args2).then(ok).catch(nok)
+        try {
+          const response = await listener.apply(eventBus, args2)
+          ok(response)
+        } catch (error) {
+          nok(error)
+        }
       }
 
       eventEmitter.on(eventName, newListener)
