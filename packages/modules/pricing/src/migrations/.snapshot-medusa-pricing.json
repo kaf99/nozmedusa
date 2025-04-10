@@ -796,6 +796,15 @@
           "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_price_rule_price_id_attribute_operator_unique\" ON \"price_rule\" (price_id, attribute, operator) WHERE deleted_at IS NULL"
         },
         {
+          "keyName": "IDX_price_rule_attribute",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_price_rule_attribute\" ON \"price_rule\" (attribute) WHERE deleted_at IS NULL"
+        },
+        {
           "keyName": "IDX_price_rule_attribute_value",
           "columnNames": [],
           "composite": false,

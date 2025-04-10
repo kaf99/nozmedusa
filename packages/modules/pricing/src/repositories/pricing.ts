@@ -4,7 +4,6 @@ import {
   MedusaError,
   MikroOrmBase,
   PriceListStatus,
-  promiseAll,
 } from "@medusajs/framework/utils"
 
 import {
@@ -15,8 +14,6 @@ import {
   PricingRepositoryService,
 } from "@medusajs/framework/types"
 import { Knex, SqlEntityManager } from "@mikro-orm/postgresql"
-
-// Simple cache implementation
 
 export class PricingRepository
   extends MikroOrmBase
@@ -53,31 +50,20 @@ export class PricingRepository
     }
 
     // Generate flatten key-value pairs for rule matching
-    const [ruleAttributes, priceListRuleAttributes] =
-      await this.getAttributesFromRuleTables(knex)
-
-    const allowedRuleAttributes = [
-      ...ruleAttributes,
-      ...priceListRuleAttributes,
-    ]
-
     const flattenedKeyValuePairs = flattenObjectToKeyValuePairs(context)
 
+    // First filter by value presence
     const flattenedContext = Object.entries(flattenedKeyValuePairs).filter(
-      ([key, value]) => {
+      ([, value]) => {
         const isValuePresent = !Array.isArray(value) && isPresent(value)
         const isArrayPresent = Array.isArray(value) && value.flat(1).length
 
-        return (
-          allowedRuleAttributes.includes(key) &&
-          (isValuePresent || isArrayPresent)
-        )
+        return isValuePresent || isArrayPresent
       }
     )
 
     const hasComplexContext = flattenedContext.length > 0
 
-    // Base query with efficient index lookups
     const query = knex
       .select({
         id: "price.id",
@@ -97,7 +83,6 @@ export class PricingRepository
       .andWhere("price.currency_code", currencyCode)
       .whereNull("price.deleted_at")
 
-    // Apply quantity filter
     if (quantity !== undefined) {
       query.andWhere(function (this: Knex.QueryBuilder) {
         this.where(function (this: Knex.QueryBuilder) {
@@ -118,7 +103,6 @@ export class PricingRepository
       })
     }
 
-    // Efficient price list join with index usage
     query.leftJoin("price_list as pl", function (this: Knex.JoinClause) {
       this.on("pl.id", "=", "price.price_list_id")
         .andOn("pl.status", "=", knex.raw("?", [PriceListStatus.ACTIVE]))
@@ -133,9 +117,7 @@ export class PricingRepository
         })
     })
 
-    // OPTIMIZATION: Only add complex rule filtering when necessary
     if (hasComplexContext) {
-      // For price rules - direct check that ALL rules match
       const priceRuleConditions = knex.raw(
         `
         (
@@ -188,7 +170,6 @@ export class PricingRepository
         })
       )
 
-      // For price list rules - direct check that ALL rules match
       const priceListRuleConditions = knex.raw(
         `
         (
@@ -231,7 +212,6 @@ export class PricingRepository
           })
       })
     } else {
-      // Simple case - just get prices with no rules or price lists with no rules
       query.where(function (this: Knex.QueryBuilder) {
         this.where("price.rules_count", 0).orWhere(function (
           this: Knex.QueryBuilder
@@ -241,31 +221,13 @@ export class PricingRepository
       })
     }
 
-    // Optimized ordering to help query planner and preserve price list precedence
     query
       .orderByRaw("price.price_list_id IS NOT NULL DESC")
-      .orderByRaw("price.rules_count + COALESCE(pl.rules_count, 0) DESC") // More specific rules first
-      .orderBy("pl.id", "asc") // Order by price list ID to ensure first created price list takes precedence
-      .orderBy("price.amount", "asc") // For non-price list prices, cheaper ones first
+      .orderByRaw("price.rules_count + COALESCE(pl.rules_count, 0) DESC")
+      .orderBy("pl.id", "asc")
+      .orderBy("price.amount", "asc")
 
-    // Execute the optimized query
+    console.log(query.toString())
     return await query
-  }
-
-  // Helper method to get attributes from rule tables
-  private async getAttributesFromRuleTables(knex: Knex) {
-    // Using distinct queries for better performance
-    const priceRuleAttributesQuery = knex("price_rule")
-      .distinct("attribute")
-      .pluck("attribute")
-
-    const priceListRuleAttributesQuery = knex("price_list_rule")
-      .distinct("attribute")
-      .pluck("attribute")
-
-    return await promiseAll([
-      priceRuleAttributesQuery,
-      priceListRuleAttributesQuery,
-    ])
   }
 }
