@@ -1,7 +1,6 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import { RemoteQueryFunction } from "@medusajs/types"
 import { ContainerRegistrationKeys, defaultCurrencies } from "@medusajs/utils"
-import { setTimeout } from "timers/promises"
 import {
   adminHeaders,
   createAdminUser,
@@ -74,13 +73,9 @@ async function populateData(api: any) {
     },
   ]
 
-  await api
-    .post("/admin/products/batch", { create: payload }, adminHeaders)
-    .catch((err) => {
-      console.log(err)
-    })
-
-  await setTimeout(0)
+  await api.post("/admin/products", payload, adminHeaders).catch((err) => {
+    console.log(err)
+  })
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"
