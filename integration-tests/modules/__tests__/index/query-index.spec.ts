@@ -80,7 +80,7 @@ async function populateData(api: any) {
       console.log(err)
     })
 
-  await setTimeout(10000)
+  await setTimeout(0)
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"
@@ -88,6 +88,10 @@ process.env.ENABLE_INDEX_MODULE = "true"
 medusaIntegrationTestRunner({
   testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
     let appContainer
+
+    beforeEach(async () => {
+      await createAdminUser(dbConnection, adminHeaders, appContainer)
+    })
 
     beforeAll(() => {
       appContainer = getContainer()
@@ -98,10 +102,6 @@ medusaIntegrationTestRunner({
     })
 
     describe("Index engine - Query.index", () => {
-      beforeEach(async () => {
-        await createAdminUser(dbConnection, adminHeaders, appContainer)
-      })
-
       it("should use query.index to query the index module and hydrate the data", async () => {
         await populateData(api)
 
@@ -139,7 +139,7 @@ medusaIntegrationTestRunner({
                 },
               },
             }),
-          ({ data }) => data.length > 0,
+          ({ data }) => data.length >= 2,
           {
             retries: 3,
             waitSeconds: 3,
@@ -289,7 +289,7 @@ medusaIntegrationTestRunner({
                 },
               },
             }),
-          ({ data }) => data.length > 0,
+          ({ data }) => data.length >= 1,
           {
             retries: 3,
             waitSeconds: 3,
@@ -347,7 +347,7 @@ medusaIntegrationTestRunner({
                 },
               },
             }),
-          ({ data }) => data.length > 0,
+          ({ data }) => data.length >= 1,
           {
             retries: 3,
             waitSeconds: 3,
