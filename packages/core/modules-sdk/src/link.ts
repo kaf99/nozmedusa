@@ -11,7 +11,6 @@ import {
   MedusaContext,
   MedusaError,
   MedusaModuleType,
-  MedusaSyncMethodType,
   Modules,
   promiseAll,
   toPascalCase,
@@ -61,15 +60,6 @@ type LinkDataConfig = {
 export class Link {
   // To not lose the context chain, we need to set the type to MedusaModuleType
   static __type = MedusaModuleType
-  static [MedusaSyncMethodType] = [
-    "addModule",
-    "addRelationship",
-    "getLinkModule",
-    "getRelationships",
-    "getLinkableKeys",
-    "getLinkModuleOrThrow",
-    "getLinkDataConfig",
-  ]
 
   private modulesMap: Map<string, LoadedLinkModule> = new Map()
   private relationsPairs: Map<string, LoadedLinkModule> = new Map()

@@ -7,7 +7,6 @@ import {
   MedusaContextType,
   MedusaError,
   MedusaModuleType,
-  MedusaSyncMethodType,
 } from "@medusajs/utils"
 import { asValue } from "awilix"
 import {
@@ -110,16 +109,11 @@ export class LocalWorkflow {
 
       return new Proxy(resolved, {
         get: function (target, prop) {
-          if (resolved.constructor[MedusaSyncMethodType]) {
-            if (resolved.constructor[MedusaSyncMethodType].includes(prop)) {
-              return target[prop]
-            }
-          }
           if (typeof target[prop] !== "function") {
             return target[prop]
           }
 
-          return async (...args) => {
+          return (...args) => {
             const ctxIndex = MedusaContext.getIndex(target, prop as string)
 
             const hasContext = args[ctxIndex!]?.__type === MedusaContextType
@@ -134,7 +128,9 @@ export class LocalWorkflow {
             } else if (hasContext) {
               args[ctxIndex!].eventGroup ??= this_.medusaContext?.eventGroupId
             }
-            return await target[prop].apply(target, [...args])
+
+            const method = target[prop]
+            return method.apply(target, [...args])
           }
         },
       })

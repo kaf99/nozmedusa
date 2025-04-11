@@ -31,4 +31,3 @@ export * from "./user"
 
 export const MedusaModuleType = Symbol.for("MedusaModule")
 export const MedusaModuleProviderType = Symbol.for("MedusaModuleProvider")
-export const MedusaSyncMethodType = Symbol.for("MedusaSyncMethodType")
