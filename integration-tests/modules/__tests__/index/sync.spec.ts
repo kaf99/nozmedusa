@@ -74,8 +74,6 @@ medusaIntegrationTestRunner({
 
         await setTimeout(1000)
         await dbConnection.raw('TRUNCATE TABLE "index_data";')
-        await setTimeout(1000)
-        await dbConnection.raw('TRUNCATE TABLE "index_data";')
         await dbConnection.raw('TRUNCATE TABLE "index_relation";')
         await dbConnection.raw('TRUNCATE TABLE "index_metadata";')
         await dbConnection.raw('TRUNCATE TABLE "index_sync";')
