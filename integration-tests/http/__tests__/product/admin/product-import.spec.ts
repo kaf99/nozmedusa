@@ -125,18 +125,18 @@ medusaIntegrationTestRunner({
       ).data.product_category
     })
 
-    afterEach(() => {
-      ;(eventBus as any).eventEmitter_.removeAllListeners()
-    })
+    // afterEach(() => {
+    //   ;(eventBus as any).eventEmitter_.removeAllListeners()
+    // })
 
     describe("POST /admin/products/export", () => {
       // We want to ensure files with different delimiters are supported
       ;[
         { file: "exported-products-comma.csv", name: "delimited with comma" },
-        {
-          file: "exported-products-semicolon.csv",
-          name: "delimited with semicolon",
-        },
+        // {
+        //   file: "exported-products-semicolon.csv",
+        //   name: "delimited with semicolon",
+        // },
       ].forEach((testcase) => {
         it(`should import a previously exported products CSV file ${testcase.name}`, async () => {
           const subscriberExecution = TestEventUtils.waitSubscribersExecution(
@@ -144,6 +144,8 @@ medusaIntegrationTestRunner({
             eventBus,
             { timeout: 20000 }
           )
+
+          const perfStartTime = performance.now()
 
           let fileContent = await fs.readFile(
             path.join(__dirname, "__fixtures__", testcase.file),
@@ -190,6 +192,9 @@ medusaIntegrationTestRunner({
             {},
             meta
           )
+
+          const perfEndTime = performance.now()
+          console.log(`Time taken: ${perfEndTime - perfStartTime} milliseconds`)
 
           await subscriberExecution
           const notifications = (

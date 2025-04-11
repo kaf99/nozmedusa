@@ -126,8 +126,10 @@ export class LocalWorkflow {
                 args[ctxIndex] = context
               }
             } else if (hasContext) {
-              args[ctxIndex!].eventGroup ??= this_.medusaContext?.eventGroupId
+              args[ctxIndex!].eventGroupId ??= this_.medusaContext?.eventGroupId
             }
+
+            console.log("LOCAL WORKFLOW", this_.medusaContext)
 
             const method = target[prop]
             return method.apply(target, [...args])
