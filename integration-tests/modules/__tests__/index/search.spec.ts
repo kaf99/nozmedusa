@@ -55,10 +55,11 @@ async function populateData(
     await api.post("/admin/products", payload, adminHeaders)
   }
 
-  await setTimeout(10000)
+  await setTimeout(5000 * (productCount / 10))
 }
 
 medusaIntegrationTestRunner({
+  dbName: "index-search-tests",
   testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
     let indexEngine: IndexTypes.IIndexService
     let appContainer

@@ -83,6 +83,7 @@ async function populateData(api: any) {
 process.env.ENABLE_INDEX_MODULE = "true"
 
 medusaIntegrationTestRunner({
+  dbName: "index-query-index-tests",
   testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
     let appContainer
 

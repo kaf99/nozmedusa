@@ -47,6 +47,7 @@ async function populateData(
 }
 
 medusaIntegrationTestRunner({
+  dbName: "index-sync-tests",
   testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
     let indexEngine: IndexTypes.IIndexService
     let appContainer
