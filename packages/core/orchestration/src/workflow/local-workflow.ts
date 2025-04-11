@@ -7,6 +7,7 @@ import {
   MedusaContextType,
   MedusaError,
   MedusaModuleType,
+  MedusaSyncMethodType,
 } from "@medusajs/utils"
 import { asValue } from "awilix"
 import {
@@ -109,6 +110,11 @@ export class LocalWorkflow {
 
       return new Proxy(resolved, {
         get: function (target, prop) {
+          if (resolved.constructor[MedusaSyncMethodType]) {
+            if (resolved.constructor[MedusaSyncMethodType].includes(prop)) {
+              return target[prop]
+            }
+          }
           if (typeof target[prop] !== "function") {
             return target[prop]
           }
