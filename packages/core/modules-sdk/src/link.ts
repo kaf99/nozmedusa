@@ -68,6 +68,7 @@ export class Link {
     "getRelationships",
     "getLinkableKeys",
     "getLinkModuleOrThrow",
+    "getLinkDataConfig",
   ]
 
   private modulesMap: Map<string, LoadedLinkModule> = new Map()
