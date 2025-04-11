@@ -17,7 +17,7 @@ medusaIntegrationTestRunner({
     let indexEngine: IndexTypes.IIndexService
     let appContainer
 
-    beforeAll(() => {
+    beforeAll(async () => {
       appContainer = getContainer()
       indexEngine = appContainer.resolve(Modules.INDEX)
       await setTimeout(5000)
