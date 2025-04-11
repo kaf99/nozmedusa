@@ -151,7 +151,7 @@ medusaIntegrationTestRunner({
       })
 
       describe("POST /store/carts", () => {
-        it("should succesffully create a cart", async () => {
+        it("should successfully create a cart", async () => {
           const response = await api.post(
             `/store/carts`,
             {
@@ -255,10 +255,10 @@ medusaIntegrationTestRunner({
       })
 
       describe("POST /store/carts/:id/line-items", () => {
-        let shippingOption, shippingOptionExpensive
+        let shippingOption, shippingOptionExpensive, stockLocation
 
         beforeEach(async () => {
-          const stockLocation = (
+          stockLocation = (
             await api.post(
               `/admin/stock-locations`,
               { name: "test location" },
@@ -892,6 +892,67 @@ medusaIntegrationTestRunner({
                 ]),
               })
             )
+          })
+        })
+
+        describe("with manage_inventory true", () => {
+          let inventoryItem
+          beforeEach(async () => {
+            await api.post(
+              `/admin/products/${product.id}/variants/${product.variants[0].id}`,
+              { manage_inventory: true },
+              adminHeaders
+            )
+
+            inventoryItem = (
+              await api.post(
+                `/admin/inventory-items`,
+                { sku: "bottle" },
+                adminHeaders
+              )
+            ).data.inventory_item
+          })
+
+          describe("with allow_backorder true", () => {
+            beforeEach(async () => {
+              await api.post(
+                `/admin/products/${product.id}/variants/${product.variants[0].id}`,
+                { allow_backorder: true },
+                adminHeaders
+              )
+            })
+
+            it("should add item to cart even if no inventory locations", async () => {
+              let response = await api.post(
+                `/store/carts/${cart.id}/line-items`,
+                {
+                  variant_id: product.variants[0].id,
+                  quantity: 1,
+                },
+                storeHeaders
+              )
+
+              expect(response.status).toEqual(200)
+            })
+
+            it("should add item to cart even if inventory is empty", async () => {
+              await api.post(
+                `/admin/inventory-items/${inventoryItem.id}/location-levels/batch`,
+                { create: [{ location_id: stockLocation.id }] },
+                adminHeaders
+              )
+
+              let response = await api.post(
+                `/store/carts/${cart.id}/line-items`,
+                {
+                  variant_id: product.variants[0].id,
+                  quantity: 1,
+                },
+                storeHeaders
+              )
+
+              expect(response.status).toEqual(200)
+            })
           })
         })
       })

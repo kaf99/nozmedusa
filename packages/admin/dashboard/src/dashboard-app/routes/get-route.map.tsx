@@ -1414,6 +1414,13 @@ export function getRouteMap({
                       lazy: () =>
                         import("../../routes/product-types/product-type-edit"),
                     },
+                    {
+                      path: "metadata/edit",
+                      lazy: () =>
+                        import(
+                          "../../routes/product-types/product-type-metadata"
+                        ),
+                    },
                   ],
                 },
               ],

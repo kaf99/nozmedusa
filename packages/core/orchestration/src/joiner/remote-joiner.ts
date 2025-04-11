@@ -383,6 +383,11 @@ export class RemoteJoiner {
             `Cannot add alias "${alias}" for "${extend.serviceName}". It is already defined for Entity "${extend.entity}".`
           )
         }
+
+        service_.fieldAlias[alias].push({
+          ...objAlias,
+          entity: extend.entity,
+        })
       } else {
         service_.fieldAlias[alias] = {
           ...objAlias,

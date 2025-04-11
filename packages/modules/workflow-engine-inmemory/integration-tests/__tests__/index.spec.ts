@@ -15,6 +15,7 @@ import {
 import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { WorkflowsModuleService } from "@services"
 import { asFunction } from "awilix"
+import { setTimeout as setTimeoutSync } from "timers"
 import { setTimeout as setTimeoutPromise } from "timers/promises"
 import "../__fixtures__"
 import {
@@ -28,10 +29,9 @@ import {
   workflowEventGroupIdStep1Mock,
   workflowEventGroupIdStep2Mock,
 } from "../__fixtures__/workflow_event_group_id"
-import { setTimeout as setTimeoutSync } from "timers"
 import { createScheduled } from "../__fixtures__/workflow_scheduled"
 
-jest.setTimeout(3000000)
+jest.setTimeout(300000)
 
 const failTrap = (done) => {
   setTimeoutSync(() => {
@@ -97,9 +97,9 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
 
         await workflowOrcModule.run(eventGroupWorkflowId, {
           input: {},
+          transactionId: "transaction_id",
           context: {
             eventGroupId,
-            transactionId: "transaction_id",
           },
           throwOnError: true,
         })
@@ -126,9 +126,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
       it("should execute an async workflow keeping track of the event group id that has been auto generated", async () => {
         await workflowOrcModule.run(eventGroupWorkflowId, {
           input: {},
-          context: {
-            transactionId: "transaction_id_2",
-          },
+          transactionId: "transaction_id_2",
           throwOnError: true,
         })
 
