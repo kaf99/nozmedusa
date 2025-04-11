@@ -6,7 +6,7 @@ import {
   createAdminUser,
 } from "../../../helpers/create-admin-user"
 import { fetchAndRetry } from "../../../helpers/retry"
-
+import { setTimeout } from "timers/promises"
 jest.setTimeout(120000)
 
 // NOTE: In this tests, both API are used to query, we use object pattern and string pattern
@@ -88,8 +88,9 @@ medusaIntegrationTestRunner({
       await createAdminUser(dbConnection, adminHeaders, appContainer)
     })
 
-    beforeAll(() => {
+    beforeAll(async () => {
       appContainer = getContainer()
+      await setTimeout(5000)
     })
 
     afterAll(() => {
