@@ -185,8 +185,8 @@ export function MedusaService<
 
       // The order of the decorators is important, do not change it
       MedusaContext()(klassPrototype, methodName, contextIndex)
-      InjectManager()(klassPrototype, methodName, descriptorMockRef)
       EmitEvents()(klassPrototype, methodName, descriptorMockRef)
+      InjectManager()(klassPrototype, methodName, descriptorMockRef)
 
       klassPrototype[methodName] = descriptorMockRef.value
     }
