@@ -19,10 +19,44 @@ export class PricingRepository
   extends MikroOrmBase
   implements PricingRepositoryService
 {
+  #availableAttributes: Set<string> = new Set()
+
   constructor() {
     // @ts-ignore
     // eslint-disable-next-line prefer-rest-params
     super(...arguments)
+  }
+
+  clearAvailableAttributes() {
+    this.#availableAttributes.clear()
+  }
+
+  async #cacheAvailableAttributes() {
+    const manager = this.getActiveManager<SqlEntityManager>()
+    const knex = manager.getKnex()
+
+    const { rows } = await knex.raw(
+      `
+      SELECT DISTINCT attribute 
+      FROM (
+        SELECT attribute 
+        FROM price_rule 
+        UNION ALL
+        SELECT attribute 
+        FROM price_list_rule
+      ) as combined_rules_attributes
+    `
+    )
+    this.#availableAttributes.clear()
+    rows.forEach(({ attribute }) => {
+      this.#availableAttributes.add(attribute)
+    })
+  }
+
+  async #cacheAvailableAttributesIfNecessary() {
+    if (this.#availableAttributes.size === 0) {
+      await this.#cacheAvailableAttributes()
+    }
   }
 
   async calculatePrices(
@@ -53,7 +87,7 @@ export class PricingRepository
     const flattenedKeyValuePairs = flattenObjectToKeyValuePairs(context)
 
     // First filter by value presence
-    const flattenedContext = Object.entries(flattenedKeyValuePairs).filter(
+    let flattenedContext = Object.entries(flattenedKeyValuePairs).filter(
       ([, value]) => {
         const isValuePresent = !Array.isArray(value) && isPresent(value)
         const isArrayPresent = Array.isArray(value) && value.flat(1).length
@@ -61,6 +95,13 @@ export class PricingRepository
         return isValuePresent || isArrayPresent
       }
     )
+
+    if (flattenedContext.length > 10) {
+      await this.#cacheAvailableAttributesIfNecessary()
+      flattenedContext = flattenedContext.filter(([key]) =>
+        this.#availableAttributes.has(key)
+      )
+    }
 
     const hasComplexContext = flattenedContext.length > 0
 
@@ -227,7 +268,6 @@ export class PricingRepository
       .orderBy("pl.id", "asc")
       .orderBy("price.amount", "asc")
 
-    console.log(query.toString())
     return await query
   }
 }

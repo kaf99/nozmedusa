@@ -205,7 +205,7 @@ medusaIntegrationTestRunner({
         }
       })
 
-      it.skip("should search through the indexed data and return the correct results ordered and filtered [3]", async () => {
+      it("should search through the indexed data and return the correct results ordered and filtered [3]", async () => {
         const shippingProfile = (
           await api.post(
             `/admin/shipping-profiles`,

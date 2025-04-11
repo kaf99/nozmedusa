@@ -140,7 +140,7 @@ export class WorkflowOrchestratorService {
     let { throwOnError, context } = options ?? {}
     throwOnError ??= true
     context ??= {}
-    context.transactionId ??= transactionId ?? ulid()
+    context.transactionId = transactionId ?? ulid()
 
     const workflowId = isString(workflowIdOrWorkflow)
       ? workflowIdOrWorkflow

@@ -1,7 +1,6 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import { RemoteQueryFunction } from "@medusajs/types"
 import { ContainerRegistrationKeys, defaultCurrencies } from "@medusajs/utils"
-import { setTimeout } from "timers/promises"
 import {
   adminHeaders,
   createAdminUser,
