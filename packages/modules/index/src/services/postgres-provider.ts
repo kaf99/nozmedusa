@@ -686,7 +686,7 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     })
 
     let relationsToUpsert: any[] = []
-    const entitiesToUpdate = cleanedData.map((entityData) => {
+    const entitiesToUpsert = cleanedData.map((entityData) => {
       relationsToUpsert.push(
         {
           parent_id: entityData[parentPropertyId] as string,
@@ -714,8 +714,8 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
       }
     })
 
-    if (entitiesToUpdate.length) {
-      await indexRepository.upsertMany(entitiesToUpdate, {
+    if (entitiesToUpsert.length) {
+      await indexRepository.upsertMany(entitiesToUpsert, {
         onConflictAction: "merge",
         onConflictFields: ["id", "name"],
         onConflictMergeFields: ["data", "staled_at"],

@@ -125,6 +125,8 @@ export class LocalWorkflow {
 
                 args[ctxIndex] = context
               }
+            } else if (hasContext) {
+              args[ctxIndex!].eventGroup ??= this_.medusaContext?.eventGroupId
             }
             return await target[prop].apply(target, [...args])
           }
