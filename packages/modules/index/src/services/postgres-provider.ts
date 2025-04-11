@@ -203,6 +203,8 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     return async (event: Event) => {
       await this.#isReady_
 
+      console.log("[INDEX ENGINE]: consume event", JSON.stringify(event))
+
       const data_: { id: string }[] = Array.isArray(event.data)
         ? event.data
         : [event.data]
@@ -238,6 +240,7 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
         idsBatches.push(ids.slice(i, i + batchSize))
       }
 
+      let i = 0
       for (const idsBatch of idsBatches) {
         const graphConfig: Parameters<QueryGraphFunction>[0] = {
           entity: alias,
@@ -255,6 +258,8 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
           data: entityData,
           schemaEntityObjectRepresentation,
         }
+
+        console.log(`[INDEX ENGINE]: consume event batch ${++i}`)
 
         await this[targetMethod](argument)
       }
@@ -467,6 +472,10 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     })
 
     if (entitiesToUpsert.size) {
+      console.log(
+        `[INDEX ENGINE]: consume event on create entitiesToUpsert`,
+        JSON.stringify(Array.from(entitiesToUpsert))
+      )
       await indexRepository.upsertMany(
         Array.from(entitiesToUpsert).map((entity) => JSON.parse(entity)),
         {
@@ -478,6 +487,10 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     }
 
     if (relationsToUpsert.size) {
+      console.log(
+        `[INDEX ENGINE]: consume event on create relationsToUpsert`,
+        JSON.stringify(Array.from(relationsToUpsert))
+      )
       await indexRelationRepository.upsertMany(
         Array.from(relationsToUpsert).map((relation) => JSON.parse(relation)),
         {
@@ -686,7 +699,7 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     })
 
     let relationsToUpsert: any[] = []
-    const entitiesToUpdate = cleanedData.map((entityData) => {
+    const entitiesToUpsert = cleanedData.map((entityData) => {
       relationsToUpsert.push(
         {
           parent_id: entityData[parentPropertyId] as string,
@@ -714,8 +727,12 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
       }
     })
 
-    if (entitiesToUpdate.length) {
-      await indexRepository.upsertMany(entitiesToUpdate, {
+    if (entitiesToUpsert.length) {
+      console.log(
+        `[INDEX ENGINE]: consume event on attach entitiesToUpsert`,
+        JSON.stringify(entitiesToUpsert)
+      )
+      await indexRepository.upsertMany(entitiesToUpsert, {
         onConflictAction: "merge",
         onConflictFields: ["id", "name"],
         onConflictMergeFields: ["data", "staled_at"],
@@ -723,6 +740,10 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
     }
 
     if (relationsToUpsert.length) {
+      console.log(
+        `[INDEX ENGINE]: consume event on attach relationsToUpsert`,
+        JSON.stringify(relationsToUpsert)
+      )
       await indexRelationRepository.upsertMany(relationsToUpsert, {
         onConflictAction: "merge",
         onConflictFields: [
