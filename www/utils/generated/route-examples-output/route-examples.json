@@ -87,7 +87,7 @@
     "js-sdk": "sdk.admin.claim.removeOutboundItem(\n  \"claim_123\", \n  \"ordchact_123\",\n)\n.then(({ claim }) => {\n  console.log(claim)\n})"
   },
   "POST /admin/claims/{id}/outbound/shipping-method": {
-    "js-sdk": "   * sdk.admin.claim.addOutboundShipping(\n  \"claim_123\", \n  {\n    shipping_option_id: \"so_123\",\n    custom_amount: 10\n  },\n)\n.then(({ claim }) => {\n  console.log(claim)\n})"
+    "js-sdk": "sdk.admin.claim.addOutboundShipping(\n  \"claim_123\", \n  {\n    shipping_option_id: \"so_123\",\n    custom_amount: 10\n  },\n)\n.then(({ claim }) => {\n  console.log(claim)\n})"
   },
   "POST /admin/claims/{id}/outbound/shipping-method/{actionid}": {
     "js-sdk": "sdk.admin.claim.updateOutboundShipping(\n  \"claim_123\", \n  \"ordchact_123\",\n  {\n    custom_amount: 10\n  },\n)\n.then(({ claim }) => {\n  console.log(claim)\n})"
@@ -159,16 +159,61 @@
     "js-sdk": "sdk.admin.customerGroup.batchCustomers(\"cusgroup_123\", {\n  add: [\"cus_123\"],\n  remove: [\"cus_321\"]\n})\n.then(({ customer_group }) => {\n  console.log(customer_group)\n})"
   },
   "GET /admin/draft-orders/{id}": {
-    "js-sdk": "sdk.admin.draftOrder.retrieve(\"draft_order_123\")\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
+    "js-sdk": "sdk.admin.draftOrder.retrieve(\"order_123\")\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
   },
   "GET /admin/draft-orders": {
     "js-sdk": "sdk.admin.draftOrder.list()\n.then(({ draft_orders, count, limit, offset }) => {\n  console.log(draft_orders)\n})"
   },
   "POST /admin/draft-orders": {
-    "js-sdk": "sdk.admin.draftOrder.create({\n  email: \"test@test.com\",\n  items: [\n    {\n      variant_id: \"variant_123\",\n      quantity: 1,\n    },\n  ],\n  region_id: \"region_123\",\n  sales_channel_id: \"sales_channel_123\",\n})\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
+    "js-sdk": "sdk.admin.draftOrder.create({\n  email: \"test@test.com\",\n  items: [\n    {\n      variant_id: \"variant_123\",\n      quantity: 1,\n    },\n  ],\n  region_id: \"region_123\",\n  sales_channel_id: \"sc_123\",\n})\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
   },
   "POST /admin/draft-orders/{id}": {
-    "js-sdk": "sdk.admin.draftOrder.update(\"draft_order_123\", {\n  email: \"test@test.com\",\n})\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
+    "js-sdk": "sdk.admin.draftOrder.update(\"order_123\", {\n  email: \"test@test.com\",\n})\n.then(({ draft_order }) => {\n  console.log(draft_order)\n})"
+  },
+  "POST /admin/draft-orders/{id}/convert-to-order": {
+    "js-sdk": "To convert a draft order to an order:\n\n```ts\nsdk.admin.draftOrder.convertToOrder(\"order_123\")\n.then(({ order }) => {\n  console.log(order)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/items": {
+    "js-sdk": "sdk.admin.draftOrder.addItems(\"order_123\", {\n  items: [\n    {\n      variant_id: \"variant_123\",\n      quantity: 1,\n    },\n  ],\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/items/{actionid}": {
+    "js-sdk": "sdk.admin.draftOrder.updateActionItem(\"order_123\", \"action_123\", {\n  quantity: 2,\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "DELETE /admin/draft-orders/{id}/edit/items/{actionid}": {
+    "js-sdk": "sdk.admin.draftOrder.removeActionItem(\"order_123\", \"action_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/items/item/{itemid}": {
+    "js-sdk": "sdk.admin.draftOrder.updateItem(\"order_123\", \"item_123\", {\n  quantity: 2,\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/promotions": {
+    "js-sdk": "sdk.admin.draftOrder.addPromotions(\"order_123\", {\n  promo_codes: [\"PROMO_CODE_1\", \"PROMO_CODE_2\"],\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "DELETE /admin/draft-orders/{id}/edit/promotions": {
+    "js-sdk": "sdk.admin.draftOrder.removePromotions(\"order_123\", {\n  promo_codes: [\"PROMO_CODE_1\", \"PROMO_CODE_2\"],\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/shipping-methods": {
+    "js-sdk": "sdk.admin.draftOrder.addShippingMethod(\"order_123\", {\n  shipping_option_id: \"shipping_option_123\",\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/shipping-methods/{actionid}": {
+    "js-sdk": "sdk.admin.draftOrder.updateShippingMethod(\"order_123\", \"action_123\", {\n  shipping_option_id: \"shipping_option_123\",\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "DELETE /admin/draft-orders/{id}/edit/shipping-methods/{actionid}": {
+    "js-sdk": "sdk.admin.draftOrder.removeShippingMethod(\"order_123\", \"action_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/shipping-methods/method/{methodid}": {
+    "js-sdk": "sdk.admin.draftOrder.updateShippingMethod(\"order_123\", \"sm_123\", {\n shipping_option_id: \"so_123\",\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit": {
+    "js-sdk": "sdk.admin.draftOrder.beginEdit(\"order_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "DELETE /admin/draft-orders/{id}/edit": {
+    "js-sdk": "sdk.admin.draftOrder.cancelEdit(\"order_123\")\n.then(({ id, object, deleted }) => {\n  console.log(id, object, deleted)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/request": {
+    "js-sdk": "sdk.admin.draftOrder.requestEdit(\"order_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
+  "POST /admin/draft-orders/{id}/edit/confirm": {
+    "js-sdk": "sdk.admin.draftOrder.confirmEdit(\"order_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
   },
   "GET /admin/exchanges": {
     "js-sdk": "sdk.admin.exchange.list()\n.then(({ exchanges, count, limit, offset }) => {\n  console.log(exchanges)\n})"
@@ -347,6 +392,9 @@
   "GET /admin/orders/{id}/line-items": {
     "js-sdk": "sdk.admin.order.listLineItems(\"order_123\")\n.then(({ order_items }) => {\n  console.log(order_items)\n})"
   },
+  "POST /admin/orders/{orderid}/credit-lines": {
+    "js-sdk": "sdk.admin.order.createCreditLine(\n  \"order_123\",\n  {\n    amount: 100,\n    reference: \"order\",\n    reference_id: \"order_123\",\n  }\n)\n.then(({ order }) => {\n  console.log(order)\n})"
+  },
   "POST /admin/order-edits": {
     "js-sdk": "sdk.admin.orderEdit.initiateRequest({\n  order_id: \"order_123\"\n})\n.then(({ order_change }) => {\n  console.log(order_change)\n})"
   },
@@ -394,6 +442,9 @@
   },
   "POST /admin/payment-collections/{id}/mark-as-paid": {
     "js-sdk": "sdk.admin.paymentCollection.markAsPaid(\"paycol_123\", {\n  order_id: \"order_123\"\n})\n.then(({ payment_collection }) => {\n  console.log(payment_collection)\n})"
+  },
+  "GET /admin/plugins": {
+    "js-sdk": "sdk.admin.plugin.list()\n.then(({ plugins }) => {\n  console.log(plugins)\n})"
   },
   "GET /admin/price-lists/{id}": {
     "js-sdk": "sdk.admin.priceList.retrieve(\"plist_123\")\n.then(({ price_list }) => {\n  console.log(price_list)\n})"
@@ -846,19 +897,19 @@
     "js-sdk": "sdk.admin.workflowExecution.retrieve(\"wrk_123\")\n.then(({ workflow_execution }) => {\n  console.log(workflow_execution)\n})"
   },
   "POST /auth/{actor}/{method}/register": {
-    "js-sdk": "sdk.auth.register(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n).then((token) => {\n  console.log(token)\n})"
+    "js-sdk": "await sdk.auth.register(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n)\n\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.create({\n  email: \"customer@gmail.com\",\n  password: \"supersecret\"\n})"
   },
   "POST /auth/{actor}/{method}": {
-    "js-sdk": "sdk.auth.login(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n).then((token) => {\n  console.log(token)\n})"
+    "js-sdk": "const result = await sdk.auth.login(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n)\n\nif (typeof result !== \"string\") {\n  alert(\"Authentication requires additional steps\")\n  // replace with the redirect logic of your application\n  window.location.href = result.location\n  return\n}\n\n// customer is now authenticated\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.retrieve()"
   },
   "GET /auth/{actor}/{method}/callback": {
-    "js-sdk": "sdk.auth.callback(\n  \"customer\",\n  \"google\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n).then((token) => {\n  console.log(token)\n})"
+    "js-sdk": "await sdk.auth.callback(\n  \"customer\",\n  \"google\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n)\n\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.create({\n  email: \"customer@gmail.com\",\n  password: \"supersecret\"\n})"
   },
   "POST /auth/token/refresh": {
-    "js-sdk": "sdk.auth.refresh()\n.then((token) => {\n  console.log(token)\n})"
+    "js-sdk": "const token = await sdk.auth.refresh()\n\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.retrieve()"
   },
   "DELETE /auth/session": {
-    "js-sdk": "sdk.auth.logout()\n.then(() => {\n  // user is logged out\n})"
+    "js-sdk": "await sdk.auth.logout()\n\n// user is now logged out\n// you can't send any requests that require authentication"
   },
   "POST /auth/{actor}/{provider}/reset-password": {
     "js-sdk": "sdk.auth.resetPassword(\n  \"customer\",\n  \"emailpass\",\n  {\n    identifier: \"customer@gmail.com\"\n  }\n)\n.then(() => {\n  // user receives token\n})"

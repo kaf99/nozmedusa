@@ -32,6 +32,29 @@
  *         description: The user's identifier for the selected auth provider. For example, for the `emailpass` auth provider, the value is the user's email.
  *         example: "admin@medusa-test.com"
  * x-codeSamples:
+ *   - lang: JavaScript
+ *     label: JS SDK
+ *     source: |-
+ *       import Medusa from "@medusajs/js-sdk"
+ * 
+ *       export const sdk = new Medusa({
+ *         baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+ *         debug: import.meta.env.DEV,
+ *         auth: {
+ *           type: "session",
+ *         },
+ *       })
+ * 
+ *       sdk.auth.resetPassword(
+ *         "user",
+ *         "emailpass",
+ *         {
+ *           identifier: "user@gmail.com"
+ *         }
+ *       )
+ *       .then(() => {
+ *         // user receives token
+ *       })
  *   - lang: Shell
  *     label: cURL
  *     source:  |-

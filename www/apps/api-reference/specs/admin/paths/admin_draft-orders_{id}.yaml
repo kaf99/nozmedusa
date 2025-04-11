@@ -37,6 +37,10 @@ get:
     - cookie_auth: []
     - jwt_token: []
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_draft-orders_{id}/get.js
     - lang: Shell
       label: cURL
       source:
@@ -105,6 +109,10 @@ post:
         schema:
           $ref: ../components/schemas/AdminUpdateDraftOrder.yaml
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_draft-orders_{id}/post.js
     - lang: Shell
       label: cURL
       source:
@@ -130,4 +138,4 @@ post:
       $ref: ../components/responses/invalid_request_error.yaml
     '500':
       $ref: ../components/responses/500_error.yaml
-  x-workflow: updateOrderWorkflow
+  x-workflow: updateDraftOrderWorkflow

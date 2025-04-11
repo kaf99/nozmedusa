@@ -7,13 +7,12 @@ This method converts a draft order to an order. It sends a request to the
 
 ## Example
 
-To convert a draft order to an order:
-
 ```ts
 sdk.admin.draftOrder.convertToOrder("order_123")
 .then(({ order }) => {
   console.log(order)
 })
+```
 
 ## Parameters
 

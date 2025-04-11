@@ -1,4 +1,4 @@
-import { Prerequisites, CardList } from "docs-ui"
+import { Prerequisites, CardList, Table } from "docs-ui"
 
 export const metadata = {
   title: `${pageNumber} Create a Plugin`,
@@ -65,17 +65,147 @@ For example:
 
 ### Package Keywords
 
-In addition, make sure that the `keywords` field in `package.json` includes the keyword `medusa-plugin` and `medusa-v2`. This helps Medusa list community plugins on the Medusa website:
+Medusa scrapes NPM for a list of plugins that integrate third-party services, to later showcase them on the Medusa website. If you want your plugin to appear in that listing, make sure to add the `medusa-v2` and `medusa-plugin-integration` keywords to the `keywords` field in `package.json`.
 
 ```json title="package.json"
 {
   "keywords": [
-    "medusa-plugin",
+    "medusa-plugin-integration",
     "medusa-v2"
   ],
   // ...
 }
 ```
+
+In addition, make sure to use one of the following keywords based on your integration type:
+
+<Table>
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCell>
+        Keyword
+      </Table.HeaderCell>
+      <Table.HeaderCell>
+        Description
+      </Table.HeaderCell>
+      <Table.HeaderCell>
+        Example
+      </Table.HeaderCell>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-analytics`
+      </Table.Cell>
+      <Table.Cell>
+        Analytics service integration
+      </Table.Cell>
+      <Table.Cell>
+        Google Analytics
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-auth`
+      </Table.Cell>
+      <Table.Cell>
+        Authentication service integration
+      </Table.Cell>
+      <Table.Cell>
+        Auth0
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-cms`
+      </Table.Cell>
+      <Table.Cell>
+        CMS service integration
+      </Table.Cell>
+      <Table.Cell>
+        Contentful
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-notification`
+      </Table.Cell>
+      <Table.Cell>
+        Notification service integration
+      </Table.Cell>
+      <Table.Cell>
+        Twilio SMS
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-payment`
+      </Table.Cell>
+      <Table.Cell>
+        Payment service integration
+      </Table.Cell>
+      <Table.Cell>
+        PayPal
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-search`
+      </Table.Cell>
+      <Table.Cell>
+        Search service integration
+      </Table.Cell>
+      <Table.Cell>
+        MeiliSearch
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-shipping`
+      </Table.Cell>
+      <Table.Cell>
+        Shipping service integration
+      </Table.Cell>
+      <Table.Cell>
+        DHL
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-storage`
+      </Table.Cell>
+      <Table.Cell>
+        Storage or File service integration
+      </Table.Cell>
+      <Table.Cell>
+        Cloudinary
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-source`
+      </Table.Cell>
+      <Table.Cell>
+        Data migration integration
+      </Table.Cell>
+      <Table.Cell>
+        Shopify
+      </Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+        `medusa-plugin-other`
+      </Table.Cell>
+      <Table.Cell>
+        Other service integrations
+      </Table.Cell>
+      <Table.Cell>
+        Custom API Integration
+      </Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>
 
 ### Package Dependencies
 
@@ -458,6 +588,12 @@ To learn how to create module providers, refer to the following guides:
 ---
 
 ## 5. Publish Plugin to NPM
+
+<Note title="Want your plugin to be listed in the Integrations page?">
+
+Make sure to add the keywords mentioned in the [Package Keywords](#package-keywords) section in your plugin's `package.json` file.
+
+</Note>
 
 Medusa's CLI tool provides a command that bundles your plugin to be published to npm. Once you're ready to publish your plugin publicly, run the following command in your plugin project:
 

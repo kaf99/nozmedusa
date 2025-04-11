@@ -7,8 +7,6 @@ This method removes an item that is part of an action in a draft order. It sends
 
 ## Example
 
-To remove an item that is part of an action in a draft order:
-
 ```ts
 sdk.admin.draftOrder.removeActionItem("order_123", "action_123")
 .then(({ draft_order_preview }) => {
