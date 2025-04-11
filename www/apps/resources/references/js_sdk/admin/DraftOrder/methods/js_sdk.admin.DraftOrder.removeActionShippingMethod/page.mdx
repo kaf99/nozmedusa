@@ -7,8 +7,6 @@ This method removes a shipping method from a draft order. It sends a request to 
 
 ## Example
 
-To remove a shipping method from a draft order:
-
 ```ts
 sdk.admin.draftOrder.removeShippingMethod("order_123", "action_123")
 .then(({ draft_order_preview }) => {

@@ -103,7 +103,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/data-models/check-constraints/page.mdx": "2024-12-06T14:34:50.384Z",
   "app/learn/fundamentals/module-links/link/page.mdx": "2025-04-07T08:03:14.513Z",
   "app/learn/fundamentals/workflows/store-executions/page.mdx": "2025-02-11T15:56:03.835Z",
-  "app/learn/fundamentals/plugins/create/page.mdx": "2025-04-07T14:50:53.866Z",
+  "app/learn/fundamentals/plugins/create/page.mdx": "2025-04-11T10:39:31.589Z",
   "app/learn/fundamentals/plugins/page.mdx": "2025-01-22T10:14:10.433Z",
   "app/learn/customization/reuse-customizations/page.mdx": "2025-01-22T10:01:57.665Z",
   "app/learn/update/page.mdx": "2025-01-27T08:45:19.030Z",

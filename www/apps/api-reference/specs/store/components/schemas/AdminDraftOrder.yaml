@@ -247,3 +247,10 @@ properties:
     type: number
     title: original_shipping_tax_total
     description: The tax total of the draft order's shipping excluding promotions.
+  region:
+    $ref: ./AdminRegion.yaml
+  credit_lines:
+    type: array
+    description: The draft order's credit lines.
+    items:
+      $ref: ./OrderCreditLine.yaml

@@ -106,3 +106,11 @@ properties:
   metadata:
     type: object
     description: The draft order's metadata, can hold custom key-value pairs.
+  customer_id:
+    type: string
+    title: customer_id
+    description: The ID of the customer associated with the draft order.
+  sales_channel_id:
+    type: string
+    title: sales_channel_id
+    description: The ID of the sales channel associated with the draft order.
