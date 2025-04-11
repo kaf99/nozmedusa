@@ -96,15 +96,8 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
       const options_ = options as { delay: number }
       const delay = (ms?: number) => (ms ? setTimeout(ms) : Promise.resolve())
 
-      try {
-        await delay(options_?.delay)
-        this.eventEmitter_.emit(eventData.name, eventBody)
-      } catch (error) {
-        this.logger_?.error(
-          `Error emitting event ${eventData.name}: ${error.message}`
-        )
-        throw error
-      }
+      await delay(options_?.delay)
+      this.eventEmitter_.emit(eventData.name, eventBody)
     }
   }
 
@@ -131,16 +124,9 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
       const delay = (ms?: number) => (ms ? setTimeout(ms) : Promise.resolve())
 
       promises.push(
-        delay(options_?.delay)
-          .then(() => {
-            this.eventEmitter_.emit(event.name, eventBody)
-          })
-          .catch((error) => {
-            this.logger_?.error(
-              `Error releasing grouped event ${event.name}: ${error.message}`
-            )
-            throw error
-          })
+        delay(options_?.delay).then(() => {
+          this.eventEmitter_.emit(event.name, eventBody)
+        })
       )
     }
 

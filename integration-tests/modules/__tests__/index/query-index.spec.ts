@@ -76,6 +76,8 @@ async function populateData(api: any) {
   for (const productPayload of payload) {
     await api.post("/admin/products", productPayload, adminHeaders)
   }
+
+  await setTimeout(2500)
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"
