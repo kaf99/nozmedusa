@@ -614,7 +614,7 @@ export class Link {
 
       promises.push(
         service
-          .list({ $or: filters })
+          .list({ $or: filters }, {}, sharedContext)
           .then((links: any[]) =>
             options?.asLinkDefinition
               ? convertRecordsToLinkDefinition(links, service)
