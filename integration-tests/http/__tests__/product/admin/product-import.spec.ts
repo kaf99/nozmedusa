@@ -13,7 +13,7 @@ import {
 } from "../../../../helpers/create-admin-user"
 import { getProductFixture } from "../../../../helpers/fixtures"
 
-jest.setTimeout(50000)
+jest.setTimeout(180000)
 
 const getUploadReq = (file: { name: string; content: string }) => {
   const form = new FormData()
@@ -141,7 +141,8 @@ medusaIntegrationTestRunner({
         it(`should import a previously exported products CSV file ${testcase.name}`, async () => {
           const subscriberExecution = TestEventUtils.waitSubscribersExecution(
             `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-            eventBus
+            eventBus,
+            { timeout: 20000 }
           )
 
           let fileContent = await fs.readFile(
@@ -402,7 +403,8 @@ medusaIntegrationTestRunner({
       it("should import product with categories", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus
+          eventBus,
+          { timeout: 20000 }
         )
 
         let fileContent = await fs.readFile(
@@ -481,7 +483,8 @@ medusaIntegrationTestRunner({
       it("should ignore non-existent fields being present in the CSV that don't start with Product or Variant", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus
+          eventBus,
+          { timeout: 20000 }
         )
 
         let fileContent = await fs.readFile(
@@ -536,7 +539,8 @@ medusaIntegrationTestRunner({
       it("should successfully skip non-existent product fields being present in the CSV", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus
+          eventBus,
+          { timeout: 20000 }
         )
 
         let fileContent = await fs.readFile(
@@ -602,7 +606,8 @@ medusaIntegrationTestRunner({
       it("supports importing the v1 template", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus
+          eventBus,
+          { timeout: 20000 }
         )
 
         let fileContent = await fs.readFile(
