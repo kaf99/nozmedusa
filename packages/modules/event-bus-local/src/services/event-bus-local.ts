@@ -7,7 +7,10 @@ import {
   Message,
   Subscriber,
 } from "@medusajs/framework/types"
-import { AbstractEventBusModuleService } from "@medusajs/framework/utils"
+import {
+  AbstractEventBusModuleService,
+  promiseAll,
+} from "@medusajs/framework/utils"
 import { EventEmitter } from "events"
 import { setTimeout } from "timers/promises"
 
@@ -93,9 +96,15 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
       const options_ = options as { delay: number }
       const delay = (ms?: number) => (ms ? setTimeout(ms) : Promise.resolve())
 
-      delay(options_?.delay).then(() =>
+      try {
+        await delay(options_?.delay)
         this.eventEmitter_.emit(eventData.name, eventBody)
-      )
+      } catch (error) {
+        this.logger_?.error(
+          `Error emitting event ${eventData.name}: ${error.message}`
+        )
+        throw error
+      }
     }
   }
 
@@ -114,17 +123,28 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
   async releaseGroupedEvents(eventGroupId: string) {
     const groupedEvents = this.groupedEventsMap_.get(eventGroupId) || []
 
+    const promises: Promise<void>[] = []
     for (const event of groupedEvents) {
       const { options, ...eventBody } = event
 
       const options_ = options as { delay: number }
       const delay = (ms?: number) => (ms ? setTimeout(ms) : Promise.resolve())
 
-      delay(options_?.delay).then(() =>
-        this.eventEmitter_.emit(event.name, eventBody)
+      promises.push(
+        delay(options_?.delay)
+          .then(() => {
+            this.eventEmitter_.emit(event.name, eventBody)
+          })
+          .catch((error) => {
+            this.logger_?.error(
+              `Error releasing grouped event ${event.name}: ${error.message}`
+            )
+            throw error
+          })
       )
     }
 
+    await promiseAll(promises)
     await this.clearGroupedEvents(eventGroupId)
   }
 
