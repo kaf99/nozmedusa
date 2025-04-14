@@ -719,7 +719,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
     while (continueExecution) {
       if (transaction.hasFinished()) {
-        return
+        break
       }
 
       const flow = transaction.getFlow()
@@ -891,7 +891,7 @@ export class TransactionOrchestrator extends EventEmitter {
         })
 
         if (!continueExecution) {
-          return
+          break
         }
 
         const stepHandler = async () => {
@@ -1027,6 +1027,9 @@ export class TransactionOrchestrator extends EventEmitter {
         continueExecution = false
       }
     }
+
+    await this.checkAllSteps(transaction)
+    await transaction.saveCheckpoint()
   }
 
   /**
