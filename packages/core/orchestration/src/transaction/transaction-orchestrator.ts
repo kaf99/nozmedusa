@@ -717,7 +717,11 @@ export class TransactionOrchestrator extends EventEmitter {
   ): Promise<void> {
     let continueExecution = true
 
-    while (continueExecution && !transaction.hasFinished()) {
+    while (continueExecution) {
+      if (transaction.hasFinished()) {
+        return
+      }
+
       const flow = transaction.getFlow()
       const nextSteps = await this.checkAllSteps(transaction)
 
@@ -732,7 +736,6 @@ export class TransactionOrchestrator extends EventEmitter {
 
       const execution: Promise<void | unknown>[] = []
       for (const step of nextSteps.next) {
-        // Initialize the step for execution
         const { stopStepExecution } = this.prepareStepForExecution(step, flow)
 
         // Should stop the execution if next step cant be handled
@@ -740,18 +743,15 @@ export class TransactionOrchestrator extends EventEmitter {
           continue
         }
 
-        // Schedule step timeout if needed
         if (step.hasTimeout() && !step.timedOutAt && step.attempts === 1) {
           await transaction.scheduleStepTimeout(step, step.definition.timeout!)
         }
 
-        // Emit step begin event
         transaction.emit(DistributedTransactionEvent.STEP_BEGIN, {
           step,
           transaction,
         })
 
-        // Get step async status
         const isAsync = step.isCompensating()
           ? step.definition.compensateAsync
           : step.definition.async
@@ -790,6 +790,7 @@ export class TransactionOrchestrator extends EventEmitter {
       }
     }
 
+    // Recompute the current flow flags
     await this.checkAllSteps(transaction)
     await transaction.saveCheckpoint()
   }
