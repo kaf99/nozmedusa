@@ -741,7 +741,6 @@ export class TransactionOrchestrator extends EventEmitter {
         this.emit(DistributedTransactionEvent.FINISH, { transaction })
       }
 
-      const asyncStepsToStart: any[] = []
       for (const step of nextSteps.next) {
         const curState = step.getStates()
         const type = step.isCompensating()
@@ -924,8 +923,8 @@ export class TransactionOrchestrator extends EventEmitter {
             return await transaction.handler(...handlerArgs)
           }
 
-          asyncStepsToStart.push({
-            handler: async () => {
+          execution.push(
+            transaction.saveCheckpoint().then(() => {
               let promise: Promise<unknown>
 
               if (TransactionOrchestrator.traceStep) {
@@ -937,7 +936,7 @@ export class TransactionOrchestrator extends EventEmitter {
                 promise = stepHandler()
               }
 
-              return promise
+              promise
                 .then(async (response: any) => {
                   const output = response?.__type ? response.output : response
 
@@ -991,8 +990,8 @@ export class TransactionOrchestrator extends EventEmitter {
                     response,
                   })
                 })
-            },
-          })
+            })
+          )
         }
       }
 
@@ -1004,10 +1003,6 @@ export class TransactionOrchestrator extends EventEmitter {
         } else {
           throw error
         }
-      }
-
-      if (asyncStepsToStart.length > 0) {
-        execution.push(...asyncStepsToStart.map((step) => step.handler()))
       }
 
       await promiseAll(execution)

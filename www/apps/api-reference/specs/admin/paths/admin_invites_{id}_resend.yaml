@@ -29,6 +29,10 @@ post:
         externalDocs:
           url: '#select-fields-and-relations'
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_invites_{id}_resend/post.js
     - lang: Shell
       label: cURL
       source:

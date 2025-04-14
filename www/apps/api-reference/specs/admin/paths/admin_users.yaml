@@ -522,6 +522,10 @@ get:
             title: $exists
             description: Filter by whether a value for this parameter exists (not `null`).
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_users/get.js
     - lang: Shell
       label: cURL
       source:

@@ -535,6 +535,10 @@ get:
           type: object
         title: $or
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_invites/get.js
     - lang: Shell
       label: cURL
       source:
@@ -635,6 +639,10 @@ post:
               type: object
               description: The invite's metadata. Can be custom data in key-value pairs.
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_invites/post.js
     - lang: Shell
       label: cURL
       source:

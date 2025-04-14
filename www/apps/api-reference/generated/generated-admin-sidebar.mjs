@@ -49,13 +49,6 @@ const generatedgeneratedAdminSidebarSidebar = {
     },
     {
       "type": "category",
-      "title": "Auth",
-      "children": [],
-      "loaded": false,
-      "showLoadingIfEmpty": true
-    },
-    {
-      "type": "category",
       "title": "Api Keys",
       "children": [
         {
@@ -69,6 +62,13 @@ const generatedgeneratedAdminSidebarSidebar = {
           }
         }
       ],
+      "loaded": false,
+      "showLoadingIfEmpty": true
+    },
+    {
+      "type": "category",
+      "title": "Auth",
+      "children": [],
       "loaded": false,
       "showLoadingIfEmpty": true
     },
@@ -375,6 +375,24 @@ const generatedgeneratedAdminSidebarSidebar = {
           "type": "link",
           "path": "payments_payment_schema",
           "title": "Payment Object",
+          "loaded": true,
+          "badge": {
+            "variant": "neutral",
+            "text": "Schema"
+          }
+        }
+      ],
+      "loaded": false,
+      "showLoadingIfEmpty": true
+    },
+    {
+      "type": "category",
+      "title": "Plugins",
+      "children": [
+        {
+          "type": "link",
+          "path": "plugins_plugin_schema",
+          "title": "Plugin Object",
           "loaded": true,
           "badge": {
             "variant": "neutral",

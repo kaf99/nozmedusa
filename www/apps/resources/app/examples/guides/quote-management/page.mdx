@@ -3645,7 +3645,7 @@ npm run dev
 Then, send a request to accept a quote for the authenticated customer:
 
 ```bash
-curl 'http://localhost:9000/store/customers/me/quotes/{quote_id}/accept' \
+curl -X POST 'http://localhost:9000/store/customers/me/quotes/{quote_id}/accept' \
 -H 'x-publishable-api-key: {your_publishable_api_key}' \
 -H 'Authorization: Bearer {token}'
 ```

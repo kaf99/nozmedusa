@@ -73,7 +73,8 @@
 			"adjustments": "The associated adjustments.\n\n@expandable",
 			"tax_lines": "The associated tax_lines.\n\n@expandable",
 			"cart": "The associated cart.\n\n@expandable",
-			"is_custom_price": "Whether the line item's price is custom."
+			"is_custom_price": "Whether the line item's price is custom.",
+			"is_giftcard": "Whether the line item is a giftcard."
 		}
 	},
 	"ShippingMethodAdjustment": {

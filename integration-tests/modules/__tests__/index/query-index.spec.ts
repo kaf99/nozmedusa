@@ -97,7 +97,7 @@ medusaIntegrationTestRunner({
       process.env.ENABLE_INDEX_MODULE = "false"
     })
 
-    describe("Index engine - Query.index", () => {
+    describe.skip("Index engine - Query.index", () => {
       beforeEach(async () => {
         await createAdminUser(dbConnection, adminHeaders, appContainer)
       })

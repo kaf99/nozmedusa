@@ -29,6 +29,26 @@
  *       schema:
  *         $ref: "#/components/schemas/AdminUpdateUser"
  * x-codeSamples:
+ *   - lang: JavaScript
+ *     label: JS SDK
+ *     source: |-
+ *       import Medusa from "@medusajs/js-sdk"
+ * 
+ *       export const sdk = new Medusa({
+ *         baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+ *         debug: import.meta.env.DEV,
+ *         auth: {
+ *           type: "session",
+ *         },
+ *       })
+ * 
+ *       sdk.admin.user.update("user_123", {
+ *         first_name: "John",
+ *         last_name: "Doe",
+ *       })
+ *       .then(({ user }) => {
+ *         console.log(user)
+ *       })
  *   - lang: Shell
  *     label: cURL
  *     source: |-

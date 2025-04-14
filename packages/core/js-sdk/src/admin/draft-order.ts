@@ -130,9 +130,6 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To create a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.create({
    *   email: "test@test.com",
    *   items: [
@@ -147,7 +144,6 @@ export class DraftOrder {
    * .then(({ draft_order }) => {
    *   console.log(draft_order)
    * })
-   * ```
    */
   async create(
     body: HttpTypes.AdminCreateDraftOrder,
@@ -175,16 +171,12 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To update a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.update("order_123", {
    *   email: "test@test.com",
    * })
    * .then(({ draft_order }) => {
    *   console.log(draft_order)
    * })
-   * ```
    */
   async update(
     id: string,
@@ -212,9 +204,6 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To convert a draft order to an order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.convertToOrder("order_123")
    * .then(({ order }) => {
    *   console.log(order)
@@ -244,9 +233,6 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To add items to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.addItems("order_123", {
    *   items: [
    *     {
@@ -258,7 +244,6 @@ export class DraftOrder {
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async addItems(
     id: string,
@@ -285,16 +270,12 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To update an item that is part of an action in a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.updateActionItem("order_123", "action_123", {
    *   quantity: 2,
    * })
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async updateActionItem(
     id: string,
@@ -321,14 +302,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To remove an item that is part of an action in a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.removeActionItem("order_123", "action_123")
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async removeActionItem(
     id: string,
@@ -352,18 +329,15 @@ export class DraftOrder {
    * @param itemId - The item ID.
    * @param body - The data to update the item.
    * @param headers - Headers to pass in the request.
+   * @returns The draft order preview's details.
    *
    * @example
-   * To update an item in a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.updateItem("order_123", "item_123", {
    *   quantity: 2,
    * })
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async updateItem(
     id: string,
@@ -390,16 +364,12 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To add promotions to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.addPromotions("order_123", {
    *   promo_codes: ["PROMO_CODE_1", "PROMO_CODE_2"],
    * })
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async addPromotions(
     id: string,
@@ -425,13 +395,9 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To remove promotions from a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.removePromotions("order_123", {
    *   promo_codes: ["PROMO_CODE_1", "PROMO_CODE_2"],
    * })
-   * ```
    */
   async removePromotions(
     id: string,
@@ -457,16 +423,12 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To add a shipping method to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.addShippingMethod("order_123", {
    *   shipping_option_id: "shipping_option_123",
    * })
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async addShippingMethod(
     id: string,
@@ -493,16 +455,12 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To update a shipping method in a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.updateShippingMethod("order_123", "action_123", {
    *   shipping_option_id: "shipping_option_123",
    * })
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async updateActionShippingMethod(
     id: string,
@@ -529,14 +487,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To remove a shipping method from a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.removeShippingMethod("order_123", "action_123")
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async removeActionShippingMethod(
     id: string,
@@ -552,6 +506,24 @@ export class DraftOrder {
     )
   }
 
+  /**
+   * This method updates a shipping method in a draft order. It sends a request to the
+   * [Update Draft Order Shipping Method](https://docs.medusajs.com/api/admin#draft-orders_postordereditsidshipping-methodsaction_id) API route.
+   * 
+   * @param id - The draft order's ID.
+   * @param methodId - The shipping method's ID.
+   * @param body - The data to update the shipping method.
+   * @param headers - Headers to pass in the request.
+   * @returns The draft order preview's details.
+   * 
+   * @example
+   * sdk.admin.draftOrder.updateShippingMethod("order_123", "sm_123", {
+   *  shipping_option_id: "so_123",
+   * })
+   * .then(({ draft_order_preview }) => {
+   *   console.log(draft_order_preview)
+   * })
+   */
   async updateShippingMethod(
     id: string,
     methodId: string,
@@ -575,14 +547,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To begin an edit to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.beginEdit("order_123")
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async beginEdit(id: string, headers?: ClientHeaders) {
     return await this.client.fetch<HttpTypes.AdminDraftOrderPreviewResponse>(
@@ -602,14 +570,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To cancel an edit to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.cancelEdit("order_123")
    * .then(({ id, object, deleted }) => {
    *   console.log(id, object, deleted)
    * })
-   * ```
    */
   async cancelEdit(id: string, headers?: ClientHeaders) {
     return await this.client.fetch<
@@ -628,14 +592,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To request an edit to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.requestEdit("order_123")
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async requestEdit(id: string, headers?: ClientHeaders) {
     return await this.client.fetch<HttpTypes.AdminDraftOrderPreviewResponse>(
@@ -655,14 +615,10 @@ export class DraftOrder {
    * @param headers - Headers to pass in the request.
    *
    * @example
-   * To confirm an edit to a draft order:
-   *
-   * ```ts
    * sdk.admin.draftOrder.confirmEdit("order_123")
    * .then(({ draft_order_preview }) => {
    *   console.log(draft_order_preview)
    * })
-   * ```
    */
   async confirmEdit(id: string, headers?: ClientHeaders) {
     return await this.client.fetch<HttpTypes.AdminDraftOrderPreviewResponse>(

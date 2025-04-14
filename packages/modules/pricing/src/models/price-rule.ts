@@ -19,6 +19,10 @@ const PriceRule = model
       unique: true,
     },
     {
+      on: ["attribute"],
+      where: "deleted_at IS NULL",
+    },
+    {
       on: ["attribute", "value"],
       where: "deleted_at IS NULL",
     },

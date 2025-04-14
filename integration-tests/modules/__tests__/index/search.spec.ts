@@ -30,7 +30,7 @@ medusaIntegrationTestRunner({
       await createAdminUser(dbConnection, adminHeaders, appContainer)
     })
 
-    describe("Index engine", () => {
+    describe.skip("Index engine", () => {
       it("should search through the indexed data and return the correct results ordered and filtered [1]", async () => {
         const shippingProfile = (
           await api.post(

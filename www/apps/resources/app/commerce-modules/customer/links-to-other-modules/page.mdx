@@ -105,11 +105,11 @@ To retrieve the account holder associated with a customer with [Query](!docs!/le
 const { data: customers } = await query.graph({
   entity: "customer",
   fields: [
-    "account_holder.*",
+    "account_holders.*",
   ],
 })
 
-// customers.account_holder
+// customers.account_holders
 ```
 
   </CodeTab>
@@ -123,11 +123,11 @@ import { useQueryGraphStep } from "@medusajs/medusa/core-flows"
 const { data: customers } = useQueryGraphStep({
   entity: "customer",
   fields: [
-    "account_holder.*",
+    "account_holders.*",
   ],
 })
 
-// customers.account_holder
+// customers.account_holders
 ```
 
   </CodeTab>

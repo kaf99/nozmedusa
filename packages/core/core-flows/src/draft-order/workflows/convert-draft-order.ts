@@ -1,4 +1,8 @@
-import { Modules, OrderStatus } from "@medusajs/framework/utils"
+import {
+  Modules,
+  OrderStatus,
+  OrderWorkflowEvents,
+} from "@medusajs/framework/utils"
 import {
   createStep,
   createWorkflow,
@@ -7,7 +11,7 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { IOrderModuleService, OrderDTO } from "@medusajs/types"
-import { useRemoteQueryStep } from "../../common"
+import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { validateDraftOrderStep } from "../steps/validate-draft-order"
 
 const convertDraftOrderWorkflowId = "convert-draft-order"
@@ -90,6 +94,11 @@ export const convertDraftOrderWorkflow = createWorkflow(
     validateDraftOrderStep({ order })
 
     const updatedOrder = convertDraftOrderStep({ id: input.id })
+
+    emitEventStep({
+      eventName: OrderWorkflowEvents.PLACED,
+      data: { id: updatedOrder.id },
+    })
 
     return new WorkflowResponse(updatedOrder)
   }
