@@ -92,4 +92,9 @@ export class SkipExecutionError extends Error {
       error?.name === "SkipExecutionError"
     )
   }
+
+  constructor(message?: string) {
+    super(message)
+    this.name = "SkipExecutionError"
+  }
 }

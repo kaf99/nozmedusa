@@ -837,6 +837,30 @@ export class TransactionOrchestrator extends EventEmitter {
           return ret
         }
 
+        const setStepSuccess = async (response: unknown) => {
+          if (isDefined(response) && step.saveResponse) {
+            transaction.addResponse(
+              step.definition.action!,
+              step.isCompensating()
+                ? TransactionHandlerType.COMPENSATE
+                : TransactionHandlerType.INVOKE,
+              response
+            )
+          }
+
+          const ret = await TransactionOrchestrator.setStepSuccess(
+            transaction,
+            step,
+            response
+          )
+
+          if (isAsync && !ret.stopExecution) {
+            await transaction.scheduleRetry(step, 0)
+          }
+
+          return ret
+        }
+
         const traceData = {
           action: step.definition.action + "",
           type,
@@ -859,7 +883,16 @@ export class TransactionOrchestrator extends EventEmitter {
           this,
         ] as Parameters<TransactionStepHandler>
 
-        await transaction.saveCheckpoint()
+        await transaction.saveCheckpoint().catch((error) => {
+          if (SkipExecutionError.isSkipExecutionError(error)) {
+            continueExecution = false
+            return
+          }
+        })
+
+        if (!continueExecution) {
+          return
+        }
 
         const stepHandler = async () => {
           return await transaction.handler(...handlerArgs)
@@ -894,11 +927,7 @@ export class TransactionOrchestrator extends EventEmitter {
                   return
                 }
 
-                await TransactionOrchestrator.setStepSuccess(
-                  transaction,
-                  step,
-                  response
-                )
+                await setStepSuccess(response)
               })
               .catch(async (error) => {
                 if (SkipExecutionError.isSkipExecutionError(error)) {
@@ -962,15 +991,8 @@ export class TransactionOrchestrator extends EventEmitter {
                     )
                   }
 
-                  await TransactionOrchestrator.setStepSuccess(
-                    transaction,
-                    step,
-                    response
-                  )
+                  await setStepSuccess(response)
                 }
-
-                // check nested flow
-                await transaction.scheduleRetry(step, 0)
               })
               .catch(async (error) => {
                 if (SkipExecutionError.isSkipExecutionError(error)) {
