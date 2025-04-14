@@ -859,20 +859,23 @@ export class TransactionOrchestrator extends EventEmitter {
           this,
         ] as Parameters<TransactionStepHandler>
 
+        await transaction.saveCheckpoint()
+
+        const stepHandler = async () => {
+          return await transaction.handler(...handlerArgs)
+        }
+
+        let promise: () => Promise<any>
+        if (TransactionOrchestrator.traceStep) {
+          promise = () =>
+            TransactionOrchestrator.traceStep!(stepHandler, traceData)
+        } else {
+          promise = stepHandler
+        }
+
         if (!isAsync) {
-          const stepHandler = async () => {
-            return await transaction.handler(...handlerArgs)
-          }
-
-          let promise: Promise<unknown>
-          if (TransactionOrchestrator.traceStep) {
-            promise = TransactionOrchestrator.traceStep(stepHandler, traceData)
-          } else {
-            promise = stepHandler()
-          }
-
           execution.push(
-            promise
+            promise()
               .then(async (response: any) => {
                 if (this.hasExpired({ transaction, step }, Date.now())) {
                   await this.checkStepTimeout(transaction, step)
@@ -898,6 +901,11 @@ export class TransactionOrchestrator extends EventEmitter {
                 )
               })
               .catch(async (error) => {
+                if (SkipExecutionError.isSkipExecutionError(error)) {
+                  continueExecution = false
+                  return
+                }
+
                 const response = error?.getStepResponse?.()
 
                 if (this.hasExpired({ transaction, step }, Date.now())) {
@@ -925,92 +933,69 @@ export class TransactionOrchestrator extends EventEmitter {
               })
           )
         } else {
-          const stepHandler = async () => {
-            return await transaction.handler(...handlerArgs)
-          }
-
           execution.push(
-            transaction.saveCheckpoint().then(() => {
-              let promise: Promise<unknown>
+            promise()
+              .then(async (response: any) => {
+                const output = response?.__type ? response.output : response
 
-              if (TransactionOrchestrator.traceStep) {
-                promise = TransactionOrchestrator.traceStep(
-                  stepHandler,
-                  traceData
-                )
-              } else {
-                promise = stepHandler()
-              }
-
-              promise
-                .then(async (response: any) => {
-                  const output = response?.__type ? response.output : response
-
-                  if (SkipStepResponse.isSkipStepResponse(output)) {
-                    await TransactionOrchestrator.skipStep({
-                      transaction,
-                      step,
-                    })
-                  } else {
-                    if (
-                      !step.definition.backgroundExecution ||
-                      step.definition.nested
-                    ) {
-                      const eventName =
-                        DistributedTransactionEvent.STEP_AWAITING
-                      transaction.emit(eventName, { step, transaction })
-
-                      return
-                    }
-
-                    if (this.hasExpired({ transaction, step }, Date.now())) {
-                      await this.checkStepTimeout(transaction, step)
-                      await this.checkTransactionTimeout(
-                        transaction,
-                        nextSteps.next.includes(step) ? nextSteps.next : [step]
-                      )
-                    }
-
-                    await TransactionOrchestrator.setStepSuccess(
-                      transaction,
-                      step,
-                      response
-                    )
-                  }
-
-                  // check nested flow
-                  await transaction.scheduleRetry(step, 0)
-                })
-                .catch(async (error) => {
-                  const response = error?.getStepResponse?.()
-
+                if (SkipStepResponse.isSkipStepResponse(output)) {
+                  await TransactionOrchestrator.skipStep({
+                    transaction,
+                    step,
+                  })
+                } else {
                   if (
-                    PermanentStepFailureError.isPermanentStepFailureError(error)
+                    !step.definition.backgroundExecution ||
+                    step.definition.nested
                   ) {
-                    await setStepFailure(error, {
-                      endRetry: true,
-                      response,
-                    })
+                    const eventName = DistributedTransactionEvent.STEP_AWAITING
+                    transaction.emit(eventName, { step, transaction })
 
                     return
                   }
 
+                  if (this.hasExpired({ transaction, step }, Date.now())) {
+                    await this.checkStepTimeout(transaction, step)
+                    await this.checkTransactionTimeout(
+                      transaction,
+                      nextSteps.next.includes(step) ? nextSteps.next : [step]
+                    )
+                  }
+
+                  await TransactionOrchestrator.setStepSuccess(
+                    transaction,
+                    step,
+                    response
+                  )
+                }
+
+                // check nested flow
+                await transaction.scheduleRetry(step, 0)
+              })
+              .catch(async (error) => {
+                if (SkipExecutionError.isSkipExecutionError(error)) {
+                  continueExecution = false
+                  return
+                }
+
+                const response = error?.getStepResponse?.()
+
+                if (
+                  PermanentStepFailureError.isPermanentStepFailureError(error)
+                ) {
                   await setStepFailure(error, {
+                    endRetry: true,
                     response,
                   })
-                })
-            })
-          )
-        }
-      }
 
-      try {
-        await transaction.saveCheckpoint()
-      } catch (error) {
-        if (SkipExecutionError.isSkipExecutionError(error)) {
-          break
-        } else {
-          throw error
+                  return
+                }
+
+                await setStepFailure(error, {
+                  response,
+                })
+              })
+          )
         }
       }
 
