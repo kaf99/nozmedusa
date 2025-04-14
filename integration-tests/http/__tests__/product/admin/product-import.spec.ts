@@ -1,11 +1,11 @@
-import { IEventBusModuleService } from "@medusajs/types"
-import { CommonEvents, Modules } from "@medusajs/utils"
-import FormData from "form-data"
-import fs from "fs/promises"
 import {
   medusaIntegrationTestRunner,
   TestEventUtils,
 } from "@medusajs/test-utils"
+import { IEventBusModuleService } from "@medusajs/types"
+import { CommonEvents, Modules } from "@medusajs/utils"
+import FormData from "form-data"
+import fs from "fs/promises"
 import path from "path"
 import {
   adminHeaders,
@@ -13,7 +13,7 @@ import {
 } from "../../../../helpers/create-admin-user"
 import { getProductFixture } from "../../../../helpers/fixtures"
 
-jest.setTimeout(180000)
+jest.setTimeout(50000)
 
 const getUploadReq = (file: { name: string; content: string }) => {
   const form = new FormData()
@@ -125,27 +125,24 @@ medusaIntegrationTestRunner({
       ).data.product_category
     })
 
-    // afterEach(() => {
-    //   ;(eventBus as any).eventEmitter_.removeAllListeners()
-    // })
+    afterEach(() => {
+      ;(eventBus as any).eventEmitter_.removeAllListeners()
+    })
 
     describe("POST /admin/products/export", () => {
       // We want to ensure files with different delimiters are supported
       ;[
         { file: "exported-products-comma.csv", name: "delimited with comma" },
-        // {
-        //   file: "exported-products-semicolon.csv",
-        //   name: "delimited with semicolon",
-        // },
+        {
+          file: "exported-products-semicolon.csv",
+          name: "delimited with semicolon",
+        },
       ].forEach((testcase) => {
         it(`should import a previously exported products CSV file ${testcase.name}`, async () => {
           const subscriberExecution = TestEventUtils.waitSubscribersExecution(
             `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-            eventBus,
-            { timeout: 20000 }
+            eventBus
           )
-
-          const perfStartTime = performance.now()
 
           let fileContent = await fs.readFile(
             path.join(__dirname, "__fixtures__", testcase.file),
@@ -192,9 +189,6 @@ medusaIntegrationTestRunner({
             {},
             meta
           )
-
-          const perfEndTime = performance.now()
-          console.log(`Time taken: ${perfEndTime - perfStartTime} milliseconds`)
 
           await subscriberExecution
           const notifications = (
@@ -408,8 +402,7 @@ medusaIntegrationTestRunner({
       it("should import product with categories", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus,
-          { timeout: 20000 }
+          eventBus
         )
 
         let fileContent = await fs.readFile(
@@ -488,8 +481,7 @@ medusaIntegrationTestRunner({
       it("should ignore non-existent fields being present in the CSV that don't start with Product or Variant", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus,
-          { timeout: 20000 }
+          eventBus
         )
 
         let fileContent = await fs.readFile(
@@ -544,8 +536,7 @@ medusaIntegrationTestRunner({
       it("should successfully skip non-existent product fields being present in the CSV", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus,
-          { timeout: 20000 }
+          eventBus
         )
 
         let fileContent = await fs.readFile(
@@ -611,8 +602,7 @@ medusaIntegrationTestRunner({
       it("supports importing the v1 template", async () => {
         const subscriberExecution = TestEventUtils.waitSubscribersExecution(
           `${Modules.NOTIFICATION}.notification.${CommonEvents.CREATED}`,
-          eventBus,
-          { timeout: 20000 }
+          eventBus
         )
 
         let fileContent = await fs.readFile(
