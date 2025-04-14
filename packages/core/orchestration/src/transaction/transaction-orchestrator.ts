@@ -717,306 +717,68 @@ export class TransactionOrchestrator extends EventEmitter {
   ): Promise<void> {
     let continueExecution = true
 
-    while (continueExecution) {
-      if (transaction.hasFinished()) {
-        break
-      }
-
+    while (continueExecution && !transaction.hasFinished()) {
       const flow = transaction.getFlow()
       const nextSteps = await this.checkAllSteps(transaction)
-      const execution: Promise<void | unknown>[] = []
 
-      const hasTimedOut = await this.checkTransactionTimeout(
-        transaction,
-        nextSteps.current
-      )
-
-      if (hasTimedOut) {
+      if (await this.checkTransactionTimeout(transaction, nextSteps.current)) {
         continue
       }
 
       if (nextSteps.remaining === 0) {
-        if (transaction.hasTimeout()) {
-          void transaction.clearTransactionTimeout()
-        }
-
-        await transaction.saveCheckpoint()
-        this.emit(DistributedTransactionEvent.FINISH, { transaction })
+        await this.finalizeTransaction(transaction)
+        return
       }
 
+      const execution: Promise<void | unknown>[] = []
       for (const step of nextSteps.next) {
-        const curState = step.getStates()
-        const type = step.isCompensating()
-          ? TransactionHandlerType.COMPENSATE
-          : TransactionHandlerType.INVOKE
+        // Initialize the step for execution
+        const { stopStepExecution } = this.prepareStepForExecution(step, flow)
 
-        step.lastAttempt = Date.now()
-        step.attempts++
-
-        if (curState.state === TransactionStepState.NOT_STARTED) {
-          if (!step.startedAt) {
-            step.startedAt = Date.now()
-          }
-
-          if (step.isCompensating()) {
-            step.changeState(TransactionStepState.COMPENSATING)
-
-            if (step.definition.noCompensation) {
-              step.changeState(TransactionStepState.REVERTED)
-              continue
-            }
-          } else if (flow.state === TransactionState.INVOKING) {
-            step.changeState(TransactionStepState.INVOKING)
-          }
+        // Should stop the execution if next step cant be handled
+        if (!stopStepExecution) {
+          continue
         }
 
-        step.changeStatus(TransactionStepStatus.WAITING)
-
-        const payload = new TransactionPayload(
-          {
-            model_id: flow.modelId,
-            idempotency_key: TransactionOrchestrator.getKeyName(
-              flow.modelId,
-              flow.transactionId,
-              step.definition.action!,
-              type
-            ),
-            action: step.definition.action + "",
-            action_type: type,
-            attempt: step.attempts,
-            timestamp: Date.now(),
-          },
-          transaction.payload,
-          transaction.getContext()
-        )
-
+        // Schedule step timeout if needed
         if (step.hasTimeout() && !step.timedOutAt && step.attempts === 1) {
           await transaction.scheduleStepTimeout(step, step.definition.timeout!)
         }
 
+        // Emit step begin event
         transaction.emit(DistributedTransactionEvent.STEP_BEGIN, {
           step,
           transaction,
         })
 
+        // Get step async status
         const isAsync = step.isCompensating()
           ? step.definition.compensateAsync
           : step.definition.async
 
-        const setStepFailure = async (
-          error: Error | any,
-          {
-            endRetry,
-            response,
-          }: {
-            endRetry?: boolean
-            response?: unknown
-          } = {}
-        ) => {
-          if (isDefined(response) && step.saveResponse) {
-            transaction.addResponse(
-              step.definition.action!,
-              step.isCompensating()
-                ? TransactionHandlerType.COMPENSATE
-                : TransactionHandlerType.INVOKE,
-              response
-            )
-          }
-
-          const ret = await TransactionOrchestrator.setStepFailure(
-            transaction,
-            step,
-            error,
-            endRetry ? 0 : step.definition.maxRetries
-          )
-
-          if (isAsync && !ret.stopExecution) {
-            await transaction.scheduleRetry(step, 0)
-          }
-
-          return ret
-        }
-
-        const setStepSuccess = async (response: unknown) => {
-          if (isDefined(response) && step.saveResponse) {
-            transaction.addResponse(
-              step.definition.action!,
-              step.isCompensating()
-                ? TransactionHandlerType.COMPENSATE
-                : TransactionHandlerType.INVOKE,
-              response
-            )
-          }
-
-          const ret = await TransactionOrchestrator.setStepSuccess(
-            transaction,
-            step,
-            response
-          )
-
-          if (isAsync && !ret.stopExecution) {
-            await transaction.scheduleRetry(step, 0)
-          }
-
-          return ret
-        }
-
-        const traceData = {
-          action: step.definition.action + "",
-          type,
-          step_id: step.id,
-          step_uuid: step.uuid + "",
-          attempts: step.attempts,
-          failures: step.failures,
-          async: !!(type === "invoke"
-            ? step.definition.async
-            : step.definition.compensateAsync),
-          idempotency_key: payload.metadata.idempotency_key,
-        }
-
-        const handlerArgs = [
-          step.definition.action + "",
-          type,
-          payload,
-          transaction,
-          step,
-          this,
-        ] as Parameters<TransactionStepHandler>
-
+        // Save checkpoint before executing step
         await transaction.saveCheckpoint().catch((error) => {
           if (SkipExecutionError.isSkipExecutionError(error)) {
             continueExecution = false
             return
           }
+
+          throw error
         })
 
         if (!continueExecution) {
           break
         }
 
-        const stepHandler = async () => {
-          return await transaction.handler(...handlerArgs)
-        }
-
-        let promise: () => Promise<any>
-        if (TransactionOrchestrator.traceStep) {
-          promise = () =>
-            TransactionOrchestrator.traceStep!(stepHandler, traceData)
-        } else {
-          promise = stepHandler
-        }
+        const promise = this.createStepExecutionPromise(transaction, step)
 
         if (!isAsync) {
           execution.push(
-            promise()
-              .then(async (response: any) => {
-                if (this.hasExpired({ transaction, step }, Date.now())) {
-                  await this.checkStepTimeout(transaction, step)
-                  await this.checkTransactionTimeout(
-                    transaction,
-                    nextSteps.next.includes(step) ? nextSteps.next : [step]
-                  )
-                }
-
-                const output = response?.__type ? response.output : response
-                if (SkipStepResponse.isSkipStepResponse(output)) {
-                  await TransactionOrchestrator.skipStep({
-                    transaction,
-                    step,
-                  })
-                  return
-                }
-
-                await setStepSuccess(response)
-              })
-              .catch(async (error) => {
-                if (SkipExecutionError.isSkipExecutionError(error)) {
-                  continueExecution = false
-                  return
-                }
-
-                const response = error?.getStepResponse?.()
-
-                if (this.hasExpired({ transaction, step }, Date.now())) {
-                  await this.checkStepTimeout(transaction, step)
-                  await this.checkTransactionTimeout(
-                    transaction,
-                    nextSteps.next.includes(step) ? nextSteps.next : [step]
-                  )
-                }
-
-                if (
-                  PermanentStepFailureError.isPermanentStepFailureError(error)
-                ) {
-                  await setStepFailure(error, {
-                    endRetry: true,
-                    response,
-                  })
-
-                  return
-                }
-
-                await setStepFailure(error, {
-                  response,
-                })
-              })
+            this.executeSyncStep(promise, transaction, step, nextSteps)
           )
         } else {
           execution.push(
-            promise()
-              .then(async (response: any) => {
-                const output = response?.__type ? response.output : response
-
-                if (SkipStepResponse.isSkipStepResponse(output)) {
-                  await TransactionOrchestrator.skipStep({
-                    transaction,
-                    step,
-                  })
-                } else {
-                  if (
-                    !step.definition.backgroundExecution ||
-                    step.definition.nested
-                  ) {
-                    const eventName = DistributedTransactionEvent.STEP_AWAITING
-                    transaction.emit(eventName, { step, transaction })
-
-                    return
-                  }
-
-                  if (this.hasExpired({ transaction, step }, Date.now())) {
-                    await this.checkStepTimeout(transaction, step)
-                    await this.checkTransactionTimeout(
-                      transaction,
-                      nextSteps.next.includes(step) ? nextSteps.next : [step]
-                    )
-                  }
-
-                  await setStepSuccess(response)
-                }
-              })
-              .catch(async (error) => {
-                if (SkipExecutionError.isSkipExecutionError(error)) {
-                  continueExecution = false
-                  return
-                }
-
-                const response = error?.getStepResponse?.()
-
-                if (
-                  PermanentStepFailureError.isPermanentStepFailureError(error)
-                ) {
-                  await setStepFailure(error, {
-                    endRetry: true,
-                    response,
-                  })
-
-                  return
-                }
-
-                await setStepFailure(error, {
-                  response,
-                })
-              })
+            this.executeAsyncStep(promise, transaction, step, nextSteps)
           )
         }
       }
@@ -1030,6 +792,323 @@ export class TransactionOrchestrator extends EventEmitter {
 
     await this.checkAllSteps(transaction)
     await transaction.saveCheckpoint()
+  }
+
+  /**
+   * Finalize the transaction when all steps are complete
+   */
+  private async finalizeTransaction(
+    transaction: DistributedTransactionType
+  ): Promise<void> {
+    if (transaction.hasTimeout()) {
+      void transaction.clearTransactionTimeout()
+    }
+
+    await transaction.saveCheckpoint()
+    this.emit(DistributedTransactionEvent.FINISH, { transaction })
+  }
+
+  /**
+   * Prepare a step for execution by setting state and incrementing attempts
+   */
+  private prepareStepForExecution(
+    step: TransactionStep,
+    flow: TransactionFlow
+  ): { stopStepExecution: boolean } {
+    const curState = step.getStates()
+
+    step.lastAttempt = Date.now()
+    step.attempts++
+
+    if (curState.state === TransactionStepState.NOT_STARTED) {
+      if (!step.startedAt) {
+        step.startedAt = Date.now()
+      }
+
+      if (step.isCompensating()) {
+        step.changeState(TransactionStepState.COMPENSATING)
+
+        if (step.definition.noCompensation) {
+          step.changeState(TransactionStepState.REVERTED)
+          return { stopStepExecution: false }
+        }
+      } else if (flow.state === TransactionState.INVOKING) {
+        step.changeState(TransactionStepState.INVOKING)
+      }
+    }
+
+    step.changeStatus(TransactionStepStatus.WAITING)
+
+    return { stopStepExecution: true }
+  }
+
+  /**
+   * Create the payload for a step execution
+   */
+  private createStepPayload(
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    flow: TransactionFlow
+  ): TransactionPayload {
+    const type = step.isCompensating()
+      ? TransactionHandlerType.COMPENSATE
+      : TransactionHandlerType.INVOKE
+
+    return new TransactionPayload(
+      {
+        model_id: flow.modelId,
+        idempotency_key: TransactionOrchestrator.getKeyName(
+          flow.modelId,
+          flow.transactionId,
+          step.definition.action!,
+          type
+        ),
+        action: step.definition.action + "",
+        action_type: type,
+        attempt: step.attempts,
+        timestamp: Date.now(),
+      },
+      transaction.payload,
+      transaction.getContext()
+    )
+  }
+
+  /**
+   * Prepare handler arguments for step execution
+   */
+  private prepareHandlerArgs(
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    flow: TransactionFlow,
+    payload: TransactionPayload
+  ): Parameters<TransactionStepHandler> {
+    const type = step.isCompensating()
+      ? TransactionHandlerType.COMPENSATE
+      : TransactionHandlerType.INVOKE
+
+    return [
+      step.definition.action + "",
+      type,
+      payload,
+      transaction,
+      step,
+      this,
+    ] as Parameters<TransactionStepHandler>
+  }
+
+  /**
+   * Create the step execution promise with optional tracing
+   */
+  private createStepExecutionPromise(
+    transaction: DistributedTransactionType,
+    step: TransactionStep
+  ): () => Promise<any> {
+    const type = step.isCompensating()
+      ? TransactionHandlerType.COMPENSATE
+      : TransactionHandlerType.INVOKE
+
+    const handlerArgs = this.prepareHandlerArgs(
+      transaction,
+      step,
+      transaction.getFlow(),
+      this.createStepPayload(transaction, step, transaction.getFlow())
+    )
+
+    const traceData = {
+      action: step.definition.action + "",
+      type,
+      step_id: step.id,
+      step_uuid: step.uuid + "",
+      attempts: step.attempts,
+      failures: step.failures,
+      async: !!(type === "invoke"
+        ? step.definition.async
+        : step.definition.compensateAsync),
+      idempotency_key: handlerArgs[2].metadata.idempotency_key,
+    }
+
+    const stepHandler = async () => {
+      return await transaction.handler(...handlerArgs)
+    }
+
+    // Return the appropriate promise based on tracing configuration
+    if (TransactionOrchestrator.traceStep) {
+      return () => TransactionOrchestrator.traceStep!(stepHandler, traceData)
+    } else {
+      return stepHandler
+    }
+  }
+
+  /**
+   * Execute a synchronous step and handle its result
+   */
+  private executeSyncStep(
+    promiseFn: () => Promise<any>,
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    nextSteps: { next: TransactionStep[] }
+  ): Promise<void | unknown> {
+    return promiseFn()
+      .then(async (response: any) => {
+        await this.handleStepExpiration(transaction, step, nextSteps)
+
+        const output = response?.__type ? response.output : response
+        if (SkipStepResponse.isSkipStepResponse(output)) {
+          await TransactionOrchestrator.skipStep({
+            transaction,
+            step,
+          })
+          return
+        }
+
+        await this.handleStepSuccess(transaction, step, response)
+      })
+      .catch(async (error) => {
+        if (SkipExecutionError.isSkipExecutionError(error)) {
+          return
+        }
+
+        const response = error?.getStepResponse?.()
+        await this.handleStepExpiration(transaction, step, nextSteps)
+
+        if (PermanentStepFailureError.isPermanentStepFailureError(error)) {
+          await this.handleStepFailure(transaction, step, error, true, response)
+          return
+        }
+
+        await this.handleStepFailure(transaction, step, error, false, response)
+      })
+  }
+
+  /**
+   * Execute an asynchronous step and handle its result
+   */
+  private executeAsyncStep(
+    promiseFn: () => Promise<any>,
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    nextSteps: { next: TransactionStep[] }
+  ): Promise<void | unknown> {
+    return promiseFn()
+      .then(async (response: any) => {
+        const output = response?.__type ? response.output : response
+
+        if (SkipStepResponse.isSkipStepResponse(output)) {
+          await TransactionOrchestrator.skipStep({
+            transaction,
+            step,
+          })
+        } else {
+          if (!step.definition.backgroundExecution || step.definition.nested) {
+            const eventName = DistributedTransactionEvent.STEP_AWAITING
+            transaction.emit(eventName, { step, transaction })
+            return
+          }
+
+          await this.handleStepExpiration(transaction, step, nextSteps)
+          await this.handleStepSuccess(transaction, step, response)
+        }
+      })
+      .catch(async (error) => {
+        if (SkipExecutionError.isSkipExecutionError(error)) {
+          return
+        }
+
+        const response = error?.getStepResponse?.()
+
+        if (PermanentStepFailureError.isPermanentStepFailureError(error)) {
+          await this.handleStepFailure(transaction, step, error, true, response)
+          return
+        }
+
+        await this.handleStepFailure(transaction, step, error, false, response)
+      })
+  }
+
+  /**
+   * Check if step or transaction has expired and handle timeouts
+   */
+  private async handleStepExpiration(
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    nextSteps: { next: TransactionStep[] }
+  ): Promise<void> {
+    if (this.hasExpired({ transaction, step }, Date.now())) {
+      await this.checkStepTimeout(transaction, step)
+      await this.checkTransactionTimeout(
+        transaction,
+        nextSteps.next.includes(step) ? nextSteps.next : [step]
+      )
+    }
+  }
+
+  /**
+   * Handle successful step completion
+   */
+  private async handleStepSuccess(
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    response: unknown
+  ): Promise<void> {
+    const isAsync = step.isCompensating()
+      ? step.definition.compensateAsync
+      : step.definition.async
+
+    if (isDefined(response) && step.saveResponse) {
+      transaction.addResponse(
+        step.definition.action!,
+        step.isCompensating()
+          ? TransactionHandlerType.COMPENSATE
+          : TransactionHandlerType.INVOKE,
+        response
+      )
+    }
+
+    const ret = await TransactionOrchestrator.setStepSuccess(
+      transaction,
+      step,
+      response
+    )
+
+    if (isAsync && !ret.stopExecution) {
+      await transaction.scheduleRetry(step, 0)
+    }
+  }
+
+  /**
+   * Handle step failure
+   */
+  private async handleStepFailure(
+    transaction: DistributedTransactionType,
+    step: TransactionStep,
+    error: Error | any,
+    isPermanent: boolean,
+    response?: unknown
+  ): Promise<void> {
+    const isAsync = step.isCompensating()
+      ? step.definition.compensateAsync
+      : step.definition.async
+
+    if (isDefined(response) && step.saveResponse) {
+      transaction.addResponse(
+        step.definition.action!,
+        step.isCompensating()
+          ? TransactionHandlerType.COMPENSATE
+          : TransactionHandlerType.INVOKE,
+        response
+      )
+    }
+
+    const ret = await TransactionOrchestrator.setStepFailure(
+      transaction,
+      step,
+      error,
+      isPermanent ? 0 : step.definition.maxRetries
+    )
+
+    if (isAsync && !ret.stopExecution) {
+      await transaction.scheduleRetry(step, 0)
+    }
   }
 
   /**
