@@ -792,7 +792,11 @@ export class TransactionOrchestrator extends EventEmitter {
 
     // Recompute the current flow flags
     await this.checkAllSteps(transaction)
-    await transaction.saveCheckpoint()
+    await transaction.saveCheckpoint().catch((error) => {
+      if (!SkipExecutionError.isSkipExecutionError(error)) {
+        throw error
+      }
+    })
   }
 
   /**
@@ -805,7 +809,11 @@ export class TransactionOrchestrator extends EventEmitter {
       void transaction.clearTransactionTimeout()
     }
 
-    await transaction.saveCheckpoint()
+    await transaction.saveCheckpoint().catch((error) => {
+      if (!SkipExecutionError.isSkipExecutionError(error)) {
+        throw error
+      }
+    })
     this.emit(DistributedTransactionEvent.FINISH, { transaction })
   }
 
