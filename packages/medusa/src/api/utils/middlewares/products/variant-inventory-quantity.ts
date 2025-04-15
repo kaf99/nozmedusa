@@ -27,23 +27,28 @@ export const wrapVariantsWithTotalInventoryQuantity = async (
 export const wrapVariantsWithInventoryQuantityForSalesChannel = async (
   req: MedusaStoreRequest<unknown>,
   variants: VariantInput[],
-  salesChannelIdFromQuery?: string
+  salesChannelIdFromQuery?: string | string[]
 ) => {
   // Comment: In our core, `req.filterableFields.sales_channel_id` will always be undefined, as we delete it in a previous middleware
   //   However, we are keeping it here for backwards compatibility
-  const salesChannelId =
+  let salesChannelIds =
     (req.filterableFields.sales_channel_id as string | string[]) ??
     salesChannelIdFromQuery
+
+  salesChannelIds = Array.isArray(salesChannelIds)
+    ? salesChannelIds
+    : [salesChannelIds]
 
   const { sales_channel_ids: idsFromPublishableKey = [] } =
     req.publishable_key_context
 
   let channelToUse: string | undefined
 
-  if (salesChannelId && !Array.isArray(salesChannelId)) {
-    channelToUse = salesChannelId
+  if (salesChannelIds.length === 1) {
+    channelToUse = salesChannelIds[0]
   }
 
+  // Sales channel from publishable key takes precedence over the sales channel id from query params
   if (idsFromPublishableKey.length === 1) {
     channelToUse = idsFromPublishableKey[0]
   }
@@ -51,7 +56,7 @@ export const wrapVariantsWithInventoryQuantityForSalesChannel = async (
   // At this point, we have checked two sources of sales channel id:
   // - The sales channel id(s) passed in the query params
   // - The sales channel id(s) passed in the publishable key
-  // If we don't have a single sales channel id, we have to throw an error, as we don't know where to get the inventory quantity from
+  // If we don't have a *single* sales channel id, we have to throw an error, as we don't know where to get the inventory quantity from
   if (!channelToUse) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,

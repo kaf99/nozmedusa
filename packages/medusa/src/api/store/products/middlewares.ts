@@ -50,6 +50,8 @@ export const storeProductRoutesMiddlewares: MiddlewareRoute[] = [
           entryPoint: "product_sales_channel",
           resourceId: "product_id",
           filterableField: "sales_channel_id",
+          filterByField: "id",
+          deleteFilterableField: false,
         })(req, res, next)
       },
       applyDefaultFilters({

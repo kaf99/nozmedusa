@@ -109,6 +109,16 @@ async function getProducts(
     }
   }
 
+  let salesChannelFromParam: string | string[] | undefined
+
+  if (isPresent(req.filterableFields.sales_channel_id)) {
+    salesChannelFromParam = req.filterableFields.sales_channel_id as
+      | string
+      | string[]
+      | undefined
+    delete req.filterableFields.sales_channel_id
+  }
+
   const queryObject = remoteQueryObjectFromString({
     entryPoint: "product",
     variables: {
@@ -124,7 +134,8 @@ async function getProducts(
   if (withInventoryQuantity) {
     await wrapVariantsWithInventoryQuantityForSalesChannel(
       req,
-      products.map((product) => product.variants).flat(1)
+      products.map((product) => product.variants).flat(1),
+      salesChannelFromParam
     )
   }
 

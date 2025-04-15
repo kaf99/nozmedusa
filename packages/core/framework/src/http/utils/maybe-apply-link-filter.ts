@@ -10,6 +10,9 @@ export function maybeApplyLinkFilter({
   resourceId,
   filterableField,
   filterByField = "id",
+  // In some rare occasions, we don't want to delete the filterable field, as it's used in subsequent middleware or routes
+  // For example, in the case of the product variant inventory quantity middleware, we need to keep the sales channel id in the filterable fields
+  deleteFilterableField = true,
 }) {
   return async function linkFilter(
     req: MedusaRequest,
@@ -28,7 +31,9 @@ export function maybeApplyLinkFilter({
       ? filterFields
       : [filterFields]
 
-    delete filterableFields[filterableField]
+    if (deleteFilterableField) {
+      delete filterableFields[filterableField]
+    }
 
     let existingFilters = filterableFields[filterByField] as
       | string[]

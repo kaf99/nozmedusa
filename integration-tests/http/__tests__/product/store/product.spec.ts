@@ -1761,6 +1761,28 @@ medusaIntegrationTestRunner({
           )
         })
 
+        it("should throw when multiple sales channels are passed as a query param AND there are multiple sales channels associated with the publishable key", async () => {
+          await api.post(
+            `/admin/api-keys/${publishableKey1.id}/sales-channels`,
+            { add: [salesChannel2.id] },
+            adminHeaders
+          )
+
+          let error = await api
+            .get(
+              `/store/products?sales_channel_id[]=${salesChannel1.id}&sales_channel_id[]=${salesChannel2.id}&fields=variants.inventory_quantity`,
+              { headers: { "x-publishable-api-key": publishableKey1.token } }
+            )
+            .catch((e) => e)
+
+          expect(error.response.status).toEqual(400)
+          expect(error.response.data).toEqual({
+            message:
+              "Inventory availability cannot be calculated in the given context. Either provide a sales channel id or configure a single sales channel in the publishable key",
+            type: "invalid_data",
+          })
+        })
+
         it("should return inventory quantity when variant's manage_inventory is true", async () => {
           await api.post(
             `/admin/products/${product.id}/variants/${variant.id}/inventory-items`,
