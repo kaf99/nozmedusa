@@ -53,11 +53,11 @@ async function getProductsWithIndexEngine(
   }
 
   const filters: Record<string, any> = req.filterableFields
-  if (isPresent(filters.sales_channel_id)) {
-    const salesChannelIds = filters.sales_channel_id
+  const salesChannelIdsFromQuery = filters.sales_channel_id
 
+  if (isPresent(salesChannelIdsFromQuery)) {
     filters["sales_channels"] ??= {}
-    filters["sales_channels"]["id"] = salesChannelIds
+    filters["sales_channels"]["id"] = salesChannelIdsFromQuery
 
     delete filters.sales_channel_id
   }
@@ -73,7 +73,8 @@ async function getProductsWithIndexEngine(
   if (withInventoryQuantity) {
     await wrapVariantsWithInventoryQuantityForSalesChannel(
       req,
-      products.map((product) => product.variants).flat(1)
+      products.map((product) => product.variants).flat(1),
+      salesChannelIdsFromQuery
     )
   }
 
