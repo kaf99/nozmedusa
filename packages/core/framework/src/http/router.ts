@@ -1,12 +1,7 @@
 import logger from "@medusajs/cli/dist/reporter"
 import cors, { CorsOptions } from "cors"
 import { parseCorsOrigins } from "@medusajs/utils"
-import type {
-  Express,
-  RequestHandler,
-  ErrorRequestHandler,
-  NextFunction,
-} from "express"
+import type { Express, RequestHandler, ErrorRequestHandler } from "express"
 import type {
   MedusaRequest,
   MedusaResponse,
