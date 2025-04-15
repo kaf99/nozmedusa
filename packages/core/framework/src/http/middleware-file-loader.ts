@@ -106,7 +106,7 @@ export class MiddlewareFileLoader {
           const methods = route.methods || [...HTTP_METHODS]
 
           logger.debug(
-            `assigning additionalData validator for matcher ${methods}:${route.matcher}`
+            `assigning additionalData validator on matcher ${methods}:${route.matcher}`
           )
 
           result.additionalDataValidatorRoutes.push({
