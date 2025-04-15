@@ -43,21 +43,6 @@ export function defineMiddlewares<
     errorHandler,
     routes: routes.map((route) => {
       let { middlewares, method, methods, ...rest } = route
-      const customMiddleware: MedusaRequestHandler[] = []
-
-      /**
-       * Define a custom validator when a zod schema is provided via
-       * "additionalDataValidator" property
-       */
-      // if (additionalDataValidator) {
-      //   customMiddleware.push((req, _, next) => {
-      //     req.additionalDataValidator = zod
-      //       .object(additionalDataValidator)
-      //       .nullish()
-      //     next()
-      //   })
-      // }
-
       if (!methods) {
         methods = Array.isArray(method) ? method : method ? [method] : method
       }
@@ -65,7 +50,7 @@ export function defineMiddlewares<
       return {
         ...rest,
         methods,
-        middlewares: customMiddleware.concat(middlewares || []),
+        middlewares: [...(middlewares ?? [])],
       }
     }),
   }

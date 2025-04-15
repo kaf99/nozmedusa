@@ -306,15 +306,9 @@ export class ApiLoader {
         req.method as MiddlewareVerb
       )
       if (matchingRoute && matchingRoute.validator) {
-        if (logger.shouldLog("debug")) {
-          logger.debug(
-            `Using ${JSON.stringify(
-              matchingRoute.schema,
-              null,
-              2
-            )} to validate additional data on ${req.method} ${req.path}`
-          )
-        }
+        logger.debug(
+          `Using validator to validate additional data on ${req.method} ${req.path}`
+        )
         req.additionalDataValidator = matchingRoute.validator
       }
       return next()
