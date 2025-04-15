@@ -1,7 +1,6 @@
 import {
   MedusaNextFunction,
   MedusaRequest,
-  MedusaRequestHandler,
   MedusaResponse,
   MiddlewaresConfig,
   MiddlewareVerb,
