@@ -7,7 +7,7 @@ import {
   MiddlewareVerb,
   ParserConfig,
 } from "../types"
-import zod, { ZodRawShape } from "zod"
+import { ZodRawShape } from "zod"
 
 /**
  * A helper function to configure the routes by defining custom middleware,
@@ -42,22 +42,21 @@ export function defineMiddlewares<
   return {
     errorHandler,
     routes: routes.map((route) => {
-      let { middlewares, method, methods, additionalDataValidator, ...rest } =
-        route
+      let { middlewares, method, methods, ...rest } = route
       const customMiddleware: MedusaRequestHandler[] = []
 
       /**
        * Define a custom validator when a zod schema is provided via
        * "additionalDataValidator" property
        */
-      if (additionalDataValidator) {
-        customMiddleware.push((req, _, next) => {
-          req.additionalDataValidator = zod
-            .object(additionalDataValidator)
-            .nullish()
-          next()
-        })
-      }
+      // if (additionalDataValidator) {
+      //   customMiddleware.push((req, _, next) => {
+      //     req.additionalDataValidator = zod
+      //       .object(additionalDataValidator)
+      //       .nullish()
+      //     next()
+      //   })
+      // }
 
       if (!methods) {
         methods = Array.isArray(method) ? method : method ? [method] : method

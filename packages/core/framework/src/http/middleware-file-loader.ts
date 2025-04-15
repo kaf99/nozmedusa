@@ -1,3 +1,4 @@
+import zod from "zod"
 import { join } from "path"
 import { dynamicImport, FileSystem } from "@medusajs/utils"
 
@@ -7,6 +8,7 @@ import {
   type BodyParserConfigRoute,
   type MiddlewareDescriptor,
   type MedusaErrorHandlerFunction,
+  type AdditionalDataValidatorRoute,
   HTTP_METHODS,
 } from "./types"
 
@@ -30,6 +32,12 @@ export class MiddlewareFileLoader {
    * Middleware collected manually or by scanning directories
    */
   #middleware: MiddlewareDescriptor[] = []
+
+  /**
+   * Route matchers on which a custom additional data validator is
+   * defined
+   */
+  #additionalDataValidatorRoutes: AdditionalDataValidatorRoute[] = []
 
   /**
    * Route matchers on which a custom body parser config is used
@@ -61,6 +69,7 @@ export class MiddlewareFileLoader {
 
     const result = routes.reduce<{
       bodyParserConfigRoutes: BodyParserConfigRoute[]
+      additionalDataValidatorRoutes: AdditionalDataValidatorRoute[]
       middleware: MiddlewareDescriptor[]
     }>(
       (result, route) => {
@@ -90,6 +99,23 @@ export class MiddlewareFileLoader {
           })
         }
 
+        if (
+          "additionalDataValidator" in route &&
+          route.additionalDataValidator !== undefined
+        ) {
+          const methods = route.methods || [...HTTP_METHODS]
+
+          logger.debug(
+            `using custom additional data validator on matcher ${methods}:${route.matcher}`
+          )
+
+          result.additionalDataValidatorRoutes.push({
+            matcher: matcher,
+            methods,
+            schema: zod.object(route.additionalDataValidator).nullish(),
+          })
+        }
+
         if (route.middlewares) {
           route.middlewares.forEach((middleware) => {
             result.middleware.push({
@@ -103,6 +129,7 @@ export class MiddlewareFileLoader {
       },
       {
         bodyParserConfigRoutes: [],
+        additionalDataValidatorRoutes: [],
         middleware: [],
       }
     )
@@ -117,6 +144,10 @@ export class MiddlewareFileLoader {
     this.#bodyParserConfigRoutes = this.#bodyParserConfigRoutes.concat(
       result.bodyParserConfigRoutes
     )
+    this.#additionalDataValidatorRoutes =
+      this.#additionalDataValidatorRoutes.concat(
+        result.additionalDataValidatorRoutes
+      )
   }
 
   /**
@@ -156,5 +187,13 @@ export class MiddlewareFileLoader {
    */
   getBodyParserConfigRoutes() {
     return this.#bodyParserConfigRoutes
+  }
+
+  /**
+   * Returns routes that have additional validator configured
+   * on them
+   */
+  getAdditionalDataValidatorRoutes() {
+    return this.#additionalDataValidatorRoutes
   }
 }
