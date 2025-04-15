@@ -106,13 +106,14 @@ export class MiddlewareFileLoader {
           const methods = route.methods || [...HTTP_METHODS]
 
           logger.debug(
-            `using custom additional data validator on matcher ${methods}:${route.matcher}`
+            `assigning additionalData validator for matcher ${methods}:${route.matcher}`
           )
 
           result.additionalDataValidatorRoutes.push({
             matcher: matcher,
             methods,
-            schema: zod.object(route.additionalDataValidator).nullish(),
+            schema: route.additionalDataValidator,
+            validator: zod.object(route.additionalDataValidator).nullish(),
           })
         }
 

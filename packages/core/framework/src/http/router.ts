@@ -293,7 +293,7 @@ export class ApiLoader {
     routesFinder: RoutesFinder<AdditionalDataValidatorRoute>
   ) {
     logger.debug(
-      `Registering assignAdditionalDataValidator for prefix ${namespace}`
+      `Registering assignAdditionalDataValidator middleware for prefix ${namespace}`
     )
 
     const additionalDataValidator = function additionalDataValidator(
@@ -305,8 +305,17 @@ export class ApiLoader {
         req.path,
         req.method as MiddlewareVerb
       )
-      if (matchingRoute && matchingRoute.schema) {
-        req.additionalDataValidator = matchingRoute.schema
+      if (matchingRoute && matchingRoute.validator) {
+        if (logger.shouldLog("debug")) {
+          logger.debug(
+            `Using ${JSON.stringify(
+              matchingRoute.schema,
+              null,
+              2
+            )} to validate additional data on ${req.method} ${req.path}`
+          )
+        }
+        req.additionalDataValidator = matchingRoute.validator
       }
       return next()
     }

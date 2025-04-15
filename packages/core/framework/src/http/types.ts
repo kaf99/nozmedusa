@@ -106,7 +106,8 @@ export type BodyParserConfigRoute = {
 export type AdditionalDataValidatorRoute = {
   matcher: string
   methods: MiddlewareVerb | MiddlewareVerb[]
-  schema: ZodOptional<ZodNullable<ZodObject<any, any>>>
+  schema: ZodRawShape
+  validator: ZodOptional<ZodNullable<ZodObject<any, any>>>
 }
 
 export type GlobalMiddlewareDescriptor = {
