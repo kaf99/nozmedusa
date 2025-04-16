@@ -85,7 +85,7 @@ export class MiddlewareFileLoader {
 
         const matcher = String(route.matcher)
 
-        if ("bodyParser" in route && route.bodyParser !== undefined) {
+        if (route.bodyParser !== undefined) {
           const methods = route.methods || [...HTTP_METHODS]
 
           logger.debug(
@@ -99,10 +99,7 @@ export class MiddlewareFileLoader {
           })
         }
 
-        if (
-          "additionalDataValidator" in route &&
-          route.additionalDataValidator !== undefined
-        ) {
+        if (route.additionalDataValidator !== undefined) {
           const methods = route.methods || [...HTTP_METHODS]
 
           logger.debug(

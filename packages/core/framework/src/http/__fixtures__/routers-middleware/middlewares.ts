@@ -70,5 +70,4 @@ const middlewares = defineMiddlewares([
   },
 ])
 
-console.log(middlewares.routes)
 export default middlewares
