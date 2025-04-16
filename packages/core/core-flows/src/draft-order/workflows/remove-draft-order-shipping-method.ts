@@ -10,40 +10,34 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput, OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
   previewOrderChangeStep,
   updateOrderTaxLinesWorkflow,
 } from "../../order"
-import { createOrderShippingMethods } from "../../order/steps/create-order-shipping-methods"
-import { prepareShippingMethod } from "../../order/utils/prepare-shipping-method"
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
 
-export const addDraftOrderShippingMethodsWorkflowId =
-  "add-draft-order-shipping-methods"
+export const removeDraftOrderShippingMethodWorkflowId =
+  "remove-draft-order-shipping-method"
 
-interface AddDraftOrderShippingMethodsWorkflowInput {
+interface RemoveDraftOrderShippingMethodWorkflowInput {
   /**
    * The ID of the draft order to add the shipping methods to.
    */
   order_id: string
   /**
-   * The ID of the shipping option to add the shipping methods from.
+   * The ID of the shipping method to remove.
    */
-  shipping_option_id: string
-  /**
-   * The custom amount to add the shipping methods with.
-   */
-  custom_amount?: BigNumberInput | null
+  shipping_method_id: string
 }
 
-export const addDraftOrderShippingMethodsWorkflow = createWorkflow(
-  addDraftOrderShippingMethodsWorkflowId,
-  function (input: WorkflowData<AddDraftOrderShippingMethodsWorkflowInput>) {
+export const removeDraftOrderShippingMethodWorkflow = createWorkflow(
+  removeDraftOrderShippingMethodWorkflowId,
+  function (input: WorkflowData<RemoveDraftOrderShippingMethodWorkflowInput>) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,
@@ -66,45 +60,9 @@ export const addDraftOrderShippingMethodsWorkflow = createWorkflow(
 
     validateDraftOrderChangeStep({ order, orderChange })
 
-    const shippingOptions = useRemoteQueryStep({
-      entry_point: "shipping_option",
-      fields: [
-        "id",
-        "name",
-        "calculated_price.calculated_amount",
-        "calculated_price.is_calculated_price_tax_inclusive",
-      ],
-      variables: {
-        id: input.shipping_option_id,
-        calculated_price: {
-          context: { currency_code: order.currency_code },
-        },
-      },
-    }).config({ name: "fetch-shipping-option" })
-
-    const shippingMethodInput = transform(
-      {
-        relatedEntity: { order_id: order.id },
-        shippingOptions,
-        customPrice: input.custom_amount as any, // Need to cast this to any otherwise the type becomes to complex.
-        orderChange,
-        input,
-      },
-      prepareShippingMethod()
-    )
-
-    const createdMethods = createOrderShippingMethods({
-      shipping_methods: [shippingMethodInput],
-    })
-
-    const shippingMethodIds = transform(createdMethods, (createdMethods) => {
-      return createdMethods.map((item) => item.id)
-    })
-
     updateOrderTaxLinesWorkflow.runAsStep({
       input: {
         order_id: order.id,
-        shipping_method_ids: shippingMethodIds,
       },
     })
 
@@ -146,37 +104,25 @@ export const addDraftOrderShippingMethodsWorkflow = createWorkflow(
 
     const orderChangeActionInput = transform(
       {
+        input,
         order,
-        shippingOptions,
-        createdMethods,
-        customPrice: input.custom_amount as any, // Need to cast this to any otherwise the type becomes too complex.
         orderChange,
       },
-      ({
-        shippingOptions,
-        order,
-        createdMethods,
-        customPrice,
-        orderChange,
-      }) => {
-        const shippingOption = shippingOptions[0]
-        const createdMethod = createdMethods[0]
-        const methodPrice =
-          customPrice ?? shippingOption.calculated_price.calculated_amount
-
-        return {
-          action: ChangeActionType.SHIPPING_ADD,
-          reference: "order_shipping_method",
-          order_change_id: orderChange.id,
-          reference_id: createdMethod.id,
-          amount: methodPrice,
-          order_id: order.id,
-        }
+      ({ order, orderChange, input }) => {
+        return [
+          {
+            action: ChangeActionType.SHIPPING_REMOVE,
+            reference: "order_shipping_method",
+            order_change_id: orderChange.id,
+            reference_id: input.shipping_method_id,
+            order_id: order.id,
+          },
+        ]
       }
     )
 
     createOrderChangeActionsWorkflow.runAsStep({
-      input: [orderChangeActionInput],
+      input: orderChangeActionInput,
     })
 
     return new WorkflowResponse(previewOrderChangeStep(order.id))

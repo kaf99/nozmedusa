@@ -6,7 +6,7 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { OrderDTO, OrderWorkflow } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
-import { createOrderChangeStep } from "../../order"
+import { createOrderChangeStep, previewOrderChangeStep } from "../../order"
 import { validateDraftOrderStep } from "../steps"
 
 export const beginDraftOrderEditWorkflowId = "begin-draft-order-edit"
@@ -34,6 +34,8 @@ export const beginDraftOrderEditWorkflow = createWorkflow(
       }
     })
 
-    return new WorkflowResponse(createOrderChangeStep(orderChangeInput))
+    createOrderChangeStep(orderChangeInput)
+
+    return new WorkflowResponse(previewOrderChangeStep(input.order_id))
   }
 )
