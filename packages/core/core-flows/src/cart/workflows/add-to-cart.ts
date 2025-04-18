@@ -1,6 +1,8 @@
 import {
   AddToCartWorkflowInputDTO,
+  ChangeAction,
   ConfirmVariantInventoryWorkflowInputDTO,
+  CartWorkflowEventPayload,
 } from "@medusajs/framework/types"
 import { CartWorkflowEvents, isDefined } from "@medusajs/framework/utils"
 import {
@@ -195,15 +197,24 @@ export const addToCartWorkflow = createWorkflow(
       input: { cart_id: cart.id, items: allItems },
     })
 
+    const lineItemUpdateEventChanges = transform(
+      { allItems },
+      ({ allItems }) => {
+        return allItems.map((item) => {
+          return {
+            action: ChangeAction.ADDED,
+            value: item,
+          }
+        }) as CartWorkflowEventPayload["changes"]["line_items"]
+      }
+    )
+
     emitEventStep({
       eventName: CartWorkflowEvents.UPDATED,
       data: {
         id: cart.id,
         changes: {
-          line_items: {
-            action: "added",
-            value: allItems,
-          },
+          line_items: lineItemUpdateEventChanges,
         },
       },
     })

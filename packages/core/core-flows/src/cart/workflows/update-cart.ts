@@ -1,6 +1,8 @@
 import {
   AdditionalData,
   UpdateCartWorkflowInputDTO,
+  CartWorkflowEventPayload,
+  ChangeAction,
 } from "@medusajs/framework/types"
 import {
   CartWorkflowEvents,
@@ -218,25 +220,16 @@ export const updateCartWorkflow = createWorkflow(
       cart: cartToUpdate,
     })
 
+    /*
     when({ cartInput }, ({ cartInput }) => {
       return isDefined(cartInput.customer_id) || isDefined(cartInput.email)
     }).then(() => {
       emitEventStep({
-        eventName: CartWorkflowEvents.UPDATED,
-        data: {
-          id: input.id,
-          changes: {
-            customer: {
-              action: "updated",
-              value: {
-                customer_id: cartInput.customer_id,
-                email: cartInput.email,
-              },
-            },
-          },
-        },
+        eventName: CartWorkflowEvents.CUSTOMER_UPDATED,
+        data: { id: input.id },
       }).config({ name: "emit-customer-updated" })
     })
+    */
 
     const regionUpdated = transform(
       { input, cartToUpdate },
@@ -248,42 +241,49 @@ export const updateCartWorkflow = createWorkflow(
       }
     )
 
+    // Deprecated - left here for backwards compatibility
     when({ regionUpdated }, ({ regionUpdated }) => {
       return !!regionUpdated
     }).then(() => {
       emitEventStep({
-        eventName: CartWorkflowEvents.UPDATED,
-        data: {
-          id: input.id,
-          changes: {
-            region: {
-              action: "updated",
-              value: input.region_id,
-            },
-          },
-        },
+        eventName: CartWorkflowEvents.REGION_UPDATED,
+        data: { id: input.id },
       }).config({ name: "emit-region-updated" })
     })
 
-    updateCartsStep([cartInput])
+    // Transform the input into an aggregated event payload
+    const eventPayload = transform(
+      { input, cartToUpdate },
+      ({ input, cartToUpdate }) => {
+        const changes = {} as CartWorkflowEventPayload["changes"]
+        for (const key in input) {
+          if (input[key] !== cartToUpdate[key]) {
+            changes[key] = [
+              {
+                action: cartToUpdate[key]
+                  ? ChangeAction.UPDATED
+                  : input[key]
+                  ? ChangeAction.ADDED
+                  : ChangeAction.DELETED,
+                value: input[key],
+              },
+            ]
+          }
+        }
+        return {
+          id: input.id,
+          changes,
+        } as CartWorkflowEventPayload
+      }
+    )
 
-    // when the shipping address is added, we emit the shipping address added event
-    when({ input }, ({ input }) => {
-      return isDefined(input.shipping_address)
-    }).then(() => {
+    parallelize(
+      updateCartsStep([cartInput]),
       emitEventStep({
         eventName: CartWorkflowEvents.UPDATED,
-        data: {
-          id: input.id,
-          changes: {
-            shipping_address: {
-              action: "added",
-              value: input.shipping_address,
-            },
-          },
-        },
-      }).config({ name: "emit-shipping-address-added" })
-    })
+        data: eventPayload,
+      }).config({ name: "emit-cart-updated" })
+    )
 
     // In case the region is updated, we might have a new currency OR tax inclusivity setting
     // Therefore, we need to delete line items with a custom price for good measure

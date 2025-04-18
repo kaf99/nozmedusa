@@ -1,5 +1,10 @@
 import { CartWorkflowEvents } from "@medusajs/framework/utils"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import {
+  WorkflowData,
+  createWorkflow,
+  transform,
+} from "@medusajs/framework/workflows-sdk"
+import { CartWorkflowEventPayload, ChangeAction } from "@medusajs/types"
 import { refreshCartItemsWorkflow } from "../../cart/workflows/refresh-cart-items"
 import { emitEventStep, useQueryGraphStep } from "../../common"
 import { deleteLineItemsStep } from "../steps/delete-line-items"
@@ -52,8 +57,10 @@ export const deleteLineItemsWorkflow = createWorkflow(
 
     deleteLineItemsStep(input.ids)
 
-    refreshCartItemsWorkflow.runAsStep({
-      input: { cart_id: input.cart_id },
+    const lineItemUpdateEventChanges = transform({ items }, ({ items }) => {
+      return items.map((item) => {
+        return { action: ChangeAction.DELETED, value: item }
+      }) as CartWorkflowEventPayload["changes"]["line_items"]
     })
 
     emitEventStep({
@@ -61,9 +68,13 @@ export const deleteLineItemsWorkflow = createWorkflow(
       data: {
         id: input.cart_id,
         changes: {
-          line_items: { action: "deleted", value: items },
+          line_items: lineItemUpdateEventChanges,
         },
       },
+    })
+
+    refreshCartItemsWorkflow.runAsStep({
+      input: { cart_id: input.cart_id },
     })
   }
 )

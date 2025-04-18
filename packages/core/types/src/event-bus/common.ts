@@ -1,3 +1,6 @@
+import { AddressDTO } from "../address"
+import { CartLineItemDTO } from "../cart"
+import { StoreCartAddress, StoreCartLineItem } from "../http"
 import { Context } from "../shared-context"
 
 export type Subscriber<TData = unknown> = (data: Event<TData>) => Promise<void>
@@ -18,7 +21,7 @@ export type EventMetadata = Record<string, unknown> & {
   /**
    * The ID of the event's group. Grouped events are useful when you have distributed transactions
    * where you need to explicitly group, release and clear events upon lifecycle events of a transaction.
-   * 
+   *
    * When set, you must release the grouped events using the Event Module's `releaseGroupedEvents` method to emit the events.
    */
   eventGroupId?: string
@@ -27,7 +30,7 @@ export type EventMetadata = Record<string, unknown> & {
 export type Event<TData = unknown> = {
   /**
    * The event's name.
-   * 
+   *
    * @example
    * user.created
    */
@@ -57,4 +60,31 @@ export type RawMessageFormat<TData = any> = {
   action?: string
   context?: Pick<Context, "eventGroupId">
   options?: Record<string, any>
+}
+
+export enum ChangeAction {
+  ADDED = "added",
+  UPDATED = "updated",
+  DELETED = "deleted",
+}
+
+type Change<T> = {
+  action: ChangeAction
+  value: T
+}
+
+export type CartWorkflowEventPayload = {
+  id: string // Cart ID
+  changes: {
+    line_items?: Change<Partial<StoreCartLineItem | CartLineItemDTO>>[]
+    promo_codes?: Change<string>[]
+    region_id?: Change<string>
+    customer_id?: Change<string>
+    sales_channel_id?: Change<string>
+    email?: Change<string>
+    currency_code?: Change<string>
+    metadata?: Change<Record<string, unknown>>
+    shipping_address?: Change<Partial<StoreCartAddress | AddressDTO>>
+    billing_address?: Change<Partial<StoreCartAddress | AddressDTO>>
+  }
 }

@@ -1,5 +1,9 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
-import { StoreCartLineItem } from "@medusajs/types"
+import {
+  CartWorkflowEventPayload,
+  ChangeAction,
+  StoreCartLineItem,
+} from "@medusajs/types"
 
 export type GetLineItemUpdateEventPayloadStepInput = {
   line_item: StoreCartLineItem
@@ -9,29 +13,33 @@ export type GetLineItemUpdateEventPayloadStepInput = {
 
 export const getLineItemUpdateEventPayload = createStep(
   "get-line-item-update-event-payload",
-  async (input: GetLineItemUpdateEventPayloadStepInput) => {
+  async (
+    input: GetLineItemUpdateEventPayloadStepInput
+  ): Promise<
+    StepResponse<CartWorkflowEventPayload["changes"]["line_items"]>
+  > => {
     const { line_item, old_quantity, new_quantity } = input
 
     const payload =
       new_quantity > old_quantity
-        ? {
-            action: "added",
-            value: [
-              {
+        ? [
+            {
+              action: ChangeAction.ADDED,
+              value: {
                 ...line_item,
                 quantity: new_quantity - old_quantity,
               },
-            ],
-          }
-        : {
-            action: "deleted",
-            value: [
-              {
+            },
+          ]
+        : [
+            {
+              action: ChangeAction.DELETED,
+              value: {
                 ...line_item,
                 quantity: old_quantity - new_quantity,
               },
-            ],
-          }
+            },
+          ]
 
     return new StepResponse(payload)
   }
