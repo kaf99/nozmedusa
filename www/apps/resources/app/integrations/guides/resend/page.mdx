@@ -31,7 +31,7 @@ export const metadata = {
 
 In this guide, you'll learn how to integrate Medusa with Resend.
 
-When you install a Medusa application, you get a fully-fledged commerce platform with a framework for customization. Medusa's architecture supports integrating third-party services, such as an email service, that allow you to build your unique requirements around core commerce flows.
+When you install a Medusa application, you get a fully-fledged commerce platform with a Framework for customization. Medusa's architecture supports integrating third-party services, such as an email service, that allow you to build your unique requirements around core commerce flows.
 
 [Resend](https://resend.com/docs/introduction) is an email service with an intuitive developer experience to send emails from any application type, including Node.js servers. By integrating Resend with Medusa, you can build flows to send an email when a commerce operation is performed, such as when an order is placed.
 
@@ -248,7 +248,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
 
 A module's service accepts two parameters:
 
-1. Dependencies resolved from the [Module's container](!docs!/learn/fundamentals/modules/container), which is the module's local registry that the Medusa application adds framework tools to. In this service, you resolve the [Logger utility](!docs!/learn/debugging-and-testing/logging) from the module's container.
+1. Dependencies resolved from the [Module's container](!docs!/learn/fundamentals/modules/container), which is the module's local registry that the Medusa application adds Framework tools to. In this service, you resolve the [Logger utility](!docs!/learn/debugging-and-testing/logging) from the module's container.
 2. The module's options that are passed to the module in Medusa's configuration as you'll see in a later section.
 
 Using the API key passed in the module's options, you initialize the Resend client. You also set the `options` and `logger` properties.
@@ -669,11 +669,11 @@ You define the `sendNotificationStep` using the `createStep` function that accep
 - A string indicating the step's unique name.
 - The step's function definition as a second parameter. It accepts the step's input as a first parameter, and an object of options as a second.
 
-The `container` property in the second parameter is an instance of the [Medusa container](!docs!/learn/fundamentals/medusa-container), which is a registry of framework and commerce tools, such a module's service, that you can resolve to utilize their functionalities.
+The `container` property in the second parameter is an instance of the [Medusa container](!docs!/learn/fundamentals/medusa-container), which is a registry of Framework and commerce tools, such as a module's service, that you can resolve to utilize their functionalities.
 
 <Note title="Tip">
 
-The Medusa container is accessible by all customizations, such as workflows and subscribers, except for modules. Each module has its own container with framework tools like the Logger utility.
+The Medusa container is accessible by all customizations, such as workflows and subscribers, except for modules. Each module has its own container with Framework tools like the Logger utility.
 
 </Note>
 
@@ -812,7 +812,7 @@ This subscriber now runs whenever an order is placed. You'll see this in action 
 
 ## Test it Out: Place an Order
 
-To test out the Resend integration, you'll place an order using the [Next.js storefront](!docs!/learn/storefront-development/nextjs-starter) that you installed as part of installing Medusa.
+To test out the Resend integration, you'll place an order using the [Next.js storefront](../../../nextjs-starter/page.mdx) that you installed as part of installing Medusa.
 
 Start your Medusa application first:
 

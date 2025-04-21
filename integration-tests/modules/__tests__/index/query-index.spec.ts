@@ -74,13 +74,9 @@ async function populateData(api: any) {
     },
   ]
 
-  await api
-    .post("/admin/products/batch", { create: payload }, adminHeaders)
-    .catch((err) => {
-      console.log(err)
-    })
+  await api.post("/admin/products/batch", { create: payload }, adminHeaders)
 
-  await setTimeout(10000)
+  await setTimeout(4000)
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"
@@ -97,7 +93,7 @@ medusaIntegrationTestRunner({
       process.env.ENABLE_INDEX_MODULE = "false"
     })
 
-    describe.skip("Index engine - Query.index", () => {
+    describe("Index engine - Query.index", () => {
       beforeEach(async () => {
         await createAdminUser(dbConnection, adminHeaders, appContainer)
       })
@@ -262,8 +258,7 @@ medusaIntegrationTestRunner({
         ])
       })
 
-      // TODO: Investigate why this test is flacky
-      it.skip("should use query.index to query the index module sorting by price desc", async () => {
+      it("should use query.index to query the index module sorting by price desc", async () => {
         await populateData(api)
 
         const query = appContainer.resolve(

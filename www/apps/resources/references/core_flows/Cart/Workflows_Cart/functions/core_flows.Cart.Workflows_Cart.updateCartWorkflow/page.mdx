@@ -214,44 +214,12 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### validate
 
-This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
-
-#### Example
-
-```ts
-import { updateCartWorkflow } from "@medusajs/medusa/core-flows"
-
-updateCartWorkflow.hooks.validate(
-  (async ({ input, cart }, { container }) => {
-    //TODO
-  })
-)
-```
-
-#### Input
-
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"object","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"`object`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"currency_code","type":"`any`","description":"","optional":false,"defaultValue":"data.region.currency_code","expandable":false,"children":[]},{"name":"region_id","type":"`any`","description":"","optional":false,"defaultValue":"data.region.id","expandable":false,"children":[]},{"name":"id","type":"`string`","description":"The ID of the cart to update.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`null` \\| `string`","description":"The ID of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"sales_channel_id","type":"`null` \\| `string`","description":"The ID of the cart's sales channel.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"email","type":"`null` \\| `string`","description":"The email address of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`null` \\| `Record<string, unknown>`","description":"Custom key-value pairs of data related to the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"shipping_address","type":"`null` \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx) \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx)","description":"The cart's shipping address. You can either update the cart's existing shipping address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"billing_address","type":"`null` \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx) \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx)","description":"The cart's billing address. You can either update the cart's existing billing address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
+<TypeList types={[{"name":"invoke","type":"[InvokeFn](../../../../../workflows/types/workflows.InvokeFn/page.mdx)&#60;object \\| object, TOutput, TCompensateInput&#62;","description":"The type of invocation function passed to a step.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"compensate","type":"[CompensateFn](../../../../../workflows/types/workflows.CompensateFn/page.mdx)&#60;TCompensateInput&#62;","description":"The type of compensation function passed to a step.","optional":true,"defaultValue":"","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
 
 ### cartUpdated
 
-This hook is executed after a cart is update. You can consume this hook to perform custom actions on the updated cart.
-
-#### Example
-
-```ts
-import { updateCartWorkflow } from "@medusajs/medusa/core-flows"
-
-updateCartWorkflow.hooks.cartUpdated(
-  (async ({ cart, additional_data }, { container }) => {
-    //TODO
-  })
-)
-```
-
-#### Input
-
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"object","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"additional_data","type":"`Record<string, unknown> | undefined`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="cartUpdated"/>
+<TypeList types={[{"name":"invoke","type":"[InvokeFn](../../../../../workflows/types/workflows.InvokeFn/page.mdx)&#60;object \\| object, TOutput, TCompensateInput&#62;","description":"The type of invocation function passed to a step.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"compensate","type":"[CompensateFn](../../../../../workflows/types/workflows.CompensateFn/page.mdx)&#60;TCompensateInput&#62;","description":"The type of compensation function passed to a step.","optional":true,"defaultValue":"","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="cartUpdated"/>

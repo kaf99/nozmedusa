@@ -501,6 +501,29 @@ export class Order {
     )
   }
 
+  /**
+   * This method creates a credit line for an order. It sends a request to the
+   * [Create Credit Line](https://docs.medusajs.com/api/admin#orders_postordersidcredit-lines) API route.
+   * 
+   * @param orderId - The order's ID.
+   * @param body - The credit line's details.
+   * @param query - Configure the fields to retrieve in the order.
+   * @param headers - Headers to pass in the request
+   * @returns The order's details.
+   * 
+   * @example
+   * sdk.admin.order.createCreditLine(
+   *   "order_123",
+   *   {
+   *     amount: 100,
+   *     reference: "order",
+   *     reference_id: "order_123",
+   *   }
+   * )
+   * .then(({ order }) => {
+   *   console.log(order)
+   * })
+   */
   async createCreditLine(
     orderId: string,
     body: Omit<CreateOrderCreditLineDTO, "order_id">,

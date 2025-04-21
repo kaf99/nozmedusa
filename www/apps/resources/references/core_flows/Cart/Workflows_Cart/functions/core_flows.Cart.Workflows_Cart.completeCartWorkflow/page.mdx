@@ -156,22 +156,6 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### validate
 
-This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
-
-#### Example
-
-```ts
-import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
-
-completeCartWorkflow.hooks.validate(
-  (async ({ input, cart }, { container }) => {
-    //TODO
-  })
-)
-```
-
-#### Input
-
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"object","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
+<TypeList types={[{"name":"invoke","type":"[InvokeFn](../../../../../workflows/types/workflows.InvokeFn/page.mdx)&#60;object, TOutput, TCompensateInput&#62;","description":"The type of invocation function passed to a step.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"compensate","type":"[CompensateFn](../../../../../workflows/types/workflows.CompensateFn/page.mdx)&#60;TCompensateInput&#62;","description":"The type of compensation function passed to a step.","optional":true,"defaultValue":"","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>

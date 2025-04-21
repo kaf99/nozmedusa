@@ -40,6 +40,10 @@ export const order = [
     "path": "https://docs.medusajs.com/resources/examples/guides/quote-management"
   },
   {
+    "title": "Implement Loyalty Points",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/loyalty-points"
+  },
+  {
     "title": "Checkout Step 5: Complete Cart",
     "path": "https://docs.medusajs.com/resources/storefront-development/checkout/complete-cart"
   },

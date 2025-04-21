@@ -9,7 +9,7 @@ export const metadata = {
 
 In this guide, you'll learn how to support digital products in Medusa.
 
-When you install a Medusa application, you get a fully-fledged commerce platform with support for customizations. Medusa provides all features related to products and managing them, and its framework allows you to extend those features and implement your custom use case.
+When you install a Medusa application, you get a fully-fledged commerce platform with support for customizations. Medusa provides all features related to products and managing them, and the Medusa Framework allows you to extend those features and implement your custom use case.
 
 You can extend Medusa's product features to support selling, storing, and fulfilling digital products. In this guide, you'll customize Medusa to add the following features:
 
@@ -21,7 +21,7 @@ You can extend Medusa's product features to support selling, storing, and fulfil
 
 <Note>
 
-This guide provides an example of an approach to implement digital products. You're free to choose a different approach using Medusa's framework.
+This guide provides an example of an approach to implement digital products. You're free to choose a different approach using the Medusa Framework.
 
 </Note>
 
@@ -258,7 +258,7 @@ So, you can't have relations between data models in modules. Instead, you define
 
 Links are relations between data models of different modules that maintain the isolation between the modules.
 
-In this step, you’ll define links between your module’s data models and data models from Medusa’s commerce modules:
+In this step, you’ll define links between your module’s data models and data models from Medusa’s Commerce Modules:
 
 1. Link between the `DigitalProduct` model and the Product Module's `ProductVariant` model.
 2. Link between the `DigitalProductOrder` model and the Order Module's `Order` model.
@@ -791,7 +791,7 @@ To upload the digital product media files, use Medusa’s File Module.
 
 <Note>
 
-Your Medusa application uses the local file module provider by default, which uploads files to a local directory. However, you can use other file module providers, such as the [S3 module provider](../../../../architectural-modules/file/s3/page.mdx).
+Your Medusa application uses the local file module provider by default, which uploads files to a local directory. However, you can use other file module providers, such as the [S3 module provider](../../../../infrastructure-modules/file/s3/page.mdx).
 
 </Note>
 

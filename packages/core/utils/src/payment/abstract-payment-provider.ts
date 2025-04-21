@@ -301,7 +301,7 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *     )
    *
    *     return {
-   *       id: response.id
+   *       id: response.id,
    *       data: response,
    *     }
    *   }
@@ -340,7 +340,6 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *     // assuming you have a client that cancels the payment
    *     await this.client.cancelPayment(externalId)
    *     return {}
-   *   }
    *   }
    *
    *   // ...

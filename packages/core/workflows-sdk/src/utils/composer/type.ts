@@ -145,6 +145,11 @@ export interface StepExecutionContext {
   parentStepIdempotencyKey?: string
 
   /**
+   * Whether to prevent release events.
+   */
+  preventReleaseEvents?: boolean
+
+  /**
    * The name of the step.
    */
   stepName: string

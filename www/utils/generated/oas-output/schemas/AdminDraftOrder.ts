@@ -243,6 +243,13 @@
  *     type: number
  *     title: original_shipping_tax_total
  *     description: The tax total of the draft order's shipping excluding promotions.
+ *   region:
+ *     $ref: "#/components/schemas/AdminRegion"
+ *   credit_lines:
+ *     type: array
+ *     description: The draft order's credit lines.
+ *     items:
+ *       $ref: "#/components/schemas/OrderCreditLine"
  * 
 */
 

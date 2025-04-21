@@ -149,7 +149,7 @@ export const addDraftOrderShippingMethodsWorkflow = createWorkflow(
         order,
         shippingOptions,
         createdMethods,
-        customPrice: input.custom_amount as any, // Need to cast this to any otherwise the type becomes to complex.
+        customPrice: input.custom_amount as any, // Need to cast this to any otherwise the type becomes too complex.
         orderChange,
       },
       ({

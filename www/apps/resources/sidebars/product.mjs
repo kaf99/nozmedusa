@@ -16,7 +16,7 @@ export const productSidebar = [
       {
         type: "category",
         title: "Concepts",
-        autogenerate_tags: "concept+product",
+        autogenerate_tags: "product+concept",
         autogenerate_as_ref: true,
         children: [
           {

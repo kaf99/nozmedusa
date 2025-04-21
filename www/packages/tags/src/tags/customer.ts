@@ -16,6 +16,10 @@ export const customer = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/customer/extend"
   },
   {
+    "title": "Implement Loyalty Points",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/loyalty-points"
+  },
+  {
     "title": "Manage Customer Addresses in Storefront",
     "path": "https://docs.medusajs.com/resources/storefront-development/customers/addresses"
   },

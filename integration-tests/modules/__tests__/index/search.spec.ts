@@ -12,12 +12,58 @@ jest.setTimeout(100000)
 
 process.env.ENABLE_INDEX_MODULE = "true"
 
+async function populateData(
+  api: any,
+  {
+    productCount = 50,
+    variantCount = 10,
+    priceCount = 10,
+  }: {
+    productCount?: number
+    variantCount?: number
+    priceCount?: number
+  } = {}
+) {
+  const shippingProfile = (
+    await api.post(
+      `/admin/shipping-profiles`,
+      { name: "Test", type: "default" },
+      adminHeaders
+    )
+  ).data.shipping_profile
+
+  const payloads = new Array(productCount).fill(0).map((_, a) => ({
+    title: "Test Giftcard-" + a,
+    is_giftcard: true,
+    shipping_profile_id: shippingProfile.id,
+    description: "test-giftcard-description" + a,
+    options: [{ title: "Denominations", values: ["100"] }],
+    variants: new Array(variantCount).fill(0).map((_, i) => ({
+      title: `Test variant ${i}`,
+      sku: `test-variant-${i}${a}`,
+      prices: new Array(priceCount).fill(0).map((_, j) => ({
+        currency_code: Object.values(defaultCurrencies)[j].code,
+        amount: 10 * j,
+      })),
+      options: {
+        Denominations: "100",
+      },
+    })),
+  }))
+
+  for (const payload of payloads) {
+    await api.post("/admin/products", payload, adminHeaders)
+  }
+
+  await setTimeout(4000 * (productCount / 10))
+}
+
 medusaIntegrationTestRunner({
   testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
     let indexEngine: IndexTypes.IIndexService
     let appContainer
 
-    beforeAll(() => {
+    beforeAll(async () => {
       appContainer = getContainer()
       indexEngine = appContainer.resolve(Modules.INDEX)
     })
@@ -30,43 +76,13 @@ medusaIntegrationTestRunner({
       await createAdminUser(dbConnection, adminHeaders, appContainer)
     })
 
-    describe.skip("Index engine", () => {
+    describe("Index engine", () => {
       it("should search through the indexed data and return the correct results ordered and filtered [1]", async () => {
-        const shippingProfile = (
-          await api.post(
-            `/admin/shipping-profiles`,
-            { name: "Test", type: "default" },
-            adminHeaders
-          )
-        ).data.shipping_profile
-
-        const payload = {
-          title: "Test Giftcard",
-          is_giftcard: true,
-          shipping_profile_id: shippingProfile.id,
-          description: "test-giftcard-description",
-          options: [{ title: "Denominations", values: ["100"] }],
-          variants: new Array(10).fill(0).map((_, i) => ({
-            title: `Test variant ${i}`,
-            sku: `test-variant-${i}`,
-            prices: new Array(10).fill(0).map((_, j) => ({
-              currency_code: Object.values(defaultCurrencies)[j].code,
-              amount: 10 * j,
-            })),
-            options: {
-              Denominations: "100",
-            },
-          })),
-        }
-
-        await api
-          .post("/admin/products", payload, adminHeaders)
-          .catch((err) => {
-            console.log(err)
-          })
-
-        // Timeout to allow indexing to finish
-        await setTimeout(4000)
+        await populateData(api, {
+          productCount: 1,
+          variantCount: 10,
+          priceCount: 10,
+        })
 
         const { data: results } = await fetchAndRetry(
           async () =>
@@ -119,41 +135,11 @@ medusaIntegrationTestRunner({
       })
 
       it("should search through the indexed data and return the correct results ordered and filtered [2]", async () => {
-        const shippingProfile = (
-          await api.post(
-            `/admin/shipping-profiles`,
-            { name: "Test", type: "default" },
-            adminHeaders
-          )
-        ).data.shipping_profile
-
-        const payload = {
-          title: "Test Giftcard",
-          is_giftcard: true,
-          description: "test-giftcard-description",
-          shipping_profile_id: shippingProfile.id,
-          options: [{ title: "Denominations", values: ["100"] }],
-          variants: new Array(10).fill(0).map((_, i) => ({
-            title: `Test variant ${i}`,
-            sku: `test-variant-${i}`,
-            prices: new Array(10).fill(0).map((_, j) => ({
-              currency_code: Object.values(defaultCurrencies)[j].code,
-              amount: 10 * j,
-            })),
-            options: {
-              Denominations: "100",
-            },
-          })),
-        }
-
-        await api
-          .post("/admin/products", payload, adminHeaders)
-          .catch((err) => {
-            console.log(err)
-          })
-
-        // Timeout to allow indexing to finish
-        await setTimeout(10000)
+        await populateData(api, {
+          productCount: 1,
+          variantCount: 10,
+          priceCount: 10,
+        })
 
         const { data: results } = await fetchAndRetry(
           async () =>
@@ -205,43 +191,8 @@ medusaIntegrationTestRunner({
         }
       })
 
-      it.skip("should search through the indexed data and return the correct results ordered and filtered [3]", async () => {
-        const shippingProfile = (
-          await api.post(
-            `/admin/shipping-profiles`,
-            { name: "Test", type: "default" },
-            adminHeaders
-          )
-        ).data.shipping_profile
-
-        const payloads = new Array(50).fill(0).map((_, a) => ({
-          title: "Test Giftcard-" + a,
-          is_giftcard: true,
-          shipping_profile_id: shippingProfile.id,
-          description: "test-giftcard-description" + a,
-          options: [{ title: "Denominations", values: ["100"] }],
-          variants: new Array(10).fill(0).map((_, i) => ({
-            title: `Test variant ${i}`,
-            sku: `test-variant-${i}${a}`,
-            prices: new Array(10).fill(0).map((_, j) => ({
-              currency_code: Object.values(defaultCurrencies)[j].code,
-              amount: 10 * j,
-            })),
-            options: {
-              Denominations: "100",
-            },
-          })),
-        }))
-
-        let i = 0
-        for (const payload of payloads) {
-          ++i
-          await api.post("/admin/products", payload, adminHeaders).then(() => {
-            console.log(`Created ${i} products in ${payloads.length} payloads`)
-          })
-        }
-
-        await setTimeout(5000)
+      it("should search through the indexed data and return the correct results ordered and filtered [3]", async () => {
+        await populateData(api)
 
         const queryArgs = {
           fields: [

@@ -1750,6 +1750,10 @@ get:
     - cookie_auth: []
     - jwt_token: []
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_draft-orders/get.js
     - lang: Shell
       label: cURL
       source:
@@ -2107,6 +2111,10 @@ post:
                     `additional_data` parameter.
           description: The draft order's details.
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_draft-orders/post.js
     - lang: Shell
       label: cURL
       source:

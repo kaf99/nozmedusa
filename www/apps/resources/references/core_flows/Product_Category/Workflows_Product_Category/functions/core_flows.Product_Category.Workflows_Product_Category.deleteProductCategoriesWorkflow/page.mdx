@@ -135,22 +135,6 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### categoriesDeleted
 
-This step is a hook that you can inject custom functionality into.
-
-#### Example
-
-```ts
-import { deleteProductCategoriesWorkflow } from "@medusajs/medusa/core-flows"
-
-deleteProductCategoriesWorkflow.hooks.categoriesDeleted(
-  (async ({ ids }, { container }) => {
-    //TODO
-  })
-)
-```
-
-#### Input
-
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"object","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"ids","type":"[DeleteProductCategoriesWorkflowInput](../../../../types/core_flows.DeleteProductCategoriesWorkflowInput/page.mdx)","description":"The IDs of product categories to delete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="categoriesDeleted"/>
+<TypeList types={[{"name":"invoke","type":"[InvokeFn](../../../../../workflows/types/workflows.InvokeFn/page.mdx)&#60;object, TOutput, TCompensateInput&#62;","description":"The type of invocation function passed to a step.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"compensate","type":"[CompensateFn](../../../../../workflows/types/workflows.CompensateFn/page.mdx)&#60;TCompensateInput&#62;","description":"The type of compensation function passed to a step.","optional":true,"defaultValue":"","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="categoriesDeleted"/>

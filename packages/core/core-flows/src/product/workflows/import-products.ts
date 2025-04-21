@@ -1,15 +1,15 @@
+import { WorkflowTypes } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { WorkflowTypes } from "@medusajs/framework/types"
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import {
-  waitConfirmationProductImportStep,
   groupProductsForBatchStep,
   parseProductCsvStep,
+  waitConfirmationProductImportStep,
 } from "../steps"
 import { batchProductsWorkflow } from "./batch-products"
 
@@ -17,16 +17,16 @@ export const importProductsWorkflowId = "import-products"
 /**
  * This workflow starts a product import from a CSV file in the background. It's used by the
  * [Import Products Admin API Route](https://docs.medusajs.com/api/admin#products_postproductsimport).
- * 
+ *
  * You can use this workflow within your custom workflows, allowing you to wrap custom logic around product import.
  * For example, you can import products from another system.
- * 
- * The workflow only starts the import, but you'll have to confirm it using the [Workflow Engine](https://docs.medusajs.com/resources/architectural-modules/workflow-engine).
+ *
+ * The workflow only starts the import, but you'll have to confirm it using the [Workflow Engine](https://docs.medusajs.com/resources/infrastructure-modules/workflow-engine).
  * The below example shows how to confirm the import.
- * 
+ *
  * @example
  * To start the import of a CSV file:
- * 
+ *
  * ```ts
  * const { result, transaction: { transactionId } } = await importProductsWorkflow(container)
  * .run({
@@ -37,12 +37,12 @@ export const importProductsWorkflowId = "import-products"
  *   }
  * })
  * ```
- * 
+ *
  * Notice that the workflow returns a `transaction.transactionId`. You'll use this ID to confirm the import afterwards.
- * 
- * You confirm the import using the [Workflow Engine](https://docs.medusajs.com/resources/architectural-modules/workflow-engine).
+ *
+ * You confirm the import using the [Workflow Engine](https://docs.medusajs.com/resources/infrastructure-modules/workflow-engine).
  * For example, in an API route:
- * 
+ *
  * ```ts workflow={false}
  * import {
  *   AuthenticatedMedusaRequest,
@@ -55,7 +55,7 @@ export const importProductsWorkflowId = "import-products"
  * import { IWorkflowEngineService } from "@medusajs/framework/types"
  * import { Modules, TransactionHandlerType } from "@medusajs/framework/utils"
  * import { StepResponse } from "@medusajs/framework/workflows-sdk"
- * 
+ *
  * export const POST = async (
  *   req: AuthenticatedMedusaRequest,
  *   res: MedusaResponse
@@ -64,7 +64,7 @@ export const importProductsWorkflowId = "import-products"
  *     Modules.WORKFLOW_ENGINE
  *   )
  *   const transactionId = req.params.transaction_id
- * 
+ *
  *   await workflowEngineService.setStepSuccess({
  *     idempotencyKey: {
  *       action: TransactionHandlerType.INVOKE,
@@ -74,19 +74,19 @@ export const importProductsWorkflowId = "import-products"
  *     },
  *     stepResponse: new StepResponse(true),
  *   })
- * 
+ *
  *   res.status(202).json({})
  * }
  * ```
- * 
+ *
  * :::tip
- * 
+ *
  * This example API route uses the same implementation as the [Confirm Product Import Admin API Route](https://docs.medusajs.com/api/admin#products_postproductsimporttransaction_idconfirm).
- * 
+ *
  * :::
- * 
+ *
  * @summary
- * 
+ *
  * Import products from a CSV file.
  */
 export const importProductsWorkflow = createWorkflow(

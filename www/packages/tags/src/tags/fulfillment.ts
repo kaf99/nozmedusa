@@ -16,6 +16,10 @@ export const fulfillment = [
     "path": "https://docs.medusajs.com/user-guide/settings/locations-and-shipping/shipping-profiles"
   },
   {
+    "title": "Shipping Option Price Rules",
+    "path": "https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules"
+  },
+  {
     "title": "Product Shipping Requirement",
     "path": "https://docs.medusajs.com/resources/commerce-modules/product/selling-products"
   },

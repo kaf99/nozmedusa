@@ -114,19 +114,25 @@ export const confirmDraftOrderEditWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     }).config({ name: "order-items-query" })
 
-    const lineItemIds = transform(
+    const { removedLineItemIds } = transform(
       { orderItems, previousOrderItems: order.items },
-
       (data) => {
         const previousItemIds = (data.previousOrderItems || []).map(
           ({ id }) => id
-        ) // items that have been removed with the change
-        const newItemIds = data.orderItems.items.map(({ id }) => id)
-        return [...new Set([...previousItemIds, ...newItemIds])]
+        )
+        const currentItemIds = data.orderItems.items.map(({ id }) => id)
+
+        const removedItemIds = previousItemIds.filter(
+          (id) => !currentItemIds.includes(id)
+        )
+
+        return {
+          removedLineItemIds: removedItemIds,
+        }
       }
     )
 
-    deleteReservationsByLineItemsStep(lineItemIds)
+    deleteReservationsByLineItemsStep(removedLineItemIds)
 
     const { variants, items } = transform(
       { orderItems, orderPreview },
