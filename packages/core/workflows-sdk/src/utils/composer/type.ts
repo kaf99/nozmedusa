@@ -77,6 +77,14 @@ export type WorkflowDataProperties<T = unknown> = {
 }
 
 /**
+ * Merges two values
+ */
+export type MergeProperties<Source, MergeValues> = Source &
+  MergeValues extends never
+  ? MergeValues
+  : Source & MergeValues
+
+/**
  * This type is used to encapsulate the input or output type of all utils.
  *
  * @typeParam T - The type of a step's input or result.
@@ -87,16 +95,18 @@ export type WorkflowData<T = unknown> = (T extends Array<infer Item>
   ? {
       [Key in keyof T]: T[Key] | WorkflowData<T[Key]>
     }
-  : T & WorkflowDataProperties<T>) &
-  T &
-  WorkflowDataProperties<T> & {
-    config(
-      config: { name?: string } & Omit<
-        TransactionStepsDefinition,
-        "next" | "uuid" | "action"
-      >
-    ): WorkflowData<T>
-  }
+  : MergeProperties<T, WorkflowDataProperties<T>>) &
+  MergeProperties<
+    T,
+    WorkflowDataProperties<T> & {
+      config(
+        config: { name?: string } & Omit<
+          TransactionStepsDefinition,
+          "next" | "uuid" | "action"
+        >
+      ): WorkflowData<T>
+    }
+  >
 
 export type CreateWorkflowComposerContext = {
   __type: string

@@ -21,6 +21,14 @@ const step3 = createStep("step3", async function (_, context) {
   return new StepResponse({ step3: "step3" })
 })
 
+const step4 = createStep("step4", async function (_, context) {
+  return new StepResponse<undefined | { id: number }>(void 0)
+})
+
+const step5 = createStep("step5", async function (_, context) {
+  return new StepResponse<undefined>(void 0)
+})
+
 const workflow = createWorkflow(
   "sub-workflow",
   function (input: WorkflowData<{ outsideWorkflowData: string }>) {
@@ -36,6 +44,12 @@ const workflow = createWorkflow(
         }),
       }
     )
+
+    const four = step4().config({})
+    four?.id
+
+    const five = step5().config({})
+    five
 
     return new WorkflowResponse(
       { r: somethingHook.getResult(), step3: step3() },
