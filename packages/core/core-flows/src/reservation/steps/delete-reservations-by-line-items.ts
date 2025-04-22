@@ -20,7 +20,7 @@ export const deleteReservationsByLineItemsStep = createStep(
 
     await service.deleteReservationItemsByLineItem(ids)
 
-    return new StepResponse(void 0, ids)
+    return new StepResponse(undefined, ids)
   },
   async (prevIds, { container }) => {
     if (!prevIds?.length) {

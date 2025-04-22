@@ -46,7 +46,8 @@ const workflow = createWorkflow(
     )
 
     const four = step4().config({})
-    four?.id
+    four
+    // four?.id
 
     const five = step5().config({})
     five

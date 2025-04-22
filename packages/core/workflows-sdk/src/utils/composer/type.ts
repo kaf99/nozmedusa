@@ -62,12 +62,11 @@ export type StepFunction<
 > = (KeysOfUnion<TInput> extends []
   ? // Function that doesn't expect any input
     {
-      (): WorkflowData<TOutput> & StepFunctionReturnConfig<TOutput>
+      (): WorkflowData<TOutput>
     }
   : // function that expects an input object
     {
-      (input: WorkflowData<TInput> | TInput): WorkflowData<TOutput> &
-        StepFunctionReturnConfig<TOutput>
+      (input: WorkflowData<TInput> | TInput): WorkflowData<TOutput>
     }) &
   WorkflowDataProperties<TOutput>
 
@@ -96,17 +95,7 @@ export type WorkflowData<T = unknown> = (T extends Array<infer Item>
       [Key in keyof T]: T[Key] | WorkflowData<T[Key]>
     }
   : MergeProperties<T, WorkflowDataProperties<T>>) &
-  MergeProperties<
-    T,
-    WorkflowDataProperties<T> & {
-      config(
-        config: { name?: string } & Omit<
-          TransactionStepsDefinition,
-          "next" | "uuid" | "action"
-        >
-      ): WorkflowData<T>
-    }
-  >
+  MergeProperties<T, WorkflowDataProperties<T> & StepFunctionReturnConfig<T>>
 
 export type CreateWorkflowComposerContext = {
   __type: string
