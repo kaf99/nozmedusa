@@ -34,6 +34,7 @@ export const batchLinkProductsToCategoryWorkflow = createWorkflow(
     // eslint-disable-next-line max-len
     input: WorkflowData<ProductCategoryWorkflow.BatchUpdateProductsOnCategoryWorkflowInput>
   ): WorkflowResponse<void> => {
-    return new WorkflowResponse(batchLinkProductsToCategoryStep(input))
+    batchLinkProductsToCategoryStep(input)
+    return new WorkflowResponse(void 0)
   }
 )

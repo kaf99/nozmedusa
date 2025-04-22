@@ -14,6 +14,7 @@ import {
   StepExecutionContext,
   StepFunction,
   StepFunctionResult,
+  StepFunctionReturnConfig,
   WorkflowData,
 } from "./type"
 
@@ -152,12 +153,13 @@ export function applyStep<
       __step__: stepName,
     }
 
-    const refRet = proxify(ret) as WorkflowData<TInvokeResultOutput> & {
-      if: (
-        input: any,
-        condition: (...args: any) => boolean | WorkflowData
-      ) => WorkflowData<TInvokeResultOutput>
-    }
+    const refRet = proxify(ret) as WorkflowData<TInvokeResultOutput> &
+      StepFunctionReturnConfig<TInvokeResultOutput> & {
+        if: (
+          input: any,
+          condition: (...args: any) => boolean | WorkflowData
+        ) => WorkflowData<TInvokeResultOutput>
+      }
 
     refRet.config = (
       localConfig: { name?: string } & Omit<

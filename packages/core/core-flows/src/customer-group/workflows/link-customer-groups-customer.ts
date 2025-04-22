@@ -43,6 +43,7 @@ export const linkCustomerGroupsToCustomerWorkflow = createWorkflow(
   (
     input: WorkflowData<LinkCustomerGroupsToCustomerWorkflowInput>
   ): WorkflowResponse<void> => {
-    return new WorkflowResponse(linkCustomerGroupsToCustomerStep(input))
+    linkCustomerGroupsToCustomerStep(input)
+    return new WorkflowResponse(void 0)
   }
 )

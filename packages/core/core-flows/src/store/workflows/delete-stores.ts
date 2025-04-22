@@ -45,6 +45,7 @@ export const deleteStoresWorkflowId = "delete-stores"
 export const deleteStoresWorkflow = createWorkflow(
   deleteStoresWorkflowId,
   (input: WorkflowData<DeleteStoresWorkflowInput>): WorkflowResponse<void> => {
-    return new WorkflowResponse(deleteStoresStep(input.ids))
+    deleteStoresStep(input.ids)
+    return new WorkflowResponse(void 0)
   }
 )

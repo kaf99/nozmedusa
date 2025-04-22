@@ -40,6 +40,7 @@ export const deleteCustomerGroupsWorkflow = createWorkflow(
   (
     input: WorkflowData<DeleteCustomerGroupsWorkflowInput>
   ): WorkflowResponse<void> => {
-    return new WorkflowResponse(deleteCustomerGroupStep(input.ids))
+    deleteCustomerGroupStep(input.ids)
+    return new WorkflowResponse(void 0)
   }
 )

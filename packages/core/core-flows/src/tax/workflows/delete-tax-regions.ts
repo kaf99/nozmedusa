@@ -40,7 +40,7 @@ export const deleteTaxRegionsWorkflow = createWorkflow(
   (
     input: WorkflowData<DeleteTaxRegionsWorkflowInput>
   ): WorkflowResponse<void> => {
-    const r = deleteTaxRegionsStep(input.ids)
-    return new WorkflowResponse(r)
+    deleteTaxRegionsStep(input.ids)
+    return new WorkflowResponse(void 0)
   }
 )

@@ -40,6 +40,7 @@ export const deleteReturnReasonsWorkflow = createWorkflow(
   (
     input: WorkflowData<DeleteReturnReasonsWorkflowInput>
   ): WorkflowResponse<void> => {
-    return new WorkflowResponse(deleteReturnReasonStep(input.ids))
+    deleteReturnReasonStep(input.ids)
+    return new WorkflowResponse(void 0)
   }
 )

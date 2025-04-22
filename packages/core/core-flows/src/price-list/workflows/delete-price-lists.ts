@@ -40,6 +40,7 @@ export const deletePriceListsWorkflow = createWorkflow(
   (
     input: WorkflowData<DeletePriceListsWorkflowInput>
   ): WorkflowResponse<void> => {
-    return new WorkflowResponse(deletePriceListsStep(input.ids))
+    deletePriceListsStep(input.ids)
+    return new WorkflowResponse(void 0)
   }
 )
