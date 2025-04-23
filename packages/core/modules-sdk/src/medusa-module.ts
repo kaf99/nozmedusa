@@ -14,6 +14,7 @@ import {
 import {
   ContainerRegistrationKeys,
   createMedusaContainer,
+  Modules,
   promiseAll,
   simpleHash,
   stringifyCircular,
@@ -442,7 +443,10 @@ class MedusaModule {
           resolve: defaultPath,
           options: declaration?.options ?? declaration,
           dependencies:
-            (declaration as InternalModuleDeclaration)?.dependencies ?? [],
+            // We inject the event bus by default to make it available for custom modules out of the box. Among other things, this ensures the built-in events are emitted without manually injecting the bus
+            (declaration as InternalModuleDeclaration)?.dependencies ?? [
+              Modules.EVENT_BUS,
+            ],
           alias: declaration?.alias,
           main: declaration?.main,
           worker_mode: workerMode,
