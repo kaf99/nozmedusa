@@ -239,11 +239,19 @@ medusaIntegrationTestRunner({
       it("should issue multiple refunds", async () => {
         const payment = order.payment_collections[0].payments[0]
 
+        expect(order.summary.pending_difference).toEqual(100)
+
         await api.post(
           `/admin/payments/${payment.id}/capture`,
           undefined,
           adminHeaders
         )
+
+        let updatedOrder = (
+          await api.get(`/admin/orders/${order.id}`, adminHeaders)
+        ).data.order
+
+        expect(updatedOrder.summary.pending_difference).toEqual(-100)
 
         const refundReason = (
           await api.post(
@@ -263,6 +271,12 @@ medusaIntegrationTestRunner({
           adminHeaders
         )
 
+        updatedOrder = (
+          await api.get(`/admin/orders/${order.id}`, adminHeaders)
+        ).data.order
+
+        expect(updatedOrder.summary.pending_difference).toEqual(-75)
+
         await api.post(
           `/admin/payments/${payment.id}/refund`,
           {
@@ -272,6 +286,12 @@ medusaIntegrationTestRunner({
           },
           adminHeaders
         )
+
+        updatedOrder = (
+          await api.get(`/admin/orders/${order.id}`, adminHeaders)
+        ).data.order
+
+        expect(updatedOrder.summary.pending_difference).toEqual(-50)
 
         const refundedPayment = (
           await api.get(`/admin/payments/${payment.id}`, adminHeaders)
