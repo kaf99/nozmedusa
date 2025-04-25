@@ -102,7 +102,9 @@ export const adminProductRoutesMiddlewares: MiddlewareRoute[] = [
   {
     method: ["POST"],
     matcher: "/admin/products/import",
-    middlewares: [upload.single("file")],
+    bodyParser: {
+      multipartUploader: upload.single("file"),
+    },
   },
   {
     method: ["POST"],

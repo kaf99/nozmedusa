@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express"
+import type { NextFunction, Request, RequestHandler, Response } from "express"
 import type { ZodNullable, ZodObject, ZodOptional, ZodRawShape } from "zod"
 
 import {
@@ -48,6 +48,7 @@ export type MedusaErrorHandlerFunction = (
 export type ParserConfigArgs = {
   sizeLimit?: string | number | undefined
   preserveRawBody?: boolean
+  multipartUploader?: RequestHandler
 }
 
 export type ParserConfig = false | ParserConfigArgs

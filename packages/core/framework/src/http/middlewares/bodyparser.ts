@@ -78,6 +78,13 @@ export function createBodyParserMiddlewaresStack(
           return next()
         }
 
+        if (matchingRoute.config.multipartUploader) {
+          logger.debug(
+            `using multipart parser for processing request body ${req.method} ${req.path}`
+          )
+          return matchingRoute.config.multipartUploader(req, res, next)
+        }
+
         logger.debug(
           `using custom ${parser} bodyparser config ${req.method} ${req.path}`
         )

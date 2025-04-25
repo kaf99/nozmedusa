@@ -14,8 +14,10 @@ export const adminUploadRoutesMiddlewares: MiddlewareRoute[] = [
   {
     method: ["POST"],
     matcher: "/admin/uploads",
+    bodyParser: {
+      multipartUploader: upload.single("file"),
+    },
     middlewares: [
-      upload.array("files"),
       validateAndTransformQuery(AdminGetUploadParams, retrieveUploadConfig),
     ],
   },
