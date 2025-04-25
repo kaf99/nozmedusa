@@ -36,6 +36,10 @@ export const salesChannel = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/createDefaultsWorkflow"
   },
   {
+    "title": "addDraftOrderItemsWorkflow",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/addDraftOrderItemsWorkflow"
+  },
+  {
     "title": "addOrderLineItemsWorkflow",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/addOrderLineItemsWorkflow"
   },

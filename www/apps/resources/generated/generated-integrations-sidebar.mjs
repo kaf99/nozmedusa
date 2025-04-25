@@ -84,7 +84,7 @@ const generatedgeneratedIntegrationsSidebarSidebar = {
           "isPathHref": true,
           "type": "ref",
           "path": "/infrastructure-modules/file/s3",
-          "title": "AWS",
+          "title": "S3 (and Compatible APIs)",
           "children": []
         }
       ]

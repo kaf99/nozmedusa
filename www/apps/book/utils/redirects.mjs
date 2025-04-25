@@ -364,6 +364,11 @@ const redirects = async () => {
       destination: "/user-guide/settings/locations-and-shipping/locations",
       permanent: true,
     },
+    {
+      source: "/learn/fundamentals/workflows/access-workflow-errors",
+      destination: "/learn/fundamentals/workflows/errors",
+      permanent: true,
+    },
   ]
 }
 

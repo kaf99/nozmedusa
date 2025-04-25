@@ -112,7 +112,7 @@ import { Modules } from "@medusajs/framework/utils"
 
 await link.create({
   [Modules.API_KEY]: {
-    api_key_id: "apk_123",
+    publishable_key_id: "apk_123",
   },
   [Modules.SALES_CHANNEL]: {
     sales_channel_id: "sc_123",
@@ -131,7 +131,7 @@ import { createRemoteLinkStep } from "@medusajs/medusa/core-flows"
 
 createRemoteLinkStep({
   [Modules.API_KEY]: {
-    api_key_id: "apk_123",
+    publishable_key_id: "apk_123",
   },
   [Modules.SALES_CHANNEL]: {
     sales_channel_id: "sc_123",

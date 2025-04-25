@@ -123,6 +123,7 @@ const sidebarMappings: {
       "/references/workflows",
       "/references-overview",
       "/references/medusa-workflows",
+      "/data-model-repository-reference",
     ],
   },
   {

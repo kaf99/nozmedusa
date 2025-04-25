@@ -145,12 +145,12 @@ const { result } = await createPromotionsWorkflow(container)
             attribute: "customer.group.id",
             operator: "eq",
             values: [
-              "cusgrp_123"
-            ]
-          }
-        ]
+              "cusgrp_123",
+            ],
+          },
+        ],
       }],
-    }
+    },
   })
 ```
 
@@ -184,10 +184,10 @@ const promotions = await promotionModuleService.createPromotions([
         attribute: "customer.group.id",
         operator: "eq",
         values: [
-          "cusgrp_123"
-        ]
-      }
-    ]
+          "cusgrp_123",
+        ],
+      },
+    ],
   },
 ])
 ```

@@ -315,6 +315,11 @@ export const navDropdownItems: NavigationItem[] = [
       },
       {
         type: "link",
+        title: "Data Model Repository",
+        link: "/resources/data-model-repository-reference",
+      },
+      {
+        type: "link",
         title: "Events Reference",
         link: "/resources/events-reference",
       },

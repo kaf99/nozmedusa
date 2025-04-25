@@ -176,6 +176,10 @@ export const customer = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/updateCustomerGroupsWorkflow"
   },
   {
+    "title": "addDraftOrderItemsWorkflow",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/addDraftOrderItemsWorkflow"
+  },
+  {
     "title": "addOrderLineItemsWorkflow",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/addOrderLineItemsWorkflow"
   },
