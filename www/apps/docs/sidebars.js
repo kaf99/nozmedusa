@@ -2259,6 +2259,11 @@ module.exports = {
           id: "troubleshooting/admin-webpack-build-types",
           label: "Webpack Build Error",
         },
+        {
+          type: "doc",
+          id: "troubleshooting/white-screen-on-admin",
+          label: "White Screen on Admin Dashboard",
+        },
       ],
     },
     {
