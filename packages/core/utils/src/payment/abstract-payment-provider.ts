@@ -301,7 +301,7 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *     )
    *
    *     return {
-   *       id: response.id
+   *       id: response.id,
    *       data: response,
    *     }
    *   }
@@ -340,7 +340,6 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *     // assuming you have a client that cancels the payment
    *     await this.client.cancelPayment(externalId)
    *     return {}
-   *   }
    *   }
    *
    *   // ...
@@ -486,6 +485,11 @@ export abstract class AbstractPaymentProvider<TConfig = Record<string, unknown>>
    *   ): Promise<UpdatePaymentOutput> {
    *     const { amount, currency_code, context } = input
    *     const externalId = input.data?.id
+   * 
+   *     // Validate context.customer
+   *     if (!context || !context.customer) {
+   *       throw new Error("Context must include a valid customer.");
+   *     }
    *
    *     // assuming you have a client that updates the payment
    *     const response = await this.client.update(

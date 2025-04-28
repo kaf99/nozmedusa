@@ -1,5 +1,21 @@
 # @medusajs/inventory-next
 
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`ee35f3ce9097832c10cdf2fd168763088e6c3fcb`](https://github.com/medusajs/medusa/commit/ee35f3ce9097832c10cdf2fd168763088e6c3fcb), [`2f6963a5fbea05537680cb1b1f6a2b9822c36325`](https://github.com/medusajs/medusa/commit/2f6963a5fbea05537680cb1b1f6a2b9822c36325), [`b8902637251e9ed4f8762ef280659bbab6d967de`](https://github.com/medusajs/medusa/commit/b8902637251e9ed4f8762ef280659bbab6d967de)]:
+  - @medusajs/framework@2.7.1
+
+## 2.7.0
+
+### Patch Changes
+
+- [#12097](https://github.com/medusajs/medusa/pull/12097) [`74381addc3d6af42f0292e778948aabb60a6dad9`](https://github.com/medusajs/medusa/commit/74381addc3d6af42f0292e778948aabb60a6dad9) Thanks [@adrien2p](https://github.com/adrien2p)! - chore(): Emit events in batch and index process event ids in batch
+
+- Updated dependencies [[`ec56a8bc857a74788df6523af25914da95c4c1d8`](https://github.com/medusajs/medusa/commit/ec56a8bc857a74788df6523af25914da95c4c1d8), [`2a18a75353f872b0cb4c203afc08cfd82f778428`](https://github.com/medusajs/medusa/commit/2a18a75353f872b0cb4c203afc08cfd82f778428)]:
+  - @medusajs/framework@2.7.0
+
 ## 2.6.1
 
 ### Patch Changes

@@ -129,15 +129,6 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
-                  "path": "/medusa-cli/commands/start-cluster",
-                  "title": "start-cluster",
-                  "description": "",
-                  "children": []
-                },
-                {
-                  "loaded": true,
-                  "isPathHref": true,
-                  "type": "link",
                   "path": "/medusa-cli/commands/telemtry",
                   "title": "telemetry",
                   "description": "",
@@ -512,6 +503,15 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "type": "link",
                   "path": "/references/js-sdk/admin/paymentCollection",
                   "title": "paymentCollection",
+                  "description": "",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
+                  "path": "/references/js-sdk/admin/plugin",
+                  "title": "plugin",
                   "description": "",
                   "children": []
                 },

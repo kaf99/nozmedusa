@@ -33,6 +33,26 @@ export interface ConfirmDraftOrderEditWorkflowInput {
   confirmed_by: string
 }
 
+/**
+ * This workflow confirms a draft order edit. It's used by the
+ * [Confirm Draft Order Edit Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersideditconfirm).
+ * 
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
+ * confirming a draft order edit.
+ * 
+ * @example
+ * const { result } = await confirmDraftOrderEditWorkflow(container)
+ * .run({
+ *   input: {
+ *     order_id: "order_123",
+ *     confirmed_by: "user_123",
+ *   }
+ * })
+ * 
+ * @summary
+ * 
+ * Confirm a draft order edit.
+ */
 export const confirmDraftOrderEditWorkflow = createWorkflow(
   confirmDraftOrderEditWorkflowId,
   function (input: ConfirmDraftOrderEditWorkflowInput) {
@@ -114,19 +134,25 @@ export const confirmDraftOrderEditWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     }).config({ name: "order-items-query" })
 
-    const lineItemIds = transform(
+    const { removedLineItemIds } = transform(
       { orderItems, previousOrderItems: order.items },
-
       (data) => {
         const previousItemIds = (data.previousOrderItems || []).map(
           ({ id }) => id
-        ) // items that have been removed with the change
-        const newItemIds = data.orderItems.items.map(({ id }) => id)
-        return [...new Set([...previousItemIds, ...newItemIds])]
+        )
+        const currentItemIds = data.orderItems.items.map(({ id }) => id)
+
+        const removedItemIds = previousItemIds.filter(
+          (id) => !currentItemIds.includes(id)
+        )
+
+        return {
+          removedLineItemIds: removedItemIds,
+        }
       }
     )
 
-    deleteReservationsByLineItemsStep(lineItemIds)
+    deleteReservationsByLineItemsStep(removedLineItemIds)
 
     const { variants, items } = transform(
       { orderItems, orderPreview },

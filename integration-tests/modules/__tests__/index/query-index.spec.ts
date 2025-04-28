@@ -6,6 +6,7 @@ import {
   adminHeaders,
   createAdminUser,
 } from "../../../helpers/create-admin-user"
+import { fetchAndRetry } from "../../../helpers/retry"
 
 jest.setTimeout(120000)
 
@@ -73,13 +74,9 @@ async function populateData(api: any) {
     },
   ]
 
-  await api
-    .post("/admin/products/batch", { create: payload }, adminHeaders)
-    .catch((err) => {
-      console.log(err)
-    })
+  await api.post("/admin/products/batch", { create: payload }, adminHeaders)
 
-  await setTimeout(2000)
+  await setTimeout(4000)
 }
 
 process.env.ENABLE_INDEX_MODULE = "true"
@@ -108,34 +105,42 @@ medusaIntegrationTestRunner({
           ContainerRegistrationKeys.QUERY
         ) as RemoteQueryFunction
 
-        const resultset = await query.index({
-          entity: "product",
-          fields: [
-            "id",
-            "description",
-            "status",
-            "title",
-            "variants.sku",
-            "variants.barcode",
-            "variants.material",
-            "variants.options.value",
-            "variants.prices.amount",
-            "variants.prices.currency_code",
-            "variants.inventory_items.inventory.sku",
-            "variants.inventory_items.inventory.description",
-          ],
-          filters: {
-            "variants.sku": { $like: "%-1" },
-            "variants.prices.amount": { $gt: 30 },
-          },
-          pagination: {
-            take: 10,
-            skip: 0,
-            order: {
-              "variants.prices.amount": "DESC",
-            },
-          },
-        })
+        const resultset = await fetchAndRetry(
+          async () =>
+            await query.index({
+              entity: "product",
+              fields: [
+                "id",
+                "description",
+                "status",
+                "title",
+                "variants.sku",
+                "variants.barcode",
+                "variants.material",
+                "variants.options.value",
+                "variants.prices.amount",
+                "variants.prices.currency_code",
+                "variants.inventory_items.inventory.sku",
+                "variants.inventory_items.inventory.description",
+              ],
+              filters: {
+                "variants.sku": { $like: "%-1" },
+                "variants.prices.amount": { $gt: 30 },
+              },
+              pagination: {
+                take: 10,
+                skip: 0,
+                order: {
+                  "variants.prices.amount": "DESC",
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
 
         expect(resultset.metadata).toEqual({
           count: 2,
@@ -253,32 +258,39 @@ medusaIntegrationTestRunner({
         ])
       })
 
-      // TODO: Investigate why this test is flacky
-      it.skip("should use query.index to query the index module sorting by price desc", async () => {
+      it("should use query.index to query the index module sorting by price desc", async () => {
         await populateData(api)
 
         const query = appContainer.resolve(
           ContainerRegistrationKeys.QUERY
         ) as RemoteQueryFunction
 
-        const resultset = await query.index({
-          entity: "product",
-          fields: [
-            "id",
-            "variants.prices.amount",
-            "variants.prices.currency_code",
-          ],
-          filters: {
-            "variants.prices.currency_code": "USD",
-          },
-          pagination: {
-            take: 1,
-            skip: 0,
-            order: {
-              "variants.prices.amount": "DESC",
-            },
-          },
-        })
+        const resultset = await fetchAndRetry(
+          async () =>
+            await query.index({
+              entity: "product",
+              fields: [
+                "id",
+                "variants.prices.amount",
+                "variants.prices.currency_code",
+              ],
+              filters: {
+                "variants.prices.currency_code": "USD",
+              },
+              pagination: {
+                take: 1,
+                skip: 0,
+                order: {
+                  "variants.prices.amount": "DESC",
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
 
         // Limiting to 1 on purpose to keep it simple and check the correct order is maintained
         expect(resultset.data).toEqual([
@@ -303,32 +315,40 @@ medusaIntegrationTestRunner({
           },
         ])
 
-        const resultset2 = await query.index({
-          entity: "product",
-          fields: [
-            "id",
-            "variants.prices.amount",
-            "variants.prices.currency_code",
-          ],
-          filters: {
-            variants: {
-              prices: {
-                currency_code: "USD",
-              },
-            },
-          },
-          pagination: {
-            take: 1,
-            skip: 0,
-            order: {
-              variants: {
-                prices: {
-                  amount: "ASC",
+        const resultset2 = await fetchAndRetry(
+          async () =>
+            query.index({
+              entity: "product",
+              fields: [
+                "id",
+                "variants.prices.amount",
+                "variants.prices.currency_code",
+              ],
+              filters: {
+                variants: {
+                  prices: {
+                    currency_code: "USD",
+                  },
                 },
               },
-            },
-          },
-        })
+              pagination: {
+                take: 1,
+                skip: 0,
+                order: {
+                  variants: {
+                    prices: {
+                      amount: "ASC",
+                    },
+                  },
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
 
         // Limiting to 1 on purpose to keep it simple and check the correct order is maintained
         expect(resultset2.data).toEqual([

@@ -1,7 +1,7 @@
 import { Prerequisites } from "docs-ui"
 
 export const metadata = {
-  title: `${pageNumber} Guide: Sync Brands from Medusa to CMS`,
+  title: `${pageNumber} Guide: Sync Brands from Medusa to Third-Party`,
 }
 
 # {metadata.title}
@@ -264,7 +264,7 @@ A subscriber file must export:
 The subscriber function accepts an object parameter that has two properties:
 
 - `event`: An object of event details. Its `data` property holds the event's data payload, which is the brand's ID.
-- `container`: The Medusa container used to resolve framework and commerce tools.
+- `container`: The Medusa container used to resolve Framework and commerce tools.
 
 In the function, you execute the `syncBrandToCmsWorkflow`, passing it the data payload as an input. So, everytime a brand is created, Medusa will execute this function, which in turn executes the workflow to sync the brand to the CMS.
 

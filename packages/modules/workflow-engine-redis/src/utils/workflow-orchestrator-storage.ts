@@ -12,6 +12,7 @@ import {
 } from "@medusajs/framework/orchestration"
 import { Logger, ModulesSdkTypes } from "@medusajs/framework/types"
 import {
+  isDefined,
   isPresent,
   MedusaError,
   promiseAll,
@@ -98,8 +99,7 @@ export class RedisDistributedTransactionStorage
     ]
 
     const workerOptions = {
-      connection:
-        this.redisWorkerConnection /*, runRetryDelay: 100000 for tests */,
+      connection: this.redisWorkerConnection,
     }
 
     // TODO: Remove this once we have released to all clients (Added: v2.6+)
@@ -117,7 +117,8 @@ export class RedisDistributedTransactionStorage
         if (allowedJobs.includes(job.name as JobType)) {
           await this.executeTransaction(
             job.data.workflowId,
-            job.data.transactionId
+            job.data.transactionId,
+            job.data.transactionMetadata
           )
         }
 
@@ -179,11 +180,20 @@ export class RedisDistributedTransactionStorage
     ])
   }
 
-  private async executeTransaction(workflowId: string, transactionId: string) {
+  private async executeTransaction(
+    workflowId: string,
+    transactionId: string,
+    transactionMetadata: TransactionFlow["metadata"] = {}
+  ) {
     return await this.workflowOrchestratorService_.run(workflowId, {
       transactionId,
       logOnError: true,
       throwOnError: false,
+      context: {
+        eventGroupId: transactionMetadata.eventGroupId,
+        parentStepIdempotencyKey: transactionMetadata.parentStepIdempotencyKey,
+        preventReleaseEvents: transactionMetadata.preventReleaseEvents,
+      },
     })
   }
 
@@ -218,11 +228,13 @@ export class RedisDistributedTransactionStorage
     const data = await this.redisClient.get(key)
 
     if (data) {
-      return JSON.parse(data)
+      const parsedData = JSON.parse(data) as TransactionCheckpoint
+      return parsedData
     }
 
-    const { idempotent } = options ?? {}
-    if (!idempotent) {
+    // Not in Redis either - check database if needed
+    const { idempotent, store, retentionTime } = options ?? {}
+    if (!idempotent && !(store && isDefined(retentionTime))) {
       return
     }
 
@@ -240,26 +252,46 @@ export class RedisDistributedTransactionStorage
       .catch(() => undefined)
 
     if (trx) {
-      return {
+      const checkpointData = {
         flow: trx.execution,
         context: trx.context.data,
         errors: trx.context.errors,
       }
+
+      return checkpointData
     }
     return
   }
 
   async list(): Promise<TransactionCheckpoint[]> {
-    const keys = await this.redisClient.keys(
-      DistributedTransaction.keyPrefix + ":*"
-    )
-    const transactions: any[] = []
-    for (const key of keys) {
-      const data = await this.redisClient.get(key)
-      if (data) {
-        transactions.push(JSON.parse(data))
+    // Replace Redis KEYS with SCAN to avoid blocking the server
+    const transactions: TransactionCheckpoint[] = []
+    let cursor = "0"
+
+    do {
+      // Use SCAN instead of KEYS to avoid blocking Redis
+      const [nextCursor, keys] = await this.redisClient.scan(
+        cursor,
+        "MATCH",
+        DistributedTransaction.keyPrefix + ":*",
+        "COUNT",
+        100 // Fetch in reasonable batches
+      )
+
+      cursor = nextCursor
+
+      if (keys.length) {
+        // Use mget to batch retrieve multiple keys at once
+        const values = await this.redisClient.mget(keys)
+
+        for (const value of values) {
+          if (value) {
+            transactions.push(JSON.parse(value))
+          }
+        }
       }
-    }
+    } while (cursor !== "0")
+
     return transactions
   }
 
@@ -287,30 +319,32 @@ export class RedisDistributedTransactionStorage
       options,
     })
 
-    if (hasFinished) {
+    if (hasFinished && retentionTime) {
       Object.assign(data, {
         retention_time: retentionTime,
       })
     }
 
+    // Prepare operations to be executed in batch or pipeline
     const stringifiedData = JSON.stringify(data)
+    const pipeline = this.redisClient.pipeline()
 
+    // Execute Redis operations
     if (!hasFinished) {
       if (ttl) {
-        await this.redisClient.set(key, stringifiedData, "EX", ttl)
+        pipeline.set(key, stringifiedData, "EX", ttl)
       } else {
-        await this.redisClient.set(key, stringifiedData)
+        pipeline.set(key, stringifiedData)
       }
-    }
-
-    if (hasFinished && !retentionTime && !idempotent) {
-      await this.deleteFromDb(data)
     } else {
-      await this.saveToDb(data, retentionTime)
+      pipeline.unlink(key)
     }
 
-    if (hasFinished) {
-      await this.redisClient.unlink(key)
+    // Database operations
+    if (hasFinished && !retentionTime && !idempotent) {
+      await promiseAll([pipeline.exec(), this.deleteFromDb(data)])
+    } else {
+      await promiseAll([pipeline.exec(), this.saveToDb(data, retentionTime)])
     }
   }
 
@@ -325,6 +359,7 @@ export class RedisDistributedTransactionStorage
       {
         workflowId: transaction.modelId,
         transactionId: transaction.transactionId,
+        transactionMetadata: transaction.getFlow().metadata,
         stepId: step.id,
       },
       {
@@ -352,6 +387,7 @@ export class RedisDistributedTransactionStorage
       {
         workflowId: transaction.modelId,
         transactionId: transaction.transactionId,
+        transactionMetadata: transaction.getFlow().metadata,
       },
       {
         delay: interval * 1000,
@@ -378,6 +414,7 @@ export class RedisDistributedTransactionStorage
       {
         workflowId: transaction.modelId,
         transactionId: transaction.transactionId,
+        transactionMetadata: transaction.getFlow().metadata,
         stepId: step.id,
       },
       {
@@ -503,11 +540,7 @@ export class RedisDistributedTransactionStorage
     key: string
     options?: TransactionOptions
   }) {
-    let isInitialCheckpoint = false
-
-    if (data.flow.state === TransactionState.NOT_STARTED) {
-      isInitialCheckpoint = true
-    }
+    const isInitialCheckpoint = data.flow.state === TransactionState.NOT_STARTED
 
     /**
      * In case many execution can succeed simultaneously, we need to ensure that the latest
@@ -528,49 +561,45 @@ export class RedisDistributedTransactionStorage
       throw new SkipExecutionError("Already finished by another execution")
     }
 
-    const currentFlowLastInvokingStepIndex = Object.values(
-      currentFlow.steps
-    ).findIndex((step) => {
-      return [
-        TransactionStepState.INVOKING,
-        TransactionStepState.NOT_STARTED,
-      ].includes(step.invoke?.state)
-    })
+    const currentFlowSteps = Object.values(currentFlow.steps || {})
+    const latestUpdatedFlowSteps = latestUpdatedFlow.steps
+      ? Object.values(
+          latestUpdatedFlow.steps as Record<string, TransactionStep>
+        )
+      : []
+
+    // Predefined states for quick lookup
+    const invokingStates = [
+      TransactionStepState.INVOKING,
+      TransactionStepState.NOT_STARTED,
+    ]
+
+    const compensatingStates = [
+      TransactionStepState.COMPENSATING,
+      TransactionStepState.NOT_STARTED,
+    ]
+
+    const isInvokingState = (step: TransactionStep) =>
+      invokingStates.includes(step.invoke?.state)
+
+    const isCompensatingState = (step: TransactionStep) =>
+      compensatingStates.includes(step.compensate?.state)
+
+    const currentFlowLastInvokingStepIndex =
+      currentFlowSteps.findIndex(isInvokingState)
 
     const latestUpdatedFlowLastInvokingStepIndex = !latestUpdatedFlow.steps
       ? 1 // There is no other execution, so the current execution is the latest
-      : Object.values(
-          (latestUpdatedFlow.steps as Record<string, TransactionStep>) ?? {}
-        ).findIndex((step) => {
-          return [
-            TransactionStepState.INVOKING,
-            TransactionStepState.NOT_STARTED,
-          ].includes(step.invoke?.state)
-        })
+      : latestUpdatedFlowSteps.findIndex(isInvokingState)
 
-    const currentFlowLastCompensatingStepIndex = Object.values(
-      currentFlow.steps
-    )
-      .reverse()
-      .findIndex((step) => {
-        return [
-          TransactionStepState.COMPENSATING,
-          TransactionStepState.NOT_STARTED,
-        ].includes(step.compensate?.state)
-      })
+    const reversedCurrentFlowSteps = [...currentFlowSteps].reverse()
+    const currentFlowLastCompensatingStepIndex =
+      reversedCurrentFlowSteps.findIndex(isCompensatingState)
 
+    const reversedLatestUpdatedFlowSteps = [...latestUpdatedFlowSteps].reverse()
     const latestUpdatedFlowLastCompensatingStepIndex = !latestUpdatedFlow.steps
       ? -1
-      : Object.values(
-          (latestUpdatedFlow.steps as Record<string, TransactionStep>) ?? {}
-        )
-          .reverse()
-          .findIndex((step) => {
-            return [
-              TransactionStepState.COMPENSATING,
-              TransactionStepState.NOT_STARTED,
-            ].includes(step.compensate?.state)
-          })
+      : reversedLatestUpdatedFlowSteps.findIndex(isCompensatingState)
 
     const isLatestExecutionFinishedIndex = -1
     const invokeShouldBeSkipped =
@@ -587,20 +616,29 @@ export class RedisDistributedTransactionStorage
       latestUpdatedFlowLastCompensatingStepIndex !==
         isLatestExecutionFinishedIndex
 
+    const isCompensatingMismatch =
+      latestUpdatedFlow.state === TransactionState.COMPENSATING &&
+      ![TransactionState.REVERTED, TransactionState.FAILED].includes(
+        currentFlow.state
+      ) &&
+      currentFlow.state !== latestUpdatedFlow.state
+
+    const isRevertedMismatch =
+      latestUpdatedFlow.state === TransactionState.REVERTED &&
+      currentFlow.state !== TransactionState.REVERTED
+
+    const isFailedMismatch =
+      latestUpdatedFlow.state === TransactionState.FAILED &&
+      currentFlow.state !== TransactionState.FAILED
+
     if (
       (data.flow.state !== TransactionState.COMPENSATING &&
         invokeShouldBeSkipped) ||
       (data.flow.state === TransactionState.COMPENSATING &&
         compensateShouldBeSkipped) ||
-      (latestUpdatedFlow.state === TransactionState.COMPENSATING &&
-        ![TransactionState.REVERTED, TransactionState.FAILED].includes(
-          currentFlow.state
-        ) &&
-        currentFlow.state !== latestUpdatedFlow.state) ||
-      (latestUpdatedFlow.state === TransactionState.REVERTED &&
-        currentFlow.state !== TransactionState.REVERTED) ||
-      (latestUpdatedFlow.state === TransactionState.FAILED &&
-        currentFlow.state !== TransactionState.FAILED)
+      isCompensatingMismatch ||
+      isRevertedMismatch ||
+      isFailedMismatch
     ) {
       throw new SkipExecutionError("Already finished by another execution")
     }

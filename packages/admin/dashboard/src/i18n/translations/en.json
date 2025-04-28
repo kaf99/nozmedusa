@@ -814,6 +814,7 @@
     "manageLocationQuantity": "Manage location quantity",
     "deleteWarning": "You are about to delete an inventory item. This action cannot be undone.",
     "editItemDetails": "Edit item details",
+    "quantityAcrossLocations": "{{quantity}} across {{locations}} locations",
     "create": {
       "title": "Create Inventory Item",
       "details": "Details",

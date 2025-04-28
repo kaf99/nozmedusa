@@ -8,6 +8,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   InjectSharedContext,
+  isDefined,
   MedusaContext,
   ModulesSdkUtils,
 } from "@medusajs/framework/utils"
@@ -95,13 +96,51 @@ export class WorkflowsModuleService<
     > = {},
     @MedusaContext() context: Context = {}
   ) {
-    options ??= {}
-    options.context ??= context
+    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+
+    const {
+      manager,
+      transactionManager,
+      preventReleaseEvents,
+      transactionId,
+      parentStepIdempotencyKey,
+      ...restContext
+    } = context
+
+    let localPreventReleaseEvents = false
+
+    if (isDefined(options_.context?.preventReleaseEvents)) {
+      localPreventReleaseEvents = options_.context!.preventReleaseEvents!
+    } else {
+      if (
+        isDefined(context.eventGroupId) &&
+        isDefined(options_.context?.eventGroupId) &&
+        context.eventGroupId === options_.context?.eventGroupId
+      ) {
+        localPreventReleaseEvents = true
+      }
+    }
+
+    let eventGroupId
+
+    if (options_.context?.eventGroupId) {
+      eventGroupId = options_.context.eventGroupId
+    } else if (localPreventReleaseEvents && context.eventGroupId) {
+      eventGroupId = context.eventGroupId
+    }
+
+    options_.context = {
+      ...(restContext ?? {}),
+      ...(options_.context ?? {}),
+      eventGroupId,
+      preventReleaseEvents: localPreventReleaseEvents,
+    }
+
     const ret = await this.workflowOrchestratorService_.run<
       TWorkflow extends ReturnWorkflow<any, any, any>
         ? UnwrapWorkflowInputDataType<TWorkflow>
         : unknown
-    >(workflowIdOrWorkflow, options)
+    >(workflowIdOrWorkflow, options_)
 
     return ret as any
   }
@@ -132,13 +171,16 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    options ??= {}
-    options.context ??= context
+    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+
+    const { manager, transactionManager, ...restContext } = context
+
+    options_.context ??= restContext
 
     return await this.workflowOrchestratorService_.setStepSuccess({
       idempotencyKey,
       stepResponse,
-      options,
+      options: options_,
     } as any)
   }
 
@@ -155,13 +197,16 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    options ??= {}
-    options.context ??= context
+    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+
+    const { manager, transactionManager, ...restContext } = context
+
+    options_.context ??= restContext
 
     return await this.workflowOrchestratorService_.setStepFailure({
       idempotencyKey,
       stepResponse,
-      options,
+      options: options_,
     } as any)
   }
 
@@ -204,6 +249,6 @@ export class WorkflowsModuleService<
     options: WorkflowOrchestratorCancelOptions,
     @MedusaContext() context: Context = {}
   ) {
-    return this.workflowOrchestratorService_.cancel(workflowId, options)
+    return await this.workflowOrchestratorService_.cancel(workflowId, options)
   }
 }

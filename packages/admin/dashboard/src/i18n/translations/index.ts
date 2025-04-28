@@ -4,6 +4,7 @@ import el from "./el.json"
 import en from "./en.json"
 import es from "./es.json"
 import fr from "./fr.json"
+import hu from "./hu.json"
 import it from "./it.json"
 import ja from "./ja.json"
 import pl from "./pl.json"
@@ -20,6 +21,9 @@ import fa from "./fa.json"
 import cs from "./cs.json"
 import ru from "./ru.json"
 import lt from "./lt.json"
+import vi from "./vi.json"
+import ko from "./ko.json"
+import nl from "./nl.json"
 
 export default {
   bg: {
@@ -39,6 +43,9 @@ export default {
   },
   fr: {
     translation: fr,
+  },
+  hu: {
+    translation: hu,
   },
   it: {
     translation: it,
@@ -87,5 +94,14 @@ export default {
   },
   lt: {
     translation: lt,
+  },
+  vi: {
+    translation: vi,
+  },
+  ko: {
+    translation: ko,
+  },
+  nl: {
+    translation: nl,
   },
 }

@@ -154,7 +154,7 @@ export interface TaxRegionDTO {
   country_code: string
 
   /**
-   * The province code of the tax region.
+   * The lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) province or state code of the tax region.
    */
   province_code: string | null
 
@@ -197,6 +197,7 @@ export interface FilterableTaxRegionProps
   extends BaseFilterable<FilterableTaxRegionProps> {
   /**
    * Find tax regions based on currency and province codes through this search term.
+   * The province code is the lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) province or state code.
    */
   q?: string
 
@@ -211,7 +212,7 @@ export interface FilterableTaxRegionProps
   country_code?: string | string[] | OperatorMap<string>
 
   /**
-   * Filter the tax regions by their province code.
+   * Filter the tax regions by their lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) province or state code.
    */
   province_code?: string | string[] | OperatorMap<string>
 
@@ -425,7 +426,7 @@ export interface TaxCalculationContext {
     country_code: string
 
     /**
-     * The province code.
+     * The lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) province or state code.
      */
     province_code?: string | null
 

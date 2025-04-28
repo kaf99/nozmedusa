@@ -20,7 +20,7 @@ This workflow deletes one or more customers. It's used by the
 You can use this workflow within your customizations or your own custom workflows, allowing you to 
 delete customers in your custom flows.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/core-flows/src/customer/workflows/delete-customers.ts#L46" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/customer/workflows/delete-customers.ts#L46" />
 
 ## Examples
 
@@ -151,22 +151,6 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### customersDeleted
 
-This hook is executed after the customers are deleted. You can consume this hook to perform custom actions.
-
-#### Example
-
-```ts
-import { deleteCustomersWorkflow } from "@medusajs/medusa/core-flows"
-
-deleteCustomersWorkflow.hooks.customersDeleted(
-  (async ({ ids }, { container }) => {
-    //TODO
-  })
-)
-```
-
-#### Input
-
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"object","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"ids","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="customersDeleted"/>
+<TypeList types={[{"name":"input","type":"`object`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"ids","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="customersDeleted"/>

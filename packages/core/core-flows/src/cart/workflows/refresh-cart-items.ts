@@ -90,6 +90,41 @@ export const refreshCartItemsWorkflowId = "refresh-cart-items"
  *
  * Refresh a cart's details after an update.
  *
+ * @property hooks.setPricingContext - This hook is executed before the cart is refreshed. You can consume this hook to return any custom context useful for the prices retrieval of the variants in the cart.
+ *
+ * For example, assuming you have the following custom pricing rule:
+ *
+ * ```json
+ * {
+ *   "attribute": "location_id",
+ *   "operator": "eq",
+ *   "value": "sloc_123",
+ * }
+ * ```
+ *
+ * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
+ *
+ * ```ts
+ * import { refreshCartItemsWorkflow } from "@medusajs/medusa/core-flows";
+ * import { StepResponse } from "@medusajs/workflows-sdk";
+ *
+ * refreshCartItemsWorkflow.hooks.setPricingContext((
+ *   { cart, items, additional_data }, { container }
+ * ) => {
+ *   return new StepResponse({
+ *     location_id: "sloc_123", // Special price for in-store purchases
+ *   });
+ * });
+ * ```
+ *
+ * The variants' prices will now be retrieved using the context you return.
+ *
+ * :::note
+ *
+ * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
+ *
+ * :::
+ *
  */
 export const refreshCartItemsWorkflow = createWorkflow(
   refreshCartItemsWorkflowId,
@@ -257,14 +292,17 @@ export const refreshCartItemsWorkflow = createWorkflow(
       },
     })
 
-    createHook("beforeRefreshingPaymentCollection", { input })
+    const beforeRefreshingPaymentCollection = createHook(
+      "beforeRefreshingPaymentCollection",
+      { input }
+    )
 
     refreshPaymentCollectionForCartWorkflow.runAsStep({
       input: { cart_id: input.cart_id },
     })
 
     return new WorkflowResponse(refetchedCart, {
-      hooks: [setPricingContext] as const,
+      hooks: [setPricingContext, beforeRefreshingPaymentCollection] as const,
     })
   }
 )

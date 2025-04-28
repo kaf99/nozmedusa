@@ -62,13 +62,13 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
       handler,
-      {
+      payload: {
         prop: 123,
-      }
-    )
+      },
+    })
 
     await strategy.resume(transaction)
 
@@ -144,10 +144,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
     expect(actionOrder).toEqual(["one", "two", "three", "four", "five", "six"])
@@ -216,10 +216,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -296,10 +296,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
     expect(actionOrder).toEqual(["one", "two", "three"])
@@ -376,11 +376,11 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
       handler,
-      { prop: 123 }
-    )
+      payload: { prop: 123 },
+    })
 
     await strategy.resume(transaction)
 
@@ -471,10 +471,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
     const resposes = transaction.getContext()
@@ -538,10 +538,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     strategy.resume(transaction)
 
@@ -611,10 +611,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -678,10 +678,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -736,10 +736,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -797,13 +797,13 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
       handler,
-      {
+      payload: {
         myPayloadProp: "test",
-      }
-    )
+      },
+    })
 
     await strategy.resume(transaction)
 
@@ -818,11 +818,10 @@ describe("Transaction Orchestrator", () => {
       "firstMethod",
       TransactionHandlerType.INVOKE
     )
-    await strategy.registerStepSuccess(
-      mocktransactionId,
-      undefined,
-      transaction
-    )
+    await strategy.registerStepSuccess({
+      responseIdempotencyKey: mocktransactionId,
+      transaction,
+    })
 
     expect(transaction.getState()).toBe(TransactionState.DONE)
     expect(transaction.getFlow().hasWaitingSteps).toBe(false)
@@ -883,10 +882,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     const mocktransactionId = TransactionOrchestrator.getKeyName(
       "transaction-name",
@@ -909,7 +908,11 @@ describe("Transaction Orchestrator", () => {
     expect(mocks.two).toHaveBeenCalledTimes(0)
 
     const registerBeforeAllowed = await strategy
-      .registerStepSuccess(mockSecondStepId, handler)
+      .registerStepSuccess({
+        responseIdempotencyKey: mockSecondStepId,
+        handler,
+        transaction,
+      })
       .catch((e) => e.message)
 
     expect(registerBeforeAllowed).toEqual(
@@ -917,11 +920,11 @@ describe("Transaction Orchestrator", () => {
     )
     expect(transaction.getState()).toBe(TransactionState.INVOKING)
 
-    const resumedTransaction = await strategy.registerStepFailure(
-      mocktransactionId,
-      null,
-      handler
-    )
+    const resumedTransaction = await strategy.registerStepFailure({
+      responseIdempotencyKey: mocktransactionId,
+      handler,
+      transaction,
+    })
 
     expect(resumedTransaction.getState()).toBe(TransactionState.COMPENSATING)
     expect(mocks.compensateOne).toHaveBeenCalledTimes(1)
@@ -932,13 +935,12 @@ describe("Transaction Orchestrator", () => {
       "firstMethod",
       TransactionHandlerType.COMPENSATE
     )
-    await strategy.registerStepSuccess(
-      mocktransactionIdCompensate,
-      undefined,
-      resumedTransaction
-    )
+    await strategy.registerStepSuccess({
+      responseIdempotencyKey: mocktransactionIdCompensate,
+      transaction: resumedTransaction,
+    })
 
-    expect(resumedTransaction.getState()).toBe(TransactionState.REVERTED)
+    expect(transaction.getState()).toBe(TransactionState.REVERTED)
   })
 
   it("Should hold the status REVERTED if the steps failed and the compensation succeed and has some no compensations step set", async () => {
@@ -1010,10 +1012,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -1082,10 +1084,10 @@ describe("Transaction Orchestrator", () => {
       definition: flow,
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -1123,10 +1125,10 @@ describe("Transaction Orchestrator", () => {
       },
     })
 
-    const transaction = await strategy.beginTransaction(
-      "transaction_id_123",
-      handler
-    )
+    const transaction = await strategy.beginTransaction({
+      transactionId: "transaction_id_123",
+      handler,
+    })
 
     await strategy.resume(transaction)
 
@@ -1219,10 +1221,10 @@ describe("Transaction Orchestrator", () => {
         },
       })
 
-      const transaction = await strategy.beginTransaction(
-        "transaction_id_123",
-        handler
-      )
+      const transaction = await strategy.beginTransaction({
+        transactionId: "transaction_id_123",
+        handler,
+      })
 
       await strategy.resume(transaction)
 
@@ -1244,7 +1246,7 @@ describe("Transaction Orchestrator", () => {
       expect(transaction.getState()).toBe(TransactionState.REVERTED)
     })
 
-    it("should continue the transaction and skip children steps when the Transaction Step Timeout is reached but the step is set to 'continueOnPermanentFailure'", async () => {
+    it("should continue the transaction and skip children steps when the Transaction Step Timeout is reached but the step is set to 'skipOnPermanentFailure'", async () => {
       const mocks = {
         f1: jest.fn(() => {
           return "content f1"
@@ -1311,7 +1313,7 @@ describe("Transaction Orchestrator", () => {
             {
               timeout: 0.1, // 100ms
               action: "action2",
-              continueOnPermanentFailure: true,
+              skipOnPermanentFailure: true,
               next: {
                 action: "action4",
               },
@@ -1328,10 +1330,10 @@ describe("Transaction Orchestrator", () => {
         definition: flow,
       })
 
-      const transaction = await strategy.beginTransaction(
-        "transaction_id_123",
-        handler
-      )
+      const transaction = await strategy.beginTransaction({
+        transactionId: "transaction_id_123",
+        handler,
+      })
 
       await strategy.resume(transaction)
 
@@ -1448,10 +1450,10 @@ describe("Transaction Orchestrator", () => {
         definition: flow,
       })
 
-      const transaction = await strategy.beginTransaction(
-        "transaction_id_123",
-        handler
-      )
+      const transaction = await strategy.beginTransaction({
+        transactionId: "transaction_id_123",
+        handler,
+      })
 
       await strategy.resume(transaction)
 
@@ -1561,10 +1563,10 @@ describe("Transaction Orchestrator", () => {
         },
       })
 
-      const transaction = await strategy.beginTransaction(
-        "transaction_id_123",
-        handler
-      )
+      const transaction = await strategy.beginTransaction({
+        transactionId: "transaction_id_123",
+        handler,
+      })
 
       await strategy.resume(transaction)
 

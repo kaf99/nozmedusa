@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.7.1
+
+## 2.7.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.7.0
+
 ## 2.6.1
 
 ### Patch Changes

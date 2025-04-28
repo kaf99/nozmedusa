@@ -127,6 +127,14 @@ jobs:
       - name: Build Packages
         run: yarn build
 
+      - name: Install Docs dependencies
+        working-directory: www
+        run: yarn install
+
+      - name: Build Docs packages
+        working-directory: www
+        run: yarn build:packages
+
       - name: Install www/utils Dependencies
         run: yarn
         working-directory: www/utils

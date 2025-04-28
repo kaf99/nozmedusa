@@ -1,7 +1,7 @@
 import { MarkdownTheme } from "../../theme.js"
 import Handlebars from "handlebars"
 import { DeclarationReflection, SignatureReflection } from "typedoc"
-import { cleanUpHookInput, getProjectChild } from "utils"
+import { cleanUpHookInput, getHookChildren, getProjectChild } from "utils"
 import beautifyCode from "../../utils/beautify-code.js"
 
 export default function (theme: MarkdownTheme) {
@@ -25,28 +25,39 @@ export default function (theme: MarkdownTheme) {
       Handlebars.helpers.incrementCurrentTitleLevel()
 
       const hooksTitleLevel = Handlebars.helpers.titleLevel()
-      const hookChildrenProperty = this.parent?.getChildByName("hooks")
-      const hookChildren =
-        hookChildrenProperty instanceof DeclarationReflection &&
-        hookChildrenProperty.type?.type === "reflection"
-          ? hookChildrenProperty.type.declaration.children || []
-          : []
+      const hookChildren = getHookChildren(this.parent)
 
       hooks.forEach((hook) => {
         const hookReflection =
-          hookChildren.find(
-            (child) => child.name === hook.name && child.signatures?.length
-          ) ||
+          hookChildren.find((child) => {
+            if (child.name !== hook.name) {
+              return false
+            }
+
+            if (child.signatures?.length) {
+              return true
+            }
+
+            return (
+              child.type?.type === "reflection" &&
+              child.type.declaration.signatures?.length
+            )
+          }) ||
           ((this.parent.getChildByName(hook.name) ||
-            getProjectChild(
-              theme.project!,
-              hook.name
-            )) as DeclarationReflection)
+            getProjectChild(theme.project!, hook.name)) as
+            | DeclarationReflection
+            | undefined)
+
+        const signatures =
+          hookReflection?.signatures ||
+          (hookReflection?.type?.type === "reflection"
+            ? hookReflection.type.declaration.signatures
+            : [])
 
         if (
           !hookReflection ||
-          !hookReflection.signatures?.length ||
-          !hookReflection.signatures[0].parameters?.length
+          !signatures?.length ||
+          !signatures[0].parameters?.length
         ) {
           return
         }
@@ -75,7 +86,7 @@ export default function (theme: MarkdownTheme) {
         str += `Handlers consuming this hook accept the following input.\n\n`
 
         str += Handlebars.helpers.parameterComponent.call(
-          cleanUpHookInput(hookReflection.signatures[0].parameters),
+          cleanUpHookInput(signatures[0].parameters),
           {
             hash: {
               sectionTitle: hook.name,

@@ -298,6 +298,9 @@
     }
   },
   "filters": {
+    "sortLabel": "Ordina",
+    "filterLabel": "Filtra",
+    "searchLabel": "Cerca",
     "date": {
       "today": "Oggi",
       "lastSevenDays": "Ultimi 7 giorni",
@@ -306,7 +309,9 @@
       "lastTwelveMonths": "Ultimi 12 mesi",
       "custom": "Personalizzato",
       "from": "Da",
-      "to": "A"
+      "to": "A",
+      "starting": "Inizio",
+      "ending": "Fine"
     },
     "compare": {
       "lessThan": "Meno di",
@@ -316,6 +321,12 @@
       "lessThanLabel": "meno di {{value}}",
       "greaterThanLabel": "maggiore di {{value}}",
       "andLabel": "e"
+    },
+    "sorting": {
+      "alphabeticallyAsc": "A - Z",
+      "alphabeticallyDesc": "Z - A",
+      "dateAsc": "Più recente",
+      "dateDesc": "Meno recente"
     },
     "radio": {
       "yes": "Sì",

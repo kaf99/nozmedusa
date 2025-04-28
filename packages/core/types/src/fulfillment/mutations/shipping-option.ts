@@ -132,9 +132,36 @@ type CalculateShippingItems = {
 }
 
 export type CalculatedRMAShippingContext =
-  | { return_id: string; return_items: CalculateShippingItems[] }
-  | { exchange_id: string; exchange_items: CalculateShippingItems[] }
-  | { claim_id: string; claim_items: CalculateShippingItems[] }
+  | {
+    /**
+     * The ID of the return.
+     */ 
+    return_id: string
+    /**
+     * The details of the return's items.
+     */
+    return_items: CalculateShippingItems[]
+  }
+  | {
+    /**
+     * The ID of the exchange.
+     */
+    exchange_id: string
+    /**
+     * The details of the exchange's items.
+     */ 
+    exchange_items: CalculateShippingItems[]
+  }
+  | {
+    /**
+     * The ID of the claim.
+     */ 
+    claim_id: string
+    /**
+     * The details of the claim's items.
+     */
+    claim_items: CalculateShippingItems[]
+  }
 
 /**
  * The data needed for the associated fulfillment provider to calculate the price of a shipping option.

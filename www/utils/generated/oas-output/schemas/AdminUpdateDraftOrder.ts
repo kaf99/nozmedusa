@@ -49,7 +49,11 @@
  *       province:
  *         type: string
  *         title: province
- *         description: The shipping address's province.
+ *         description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+ *         example: "us-ca"
+ *         externalDocs:
+ *           url: https://en.wikipedia.org/wiki/ISO_3166-2
+ *           description: Learn more about ISO 3166-2
  *       postal_code:
  *         type: string
  *         title: postal_code
@@ -97,7 +101,11 @@
  *       province:
  *         type: string
  *         title: province
- *         description: The billing address's province.
+ *         description: The billing address's ISO 3166-2 province code. Must be lower-case.
+ *         example: "us-ca"
+ *         externalDocs:
+ *           url: https://en.wikipedia.org/wiki/ISO_3166-2
+ *           description: Learn more about ISO 3166-2
  *       postal_code:
  *         type: string
  *         title: postal_code
@@ -108,6 +116,14 @@
  *   metadata:
  *     type: object
  *     description: The draft order's metadata, can hold custom key-value pairs.
+ *   customer_id:
+ *     type: string
+ *     title: customer_id
+ *     description: The ID of the customer associated with the draft order.
+ *   sales_channel_id:
+ *     type: string
+ *     title: sales_channel_id
+ *     description: The ID of the sales channel associated with the draft order.
  * 
 */
 

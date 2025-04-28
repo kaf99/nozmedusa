@@ -328,7 +328,7 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
     )
 
     return {
-      id: response.id
+      id: response.id,
       data: response,
     }
   }
@@ -371,7 +371,6 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
     // assuming you have a client that cancels the payment
     await this.client.cancelPayment(externalId)
     return {}
-  }
   }
 
   // ...
@@ -533,6 +532,11 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
   ): Promise<UpdatePaymentOutput> {
     const { amount, currency_code, context } = input
     const externalId = input.data?.id
+
+    // Validate context.customer
+    if (!context || !context.customer) {
+      throw new Error("Context must include a valid customer.");
+    }
 
     // assuming you have a client that updates the payment
     const response = await this.client.update(

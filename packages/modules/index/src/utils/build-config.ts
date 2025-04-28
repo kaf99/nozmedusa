@@ -5,7 +5,11 @@ import {
   ModuleJoinerConfig,
   ModuleJoinerRelationship,
 } from "@medusajs/framework/types"
-import { CommonEvents, GraphQLUtils } from "@medusajs/framework/utils"
+import {
+  buildModuleResourceEventName,
+  CommonEvents,
+  GraphQLUtils,
+} from "@medusajs/framework/utils"
 import { schemaObjectRepresentationPropertiesToOmit } from "@types"
 
 export const CustomDirectives = {
@@ -561,9 +565,23 @@ function processEntity(
 
           intermediateEntityObjectRepresentationRef.alias =
             intermediateEntityAlias
+
           intermediateEntityObjectRepresentationRef.listeners = [
-            intermediateEntityName + "." + CommonEvents.CREATED,
-            intermediateEntityName + "." + CommonEvents.UPDATED,
+            buildModuleResourceEventName({
+              action: CommonEvents.CREATED,
+              objectName: intermediateEntityName,
+              prefix: intermediateEntityModule.serviceName,
+            }),
+            buildModuleResourceEventName({
+              action: CommonEvents.UPDATED,
+              objectName: intermediateEntityName,
+              prefix: intermediateEntityModule.serviceName,
+            }),
+            buildModuleResourceEventName({
+              action: CommonEvents.DELETED,
+              objectName: intermediateEntityName,
+              prefix: intermediateEntityModule.serviceName,
+            }),
           ]
           intermediateEntityObjectRepresentationRef.moduleConfig =
             intermediateEntityModule

@@ -1,6 +1,6 @@
 export const generatedEditDates = {
-  "app/tips/languages/page.mdx": "2025-03-06T08:49:32.514Z",
-  "app/tips/bulk-editor/page.mdx": "2025-02-14T14:16:04.867Z",
+  "app/tips/languages/page.mdx": "2025-04-11T09:14:21.012Z",
+  "app/tips/bulk-editor/page.mdx": "2025-04-07T13:20:09.040Z",
   "app/tips/lists/page.mdx": "2025-02-14T14:16:04.867Z",
   "app/settings/sales-channels/page.mdx": "2025-02-19T17:33:55.584Z",
   "app/settings/users/page.mdx": "2025-02-19T11:34:00.736Z",
@@ -29,7 +29,7 @@ export const generatedEditDates = {
   "app/customers/page.mdx": "2025-02-18T15:38:17.543Z",
   "app/orders/edit/page.mdx": "2025-02-17T15:15:53.489Z",
   "app/products/collections/page.mdx": "2025-02-18T14:00:51.469Z",
-  "app/customers/manage/page.mdx": "2025-02-19T10:20:05.606Z",
+  "app/customers/manage/page.mdx": "2025-04-11T09:30:20.738Z",
   "app/discounts/create/page.mdx": "2024-05-03T17:36:38+03:00",
   "app/orders/payments/page.mdx": "2025-02-17T15:10:24.250Z",
   "app/discounts/page.mdx": "2024-05-03T17:36:38+03:00",
@@ -47,7 +47,7 @@ export const generatedEditDates = {
   "app/price-lists/manage/page.mdx": "2025-02-19T10:35:49.881Z",
   "app/price-lists/page.mdx": "2025-02-19T09:51:32.546Z",
   "app/settings/tax-regions/page.mdx": "2025-02-19T17:33:43.806Z",
-  "app/settings/locations-and-shipping/locations/page.mdx": "2025-02-25T15:02:02.164Z",
+  "app/settings/locations-and-shipping/locations/page.mdx": "2025-04-17T13:47:40.883Z",
   "app/settings/locations-and-shipping/page.mdx": "2025-02-19T17:23:45.824Z",
   "app/settings/locations-and-shipping/shipping-profiles/page.mdx": "2025-02-19T17:36:46.339Z",
   "app/settings/product-tags/page.mdx": "2025-02-19T17:36:25.102Z",
@@ -55,5 +55,5 @@ export const generatedEditDates = {
   "app/settings/developer/publishable-api-keys/page.mdx": "2025-02-25T16:15:29.847Z",
   "app/settings/developer/secret-api-keys/page.mdx": "2025-02-25T16:17:40.621Z",
   "app/settings/developer/workflows/page.mdx": "2025-02-25T15:52:48.349Z",
-  "app/reset-password/page.mdx": "2025-02-26T11:13:45.457Z"
+  "app/reset-password/page.mdx": "2025-04-17T08:29:28.890Z"
 }

@@ -608,6 +608,23 @@
  *   - cookie_auth: []
  *   - jwt_token: []
  * x-codeSamples:
+ *   - lang: JavaScript
+ *     label: JS SDK
+ *     source: |-
+ *       import Medusa from "@medusajs/js-sdk"
+ * 
+ *       export const sdk = new Medusa({
+ *         baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+ *         debug: import.meta.env.DEV,
+ *         auth: {
+ *           type: "session",
+ *         },
+ *       })
+ * 
+ *       sdk.admin.order.list()
+ *       .then(({ orders, count, limit, offset }) => {
+ *         console.log(orders)
+ *       })
  *   - lang: Shell
  *     label: cURL
  *     source: |-

@@ -1,12 +1,12 @@
 {
-	"id": 38972,
+	"id": 40871,
 	"name": "file",
 	"variant": "project",
 	"kind": 1,
 	"flags": {},
 	"children": [
 		{
-			"id": 38973,
+			"id": 40872,
 			"name": "AbstractFileProviderService",
 			"variant": "declaration",
 			"kind": 128,
@@ -25,7 +25,7 @@
 			},
 			"children": [
 				{
-					"id": 38974,
+					"id": 40873,
 					"name": "identifier",
 					"variant": "declaration",
 					"kind": 1024,
@@ -88,7 +88,7 @@
 							"fileName": "abstract-file-provider.ts",
 							"line": 61,
 							"character": 9,
-							"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L61"
+							"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L61"
 						}
 					],
 					"type": {
@@ -97,7 +97,7 @@
 					}
 				},
 				{
-					"id": 38975,
+					"id": 40874,
 					"name": "validateOptions",
 					"variant": "declaration",
 					"kind": 2048,
@@ -109,12 +109,12 @@
 							"fileName": "abstract-file-provider.ts",
 							"line": 83,
 							"character": 9,
-							"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L83"
+							"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L83"
 						}
 					],
 					"signatures": [
 						{
-							"id": 38976,
+							"id": 40875,
 							"name": "validateOptions",
 							"variant": "signature",
 							"kind": 4096,
@@ -151,12 +151,12 @@
 									"fileName": "abstract-file-provider.ts",
 									"line": 83,
 									"character": 9,
-									"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L83"
+									"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L83"
 								}
 							],
 							"parameters": [
 								{
-									"id": 38977,
+									"id": 40876,
 									"name": "options",
 									"variant": "param",
 									"kind": 32768,
@@ -198,21 +198,21 @@
 					]
 				},
 				{
-					"id": 38978,
+					"id": 40877,
 					"name": "constructor",
 					"variant": "declaration",
 					"kind": 512,
 					"flags": {},
 					"signatures": [
 						{
-							"id": 38979,
+							"id": 40878,
 							"name": "AbstractFileProviderService",
 							"variant": "signature",
 							"kind": 16384,
 							"flags": {},
 							"type": {
 								"type": "reference",
-								"target": 38973,
+								"target": 40872,
 								"name": "AbstractFileProviderService",
 								"package": "@medusajs/utils"
 							}
@@ -220,7 +220,7 @@
 					]
 				},
 				{
-					"id": 38982,
+					"id": 40881,
 					"name": "upload",
 					"variant": "declaration",
 					"kind": 2048,
@@ -230,12 +230,12 @@
 							"fileName": "abstract-file-provider.ts",
 							"line": 120,
 							"character": 8,
-							"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L120"
+							"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L120"
 						}
 					],
 					"signatures": [
 						{
-							"id": 38983,
+							"id": 40882,
 							"name": "upload",
 							"variant": "signature",
 							"kind": 4096,
@@ -273,12 +273,12 @@
 									"fileName": "abstract-file-provider.ts",
 									"line": 120,
 									"character": 8,
-									"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L120"
+									"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L120"
 								}
 							],
 							"parameters": [
 								{
-									"id": 38984,
+									"id": 40883,
 									"name": "file",
 									"variant": "param",
 									"kind": 32768,
@@ -336,7 +336,7 @@
 					}
 				},
 				{
-					"id": 38985,
+					"id": 40884,
 					"name": "delete",
 					"variant": "declaration",
 					"kind": 2048,
@@ -346,12 +346,12 @@
 							"fileName": "abstract-file-provider.ts",
 							"line": 144,
 							"character": 8,
-							"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L144"
+							"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L144"
 						}
 					],
 					"signatures": [
 						{
-							"id": 38986,
+							"id": 40885,
 							"name": "delete",
 							"variant": "signature",
 							"kind": 4096,
@@ -389,12 +389,12 @@
 									"fileName": "abstract-file-provider.ts",
 									"line": 144,
 									"character": 8,
-									"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L144"
+									"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L144"
 								}
 							],
 							"parameters": [
 								{
-									"id": 38987,
+									"id": 40886,
 									"name": "file",
 									"variant": "param",
 									"kind": 32768,
@@ -447,7 +447,7 @@
 					}
 				},
 				{
-					"id": 38988,
+					"id": 40887,
 					"name": "getPresignedDownloadUrl",
 					"variant": "declaration",
 					"kind": 2048,
@@ -457,12 +457,12 @@
 							"fileName": "abstract-file-provider.ts",
 							"line": 172,
 							"character": 8,
-							"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L172"
+							"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L172"
 						}
 					],
 					"signatures": [
 						{
-							"id": 38989,
+							"id": 40888,
 							"name": "getPresignedDownloadUrl",
 							"variant": "signature",
 							"kind": 4096,
@@ -500,12 +500,12 @@
 									"fileName": "abstract-file-provider.ts",
 									"line": 172,
 									"character": 8,
-									"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L172"
+									"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L172"
 								}
 							],
 							"parameters": [
 								{
-									"id": 38990,
+									"id": 40889,
 									"name": "fileData",
 									"variant": "param",
 									"kind": 32768,
@@ -562,22 +562,22 @@
 				{
 					"title": "Constructors",
 					"children": [
-						38978
+						40877
 					]
 				},
 				{
 					"title": "Properties",
 					"children": [
-						38974
+						40873
 					]
 				},
 				{
 					"title": "Methods",
 					"children": [
-						38975,
-						38982,
-						38985,
-						38988
+						40874,
+						40881,
+						40884,
+						40887
 					]
 				}
 			],
@@ -586,7 +586,7 @@
 					"fileName": "abstract-file-provider.ts",
 					"line": 49,
 					"character": 13,
-					"url": "https://github.com/medusajs/medusa/blob/b9edc066c8486e8ec52e4f505968db1c558bc7b8/packages/core/utils/src/file/abstract-file-provider.ts#L49"
+					"url": "https://github.com/medusajs/medusa/blob/c53d25e44227bebb4ff4e66e9448d2066f0b7c10/packages/core/utils/src/file/abstract-file-provider.ts#L49"
 				}
 			],
 			"implementedTypes": [
@@ -606,69 +606,69 @@
 		{
 			"title": "Classes",
 			"children": [
-				38973
+				40872
 			]
 		}
 	],
 	"packageName": "@medusajs/utils",
 	"symbolIdMap": {
-		"38972": {
+		"40871": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": ""
 		},
-		"38973": {
+		"40872": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService"
 		},
-		"38974": {
+		"40873": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.identifier"
 		},
-		"38975": {
+		"40874": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.validateOptions"
 		},
-		"38976": {
+		"40875": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.validateOptions"
 		},
-		"38977": {
+		"40876": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "options"
 		},
-		"38982": {
+		"40881": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.upload"
 		},
-		"38983": {
+		"40882": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.upload"
 		},
-		"38984": {
+		"40883": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "file"
 		},
-		"38985": {
+		"40884": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.delete"
 		},
-		"38986": {
+		"40885": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.delete"
 		},
-		"38987": {
+		"40886": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "file"
 		},
-		"38988": {
+		"40887": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.getPresignedDownloadUrl"
 		},
-		"38989": {
+		"40888": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "AbstractFileProviderService.getPresignedDownloadUrl"
 		},
-		"38990": {
+		"40889": {
 			"sourceFileName": "../../../../packages/core/utils/src/file/abstract-file-provider.ts",
 			"qualifiedName": "fileData"
 		}
@@ -678,7 +678,7 @@
 			"1": "../../../../packages/core/utils/src/file/abstract-file-provider.ts"
 		},
 		"reflections": {
-			"1": 38972
+			"1": 40871
 		}
 	}
 }

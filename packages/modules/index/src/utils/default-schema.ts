@@ -8,7 +8,7 @@ export const defaultSchema = `
     status: String
     type_id: String
     collection_id: String
-    is_giftcard: String
+    is_giftcard: Boolean
     external_id: String
     created_at: DateTime
     updated_at: DateTime

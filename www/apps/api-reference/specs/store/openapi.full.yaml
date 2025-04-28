@@ -21,7 +21,7 @@ tags:
       These API routes allow customers to create and manage their cart, and place an order.
     externalDocs:
       description: How to implement cart functionality in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/cart
+      url: https://docs.medusajs.com/resources/storefront-development/cart
     x-associatedSchema:
       $ref: '#/components/schemas/StoreCart'
   - name: Collections
@@ -31,7 +31,7 @@ tags:
       These API routes allow customers to browse collections and their products.
     externalDocs:
       description: How to list product collections in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/products/collections/list
+      url: https://docs.medusajs.com/resources/storefront-development/products/collections/list
     x-associatedSchema:
       $ref: '#/components/schemas/StoreCollection'
   - name: Currencies
@@ -43,7 +43,7 @@ tags:
       These API routes allow customers to browse currencies.
     externalDocs:
       description: How to retrieve product variant prices in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/products/price
+      url: https://docs.medusajs.com/resources/storefront-development/products/price
     x-associatedSchema:
       $ref: '#/components/schemas/StoreCurrency'
   - name: Customers
@@ -55,7 +55,7 @@ tags:
       These API routes allow customers to create and manage their accounts.
     externalDocs:
       description: How to implement customer account functionalities in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/customers
+      url: https://docs.medusajs.com/resources/storefront-development/customers
     x-associatedSchema:
       $ref: '#/components/schemas/StoreCustomer'
   - name: Orders
@@ -72,7 +72,7 @@ tags:
       Use these API routes during checkout to set the cart's payment provider and authorize its payment session.
     externalDocs:
       description: How to implement payment during checkout.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/checkout/payment
+      url: https://docs.medusajs.com/resources/storefront-development/checkout/payment
     x-associatedSchema:
       $ref: '#/components/schemas/StorePaymentCollection'
   - name: Payment Providers
@@ -84,7 +84,7 @@ tags:
       These API routes allow customers to view available payment providers in their region.
     externalDocs:
       description: How to implement payment during checkout.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/checkout/payment
+      url: https://docs.medusajs.com/resources/storefront-development/checkout/payment
     x-associatedSchema:
       $ref: '#/components/schemas/StorePaymentProvider'
   - name: Product Categories
@@ -94,7 +94,7 @@ tags:
       These API routes allow customers to browse categories and their products.
     externalDocs:
       description: How to list product categories in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/products/categories/list
+      url: https://docs.medusajs.com/resources/storefront-development/products/categories/list
     x-associatedSchema:
       $ref: '#/components/schemas/StoreProductCategory'
   - name: Product Tags
@@ -112,7 +112,7 @@ tags:
       These API routes allow customers to browse products.
     externalDocs:
       description: How to list products, get their prices, and more in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/products
+      url: https://docs.medusajs.com/resources/storefront-development/products
     x-associatedSchema:
       $ref: '#/components/schemas/StoreProduct'
   - name: Regions
@@ -124,7 +124,7 @@ tags:
       Use these API routes to retrieve available regions in the store.
     externalDocs:
       description: How to retrieve and store selected region in a storefront.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/regions
+      url: https://docs.medusajs.com/resources/storefront-development/regions
     x-associatedSchema:
       $ref: '#/components/schemas/StoreRegion'
   - name: Return
@@ -150,7 +150,7 @@ tags:
       These API routes allow customers to retrieve available shipping options for their context.
     externalDocs:
       description: How to implement shipping during checkout.
-      url: https://docs.medusajs.com/v2/resources/storefront-development/checkout/shipping
+      url: https://docs.medusajs.com/resources/storefront-development/checkout/shipping
     x-associatedSchema:
       $ref: '#/components/schemas/StoreShippingOption'
 paths:
@@ -185,15 +185,42 @@ paths:
                 For example, for email-pass authentication, pass `email` and `password` properties. 
                 For the Google and GitHub authentication providers, you can pass `callback_url` to indicate the URL in the frontend that the customer should be redirected to after completing their authentication. This will override the provider's `callbackUrl` configurations in `medusa-config.ts`.
       x-codeSamples:
-        - lang: Shell
-          label: EmailPass Provider
+        - lang: JavaScript
+          label: JS SDK
           source: |-
-            curl -X POST '{backend_url}/auth/customer/emailpass' \
-            -H 'Content-Type: application/json' \
-            --data-raw '{
-              "email": "customer@gmail.com",
-              "password": "supersecret"
-            }'
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            const result = await sdk.auth.login(
+              "customer",
+              "emailpass",
+              {
+                email: "customer@gmail.com",
+                password: "supersecret"
+              }
+            )
+
+            if (typeof result !== "string") {
+              alert("Authentication requires additional steps")
+              // replace with the redirect logic of your application
+              window.location.href = result.location
+              return
+            }
+
+            // customer is now authenticated
+            // all subsequent requests will use the token in the header
+            const { customer } = await sdk.store.customer.retrieve()
         - lang: Bash
           label: Google Provider
           source: curl -X POST '{backend_url}/auth/customer/google'
@@ -240,12 +267,68 @@ paths:
             type: string
             example: google
       x-codeSamples:
-        - lang: Shell
+        - lang: JavaScript
           label: Google Provider
-          source: curl -X POST '{backend_url}/auth/customer/google/callback?code=123'
-        - lang: Bash
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            await sdk.auth.callback(
+              "customer",
+              "google",
+              {
+                code: "123",
+                state: "456"
+              }
+            )
+
+            // all subsequent requests will use the token in the header
+            const { customer } = await sdk.store.customer.create({
+              email: "customer@gmail.com",
+              password: "supersecret"
+            })
+        - lang: TypeScript
           label: GitHub Provider
-          source: curl -X POST '{backend_url}/auth/customer/github/callback?code=123'
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            await sdk.auth.callback(
+              "customer",
+              "github",
+              {
+                code: "123",
+                state: "456"
+              }
+            )
+
+            // all subsequent requests will use the token in the header
+            const { customer } = await sdk.store.customer.create({
+              email: "customer@gmail.com",
+              password: "supersecret"
+            })
       tags:
         - Auth
       responses:
@@ -295,6 +378,37 @@ paths:
                 email: customer@gmail.com
                 password: supersecret
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            await sdk.auth.register(
+              "customer",
+              "emailpass",
+              {
+                email: "customer@gmail.com",
+                password: "supersecret"
+              }
+            )
+
+            // all subsequent requests will use the token in the header
+            const { customer } = await sdk.store.customer.create({
+              email: "customer@gmail.com",
+              password: "supersecret"
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -333,7 +447,7 @@ paths:
       description: |
         Generate a reset password token for a customer. This API route doesn't reset the customer password or send them the reset instructions in a notification.
 
-        Instead, This API route emits the `auth.password_reset` event, passing it the token as a payload. You can listen to that event in a subscriber as explained in [this guide](https://docs.medusajs.com/resources/commerce-modules/auth/reset-password), then send the customer a notification. The notification is sent using a [Notification Module Provider](https://docs.medusajs.com/resources/architectural-modules/notification), and it should have a URL that accepts a `token` query parameter, allowing the customer to reset their password from the storefront.
+        Instead, This API route emits the `auth.password_reset` event, passing it the token as a payload. You can listen to that event in a subscriber as explained in [this guide](https://docs.medusajs.com/resources/commerce-modules/auth/reset-password), then send the customer a notification. The notification is sent using a [Notification Module Provider](https://docs.medusajs.com/resources/infrastructure-modules/notification), and it should have a URL that accepts a `token` query parameter, allowing the customer to reset their password from the storefront.
 
 
          Use the generated token to update the customer's password using the [Reset Password API route](https://docs.medusajs.com/api/store#auth_postactor_typeauth_providerupdate).
@@ -358,6 +472,33 @@ paths:
               description: The customer's identifier for the selected auth provider. For example, for the `emailpass` auth provider, the value is the customer's email.
               example: customer@gmail.com
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.auth.resetPassword(
+              "customer",
+              "emailpass",
+              {
+                identifier: "customer@gmail.com"
+              }
+            )
+            .then(() => {
+              // user receives token
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -413,6 +554,34 @@ paths:
                 email: customer@gmail.com
                 password: supersecret
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.auth.updateProvider(
+              "customer",
+              "emailpass",
+              {
+                password: "supersecret"
+              },
+              token
+            )
+            .then(() => {
+              // password updated
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -496,6 +665,27 @@ paths:
       description: Deletes the cookie session ID previously set for authentication.
       x-authenticated: true
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            await sdk.auth.logout()
+
+            // customer is now logged out
+            // you can't send any requests that require authentication
         - lang: Shell
           label: cURL
           source: |-
@@ -540,6 +730,27 @@ paths:
         description: 'Storefront development: Implement third-party (social) login.'
       x-authenticated: true
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            const token = await sdk.auth.refresh()
+
+            // all subsequent requests will use the token in the header
+            const { customer } = await sdk.store.customer.retrieve()
         - lang: Shell
           label: cURL
           source: |-
@@ -605,6 +816,29 @@ paths:
                       description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
               description: The cart's details.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.create({
+              region_id: "reg_123"
+            })
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -664,6 +898,27 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.retrieve("cart_123")
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -734,6 +989,29 @@ paths:
                       description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
               description: The properties to update in the cart item.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.update("cart_123", {
+              region_id: "reg_123"
+            })
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -802,6 +1080,33 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.complete("cart_123")
+            .then((data) => {
+              if(data.type === "cart") {
+                // an error occurred
+                console.log(data.error, data.cart)
+              } else {
+                // order placed successfully
+                console.log(data.order)
+              }
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -916,6 +1221,27 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.transferCart("cart_123")
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -984,6 +1310,30 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreAddCartLineItem'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.createLineItem("cart_123", {
+              variant_id: "variant_123",
+              quantity: 1
+            })
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -1064,6 +1414,33 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreUpdateCartLineItem'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.updateLineItem(
+              "cart_123",
+              "li_123",
+              {
+                quantity: 1
+              }
+            )
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -1137,6 +1514,30 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.deleteLineItem(
+              "cart_123",
+              "li_123"
+            )
+            .then(({ deleted, parent: cart }) => {
+              console.log(deleted, cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -1326,6 +1727,11 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCartPromotionsWorkflow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCartRemovePromotion'
   /store/carts/{id}/shipping-methods:
     post:
       operationId: PostCartsIdShippingMethods
@@ -1381,6 +1787,32 @@ paths:
                     url: https://docs.medusajs.com/v2/resources/storefront-development/checkout/shipping#data-request-body-parameter
                     description: Learn more about the data parameter.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.cart.addShippingMethod("cart_123", {
+              option_id: "so_123",
+              data: {
+                // custom data for fulfillment provider.
+              }
+            })
+            .then(({ cart }) => {
+              console.log(cart)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2047,6 +2479,27 @@ paths:
               type: object
             title: $or
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.collection.list()
+            .then(({ collections, count, limit, offset }) => {
+              console.log(collections)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2137,6 +2590,27 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.collection.retrieve("pcol_123")
+            .then(({ collection }) => {
+              console.log(collection)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2368,7 +2842,7 @@ paths:
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       requestBody:
@@ -2377,6 +2851,40 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreCreateCustomer'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            const token = await sdk.auth.register("customer", "emailpass", {
+              "email": "customer@gmail.com",
+              "password": "supersecret"
+            })
+
+            sdk.store.customer.create(
+              {
+                "email": "customer@gmail.com"
+              },
+              {},
+              {
+                Authorization: `Bearer ${token}`
+              }
+            )
+            .then(({ customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2437,18 +2945,39 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
         - cookie_auth: []
         - jwt_token: []
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.retrieve()
+            .then(({ customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2500,7 +3029,7 @@ paths:
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
@@ -2512,6 +3041,29 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreUpdateCustomer'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.update({
+              first_name: "John"
+            })
+            .then(({ customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2568,12 +3120,12 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
         - name: offset
@@ -2661,6 +3213,27 @@ paths:
         - cookie_auth: []
         - jwt_token: []
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.listAddress()
+            .then(({ addresses, count, offset, limit }) => {
+              console.log(addresses)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2708,12 +3281,12 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
@@ -2782,6 +3355,29 @@ paths:
                   type: object
                   description: Holds custom key-value pairs.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.createAddress({
+              country_code: "us"
+            })
+            .then(({ customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2849,18 +3445,41 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
         - cookie_auth: []
         - jwt_token: []
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.retrieveAddress(
+              "caddr_123"
+            )
+            .then(({ address }) => {
+              console.log(address)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -2914,12 +3533,12 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
@@ -2988,6 +3607,32 @@ paths:
                   type: object
                   description: Holds custom key-value pairs.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.updateAddress(
+              "caddr_123",
+              {
+                country_code: "us"
+              }
+            )
+            .then(({ customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3046,18 +3691,39 @@ paths:
               url: https://docs.medusajs.com/api/store#publishable-api-key
         - name: fields
           in: query
-          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
           required: false
           schema:
             type: string
             title: fields
-            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+            description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields. This API route restricts the fields that can be selected. Learn how to override the retrievable fields in the [Retrieve Custom Links](https://docs.medusajs.com/learn/fundamentals/api-routes/retrieve-custom-links) documentation.
             externalDocs:
               url: '#select-fields-and-relations'
       security:
         - cookie_auth: []
         - jwt_token: []
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.customer.deleteAddress("caddr_123")
+            .then(({ deleted, parent: customer }) => {
+              console.log(customer)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3235,6 +3901,27 @@ paths:
                     - draft
                     - archived
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.list()
+            .then(({ orders, count, offset, limit }) => {
+              console.log(orders)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3326,6 +4013,27 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.retrieve("order_123")
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3394,6 +4102,35 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreAcceptOrderTransfer'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.acceptTransfer(
+              "order_123",
+              {
+                token: "transfer_token"
+              },
+              {
+                Authorization: `Bearer ${token}`
+              }
+            )
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3461,6 +4198,33 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.cancelTransfer(
+              "order_123",
+              {},
+              {
+                Authorization: `Bearer ${token}`
+              }
+            )
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3532,6 +4296,35 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreDeclineOrderTransferRequest'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.declineTransfer(
+              "order_123",
+              {
+                token: "transfer_token"
+              },
+              {
+                Authorization: `Bearer ${token}`
+              }
+            )
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3604,6 +4397,36 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreRequestOrderTransfer'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.order.requestTransfer(
+              "order_123",
+              {
+                description: "I want to transfer this order to my friend."
+              },
+              {},
+              {
+                Authorization: `Bearer ${token}`
+              }
+            )
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3668,6 +4491,35 @@ paths:
             schema:
               $ref: '#/components/schemas/StoreCreatePaymentCollection'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.payment.initiatePaymentSession(
+              cart, // assuming you already have the cart object.
+              {
+                provider_id: "pp_stripe_stripe",
+                data: {
+                  // any data relevant for the provider.
+                }
+              }
+            )
+            .then(({ payment_collection }) => {
+              console.log(payment_collection)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -3836,6 +4688,29 @@ paths:
             title: region_id
             description: Filter by a region ID.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.payment.listPaymentProviders({
+              region_id: "reg_123"
+            })
+            .then(({ payment_providers, count, offset, limit }) => {
+              console.log(payment_providers)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -4522,6 +5397,27 @@ paths:
                   title: name
                   description: A product category name.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.category.list()
+            .then(({ product_categories, count, offset, limit }) => {
+              console.log(product_categories)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -4599,6 +5495,27 @@ paths:
             title: include_descendants_tree
             description: Whether to retrieve a list of child categories. If you enable this, add to the `fields` query parameter `category_children` to set the children of a category in this field. You can either pass `*category_children` to retreieve the fields of all child categories, or select specific fields to make the response size smaller. For example, `fields=category_children.id,category_children.name`.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.category.retrieve("pcat_123")
+            .then(({ product_category }) => {
+              console.log(product_category)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -6682,6 +7599,27 @@ paths:
             title: cart_id
             description: The product's cart id.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.product.list()
+            .then(({ products, count, offset, limit }) => {
+              console.log(products)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -6837,6 +7775,27 @@ paths:
             externalDocs:
               url: '#pagination'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.product.retrieve("prod_123")
+            .then(({ product }) => {
+              console.log(product)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -6990,6 +7949,27 @@ paths:
               type: object
             title: $or
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.region.list()
+            .then(({ regions, count, limit, offset }) => {
+              console.log(regions)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -7077,6 +8057,27 @@ paths:
             externalDocs:
               url: '#select-fields-and-relations'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.region.retrieve("reg_123")
+            .then(({ region }) => {
+              console.log(region)
+            })
         - lang: Shell
           label: cURL
           source: curl '{backend_url}/store/regions/{id}'
@@ -7436,6 +8437,29 @@ paths:
             title: is_return
             description: Whether the shipping option can be used for returns.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.fulfillment.listCartOptions({
+              cart_id: "cart_123"
+            })
+            .then(({ shipping_options }) => {
+              console.log(shipping_options)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -7516,6 +8540,29 @@ paths:
                   externalDocs:
                     url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            let MEDUSA_BACKEND_URL = "http://localhost:9000"
+
+            if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+              MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+            }
+
+            export const sdk = new Medusa({
+              baseUrl: MEDUSA_BACKEND_URL,
+              debug: process.env.NODE_ENV === "development",
+              publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
+            })
+
+            sdk.store.fulfillment.calculate("so_123", {
+              cart_id: "cart_123"
+            })
+            .then(({ shipping_option }) => {
+              console.log(shipping_option)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -7549,6 +8596,91 @@ paths:
       x-workflow: calculateShippingOptionsPricesWorkflow
 components:
   schemas:
+    AdminAddDraftOrderItems:
+      type: object
+      description: The details of the items to add to a draft order.
+      x-schemaName: AdminAddDraftOrderItems
+      properties:
+        items:
+          type: array
+          description: The items to add to the draft order.
+          items:
+            type: object
+            description: The item's details
+            required:
+              - quantity
+            properties:
+              quantity:
+                type: number
+                title: quantity
+                description: The item's quantity.
+              variant_id:
+                type: string
+                title: variant_id
+                description: The ID of the variant to add to the draft order.
+              title:
+                type: string
+                title: title
+                description: The item's title.
+              unit_price:
+                type: number
+                title: unit_price
+                description: The item's unit price.
+              compare_at_unit_price:
+                type: number
+                title: compare_at_unit_price
+                description: The original price of the item before a promotion or sale.
+              internal_note:
+                type: string
+                title: internal_note
+                description: A note viewed only by admin users about the item.
+              allow_backorder:
+                type: boolean
+                title: allow_backorder
+                description: Whether the item can be purchased if it's out of stock.
+              metadata:
+                type: object
+                description: The item's metadata, can hold custom key-value pairs.
+    AdminAddDraftOrderPromotions:
+      type: object
+      description: The details of the promotions to add to a draft order.
+      x-schemaName: AdminAddDraftOrderPromotions
+      required:
+        - promo_codes
+      properties:
+        promo_codes:
+          type: array
+          description: The list promotion codes to add to the draft order.
+          items:
+            type: string
+            title: promo_codes
+            description: A promotion's code.
+    AdminAddDraftOrderShippingMethod:
+      type: object
+      description: The details of the shipping method to add to a draft order.
+      x-schemaName: AdminAddDraftOrderShippingMethod
+      required:
+        - shipping_option_id
+      properties:
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The ID of the shipping option that this method is created from.
+        custom_amount:
+          type: number
+          title: custom_amount
+          description: A custom amount to be charged for this shipping method. If not provided, the shipping option's amount will be used.
+        description:
+          type: string
+          title: description
+          description: The shipping method's description.
+        internal_note:
+          type: string
+          title: internal_note
+          description: A note viewed only by admin users about the shipping method.
+        metadata:
+          type: object
+          description: The shipping method's metadata, can hold custom key-value pairs.
     AdminApiKey:
       type: object
       description: The API key's details.
@@ -8938,6 +10070,33 @@ components:
         metadata:
           type: object
           description: The inventory item's metadata, used to store custom key-value pairs.
+    AdminCreateOrderCreditLines:
+      type: object
+      description: The details of a credit line to add to an order.
+      x-schemaName: AdminCreateOrderCreditLines
+      required:
+        - amount
+        - reference
+        - reference_id
+      properties:
+        amount:
+          type: number
+          title: amount
+          description: The amount of the credit line.
+          example: 100
+        reference:
+          type: string
+          title: reference
+          description: The name of the table that the credit line is referencing.
+          example: order
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of a record in the table that the credit line is referencing.
+          example: order_123
+        metadata:
+          type: object
+          description: The credit line's metadata, can hold custom key-value pairs.
     AdminCreatePriceList:
       type: object
       description: The price list's details.
@@ -11141,6 +12300,13 @@ components:
           type: number
           title: original_shipping_tax_total
           description: The tax total of the draft order's shipping excluding promotions.
+        region:
+          $ref: '#/components/schemas/AdminRegion'
+        credit_lines:
+          type: array
+          description: The draft order's credit lines.
+          items:
+            $ref: '#/components/schemas/OrderCreditLine'
     AdminDraftOrderListResponse:
       type: object
       description: The list of draft orders with pagination fields.
@@ -11168,6 +12334,645 @@ components:
           description: The list of draft orders.
           items:
             $ref: '#/components/schemas/AdminDraftOrder'
+    AdminDraftOrderPreview:
+      type: object
+      description: The draft order preview's details.
+      x-schemaName: AdminDraftOrderPreview
+      required:
+        - return_requested_total
+        - order_change
+        - status
+        - currency_code
+        - id
+        - version
+        - region_id
+        - customer_id
+        - sales_channel_id
+        - email
+        - payment_collections
+        - payment_status
+        - fulfillment_status
+        - summary
+        - created_at
+        - updated_at
+        - original_item_total
+        - original_item_subtotal
+        - original_item_tax_total
+        - item_total
+        - item_subtotal
+        - item_tax_total
+        - original_total
+        - original_subtotal
+        - original_tax_total
+        - total
+        - subtotal
+        - tax_total
+        - discount_total
+        - discount_tax_total
+        - gift_card_total
+        - gift_card_tax_total
+        - shipping_total
+        - shipping_subtotal
+        - shipping_tax_total
+        - original_shipping_total
+        - original_shipping_subtotal
+        - original_shipping_tax_total
+      properties:
+        return_requested_total:
+          type: number
+          title: return_requested_total
+          description: The total of the requested return.
+        order_change:
+          $ref: '#/components/schemas/AdminOrderChange'
+        items:
+          type: array
+          description: The order's items.
+          items:
+            allOf:
+              - type: object
+                description: An order's item.
+                x-schemaName: BaseOrderLineItem
+                required:
+                  - id
+                  - title
+                  - subtitle
+                  - thumbnail
+                  - variant_id
+                  - product_id
+                  - product_title
+                  - product_description
+                  - product_subtitle
+                  - product_type
+                  - product_collection
+                  - product_handle
+                  - variant_sku
+                  - variant_barcode
+                  - variant_title
+                  - variant_option_values
+                  - requires_shipping
+                  - is_discountable
+                  - is_tax_inclusive
+                  - unit_price
+                  - quantity
+                  - detail
+                  - created_at
+                  - updated_at
+                  - metadata
+                  - original_total
+                  - original_subtotal
+                  - original_tax_total
+                  - item_total
+                  - item_subtotal
+                  - item_tax_total
+                  - total
+                  - subtotal
+                  - tax_total
+                  - discount_total
+                  - discount_tax_total
+                  - refundable_total
+                  - refundable_total_per_unit
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The item's ID.
+                  title:
+                    type: string
+                    title: title
+                    description: The item's title.
+                  subtitle:
+                    type: string
+                    title: subtitle
+                    description: The item's subtitle.
+                  thumbnail:
+                    type: string
+                    title: thumbnail
+                    description: The URL of the item's thumbnail.
+                  variant:
+                    $ref: '#/components/schemas/BaseProductVariant'
+                  variant_id:
+                    type: string
+                    title: variant_id
+                    description: The ID of the associated variant.
+                  product:
+                    $ref: '#/components/schemas/AdminProduct'
+                  product_id:
+                    type: string
+                    title: product_id
+                    description: The ID of the associated product.
+                  product_title:
+                    type: string
+                    title: product_title
+                    description: The title of the item's product.
+                  product_description:
+                    type: string
+                    title: product_description
+                    description: The description of the item's product.
+                  product_subtitle:
+                    type: string
+                    title: product_subtitle
+                    description: The subtitle of the item's product.
+                  product_type:
+                    type: string
+                    title: product_type
+                    description: The ID of type of the item's product.
+                  product_collection:
+                    type: string
+                    title: product_collection
+                    description: The ID of collection of the item's product.
+                  product_handle:
+                    type: string
+                    title: product_handle
+                    description: The handle of the item's product.
+                  variant_sku:
+                    type: string
+                    title: variant_sku
+                    description: The SKU of the item's variant.
+                  variant_barcode:
+                    type: string
+                    title: variant_barcode
+                    description: The barcode of the item's variant.
+                  variant_title:
+                    type: string
+                    title: variant_title
+                    description: The title of the item's variant.
+                  variant_option_values:
+                    type: object
+                    description: The option values of the item's variant as key-value pairs. The key is the title of an option, and the value is the option's value.
+                  requires_shipping:
+                    type: boolean
+                    title: requires_shipping
+                    description: Whether the item requires shipping.
+                  is_discountable:
+                    type: boolean
+                    title: is_discountable
+                    description: Whether the item is discountable.
+                  is_tax_inclusive:
+                    type: boolean
+                    title: is_tax_inclusive
+                    description: Whether the item's price includes taxes.
+                  compare_at_unit_price:
+                    type: number
+                    title: compare_at_unit_price
+                    description: The original price of the item before a promotion or sale.
+                  unit_price:
+                    type: number
+                    title: unit_price
+                    description: The item's unit price.
+                  quantity:
+                    type: number
+                    title: quantity
+                    description: The item's quantity.
+                  tax_lines:
+                    type: array
+                    description: The item's tax lines.
+                    items:
+                      $ref: '#/components/schemas/BaseOrderLineItemTaxLine'
+                  adjustments:
+                    type: array
+                    description: The item's adjustments.
+                    items:
+                      $ref: '#/components/schemas/BaseOrderLineItemAdjustment'
+                  detail:
+                    $ref: '#/components/schemas/BaseOrderItemDetail'
+                  created_at:
+                    type: string
+                    format: date-time
+                    title: created_at
+                    description: The date the item was created.
+                  updated_at:
+                    type: string
+                    format: date-time
+                    title: updated_at
+                    description: The date the item was updated.
+                  metadata:
+                    type: object
+                    description: The item's metadata, can hold custom key-value pairs.
+                  original_total:
+                    type: number
+                    title: original_total
+                    description: The item's total including taxes, excluding promotions.
+                  original_subtotal:
+                    type: number
+                    title: original_subtotal
+                    description: The item's total excluding taxes, including promotions.
+                  original_tax_total:
+                    type: number
+                    title: original_tax_total
+                    description: The tax total of the item excluding promotions.
+                  item_total:
+                    type: number
+                    title: item_total
+                    description: The item's total for a single unit including taxes and promotions.
+                  item_subtotal:
+                    type: number
+                    title: item_subtotal
+                    description: The item's total for a single unit excluding taxes, including promotions.
+                  item_tax_total:
+                    type: number
+                    title: item_tax_total
+                    description: The tax total for a single unit of the item including promotions.
+                  total:
+                    type: number
+                    title: total
+                    description: The item's total including taxes and promotions.
+                  subtotal:
+                    type: number
+                    title: subtotal
+                    description: The item's total excluding taxes, including promotions.
+                  tax_total:
+                    type: number
+                    title: tax_total
+                    description: The tax total of the item including promotions.
+                  discount_total:
+                    type: number
+                    title: discount_total
+                    description: The total of the item's discount / promotion.
+                  discount_tax_total:
+                    type: number
+                    title: discount_tax_total
+                    description: The tax total of the item's discount / promotion
+                  refundable_total:
+                    type: number
+                    title: refundable_total
+                    description: The total refundable amount of the item's total.
+                  refundable_total_per_unit:
+                    type: number
+                    title: refundable_total_per_unit
+                    description: The total refundable amount of the item's total for a single unit.
+              - type: object
+                description: An order's item.
+                properties:
+                  actions:
+                    type: array
+                    description: The actions applied on an item.
+                    items:
+                      type: object
+                      description: The action's details.
+                      x-schemaName: BaseOrderChangeAction
+        shipping_methods:
+          type: array
+          description: The order's shipping methods.
+          items:
+            allOf:
+              - type: object
+                description: The shipping method's details.
+                x-schemaName: BaseOrderShippingMethod
+                required:
+                  - id
+                  - order_id
+                  - name
+                  - amount
+                  - is_tax_inclusive
+                  - shipping_option_id
+                  - data
+                  - metadata
+                  - original_total
+                  - original_subtotal
+                  - original_tax_total
+                  - total
+                  - subtotal
+                  - tax_total
+                  - discount_total
+                  - discount_tax_total
+                  - created_at
+                  - updated_at
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The shipping method's ID.
+                  order_id:
+                    type: string
+                    title: order_id
+                    description: The ID of the order this shipping method belongs to.
+                  name:
+                    type: string
+                    title: name
+                    description: The shipping method's name.
+                  description:
+                    type: string
+                    title: description
+                    description: The shipping method's description.
+                  amount:
+                    type: number
+                    title: amount
+                    description: The shipping method's amount.
+                  is_tax_inclusive:
+                    type: boolean
+                    title: is_tax_inclusive
+                    description: Whether the shipping method's amount is tax inclusive.
+                  shipping_option_id:
+                    type: string
+                    title: shipping_option_id
+                    description: The ID of the shipping option this method was created from.
+                  data:
+                    type: object
+                    description: The data relevant for the fulfillment provider to process this shipment.
+                    externalDocs:
+                      url: https://docs.medusajs.com/v2/resources/commerce-modules/order/concepts#data-property
+                  metadata:
+                    type: object
+                    description: The shipping method's metadata, can hold custom key-value pairs.
+                  tax_lines:
+                    type: array
+                    description: The shipping method's tax lines.
+                    items:
+                      $ref: '#/components/schemas/BaseOrderShippingMethodTaxLine'
+                  adjustments:
+                    type: array
+                    description: The shipping method's adjustments.
+                    items:
+                      $ref: '#/components/schemas/BaseOrderShippingMethodAdjustment'
+                  original_total:
+                    oneOf:
+                      - type: string
+                        title: original_total
+                        description: The shipping method's total including taxes, excluding promotions.
+                      - type: number
+                        title: original_total
+                        description: The shipping method's total including taxes, excluding promotions.
+                  original_subtotal:
+                    oneOf:
+                      - type: string
+                        title: original_subtotal
+                        description: The shipping method's total excluding taxes, including promotions.
+                      - type: number
+                        title: original_subtotal
+                        description: The shipping method's total excluding taxes, including promotions.
+                  original_tax_total:
+                    oneOf:
+                      - type: string
+                        title: original_tax_total
+                        description: The tax total of the shipping method excluding promotions.
+                      - type: number
+                        title: original_tax_total
+                        description: The tax total of the shipping method excluding promotions.
+                  total:
+                    oneOf:
+                      - type: string
+                        title: total
+                        description: The shipping method's total including taxes and promotions.
+                      - type: number
+                        title: total
+                        description: The shipping method's total including taxes and promotions.
+                  subtotal:
+                    oneOf:
+                      - type: string
+                        title: subtotal
+                        description: The shipping method's total excluding taxes, including promotions.
+                      - type: number
+                        title: subtotal
+                        description: The shipping method's total excluding taxes, including promotions.
+                  tax_total:
+                    oneOf:
+                      - type: string
+                        title: tax_total
+                        description: The tax total of the shipping method including promotions.
+                      - type: number
+                        title: tax_total
+                        description: The tax total of the shipping method including promotions.
+                  discount_total:
+                    oneOf:
+                      - type: string
+                        title: discount_total
+                        description: The total of the shipping method's promotion.
+                      - type: number
+                        title: discount_total
+                        description: The total of the shipping method's promotion.
+                  discount_tax_total:
+                    oneOf:
+                      - type: string
+                        title: discount_tax_total
+                        description: The tax total of the shipping method's promotion.
+                      - type: number
+                        title: discount_tax_total
+                        description: The shipping method's discount tax total.
+                  created_at:
+                    type: string
+                    format: date-time
+                    title: created_at
+                    description: The date the shipping method was created.
+                  updated_at:
+                    type: string
+                    format: date-time
+                    title: updated_at
+                    description: The date the shipping method was updated.
+              - type: object
+                description: The shipping method's details.
+                properties:
+                  actions:
+                    type: array
+                    description: The actions applied on the shipping method.
+                    items:
+                      type: object
+                      description: The action's details.
+                      x-schemaName: BaseOrderChangeAction
+        currency_code:
+          type: string
+          title: currency_code
+          description: The order's currency code.
+        version:
+          type: number
+          title: version
+          description: The order's version when this preview is applied.
+        id:
+          type: string
+          title: id
+          description: The order's ID.
+        region_id:
+          type: string
+          title: region_id
+          description: The ID of the order's associated region.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer that placed the order.
+        sales_channel_id:
+          type: string
+          title: sales_channel_id
+          description: The ID of the sales channel that the order was placed in.
+        email:
+          type: string
+          title: email
+          description: The email of the customer that placed the order.
+          format: email
+        display_id:
+          type: number
+          title: display_id
+          description: The order's display ID.
+        shipping_address:
+          $ref: '#/components/schemas/AdminOrderAddress'
+        billing_address:
+          $ref: '#/components/schemas/AdminOrderAddress'
+        payment_collections:
+          type: array
+          description: The order's payment collections.
+          items:
+            $ref: '#/components/schemas/AdminPaymentCollection'
+        payment_status:
+          type: string
+          description: The order's payment status.
+          enum:
+            - canceled
+            - not_paid
+            - awaiting
+            - authorized
+            - partially_authorized
+            - captured
+            - partially_captured
+            - partially_refunded
+            - refunded
+            - requires_action
+        fulfillments:
+          type: array
+          description: The order's fulfillments.
+          items:
+            $ref: '#/components/schemas/AdminOrderFulfillment'
+        fulfillment_status:
+          type: string
+          description: The order's fulfillment status.
+          enum:
+            - canceled
+            - not_fulfilled
+            - partially_fulfilled
+            - fulfilled
+            - partially_shipped
+            - shipped
+            - partially_delivered
+            - delivered
+        transactions:
+          type: array
+          description: The order's transactions.
+          items:
+            $ref: '#/components/schemas/BaseOrderTransaction'
+        summary:
+          $ref: '#/components/schemas/BaseOrderSummary'
+        metadata:
+          type: object
+          description: The order's metadata, can hold custom key-value pairs.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the order was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the order was updated.
+        original_item_total:
+          type: number
+          title: original_item_total
+          description: The total of the order's items including taxes, excluding promotions.
+        original_item_subtotal:
+          type: number
+          title: original_item_subtotal
+          description: The total of the order's items excluding taxes, including promotions.
+        original_item_tax_total:
+          type: number
+          title: original_item_tax_total
+          description: The tax total of the order's items excluding promotions.
+        item_total:
+          type: number
+          title: item_total
+          description: The total of the order's items including taxes and promotions.
+        item_subtotal:
+          type: number
+          title: item_subtotal
+          description: The total of the order's items excluding taxes, including promotions.
+        item_tax_total:
+          type: number
+          title: item_tax_total
+          description: The tax total of the order's items including promotions.
+        original_total:
+          type: number
+          title: original_total
+          description: The order's total excluding promotions, including taxes.
+        original_subtotal:
+          type: number
+          title: original_subtotal
+          description: The order's total excluding taxes, including promotions.
+        original_tax_total:
+          type: number
+          title: original_tax_total
+          description: The order's tax total, excluding promotions.
+        total:
+          type: number
+          title: total
+          description: The order's total including taxes and promotions.
+        subtotal:
+          type: number
+          title: subtotal
+          description: The order's total excluding taxes, including promotions.
+        tax_total:
+          type: number
+          title: tax_total
+          description: The order's tax total including promotions.
+        discount_total:
+          type: number
+          title: discount_total
+          description: The order's discount or promotions total.
+        discount_tax_total:
+          type: number
+          title: discount_tax_total
+          description: The tax total of order's discount or promotion.
+        gift_card_total:
+          type: number
+          title: gift_card_total
+          description: The order's gift card total.
+        gift_card_tax_total:
+          type: number
+          title: gift_card_tax_total
+          description: The tax total of the order's gift card.
+        shipping_total:
+          type: number
+          title: shipping_total
+          description: The order's shipping total including taxes and promotions.
+        shipping_subtotal:
+          type: number
+          title: shipping_subtotal
+          description: The order's shipping total excluding taxes, including promotions.
+        shipping_tax_total:
+          type: number
+          title: shipping_tax_total
+          description: The tax total of the order's shipping.
+        original_shipping_total:
+          type: number
+          title: original_shipping_total
+          description: The order's shipping total including taxes, excluding promotions.
+        original_shipping_subtotal:
+          type: number
+          title: original_shipping_subtotal
+          description: The order's shipping total excluding taxes, including promotions.
+        original_shipping_tax_total:
+          type: number
+          title: original_shipping_tax_total
+          description: The tax total of the order's shipping excluding promotions.
+        customer:
+          $ref: '#/components/schemas/AdminCustomer'
+        sales_channel:
+          $ref: '#/components/schemas/AdminSalesChannel'
+        status:
+          type: string
+          title: status
+          description: The order's status.
+        region:
+          $ref: '#/components/schemas/AdminRegion'
+        credit_lines:
+          type: array
+          description: The order preview's credit lines.
+          items:
+            $ref: '#/components/schemas/OrderCreditLine'
+    AdminDraftOrderPreviewResponse:
+      type: object
+      description: The details of the preview on the draft order.
+      x-schemaName: AdminDraftOrderPreviewResponse
+      required:
+        - draft_order_preview
+      properties:
+        draft_order_preview:
+          $ref: '#/components/schemas/AdminDraftOrderPreview'
     AdminDraftOrderResponse:
       type: object
       description: The draft order's details.
@@ -12532,6 +14337,13 @@ components:
           type: string
           title: status
           description: The order's status.
+        region:
+          $ref: '#/components/schemas/AdminRegion'
+        credit_lines:
+          type: array
+          description: The order's credit lines.
+          items:
+            $ref: '#/components/schemas/OrderCreditLine'
     AdminOrderAddress:
       type: object
       description: An order address.
@@ -13839,6 +15651,13 @@ components:
           type: string
           title: status
           description: The order's status.
+        region:
+          $ref: '#/components/schemas/AdminRegion'
+        credit_lines:
+          type: array
+          description: The order preview's credit lines.
+          items:
+            $ref: '#/components/schemas/OrderCreditLine'
     AdminOrderPreviewResponse:
       type: object
       description: The preview of an order.
@@ -14230,6 +16049,29 @@ components:
         - provider_id
         - data
         - status
+    AdminPlugin:
+      type: object
+      description: The plugin's details.
+      x-schemaName: AdminPlugin
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          title: name
+          description: The plugin's name.
+    AdminPluginsListResponse:
+      type: object
+      description: The list of plugins.
+      x-schemaName: AdminPluginsListResponse
+      required:
+        - plugins
+      properties:
+        plugins:
+          type: array
+          description: The list of plugins.
+          items:
+            $ref: '#/components/schemas/AdminPlugin'
     AdminPostCancelClaimReqSchema:
       type: object
       description: The details of canceling a claim.
@@ -16710,6 +18552,20 @@ components:
       properties:
         region:
           $ref: '#/components/schemas/AdminRegion'
+    AdminRemoveDraftOrderPromotions:
+      type: object
+      description: The promotion codes to remove from the draft order.
+      x-schemaName: AdminRemoveDraftOrderPromotions
+      required:
+        - promo_codes
+      properties:
+        promo_codes:
+          type: array
+          description: The promotion codes to remove from the draft order.
+          items:
+            type: string
+            title: promo_codes
+            description: A promotion code to remove from the draft order.
     AdminReservation:
       type: object
       description: The reservation's details.
@@ -18379,6 +20235,80 @@ components:
         metadata:
           type: object
           description: The draft order's metadata, can hold custom key-value pairs.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer associated with the draft order.
+        sales_channel_id:
+          type: string
+          title: sales_channel_id
+          description: The ID of the sales channel associated with the draft order.
+    AdminUpdateDraftOrderActionShippingMethod:
+      type: object
+      description: The updates to make on a changed shipping method.
+      x-schemaName: AdminUpdateDraftOrderActionShippingMethod
+      required:
+        - shipping_option_id
+      properties:
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The ID of the associated shipping option.
+        custom_amount:
+          type: number
+          title: custom_amount
+          description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
+        description:
+          type: string
+          title: description
+          description: The shipping method's description.
+        internal_note:
+          type: string
+          title: internal_note
+          description: A note viewed only by admin users about the shipping method.
+        metadata:
+          type: object
+          description: The shipping method's metadata, can hold custom key-value pairs.
+    AdminUpdateDraftOrderItem:
+      type: object
+      description: The updates to make on a draft order's item.
+      x-schemaName: AdminUpdateDraftOrderItem
+      required:
+        - quantity
+      properties:
+        quantity:
+          type: number
+          title: quantity
+          description: The item's quantity.
+        unit_price:
+          type: number
+          title: unit_price
+          description: The item's unit price.
+        compare_at_unit_price:
+          type: number
+          title: compare_at_unit_price
+          description: The original price of the item before a promotion or sale.
+        internal_note:
+          type: string
+          title: internal_note
+          description: A note viewed only by admin users about the item.
+    AdminUpdateDraftOrderShippingMethod:
+      type: object
+      description: The updates to make on a draft order's shipping method.
+      x-schemaName: AdminUpdateDraftOrderShippingMethod
+      properties:
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The ID of the associated shipping option.
+        custom_amount:
+          type: number
+          title: custom_amount
+          description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
+        internal_note:
+          type: string
+          title: internal_note
+          description: A note viewed only by admin users about the shipping method.
     AdminUpdateOrder:
       type: object
       description: The details to update in the order.
@@ -19358,17 +21288,20 @@ components:
                 type: object
                 description: The state of the step's invokation function.
                 x-schemaName: WorkflowExecutionFn
+                required:
+                  - state
+                  - status
                 properties:
                   state:
                     type: string
                     description: The invokation step's state.
                     enum:
+                      - failed
                       - not_started
                       - invoking
                       - compensating
                       - done
                       - reverted
-                      - failed
                       - dormant
                       - skipped
                       - skipped_failure
@@ -19382,9 +21315,6 @@ components:
                       - waiting_response
                       - temp_failure
                       - permanent_failure
-                required:
-                  - state
-                  - status
               definition:
                 type: object
                 description: The step's definition details.
@@ -19405,7 +21335,15 @@ components:
                   continueOnPermanentFailure:
                     type: boolean
                     title: continueOnPermanentFailure
-                    description: Whether the step continues executing even if its status is changed to failed.
+                    description: Whether the workflow should continue executing even if its status is changed to failed.
+                  skipOnPermanentFailure:
+                    oneOf:
+                      - type: string
+                        title: skipOnPermanentFailure
+                        description: The ID of the step to skip to in case of a permanent failure.
+                      - type: boolean
+                        title: skipOnPermanentFailure
+                        description: Whether the workflow should skip subsequent steps in case of a permanent failure.
                   maxRetries:
                     type: number
                     title: maxRetries
@@ -19435,17 +21373,20 @@ components:
                 type: object
                 description: The state of the step's compensation function.
                 x-schemaName: WorkflowExecutionFn
+                required:
+                  - state
+                  - status
                 properties:
                   state:
                     type: string
                     description: The compensation function's state.
                     enum:
+                      - failed
                       - not_started
                       - invoking
                       - compensating
                       - done
                       - reverted
-                      - failed
                       - dormant
                       - skipped
                       - skipped_failure
@@ -19459,9 +21400,6 @@ components:
                       - waiting_response
                       - temp_failure
                       - permanent_failure
-                required:
-                  - state
-                  - status
               depth:
                 type: number
                 title: depth
@@ -23393,6 +25331,80 @@ components:
         summary:
           type: object
           description: The order's summary.
+          properties:
+            pending_difference:
+              type: number
+              title: pending_difference
+              description: The remaining amount to be paid or refunded.
+            current_order_total:
+              type: number
+              title: current_order_total
+              description: The order's current total.
+            original_order_total:
+              type: number
+              title: original_order_total
+              description: The order's total before any changes.
+            transaction_total:
+              type: number
+              title: transaction_total
+              description: The total of the transactions (payments and refunds) made on the order.
+            paid_total:
+              type: number
+              title: paid_total
+              description: The total paid amount.
+            refunded_total:
+              type: number
+              title: refunded_total
+              description: The total refunded amount.
+            credit_line_total:
+              type: number
+              title: credit_line_total
+              description: The total credit line amount.
+            accounting_total:
+              type: number
+              title: accounting_total
+              description: The total amount for accounting purposes.
+            raw_pending_difference:
+              type: object
+              description: The summary's raw pending difference.
+            raw_current_order_total:
+              type: object
+              description: The summary's raw current order total.
+            raw_original_order_total:
+              type: object
+              description: The summary's raw original order total.
+            raw_transaction_total:
+              type: object
+              description: The summary's raw transaction total.
+            raw_paid_total:
+              type: object
+              description: The summary's raw paid total.
+            raw_refunded_total:
+              type: object
+              description: The summary's raw refunded total.
+            raw_credit_line_total:
+              type: object
+              description: The summary's raw credit line total.
+            raw_accounting_total:
+              type: object
+              description: The summary's raw accounting total.
+          required:
+            - pending_difference
+            - current_order_total
+            - original_order_total
+            - transaction_total
+            - paid_total
+            - refunded_total
+            - credit_line_total
+            - accounting_total
+            - raw_pending_difference
+            - raw_current_order_total
+            - raw_original_order_total
+            - raw_transaction_total
+            - raw_paid_total
+            - raw_refunded_total
+            - raw_credit_line_total
+            - raw_accounting_total
         metadata:
           type: object
           description: The order's metadata, can hold custom key-value pairs.
@@ -23512,6 +25524,10 @@ components:
           description: The order's credit lines, useful to add additional payment amounts for an order.
           items:
             $ref: '#/components/schemas/OrderCreditLine'
+        is_draft_order:
+          type: boolean
+          title: is_draft_order
+          description: Whether the order is a draft order.
     OrderAddress:
       type: object
       description: The address's details.
@@ -24177,6 +26193,7 @@ components:
         - title
         - requires_shipping
         - is_discountable
+        - is_giftcard
         - is_tax_inclusive
         - unit_price
         - quantity
@@ -24367,6 +26384,10 @@ components:
           type: string
           title: product_type_id
           description: The ID of the associated product's type.
+        is_giftcard:
+          type: boolean
+          title: is_giftcard
+          description: Whether the item is a gift card.
     OrderLineItemAdjustment:
       type: object
       description: The line item adjustment's details.
@@ -25805,6 +27826,20 @@ components:
               type: string
               title: currency_code
               description: The application method's currency code.
+    StoreCartRemovePromotion:
+      type: object
+      description: The promotion code to remove from the cart.
+      x-schemaName: StoreCartRemovePromotion
+      required:
+        - promo_codes
+      properties:
+        promo_codes:
+          type: array
+          description: The promotion code to remove from the cart.
+          items:
+            type: string
+            title: promo_codes
+            description: A promotion code to remove from the cart.
     StoreCartResponse:
       type: object
       description: The cart's details.
@@ -33233,11 +35268,6 @@ components:
         - updated_at
         - deleted_at
       properties:
-        products:
-          type: array
-          description: The category's products.
-          items:
-            $ref: '#/components/schemas/StoreProduct'
         id:
           type: string
           title: id
@@ -33287,6 +35317,11 @@ components:
           format: date-time
           title: deleted_at
           description: The date the category was deleted.
+        products:
+          type: array
+          description: The category's products.
+          items:
+            $ref: '#/components/schemas/StoreProduct'
     StoreProductCategoryListResponse:
       type: object
       description: The paginated list of product categories.

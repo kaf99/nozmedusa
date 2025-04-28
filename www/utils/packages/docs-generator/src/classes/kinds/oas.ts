@@ -615,7 +615,12 @@ class OasKindGenerator extends FunctionKindGenerator {
       // check if it has a success response of a type other than JSON
       if (!this.hasResponseType(node, oas)) {
         // remove response schema by only keeping the default responses
-        oas.responses = DEFAULT_OAS_RESPONSES
+        oas.responses = {
+          ...DEFAULT_OAS_RESPONSES,
+          [newStatus]: {
+            description: "OK",
+          },
+        }
       }
     } else {
       // check if response status should be changed
@@ -1269,7 +1274,7 @@ class OasKindGenerator extends FunctionKindGenerator {
       )
     }
 
-    if (methodName !== "delete" && methodName !== "get") {
+    if (methodName !== "get") {
       requestSchema = requestBodyParameterSchema
     }
 

@@ -1,5 +1,27 @@
 # @medusajs/pricing
 
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`ee35f3ce9097832c10cdf2fd168763088e6c3fcb`](https://github.com/medusajs/medusa/commit/ee35f3ce9097832c10cdf2fd168763088e6c3fcb), [`2f6963a5fbea05537680cb1b1f6a2b9822c36325`](https://github.com/medusajs/medusa/commit/2f6963a5fbea05537680cb1b1f6a2b9822c36325), [`b8902637251e9ed4f8762ef280659bbab6d967de`](https://github.com/medusajs/medusa/commit/b8902637251e9ed4f8762ef280659bbab6d967de)]:
+  - @medusajs/framework@2.7.1
+
+## 2.7.0
+
+### Patch Changes
+
+- [#12128](https://github.com/medusajs/medusa/pull/12128) [`07252691c59f0e945730e987d0f1a97976b4c7f0`](https://github.com/medusajs/medusa/commit/07252691c59f0e945730e987d0f1a97976b4c7f0) Thanks [@adrien2p](https://github.com/adrien2p)! - chore(pricing): Pricing retrieval improvements
+
+- [#12097](https://github.com/medusajs/medusa/pull/12097) [`74381addc3d6af42f0292e778948aabb60a6dad9`](https://github.com/medusajs/medusa/commit/74381addc3d6af42f0292e778948aabb60a6dad9) Thanks [@adrien2p](https://github.com/adrien2p)! - chore(): Emit events in batch and index process event ids in batch
+
+- [#12144](https://github.com/medusajs/medusa/pull/12144) [`3a1cf2212ac3d92eebee1bbea07e8731e53e4c72`](https://github.com/medusajs/medusa/commit/3a1cf2212ac3d92eebee1bbea07e8731e53e4c72) Thanks [@adrien2p](https://github.com/adrien2p)! - Chore/pricing cache available keys
+
+- [#12120](https://github.com/medusajs/medusa/pull/12120) [`cb26c224ea3e0e06fa9efb1c317d4529bfcb2d49`](https://github.com/medusajs/medusa/commit/cb26c224ea3e0e06fa9efb1c317d4529bfcb2d49) Thanks [@adrien2p](https://github.com/adrien2p)! - chore(pricing): improve performances
+
+- Updated dependencies [[`ec56a8bc857a74788df6523af25914da95c4c1d8`](https://github.com/medusajs/medusa/commit/ec56a8bc857a74788df6523af25914da95c4c1d8), [`2a18a75353f872b0cb4c203afc08cfd82f778428`](https://github.com/medusajs/medusa/commit/2a18a75353f872b0cb4c203afc08cfd82f778428)]:
+  - @medusajs/framework@2.7.0
+
 ## 2.6.1
 
 ### Patch Changes

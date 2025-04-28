@@ -2,7 +2,7 @@ import {
   AdditionalData,
   UpdateLineItemInCartWorkflowInputDTO,
 } from "@medusajs/framework/types"
-import { isDefined, MedusaError } from "@medusajs/framework/utils"
+import { CartWorkflowEvents, isDefined, MedusaError } from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -12,6 +12,7 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep } from "../../common"
+import { emitEventStep } from "../../common/steps/emit-event"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updateLineItemsStepWithSelector } from "../../line-item/steps"
 import { validateCartStep } from "../steps/validate-cart"
@@ -50,6 +51,40 @@ export const updateLineItemInCartWorkflowId = "update-line-item-in-cart"
  * Update a cart's line item.
  *
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
+ * @property hooks.setPricingContext - This hook is executed before the cart is updated. You can consume this hook to return any custom context useful for the prices retrieval of the line item's variant.
+ * 
+ * For example, assuming you have the following custom pricing rule:
+ * 
+ * ```json
+ * {
+ *   "attribute": "location_id",
+ *   "operator": "eq",
+ *   "value": "sloc_123",
+ * }
+ * ```
+ * 
+ * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
+ * 
+ * ```ts
+ * import { addToCartWorkflow } from "@medusajs/medusa/core-flows";
+ * import { StepResponse } from "@medusajs/workflows-sdk";
+ * 
+ * addToCartWorkflow.hooks.setPricingContext((
+ *   { cart, variantIds, items, additional_data }, { container }
+ * ) => {
+ *   return new StepResponse({
+ *     location_id: "sloc_123", // Special price for in-store purchases
+ *   });
+ * });
+ * ```
+ * 
+ * The variant's prices will now be retrieved using the context you return.
+ * 
+ * :::note
+ * 
+ * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
+ * 
+ * :::
  */
 export const updateLineItemInCartWorkflow = createWorkflow(
   updateLineItemInCartWorkflowId,
@@ -179,6 +214,11 @@ export const updateLineItemInCartWorkflow = createWorkflow(
 
     refreshCartItemsWorkflow.runAsStep({
       input: { cart_id: input.cart_id },
+    })
+
+    emitEventStep({
+      eventName: CartWorkflowEvents.UPDATED,
+      data: { id: input.cart_id },
     })
 
     return new WorkflowResponse(void 0, {
