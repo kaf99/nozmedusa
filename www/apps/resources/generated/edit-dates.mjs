@@ -48,7 +48,7 @@ export const generatedEditDates = {
   "app/commerce-modules/payment/payment/page.mdx": "2024-10-09T10:59:08.463Z",
   "app/commerce-modules/payment/payment-collection/page.mdx": "2024-10-09T10:56:49.510Z",
   "app/commerce-modules/payment/payment-flow/page.mdx": "2025-01-16T10:43:25.958Z",
-  "app/commerce-modules/payment/payment-provider/stripe/page.mdx": "2025-02-26T11:31:21.090Z",
+  "app/commerce-modules/payment/payment-provider/stripe/page.mdx": "2025-04-25T12:43:03.674Z",
   "app/commerce-modules/payment/payment-provider/page.mdx": "2025-02-26T11:25:50.645Z",
   "app/commerce-modules/payment/payment-session/page.mdx": "2024-10-09T10:58:00.960Z",
   "app/commerce-modules/payment/webhook-events/page.mdx": "2024-11-19T11:45:02.167Z",
@@ -77,7 +77,7 @@ export const generatedEditDates = {
   "app/commerce-modules/region/page.mdx": "2025-04-17T08:48:22.808Z",
   "app/commerce-modules/sales-channel/_events/_events-table/page.mdx": "2024-07-03T19:27:13+03:00",
   "app/commerce-modules/sales-channel/_events/page.mdx": "2024-07-03T19:27:13+03:00",
-  "app/commerce-modules/sales-channel/publishable-api-keys/page.mdx": "2025-02-26T11:33:40.415Z",
+  "app/commerce-modules/sales-channel/publishable-api-keys/page.mdx": "2025-04-25T14:22:42.329Z",
   "app/commerce-modules/sales-channel/page.mdx": "2025-04-17T08:48:22.065Z",
   "app/commerce-modules/stock-location/_events/_events-table/page.mdx": "2024-07-03T19:27:13+03:00",
   "app/commerce-modules/stock-location/_events/page.mdx": "2024-07-03T19:27:13+03:00",
@@ -5891,7 +5891,7 @@ export const generatedEditDates = {
   "references/core_flows/Order/Steps_Order/variables/core_flows.Order.Steps_Order.updateOrderChangesStepId/page.mdx": "2025-01-27T11:43:49.278Z",
   "app/commerce-modules/payment/account-holder/page.mdx": "2025-04-07T07:31:20.235Z",
   "app/troubleshooting/test-errors/page.mdx": "2025-01-31T13:08:42.639Z",
-  "app/commerce-modules/product/variant-inventory/page.mdx": "2025-02-26T11:21:20.075Z",
+  "app/commerce-modules/product/variant-inventory/page.mdx": "2025-04-25T13:25:02.408Z",
   "app/examples/guides/custom-item-price/page.mdx": "2025-04-17T08:50:17.040Z",
   "references/core_flows/Cart/Steps_Cart/functions/core_flows.Cart.Steps_Cart.validateShippingStep/page.mdx": "2025-04-11T09:04:35.729Z",
   "references/core_flows/Cart/Steps_Cart/variables/core_flows.Cart.Steps_Cart.validateShippingStepId/page.mdx": "2025-02-11T11:36:39.228Z",
@@ -6216,5 +6216,7 @@ export const generatedEditDates = {
   "references/core_flows/interfaces/core_flows.RemoveDraftOrderPromotionsWorkflowInput/page.mdx": "2025-04-24T08:23:57.282Z",
   "references/core_flows/interfaces/core_flows.RemoveDraftOrderShippingMethodWorkflowInput/page.mdx": "2025-04-24T08:23:57.283Z",
   "references/core_flows/interfaces/core_flows.UpdateDraftOrderStepInput/page.mdx": "2025-04-24T08:23:57.295Z",
-  "references/core_flows/interfaces/core_flows.ValidateDraftOrderStepInput/page.mdx": "2025-04-24T08:23:57.277Z"
+  "references/core_flows/interfaces/core_flows.ValidateDraftOrderStepInput/page.mdx": "2025-04-24T08:23:57.277Z",
+  "app/commerce-modules/product/guides/variant-inventory/page.mdx": "2025-04-25T14:22:42.329Z",
+  "app/troubleshooting/validation-error/page.mdx": "2025-04-25T14:14:57.568Z"
 }

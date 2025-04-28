@@ -181,6 +181,14 @@ const generatedgeneratedTroubleshootingSidebarSidebar = {
               "children": []
             }
           ]
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "link",
+          "title": "ValidationError",
+          "link": "/troubleshooting/validation-error",
+          "children": []
         }
       ]
     },

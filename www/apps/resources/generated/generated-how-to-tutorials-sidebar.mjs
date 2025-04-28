@@ -114,6 +114,14 @@ const generatedgeneratedHowToTutorialsSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
+              "title": "Get Variant Inventory",
+              "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/variant-inventory",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
               "title": "Get Variant Price with Taxes",
               "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/price-with-taxes",
               "children": []

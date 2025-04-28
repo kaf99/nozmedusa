@@ -222,7 +222,7 @@ export const POST = async (
 ) => {
   const { result } = await createPostWorkflow(req.scope)
     .run({
-      input: result.validatedBody
+      input: result.validatedBody,
     })
 
   return res.json(result)
@@ -987,7 +987,7 @@ export default async function orderConfirmationJob(
   await sendOrderConfirmationWorkflow(container).run({
     input: {
       id: "order_123",
-    }
+    },
   })
 }
 export const config = {

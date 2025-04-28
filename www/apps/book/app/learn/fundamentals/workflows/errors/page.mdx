@@ -144,11 +144,11 @@ export const skipOnPermanentFailureEnabledHighlights = [
 
 ```ts title="Workflow Equivalent" highlights={skipOnPermanentFailureEnabledHighlights}
 import {
-  createWorkflow
+  createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   actionThatThrowsError,
-  moreActions
+  moreActions,
 } from "./steps"
 
 export const myWorkflow = createWorkflow(
@@ -204,12 +204,12 @@ export const skipOnPermanentFailureStepHighlights = [
 
 ```ts title="Workflow Equivalent" highlights={skipOnPermanentFailureStepHighlights}
 import {
-  createWorkflow
+  createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   actionThatThrowsError,
   moreActions,
-  continueExecutionFromStep
+  continueExecutionFromStep,
 } from "./steps"
 
 export const myWorkflow = createWorkflow(
@@ -278,11 +278,11 @@ export const continueOnPermanentFailureHighlights = [
 
 ```ts title="Workflow Equivalent" highlights={continueOnPermanentFailureHighlights}
 import {
-  createWorkflow
+  createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   actionThatThrowsError,
-  moreActions
+  moreActions,
 } from "./steps"
 
 export const myWorkflow = createWorkflow(

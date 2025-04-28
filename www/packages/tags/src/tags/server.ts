@@ -28,6 +28,10 @@ export const server = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/price-with-taxes"
   },
   {
+    "title": "Get Variant Inventory",
+    "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/variant-inventory"
+  },
+  {
     "title": "Extend Promotion",
     "path": "https://docs.medusajs.com/resources/commerce-modules/promotion/extend"
   },

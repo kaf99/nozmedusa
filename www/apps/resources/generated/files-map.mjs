@@ -468,6 +468,10 @@ export const filesMap = [
     "pathname": "/commerce-modules/product/guides/price-with-taxes"
   },
   {
+    "filePath": "/www/apps/resources/app/commerce-modules/product/guides/variant-inventory/page.mdx",
+    "pathname": "/commerce-modules/product/guides/variant-inventory"
+  },
+  {
     "filePath": "/www/apps/resources/app/commerce-modules/product/js-sdk/page.mdx",
     "pathname": "/commerce-modules/product/js-sdk"
   },
@@ -1394,6 +1398,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/app/troubleshooting/test-errors/page.mdx",
     "pathname": "/troubleshooting/test-errors"
+  },
+  {
+    "filePath": "/www/apps/resources/app/troubleshooting/validation-error/page.mdx",
+    "pathname": "/troubleshooting/validation-error"
   },
   {
     "filePath": "/www/apps/resources/app/troubleshooting/workflow-errors/step-x-defined/page.mdx",

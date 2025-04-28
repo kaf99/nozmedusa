@@ -16,6 +16,10 @@ export const inventory = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/inventory/inventory-kit"
   },
   {
+    "title": "Get Variant Inventory",
+    "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/variant-inventory"
+  },
+  {
     "title": "Product Variant Inventory",
     "path": "https://docs.medusajs.com/resources/commerce-modules/product/variant-inventory"
   },

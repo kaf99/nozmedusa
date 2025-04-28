@@ -60,6 +60,11 @@ export const productSidebar = [
             path: "/commerce-modules/product/guides/price-with-taxes",
             title: "Get Variant Price with Taxes",
           },
+          {
+            type: "link",
+            path: "/commerce-modules/product/guides/variant-inventory",
+            title: "Get Variant Inventory",
+          },
         ],
       },
       {

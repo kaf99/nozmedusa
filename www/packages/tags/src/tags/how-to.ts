@@ -16,6 +16,10 @@ export const howTo = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/price-with-taxes"
   },
   {
+    "title": "Get Variant Inventory",
+    "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/variant-inventory"
+  },
+  {
     "title": "Create Cache Module",
     "path": "https://docs.medusajs.com/resources/infrastructure-modules/cache/create"
   },

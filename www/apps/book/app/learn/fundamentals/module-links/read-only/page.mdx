@@ -436,7 +436,7 @@ export default class CmsModuleService {
     filter: {
       id: string | string[]
     },
-    config?: FindConfig<any> | undefined, 
+    config?: FindConfig<any> | undefined 
   ) {
     return this.client.getPosts(filter, {
       limit: config?.take,

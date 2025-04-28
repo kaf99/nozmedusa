@@ -120,6 +120,11 @@ export const troubleshootingSidebar = [
           },
         ],
       },
+      {
+        type: "link",
+        title: "ValidationError",
+        link: "/troubleshooting/validation-error",
+      },
     ],
   },
   {
