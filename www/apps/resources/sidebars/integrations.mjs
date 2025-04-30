@@ -32,6 +32,11 @@ export const integrationsSidebar = [
     children: [
       {
         type: "link",
+        path: "/integrations/guides/contentful",
+        title: "Contentful",
+      },
+      {
+        type: "link",
         path: "/integrations/guides/sanity",
         title: "Sanity",
       },

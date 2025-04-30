@@ -11348,6 +11348,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "title": "Implement Product Reviews",
               "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/product-reviews",
               "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Localization with Contentful",
+              "path": "https://docs.medusajs.com/resources/integrations/guides/contentful",
+              "children": []
             }
           ]
         },

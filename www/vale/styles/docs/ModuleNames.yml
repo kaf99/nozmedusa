@@ -20,3 +20,4 @@ exceptions:
   - the associated module
   - the stored module
   - the read-only module
+  - the necessary module

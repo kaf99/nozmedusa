@@ -94,6 +94,13 @@ While tutorials show you a specific use case, they also help you understand how 
       },
       {
         type: "ref",
+        title: "Localization with Contentful",
+        path: "/integrations/guides/contentful",
+        description:
+          "Learn how to implement localization in Medusa by integrating Contentful.",
+      },
+      {
+        type: "ref",
         title: "Magento Migration",
         path: "/integrations/guides/magento",
         description: "Learn how to migrate data from Magento to Medusa.",

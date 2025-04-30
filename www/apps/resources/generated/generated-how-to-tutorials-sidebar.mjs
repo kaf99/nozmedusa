@@ -379,6 +379,15 @@ const generatedgeneratedHowToTutorialsSidebarSidebar = {
           "loaded": true,
           "isPathHref": true,
           "type": "ref",
+          "title": "Localization with Contentful",
+          "path": "/integrations/guides/contentful",
+          "description": "Learn how to implement localization in Medusa by integrating Contentful.",
+          "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "ref",
           "title": "Magento Migration",
           "path": "/integrations/guides/magento",
           "description": "Learn how to migrate data from Magento to Medusa.",

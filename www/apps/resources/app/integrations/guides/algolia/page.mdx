@@ -46,6 +46,8 @@ By following this tutorial, you'll learn how to:
 - Trigger Algolia reindexing when a product is created, updated, deleted, or when the admin manually triggers a reindex.
 - Customize the Next.js Starter Storefront to allow searching for products through Algolia.
 
+![Diagram illustrating the integration of Algolia with Medusa](https://res.cloudinary.com/dza7lstvk/image/upload/v1742889842/Medusa%20Resources/algolia-summary_lhegrr.jpg)
+
 <CardList items={[
   {
     href: "https://github.com/medusajs/examples/tree/main/algolia-integration",
@@ -463,7 +465,7 @@ Finally, you pass the products you received in the input to Algolia to create or
 
 A step function must return a `StepResponse` instance. The `StepResponse` constructor accepts two parameters:
 
-1. The step's output, which is the review created.
+1. The step's output, which in this case is `undefined`.
 2. Data to pass to the step's compensation function.
 
 #### Compensation Function

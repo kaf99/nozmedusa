@@ -6218,5 +6218,6 @@ export const generatedEditDates = {
   "references/core_flows/interfaces/core_flows.UpdateDraftOrderStepInput/page.mdx": "2025-04-24T08:23:57.295Z",
   "references/core_flows/interfaces/core_flows.ValidateDraftOrderStepInput/page.mdx": "2025-04-24T08:23:57.277Z",
   "app/commerce-modules/product/guides/variant-inventory/page.mdx": "2025-04-25T14:22:42.329Z",
-  "app/troubleshooting/validation-error/page.mdx": "2025-04-25T14:14:57.568Z"
+  "app/troubleshooting/validation-error/page.mdx": "2025-04-25T14:14:57.568Z",
+  "app/integrations/guides/contentful/page.mdx": "2025-04-30T09:54:16.698Z"
 }
