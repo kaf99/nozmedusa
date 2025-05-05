@@ -96,6 +96,9 @@ export default class ProductModuleService
     ProductVariant: {
       dto: ProductTypes.ProductVariantDTO
     }
+    ProductImage: {
+      dto: ProductTypes.ProductImageDTO
+    }
   }>({
     Product,
     ProductCategory,
@@ -105,6 +108,7 @@ export default class ProductModuleService
     ProductTag,
     ProductType,
     ProductVariant,
+    ProductImage,
   })
   implements ProductTypes.IProductModuleService
 {
