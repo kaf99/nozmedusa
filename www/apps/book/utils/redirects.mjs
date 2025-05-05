@@ -159,7 +159,7 @@ const redirects = async () => {
       permanent: true,
     },
     {
-      source: "/learn/fundamentals/modules/infrastructure-modules",
+      source: "/learn/fundamentals/modules/architectural-modules",
       destination: "/learn/fundamentals/modules/infrastructure-modules",
       permanent: true,
     },
