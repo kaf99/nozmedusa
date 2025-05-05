@@ -1161,6 +1161,14 @@ moduleIntegrationTestRunner<IProductModuleService>({
                 source: Modules.PRODUCT,
                 action: CommonEvents.DELETED,
               }),
+              composeMessage(ProductEvents.PRODUCT_IMAGE_DELETED, {
+                data: {
+                  id: [products[0].images[0].id],
+                },
+                object: "product_image",
+                source: Modules.PRODUCT,
+                action: CommonEvents.DELETED,
+              }),
               composeMessage(ProductEvents.PRODUCT_OPTION_VALUE_DELETED, {
                 data: {
                   id: [products[0].options[0].values[0].id],
