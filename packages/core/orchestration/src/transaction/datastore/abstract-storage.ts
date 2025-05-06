@@ -19,7 +19,7 @@ export interface IDistributedSchedulerStorage {
 export interface IDistributedTransactionStorage {
   get(
     key: string,
-    options?: TransactionOptions
+    options?: TransactionOptions & { isCancelling?: boolean }
   ): Promise<TransactionCheckpoint | undefined>
   list(): Promise<TransactionCheckpoint[]>
   save(

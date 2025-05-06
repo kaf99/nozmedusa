@@ -73,6 +73,7 @@ describe("Transaction Orchestrator", () => {
     await strategy.resume(transaction)
 
     expect(transaction.transactionId).toBe("transaction_id_123")
+    expect(transaction.runId).toEqual(expect.any(String))
     expect(transaction.getState()).toBe(TransactionState.DONE)
 
     expect(mocks.one).toBeCalledWith(

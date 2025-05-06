@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "@medusajs/types": "2.7.1",
-    "@medusajs/utils": "2.7.1"
+    "@medusajs/utils": "2.7.1",
+    "ulid": "^2.3.0"
   },
   "peerDependencies": {
     "@mikro-orm/core": "6.4.3",

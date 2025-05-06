@@ -1,3 +1,4 @@
+import { ulid } from "ulid"
 import {
   DistributedTransaction,
   DistributedTransactionType,
@@ -786,10 +787,13 @@ export class TransactionOrchestrator extends EventEmitter {
 
       const execution: Promise<void | unknown>[] = []
       for (const step of nextSteps.next) {
-        const { stopStepExecution } = this.prepareStepForExecution(step, flow)
+        const { shouldContinueExecution } = this.prepareStepForExecution(
+          step,
+          flow
+        )
 
         // Should stop the execution if next step cant be handled
-        if (!stopStepExecution) {
+        if (!shouldContinueExecution) {
           continue
         }
 
@@ -867,7 +871,7 @@ export class TransactionOrchestrator extends EventEmitter {
   private prepareStepForExecution(
     step: TransactionStep,
     flow: TransactionFlow
-  ): { stopStepExecution: boolean } {
+  ): { shouldContinueExecution: boolean } {
     const curState = step.getStates()
 
     step.lastAttempt = Date.now()
@@ -883,7 +887,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
         if (step.definition.noCompensation) {
           step.changeState(TransactionStepState.REVERTED)
-          return { stopStepExecution: false }
+          return { shouldContinueExecution: false }
         }
       } else if (flow.state === TransactionState.INVOKING) {
         step.changeState(TransactionStepState.INVOKING)
@@ -892,7 +896,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
     step.changeStatus(TransactionStepStatus.WAITING)
 
-    return { stopStepExecution: true }
+    return { shouldContinueExecution: true }
   }
 
   /**
@@ -1239,6 +1243,7 @@ export class TransactionOrchestrator extends EventEmitter {
     }
 
     flow.state = TransactionState.WAITING_TO_COMPENSATE
+    flow.cancelledAt = Date.now()
 
     await this.executeNext(transaction)
   }
@@ -1264,7 +1269,8 @@ export class TransactionOrchestrator extends EventEmitter {
       hasStepTimeouts ||
       hasRetriesTimeout ||
       hasTransactionTimeout ||
-      isIdempotent
+      isIdempotent ||
+      this.options.retentionTime
     ) {
       this.options.store = true
     }
@@ -1292,6 +1298,7 @@ export class TransactionOrchestrator extends EventEmitter {
       modelId: this.id,
       options: this.options,
       transactionId: transactionId,
+      runId: ulid(),
       metadata: flowMetadata,
       hasAsyncSteps: features.hasAsyncSteps,
       hasFailedSteps: false,
@@ -1310,11 +1317,13 @@ export class TransactionOrchestrator extends EventEmitter {
 
   private static async loadTransactionById(
     modelId: string,
-    transactionId: string
+    transactionId: string,
+    options?: { isCancelling?: boolean }
   ): Promise<TransactionCheckpoint | null> {
     const transaction = await DistributedTransaction.loadTransaction(
       modelId,
-      transactionId
+      transactionId,
+      options
     )
 
     if (transaction !== null) {
@@ -1487,10 +1496,15 @@ export class TransactionOrchestrator extends EventEmitter {
    */
   public async retrieveExistingTransaction(
     transactionId: string,
-    handler: TransactionStepHandler
+    handler: TransactionStepHandler,
+    options?: { isCancelling?: boolean }
   ): Promise<DistributedTransactionType> {
     const existingTransaction =
-      await TransactionOrchestrator.loadTransactionById(this.id, transactionId)
+      await TransactionOrchestrator.loadTransactionById(
+        this.id,
+        transactionId,
+        { isCancelling: options?.isCancelling }
+      )
 
     if (!existingTransaction) {
       throw new MedusaError(

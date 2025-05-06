@@ -261,6 +261,7 @@ export type TransactionFlow = {
   options?: TransactionModelOptions
   definition: TransactionStepsDefinition
   transactionId: string
+  runId: string
   metadata?: {
     eventGroupId?: string
     parentIdempotencyKey?: string
@@ -277,6 +278,7 @@ export type TransactionFlow = {
   hasRevertedSteps: boolean
   timedOutAt: number | null
   startedAt?: number
+  cancelledAt?: number
   state: TransactionState
   steps: {
     [key: string]: TransactionStep
