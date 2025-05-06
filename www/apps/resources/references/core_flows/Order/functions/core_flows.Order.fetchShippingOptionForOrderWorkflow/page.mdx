@@ -8,7 +8,7 @@ by other workflows, such as createClaimShippingMethodWorkflow.
 You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around fetching
 shipping options for an order.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/order/utils/fetch-shipping-option.ts#L166" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/ecf3556589c1fb64ad8bdc0b88307b11a6f7c89f/packages/core/core-flows/src/order/utils/fetch-shipping-option.ts#L166" />
 
 ## Examples
 
@@ -171,6 +171,55 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### setPricingContext
 
+This hook is executed before the shipping option is fetched. You can consume this hook to set the pricing context for the shipping option. This is useful when you have custom pricing rules that depend on the context of the order.
+
+For example, assuming you have the following custom pricing rule:
+
+```json
+{
+  "attribute": "location_id",
+  "operator": "eq",
+  "value": "sloc_123",
+}
+```
+
+You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
+
+```ts
+import { fetchShippingOptionForOrderWorkflow } from "@medusajs/medusa/core-flows";
+import { StepResponse } from "@medusajs/workflows-sdk";
+
+fetchShippingOptionForOrderWorkflow.hooks.setPricingContext((
+  { shipping_option_id, currency_code, order_id, context, additional_data }, { container }
+) => {
+  return new StepResponse({
+    location_id: "sloc_123", // Special price for in-store purchases
+  });
+});
+```
+
+The shipping option's price will now be retrieved using the context you return.
+
+:::note
+
+Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
+
+:::
+
+#### Example
+
+```ts
+import { fetchShippingOptionForOrderWorkflow } from "@medusajs/medusa/core-flows"
+
+fetchShippingOptionForOrderWorkflow.hooks.setPricingContext(
+  (async ({}, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="setPricingContext"/>
+<TypeList types={[{"name":"input","type":"`input`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="setPricingContext"/>

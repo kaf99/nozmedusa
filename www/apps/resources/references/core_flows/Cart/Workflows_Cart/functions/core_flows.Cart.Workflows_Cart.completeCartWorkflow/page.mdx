@@ -29,7 +29,7 @@ You can use this workflow within your own customizations or custom workflows, al
 For example, in the [Subscriptions recipe](https://docs.medusajs.com/resources/recipes/subscriptions/examples/standard#create-workflow),
 this workflow is used within another workflow that creates a subscription order.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/cart/workflows/complete-cart.ts#L87" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/ecf3556589c1fb64ad8bdc0b88307b11a6f7c89f/packages/core/core-flows/src/cart/workflows/complete-cart.ts#L87" />
 
 ## Examples
 
@@ -156,6 +156,62 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### validate
 
+This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
+
+#### Example
+
+```ts
+import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
+
+completeCartWorkflow.hooks.validate(
+  (async ({ input, cart }, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"`object`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
+<TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-3)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
+
+## Emitted Events
+
+This section lists the events that are either triggered by the `emitEventStep` in the workflow, or by another workflow executed within this workflow.
+
+You can listen to these events in a subscriber, as explained in the [Subscribers](https://docs.medusajs.com/learn/fundamentals/events-and-subscribers) documentation.
+
+<Table>
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCell>
+Event
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Description
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Payload
+</Table.HeaderCell>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>
+`order.placed`
+</Table.Cell>
+      <Table.Cell>
+Emitted when an order is placed, or when a draft order is converted to an
+order.
+</Table.Cell>
+      <Table.Cell>
+```ts blockStyle="inline"
+{
+  id, // The ID of the order
+}
+```
+</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>

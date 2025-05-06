@@ -69,6 +69,10 @@
     {
       "tagName": "@eventPayload",
       "syntaxKind": "block"
+    },
+    {
+      "tagName": "@workflowEvent",
+      "syntaxKind": "block"
     }
   ]
 }

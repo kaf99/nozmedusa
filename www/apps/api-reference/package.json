@@ -59,6 +59,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react@rc",
+    "build-scripts": "*",
     "eslint": "^9.13.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^5.0.0",

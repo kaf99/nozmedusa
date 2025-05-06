@@ -276,6 +276,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the promotions:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const promotions = await promotionModuleService.listPromotions(
@@ -329,6 +336,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the promotions:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const [promotions, count] =
@@ -382,6 +396,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const promotion = await promotionModuleService.retrievePromotion(
@@ -723,6 +744,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the promotion rules:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const promotionRules =
@@ -798,6 +826,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the campaigns:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const campaigns = await promotionModuleService.listCampaigns(
@@ -851,6 +886,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the campaigns:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const [campaigns, count] =
@@ -904,6 +946,13 @@ export interface IPromotionModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const campaign =

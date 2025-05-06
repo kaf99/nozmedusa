@@ -1320,6 +1320,10 @@ export const filesMap = [
     "pathname": "/troubleshooting/medusa-admin/blocked-request"
   },
   {
+    "filePath": "/www/apps/resources/app/troubleshooting/medusa-admin/build-error/page.mdx",
+    "pathname": "/troubleshooting/medusa-admin/build-error"
+  },
+  {
     "filePath": "/www/apps/resources/app/troubleshooting/medusa-admin/no-widget-route/page.mdx",
     "pathname": "/troubleshooting/medusa-admin/no-widget-route"
   },

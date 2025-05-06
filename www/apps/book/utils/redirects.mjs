@@ -1,5 +1,5 @@
 /**
- * @returns {Promise<import("next").Redirect[]>}
+ * @type {import("next").NextConfig["redirects"]}
  */
 const redirects = async () => {
   return [

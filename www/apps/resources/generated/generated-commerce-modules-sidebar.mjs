@@ -10182,7 +10182,7 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "isPathHref": true,
               "type": "link",
               "path": "/commerce-modules/pricing/price-rules",
-              "title": "Price Rules",
+              "title": "Price Tiers and Rules",
               "children": []
             },
             {

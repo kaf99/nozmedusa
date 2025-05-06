@@ -45,6 +45,13 @@ export interface ITaxModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const taxRate = await taxModuleService.retrieveTaxRate("txr_123", {
@@ -77,6 +84,13 @@ export interface ITaxModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the tax rate:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const taxRates = await taxModuleService.listTaxRates(
@@ -131,6 +145,13 @@ export interface ITaxModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the tax rate:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const [taxRates, count] = await taxModuleService.listAndCountTaxRates(
@@ -498,6 +519,13 @@ export interface ITaxModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the tax region:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const taxRegions = await taxModuleService.listTaxRegions(
@@ -631,6 +659,13 @@ export interface ITaxModuleService extends IModuleService {
    * ```
    *
    * To specify relations that should be retrieved within the tax rate rule:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
    *
    * ```ts
    * const taxRateRules = await taxModuleService.listTaxRateRules(

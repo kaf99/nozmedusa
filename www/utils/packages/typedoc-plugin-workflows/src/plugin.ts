@@ -25,6 +25,9 @@ import {
 } from "utils"
 import { StepType } from "./types.js"
 import Examples from "./utils/examples.js"
+import { MedusaEvent } from "types"
+import path from "path"
+import { readFileSync } from "fs"
 
 type ParsedStep = {
   stepReflection: DeclarationReflection
@@ -47,6 +50,7 @@ class WorkflowsPlugin {
       workflowIds: string[]
     }
   }
+  protected events: MedusaEvent[] = []
 
   constructor(app: Application) {
     this.app = app
@@ -92,6 +96,7 @@ class WorkflowsPlugin {
     if (!isEnabled) {
       return
     }
+    this.readEventsJson()
     for (const reflection of context.project.getReflectionsByKind(
       ReflectionKind.All
     )) {
@@ -235,6 +240,7 @@ class WorkflowsPlugin {
     ])
 
     this.updateWorkflowsTagsMap(workflowId, uniqueResources)
+    this.attachEvents(parentReflection)
   }
 
   /**
@@ -853,6 +859,61 @@ class WorkflowsPlugin {
     // try to retrieve from the locals in the constructor function
     return (constructorFn.locals as Map<string, ts.Symbol>).get(
       argument.getText()
+    )
+  }
+
+  readEventsJson() {
+    if (this.events.length) {
+      return
+    }
+
+    const eventsPath = path.resolve(
+      "..",
+      "..",
+      "generated",
+      "events-output.json"
+    )
+
+    this.events = JSON.parse(readFileSync(eventsPath, "utf-8"))
+  }
+
+  attachEvents(workflowReflection: DeclarationReflection) {
+    if (!workflowReflection.comment) {
+      workflowReflection.comment = new Comment()
+    }
+
+    const eventsTag = workflowReflection.comment.blockTags.find(
+      (tag) => tag.tag === "@workflowEvent"
+    )
+
+    if (eventsTag) {
+      return
+    }
+
+    const workflowEvents = this.events.filter((event) =>
+      event.workflows.includes(workflowReflection.name)
+    )
+
+    if (!workflowEvents) {
+      return
+    }
+
+    workflowReflection.comment.blockTags.push(
+      ...workflowEvents.map((event) => {
+        let commentText = `${event.name} -- ${event.description} -- ${event.payload}`
+        if (event.deprecated) {
+          commentText += " -- deprecated"
+          if (event.deprecated_message) {
+            commentText += ` -- ${event.deprecated_message}`
+          }
+        }
+        return new CommentTag(`@workflowEvent`, [
+          {
+            kind: "text",
+            text: commentText,
+          },
+        ])
+      })
     )
   }
 }

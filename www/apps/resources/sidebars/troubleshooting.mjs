@@ -166,6 +166,11 @@ export const troubleshootingSidebar = [
         path: "/troubleshooting/medusa-admin/blocked-request",
         title: "Blocked Request",
       },
+      {
+        type: "link",
+        path: "/troubleshooting/medusa-admin/build-error",
+        title: "index.html Error",
+      },
     ],
   },
   {
