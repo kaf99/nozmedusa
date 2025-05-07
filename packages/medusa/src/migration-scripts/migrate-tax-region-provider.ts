@@ -1,6 +1,7 @@
 import { updateTaxRegionsStep, useQueryGraphStep } from "@medusajs/core-flows"
+import { MedusaModule } from "@medusajs/framework/modules-sdk"
 import { ExecArgs } from "@medusajs/framework/types"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { transform, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
 import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 
@@ -35,6 +36,10 @@ const assignSystemProviderToTaxRegionsWorkflow = createWorkflow(
 export default async function assignTaxSystemProviderToTaxRegions({
   container,
 }: ExecArgs) {
+  if (!MedusaModule.isInstalled(Modules.TAX)) {
+    return
+  }
+
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
   logger.info("Assigning tax system provider to tax regions")
