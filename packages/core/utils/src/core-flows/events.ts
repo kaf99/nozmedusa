@@ -162,7 +162,7 @@ export const OrderWorkflowEvents = {
    * {
    *   order_id, // The ID of the order
    *   fulfillment_id, // The ID of the fulfillment
-   *   no_notification, // Whether to notify the customer
+   *   no_notification, // (boolean) Whether to notify the customer
    * }
    * ```
    */
@@ -175,7 +175,7 @@ export const OrderWorkflowEvents = {
    * {
    *   order_id, // The ID of the order
    *   fulfillment_id, // The ID of the fulfillment
-   *   no_notification, // Whether to notify the customer
+   *   no_notification, // (boolean) Whether to notify the customer
    * }
    * ```
    */
@@ -258,7 +258,7 @@ export const OrderEditWorkflowEvents = {
    * ```ts
    * {
    *   order_id, // The ID of the order
-   *   actions, // The actions to edit the order
+   *   actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
    * }
    * ```
    */
@@ -270,8 +270,7 @@ export const OrderEditWorkflowEvents = {
    * ```ts
    * {
    *   order_id, // The ID of the order
-   *   actions, // The actions to edit the order
-   * }
+   *   actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
    * ```
    */
   CONFIRMED: "order-edit.confirmed",
@@ -282,7 +281,7 @@ export const OrderEditWorkflowEvents = {
    * ```ts
    * {
    *   order_id, // The ID of the order
-   *   actions, // The actions to edit the order
+   *   actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
    * }
    * ```
    */
@@ -776,7 +775,7 @@ export const FulfillmentWorkflowEvents = {
    * ```ts
    * {
    *   id, // the ID of the shipment
-   *   no_notification, // whether to notify the customer
+   *   no_notification, // (boolean) whether to notify the customer
    * }
    * ```
    */
