@@ -9,7 +9,7 @@ export const sdk = new Medusa({
 })
 
 sdk.admin.product.batchVariantInventoryItems(
-  "prod_123", 
+  "prod_123",
   {
     create: [
       {

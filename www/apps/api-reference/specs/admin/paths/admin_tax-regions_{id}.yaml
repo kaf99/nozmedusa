@@ -106,6 +106,10 @@ post:
         schema:
           $ref: ../components/schemas/AdminUpdateTaxRegion.yaml
   x-codeSamples:
+    - lang: JavaScript
+      label: JS SDK
+      source:
+        $ref: ../code_samples/JavaScript/admin_tax-regions_{id}/post.js
     - lang: Shell
       label: cURL
       source:
@@ -132,6 +136,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateTaxRegionsWorkflow
+  x-events: []
 delete:
   operationId: DeleteTaxRegionsId
   summary: Delete a Tax Region
@@ -179,3 +184,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteTaxRegionsWorkflow
+  x-events: []

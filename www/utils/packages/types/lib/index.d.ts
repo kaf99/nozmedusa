@@ -345,4 +345,5 @@ export declare type MedusaEvent = {
   version?: string
   deprecated?: boolean
   deprecated_message?: string
+  version?: string
 }

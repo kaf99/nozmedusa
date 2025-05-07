@@ -14,7 +14,7 @@ import { IOrderModuleService, OrderDTO } from "@medusajs/types"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { validateDraftOrderStep } from "../steps/validate-draft-order"
 
-const convertDraftOrderWorkflowId = "convert-draft-order"
+export const convertDraftOrderWorkflowId = "convert-draft-order"
 
 /**
  * The details of the draft order to convert to an order.

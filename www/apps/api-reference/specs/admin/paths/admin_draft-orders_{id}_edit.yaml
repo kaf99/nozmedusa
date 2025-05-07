@@ -46,6 +46,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: beginDraftOrderEditWorkflow
+  x-events: []
 delete:
   operationId: DeleteDraftOrdersIdEdit
   summary: Cancel Edit on Draft Order
@@ -90,3 +91,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: cancelDraftOrderEditWorkflow
+  x-events: []

@@ -218,6 +218,8 @@ export interface CreateCartAddressDTO {
 export interface CreateCartWorkflowInputDTO {
   /**
    * The ID of the region that the cart belongs to.
+   * If not provided, the default region of the store is used.
+   * If the store doesn't have a default region, an error is thrown.
    */
   region_id?: string
 

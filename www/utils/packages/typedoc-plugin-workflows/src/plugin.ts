@@ -22,6 +22,7 @@ import {
   addTagsToReflection,
   getResolvedResourcesOfStep,
   getUniqueStrArray,
+  getWorkflowInputType,
 } from "utils"
 import { StepType } from "./types.js"
 import Examples from "./utils/examples.js"
@@ -565,38 +566,45 @@ class WorkflowsPlugin {
       ReflectionKind.Parameter,
       signatureReflection
     )
+    const isParameterWorkflowInput =
+      inputSymbol.valueDeclaration?.kind === ts.SyntaxKind.Parameter &&
+      workflowReflection.signatures?.length
+    parameter.type = isParameterWorkflowInput
+      ? getWorkflowInputType(workflowReflection.signatures![0]) ||
+        ReferenceType.createSymbolReference(inputSymbol, context)
+      : ReferenceType.createSymbolReference(inputSymbol, context)
 
-    parameter.type = ReferenceType.createSymbolReference(inputSymbol, context)
+    if (parameter.type.type === "reference") {
+      if (parameter.type.name === "__object") {
+        parameter.type.name = "object"
+        parameter.type.qualifiedName = "object"
 
-    if (parameter.type.name === "__object") {
-      parameter.type.name = "object"
-      parameter.type.qualifiedName = "object"
-
-      if (!parameter.comment?.summary) {
-        parameter.comment = new Comment()
-        parameter.comment.summary = [
-          {
-            kind: "text",
-            text: "The input data for the hook.",
-          },
-        ]
+        if (!parameter.comment?.summary) {
+          parameter.comment = new Comment()
+          parameter.comment.summary = [
+            {
+              kind: "text",
+              text: "The input data for the hook.",
+            },
+          ]
+        }
       }
-    }
 
-    if (parameter.type.reflection instanceof DeclarationReflection) {
-      const additionalDataChild = parameter.type.reflection.children?.find(
-        (child) => child.name === "additional_data"
-      )
+      if (parameter.type.reflection instanceof DeclarationReflection) {
+        const additionalDataChild = parameter.type.reflection.children?.find(
+          (child) => child.name === "additional_data"
+        )
 
-      if (additionalDataChild) {
-        additionalDataChild.comment =
-          additionalDataChild.comment || new Comment()
-        additionalDataChild.comment.summary = [
-          {
-            kind: "text",
-            text: "Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).",
-          },
-        ]
+        if (additionalDataChild) {
+          additionalDataChild.comment =
+            additionalDataChild.comment || new Comment()
+          additionalDataChild.comment.summary = [
+            {
+              kind: "text",
+              text: "Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).",
+            },
+          ]
+        }
       }
     }
 

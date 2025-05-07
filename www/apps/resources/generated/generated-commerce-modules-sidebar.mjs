@@ -1083,6 +1083,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
+              "title": "Implement Bundled Products",
+              "path": "https://docs.medusajs.com/resources/recipes/bundled-products/examples/standard",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
               "title": "Implement Custom Line Item Pricing in Medusa",
               "path": "https://docs.medusajs.com/resources/examples/guides/custom-item-price",
               "children": []
@@ -11339,6 +11347,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "type": "link",
               "path": "/commerce-modules/product/guides/price",
               "title": "Get Variant Prices",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Implement Bundled Products",
+              "path": "https://docs.medusajs.com/resources/recipes/bundled-products/examples/standard",
               "children": []
             },
             {

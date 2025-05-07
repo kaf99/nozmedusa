@@ -936,6 +936,14 @@ export const filesMap = [
     "pathname": "/recipes/b2b"
   },
   {
+    "filePath": "/www/apps/resources/app/recipes/bundled-products/examples/standard/page.mdx",
+    "pathname": "/recipes/bundled-products/examples/standard"
+  },
+  {
+    "filePath": "/www/apps/resources/app/recipes/bundled-products/page.mdx",
+    "pathname": "/recipes/bundled-products"
+  },
+  {
     "filePath": "/www/apps/resources/app/recipes/commerce-automation/page.mdx",
     "pathname": "/recipes/commerce-automation"
   },

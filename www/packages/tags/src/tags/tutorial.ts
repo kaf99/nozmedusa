@@ -42,5 +42,9 @@ export const tutorial = [
   {
     "title": "Build Wishlist Plugin",
     "path": "https://docs.medusajs.com/resources/plugins/guides/wishlist"
+  },
+  {
+    "title": "Bundled Products",
+    "path": "https://docs.medusajs.com/resources/recipes/bundled-products/examples/standard"
   }
 ]

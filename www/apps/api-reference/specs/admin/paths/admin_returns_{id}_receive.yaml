@@ -70,6 +70,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: beginReceiveReturnWorkflow
+  x-events: []
 delete:
   operationId: DeleteReturnsIdReceive
   summary: Cancel Return Receival
@@ -138,3 +139,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: cancelReturnReceiveWorkflow
+  x-events: []

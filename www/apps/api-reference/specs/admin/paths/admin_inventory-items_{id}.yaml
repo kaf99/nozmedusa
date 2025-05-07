@@ -196,6 +196,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateInventoryItemsWorkflow
+  x-events: []
 delete:
   operationId: DeleteInventoryItemsId
   summary: Delete Inventory Item
@@ -262,3 +263,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteInventoryItemWorkflow
+  x-events: []

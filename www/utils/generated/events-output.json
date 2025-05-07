@@ -100,8 +100,8 @@
     "payload": "```ts\n{\n  id, // The ID of the order\n}\n```",
     "description": "Emitted when an order is placed, or when a draft order is converted to an\norder.",
     "workflows": [
-      "completeCartWorkflow",
       "convertDraftOrderWorkflow",
+      "completeCartWorkflow",
       "processPaymentWorkflow"
     ],
     "deprecated": false
@@ -143,7 +143,7 @@
     "name": "order.fulfillment_created",
     "parentName": "OrderWorkflowEvents",
     "propertyName": "FULFILLMENT_CREATED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  fulfillment_id, // The ID of the fulfillment\n  no_notification, // Whether to notify the customer\n}\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  fulfillment_id, // The ID of the fulfillment\n  no_notification, // (boolean) Whether to notify the customer\n}\n```",
     "description": "Emitted when a fulfillment is created for an order.",
     "workflows": [
       "createOrderFulfillmentWorkflow"
@@ -154,7 +154,7 @@
     "name": "order.fulfillment_canceled",
     "parentName": "OrderWorkflowEvents",
     "propertyName": "FULFILLMENT_CANCELED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  fulfillment_id, // The ID of the fulfillment\n  no_notification, // Whether to notify the customer\n}\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  fulfillment_id, // The ID of the fulfillment\n  no_notification, // (boolean) Whether to notify the customer\n}\n```",
     "description": "Emitted when an order's fulfillment is canceled.",
     "workflows": [
       "cancelOrderFulfillmentWorkflow"
@@ -222,7 +222,7 @@
     "name": "order-edit.requested",
     "parentName": "OrderEditWorkflowEvents",
     "propertyName": "REQUESTED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // The actions to edit the order\n}\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order\n}\n```",
     "description": "Emitted when an order edit is requested.",
     "workflows": [
       "requestOrderEditRequestWorkflow"
@@ -233,7 +233,7 @@
     "name": "order-edit.confirmed",
     "parentName": "OrderEditWorkflowEvents",
     "propertyName": "CONFIRMED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // The actions to edit the order\n}\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order\n```",
     "description": "Emitted when an order edit request is confirmed.",
     "workflows": [
       "confirmOrderEditRequestWorkflow"
@@ -244,7 +244,7 @@
     "name": "order-edit.canceled",
     "parentName": "OrderEditWorkflowEvents",
     "propertyName": "CANCELED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // The actions to edit the order\n}\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order\n}\n```",
     "description": "Emitted when an order edit request is canceled.",
     "workflows": [
       "cancelBeginOrderEditWorkflow"
@@ -655,7 +655,7 @@
     "name": "shipment.created",
     "parentName": "FulfillmentWorkflowEvents",
     "propertyName": "SHIPMENT_CREATED",
-    "payload": "```ts\n{\n  id, // the ID of the shipment\n  no_notification, // whether to notify the customer\n}\n```",
+    "payload": "```ts\n{\n  id, // the ID of the shipment\n  no_notification, // (boolean) whether to notify the customer\n}\n```",
     "description": "Emitted when a shipment is created for an order.",
     "workflows": [
       "createOrderShipmentWorkflow"

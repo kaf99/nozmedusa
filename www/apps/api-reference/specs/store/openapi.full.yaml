@@ -525,6 +525,20 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: generateResetPasswordTokenWorkflow
+      x-events:
+        - name: auth.password_reset
+          payload: |-
+            ```ts
+            {
+              entity_id, // The identifier of the user or customer. For example, an email address.
+              actor_type, // The type of actor. For example, "customer", "user", or custom.
+              token, // The generated token.
+            }
+            ```
+          description: |-
+            Emitted when a reset password token is generated. You can listen to this event
+            to send a reset password email to the user or customer, for example.
+          deprecated: false
   /auth/customer/{auth_provider}/update:
     post:
       operationId: PostActor_typeAuth_providerUpdate
@@ -866,6 +880,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCartWorkflow
+      x-events:
+        - name: cart.created
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart is created.
+          deprecated: false
   /store/carts/{id}:
     get:
       operationId: GetCartsId
@@ -1045,6 +1069,36 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
+        - name: cart.customer_updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when the customer in the cart is updated.
+          deprecated: false
+        - name: cart.region_updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: |-
+            Emitted when the cart's region is updated. This
+            event is emitted alongside the `cart.updated` event.
+          deprecated: false
   /store/carts/{id}/complete:
     post:
       operationId: PostCartsIdComplete
@@ -1182,6 +1236,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: completeCartWorkflow
+      x-events:
+        - name: order.placed
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: |-
+            Emitted when an order is placed, or when a draft order is converted to an
+            order.
+          deprecated: false
   /store/carts/{id}/customer:
     post:
       operationId: PostCartsIdCustomer
@@ -1269,6 +1335,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: transferCartCustomerWorkflow
+      x-events: []
   /store/carts/{id}/line-items:
     post:
       operationId: PostCartsIdLineItems
@@ -1367,6 +1434,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addToCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
   /store/carts/{id}/line-items/{line_id}:
     post:
       operationId: PostCartsIdLineItemsLine_id
@@ -1473,6 +1550,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateLineItemInCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
     delete:
       operationId: DeleteCartsIdLineItemsLine_id
       summary: Remove Line Item from Cart
@@ -1592,6 +1679,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteLineItemsWorkflow
+      x-events: []
   /store/carts/{id}/promotions:
     post:
       operationId: PostCartsIdPromotions
@@ -1663,6 +1751,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCartPromotionsWorkflow
+      x-events: []
     delete:
       operationId: DeleteCartsIdPromotions
       summary: Remove Promotions from Cart
@@ -1732,6 +1821,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/StoreCartRemovePromotion'
+      x-events: []
   /store/carts/{id}/shipping-methods:
     post:
       operationId: PostCartsIdShippingMethods
@@ -1844,6 +1934,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addShippingMethodToCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
   /store/carts/{id}/taxes:
     post:
       operationId: PostCartsIdTaxes
@@ -1904,6 +2004,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateTaxLinesWorkflow
+      x-events: []
   /store/collections:
     get:
       operationId: GetCollections
@@ -2924,6 +3025,16 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: customer.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is created.
+          deprecated: false
   /store/customers/me:
     get:
       operationId: GetCustomersMe
@@ -3099,6 +3210,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomersWorkflow
+      x-events:
+        - name: customer.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is updated.
+          deprecated: false
   /store/customers/me/addresses:
     get:
       operationId: GetCustomersMeAddresses
@@ -3334,7 +3455,11 @@ paths:
                 province:
                   type: string
                   title: province
-                  description: The address's province.
+                  description: The address's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
                 postal_code:
                   type: string
                   title: postal_code
@@ -3395,7 +3520,7 @@ paths:
               "address_2": "{value}",
               "city": "{value}",
               "country_code": "{value}",
-              "province": "{value}",
+              "province": "us-ca",
               "postal_code": "{value}",
               "address_name": "{value}"
             }'
@@ -3421,6 +3546,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCustomerAddressesWorkflow
+      x-events: []
   /store/customers/me/addresses/{address_id}:
     get:
       operationId: GetCustomersMeAddressesAddress_id
@@ -3586,7 +3712,11 @@ paths:
                 province:
                   type: string
                   title: province
-                  description: The address's province.
+                  description: The address's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
                 postal_code:
                   type: string
                   title: postal_code
@@ -3665,6 +3795,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomerAddressesWorkflow
+      x-events: []
     delete:
       operationId: DeleteCustomersMeAddressesAddress_id
       summary: Remove Customer's Address
@@ -3779,6 +3910,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCustomerAddressesWorkflow
+      x-events: []
   /store/orders:
     get:
       operationId: GetOrders
@@ -3981,6 +4113,7 @@ paths:
         - cookie_auth: []
         - jwt_token: []
       x-workflow: getOrdersListWorkflow
+      x-events: []
   /store/orders/{id}:
     get:
       operationId: GetOrdersId
@@ -4061,6 +4194,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrderDetailWorkflow
+      x-events: []
   /store/orders/{id}/transfer/accept:
     post:
       operationId: PostOrdersIdTransferAccept
@@ -4162,6 +4296,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: acceptOrderTransferWorkflow
+      x-events: []
   /store/orders/{id}/transfer/cancel:
     post:
       operationId: PostOrdersIdTransferCancel
@@ -4255,6 +4390,7 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events: []
   /store/orders/{id}/transfer/decline:
     post:
       operationId: PostOrdersIdTransferDecline
@@ -4356,6 +4492,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: declineOrderTransferRequestWorkflow
+      x-events: []
   /store/orders/{id}/transfer/request:
     post:
       operationId: PostOrdersIdTransferRequest
@@ -4457,6 +4594,7 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events: []
   /store/payment-collections:
     post:
       operationId: PostPaymentCollections
@@ -4551,6 +4689,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPaymentCollectionForCartWorkflow
+      x-events: []
   /store/payment-collections/{id}/payment-sessions:
     post:
       operationId: PostPaymentCollectionsIdPaymentSessions
@@ -4623,6 +4762,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPaymentSessionsWorkflow
+      x-events: []
   /store/payment-providers:
     get:
       operationId: GetPaymentProviders
@@ -7524,12 +7664,16 @@ paths:
               description: 'Storefront guide: How to show product variants'' prices with taxes.'
         - name: province
           in: query
-          description: The province the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+          description: The lower-case ISO 3166-2 province code the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
           required: false
           schema:
             type: string
             title: province
-            description: The province the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            description: The lower-case ISO 3166-2 province code the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            example: us-ca
+            externalDocs:
+              url: https://en.wikipedia.org/wiki/ISO_3166-2
+              description: Learn more about ISO 3166-2
         - name: sales_channel_id
           in: query
           required: false
@@ -7730,12 +7874,16 @@ paths:
             description: The country code the product is being viewed from. This is required if you're retrieving product variant prices with taxes.
         - name: province
           in: query
-          description: The province the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+          description: The lower-case ISO 3166-2 province code the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
           required: false
           schema:
             type: string
             title: province
-            description: The province the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            description: The lower-case ISO 3166-2 province code the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            example: us-ca
+            externalDocs:
+              url: https://en.wikipedia.org/wiki/ISO_3166-2
+              description: Learn more about ISO 3166-2
         - name: cart_id
           in: query
           description: The ID of the customer's cart. If set, the cart's region and shipping address's country code and province are used instead of the `region_id`, `country_code`, and `province` properties.
@@ -8487,6 +8635,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: listShippingOptionsForCartWorkflow
+      x-events: []
   /store/shipping-options/{id}/calculate:
     post:
       operationId: PostShippingOptionsIdCalculate
@@ -8594,6 +8743,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: calculateShippingOptionsPricesWorkflow
+      x-events: []
 components:
   schemas:
     AdminAddDraftOrderItems:
@@ -9906,7 +10056,11 @@ components:
             province:
               type: string
               title: province
-              description: The delivery address's province.
+              description: The delivery address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -11050,7 +11204,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         parent_id:
           type: string
           title: parent_id
@@ -11393,7 +11551,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -13364,7 +13526,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -13712,7 +13878,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The geo zone's province code.
+          description: The geo zone's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         city:
           type: string
           title: city
@@ -14400,7 +14570,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -19633,7 +19807,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
       required:
         - id
         - address_1
@@ -19998,7 +20176,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
@@ -20176,7 +20358,11 @@ components:
             province:
               type: string
               title: province
-              description: The shipping address's province.
+              description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20224,7 +20410,11 @@ components:
             province:
               type: string
               title: province
-              description: The billing address's province.
+              description: The billing address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20359,7 +20549,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20407,7 +20601,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20904,7 +21102,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
         address_id:
           type: string
           title: address_id
@@ -21016,7 +21218,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
@@ -21091,7 +21297,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
     AdminUser:
       type: object
       description: The user's details.
@@ -22690,7 +22900,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: US-CA
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -24763,7 +24977,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -25581,7 +25799,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -27428,7 +27650,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -28643,7 +28869,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -29031,7 +29261,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -36254,7 +36488,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code

@@ -360,6 +360,15 @@ const generatedgeneratedHowToTutorialsSidebarSidebar = {
         {
           "loaded": true,
           "isPathHref": true,
+          "type": "ref",
+          "title": "Bundled Products",
+          "path": "/recipes/bundled-products/examples/standard",
+          "description": "Learn how to implement bundled products in your Medusa store.",
+          "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
           "type": "link",
           "title": "Custom Item Pricing",
           "path": "/examples/guides/custom-item-price",

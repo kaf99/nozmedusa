@@ -660,7 +660,7 @@
  *       type: string
  *       title: province
  *       description: The lower-case ISO 3166-2 province code the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
- *       example: "us-ca"
+ *       example: us-ca
  *       externalDocs:
  *         url: https://en.wikipedia.org/wiki/ISO_3166-2
  *         description: Learn more about ISO 3166-2

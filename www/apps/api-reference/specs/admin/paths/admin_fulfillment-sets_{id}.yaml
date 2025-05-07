@@ -45,3 +45,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteFulfillmentSetsWorkflow
+  x-events: []

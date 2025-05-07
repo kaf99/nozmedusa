@@ -14,6 +14,10 @@ import {
 } from "../../../../../components/modals"
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useCreateTaxRegion } from "../../../../../hooks/api"
+import { useComboboxData } from "../../../../../hooks/use-combobox-data"
+import { Combobox } from "../../../../../components/inputs/combobox"
+import { formatProvider } from "../../../../../lib/format-provider"
+import { sdk } from "../../../../../lib/client"
 
 type TaxRegionCreateFormProps = {
   parentId?: string
@@ -27,11 +31,22 @@ const TaxRegionCreateSchema = z.object({
     value: z.string().optional(),
   }),
   country_code: z.string().min(1),
+  provider_id: z.string(),
 })
 
 export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
+
+  const taxProviders = useComboboxData({
+    queryKey: ["tax_providers"],
+    queryFn: (params) => sdk.admin.taxProvider.list(params),
+    getOptions: (data) =>
+      data.tax_providers.map((provider) => ({
+        label: formatProvider(provider.id),
+        value: provider.id,
+      })),
+  })
 
   const form = useForm<z.infer<typeof TaxRegionCreateSchema>>({
     defaultValues: {
@@ -41,6 +56,7 @@ export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
       },
       code: "",
       country_code: "",
+      provider_id: "",
     },
     resolver: zodResolver(TaxRegionCreateSchema),
   })
@@ -64,6 +80,7 @@ export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
         country_code: values.country_code,
         parent_id: parentId,
         default_tax_rate: defaultRate,
+        provider_id: values.provider_id,
       },
       {
         onSuccess: ({ tax_region }) => {
@@ -191,6 +208,29 @@ export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
                           </Form.Item>
                         )
                       }}
+                    />
+                    <Form.Field
+                      control={form.control}
+                      name="provider_id"
+                      render={({ field }) => (
+                        <Form.Item>
+                          <Form.Label>
+                            {t("taxRegions.fields.taxProvider")}
+                          </Form.Label>
+                          <Form.Control>
+                            <Combobox
+                              {...field}
+                              options={taxProviders.options}
+                              searchValue={taxProviders.searchValue}
+                              onSearchValueChange={
+                                taxProviders.onSearchValueChange
+                              }
+                              fetchNextPage={taxProviders.fetchNextPage}
+                            />
+                          </Form.Control>
+                          <Form.ErrorMessage />
+                        </Form.Item>
+                      )}
                     />
                   </div>
                 </div>

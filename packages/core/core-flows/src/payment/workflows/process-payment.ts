@@ -9,7 +9,7 @@ import { capturePaymentWorkflow } from "./capture-payment"
 /**
  * The data to process a payment from a webhook action.
  */
-interface ProcessPaymentWorkflowInput extends WebhookActionResult {}
+export interface ProcessPaymentWorkflowInput extends WebhookActionResult {}
 
 export const processPaymentWorkflowId = "process-payment-workflow"
 /**

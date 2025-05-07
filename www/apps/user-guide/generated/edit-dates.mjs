@@ -14,7 +14,7 @@ export const generatedEditDates = {
   "app/settings/developer/page.mdx": "2025-02-25T15:11:55.392Z",
   "app/settings/profile/page.mdx": "2025-03-06T08:49:28.814Z",
   "app/settings/store/page.mdx": "2025-02-26T10:33:07.346Z",
-  "app/products/import/page.mdx": "2025-02-18T12:15:03.830Z",
+  "app/products/import/page.mdx": "2025-05-06T16:14:03.721Z",
   "app/products/categories/page.mdx": "2025-02-19T10:21:42.058Z",
   "app/inventory/reservations/page.mdx": "2025-02-18T13:56:28.134Z",
   "app/discounts/manage/page.mdx": "2024-05-03T17:36:38+03:00",

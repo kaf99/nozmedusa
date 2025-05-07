@@ -9,7 +9,7 @@ export const sdk = new Medusa({
 })
 
 sdk.admin.product.updateVariant(
-  "prod_123", 
+  "prod_123",
   "variant_123",
     {
     title: "Blue Shirt",

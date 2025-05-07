@@ -58,6 +58,7 @@ medusaIntegrationTestRunner({
         await api.post(
           "/admin/tax-regions",
           {
+            provider_id: "tp_system_system",
             country_code: "US",
           },
           adminHeaders

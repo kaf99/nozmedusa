@@ -134,6 +134,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updatePricePreferencesWorkflow
+  x-events: []
 delete:
   operationId: DeletePricePreferencesId
   summary: Delete a Price Preference
@@ -181,3 +182,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deletePricePreferencesWorkflow
+  x-events: []

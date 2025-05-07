@@ -2038,7 +2038,7 @@
                   "type": "string"
                 }
               },
-              "required": ["label", "hint"],
+              "required": ["label", "hint", "placeholder"],
               "additionalProperties": false
             },
             "subtitle": {
@@ -2051,7 +2051,7 @@
                   "type": "string"
                 }
               },
-              "required": ["label"],
+              "required": ["label", "placeholder"],
               "additionalProperties": false
             },
             "handle": {
@@ -2067,7 +2067,7 @@
                   "type": "string"
                 }
               },
-              "required": ["label", "tooltip"],
+              "required": ["label", "tooltip", "placeholder"],
               "additionalProperties": false
             },
             "description": {
@@ -2083,7 +2083,7 @@
                   "type": "string"
                 }
               },
-              "required": ["label", "hint"],
+              "required": ["label", "hint", "placeholder"],
               "additionalProperties": false
             },
             "discountable": {
@@ -6479,6 +6479,16 @@
           "required": ["header", "hint", "errors", "successToast"],
           "additionalProperties": false
         },
+        "edit": {
+          "type": "object",
+          "properties": {
+            "successToast": {
+              "type": "string"
+            }
+          },
+          "required": ["successToast"],
+          "additionalProperties": false
+        },
         "province": {
           "type": "object",
           "properties": {
@@ -6500,6 +6510,16 @@
             }
           },
           "required": ["header", "create"],
+          "additionalProperties": false
+        },
+        "provider": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "string"
+            }
+          },
+          "required": ["header"],
           "additionalProperties": false
         },
         "state": {
@@ -6910,6 +6930,9 @@
             "taxCode": {
               "type": "string"
             },
+            "taxProvider": {
+              "type": "string"
+            },
             "targets": {
               "type": "object",
               "properties": {
@@ -7240,6 +7263,7 @@
             "defaultTaxRate",
             "taxRate",
             "taxCode",
+            "taxProvider",
             "targets",
             "sublevels",
             "noDefaultRate"
@@ -7252,7 +7276,9 @@
         "list",
         "delete",
         "create",
+        "edit",
         "province",
+        "provider",
         "state",
         "stateOrTerritory",
         "county",
@@ -9192,9 +9218,6 @@
             "deleteRateDescription": {
               "type": "string"
             },
-            "editTaxRate": {
-              "type": "string"
-            },
             "editRateAction": {
               "type": "string"
             },
@@ -9252,7 +9275,6 @@
             "createTaxRate",
             "createTaxRateHint",
             "deleteRateDescription",
-            "editTaxRate",
             "editRateAction",
             "editOverridesAction",
             "editOverridesTitle",

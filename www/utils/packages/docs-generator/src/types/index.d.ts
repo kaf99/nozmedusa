@@ -10,6 +10,7 @@ export declare type OpenApiOperation = Partial<OpenAPIV3.OperationObject> & {
   "x-authenticated"?: boolean
   "x-codeSamples"?: CodeSample[]
   "x-workflow"?: string
+  "x-events"?: OasEvent[]
 }
 
 export declare type CommonCliOptions = {
@@ -37,4 +38,13 @@ export declare type DmlFile = {
     filePath: string
     properties: DmlObject
   }
+}
+
+export declare type OasEvent = {
+  name: string
+  payload: string
+  description?: string
+  deprecated?: boolean
+  deprecated_message?: string
+  version?: string
 }

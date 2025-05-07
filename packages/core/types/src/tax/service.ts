@@ -11,6 +11,7 @@ import {
   TaxableItemDTO,
   TaxableShippingDTO,
   TaxCalculationContext,
+  TaxProviderDTO,
   TaxRateDTO,
   TaxRateRuleDTO,
   TaxRegionDTO,
@@ -19,6 +20,7 @@ import {
   CreateTaxRateDTO,
   CreateTaxRateRuleDTO,
   CreateTaxRegionDTO,
+  FilterableTaxProviderProps,
   UpdateTaxRateDTO,
   UpdateTaxRegionDTO,
   UpsertTaxRateDTO,
@@ -579,6 +581,24 @@ export interface ITaxModuleService extends IModuleService {
     data: CreateTaxRateRuleDTO,
     sharedContext?: Context
   ): Promise<TaxRateRuleDTO>
+
+  /**
+   * This method retrieves a paginated list of tax providers based on optional filters and configuration.
+   *
+   * @param {FilterableTaxProviderProps} filters - The filters to apply on the retrieved tax providers.
+   * @param {FindConfig<TaxProviderDTO>} config - The configurations determining how the tax provider is retrieved.
+   * @param {Context} sharedContext - A context used to share resources, such as transaction manager, between the application and the module.
+   * @returns {Promise<TaxProviderDTO[]>} The list of tax providers.
+   *
+   * @example
+   * const taxProviders = await taxModuleService.listTaxProviders()
+   */
+
+  listTaxProviders(
+    filters?: FilterableTaxProviderProps,
+    config?: FindConfig<TaxProviderDTO>,
+    sharedContext?: Context
+  ): Promise<TaxProviderDTO[]>
 
   /**
    * This method creates tax rate rules.

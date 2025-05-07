@@ -1723,12 +1723,18 @@
       },
       "successToast": "The tax region was successfully created."
     },
+    "edit": {
+      "successToast": "The tax region was successfully updated."
+    },
     "province": {
       "header": "Provinces",
       "create": {
         "header": "Create Province Tax Region",
         "hint": "Create a new tax region to define tax rates for a specific province."
       }
+    },
+    "provider": {
+      "header": "Tax Provider"
     },
     "state": {
       "header": "States",
@@ -1855,6 +1861,7 @@
       },
       "taxRate": "Tax rate",
       "taxCode": "Tax code",
+      "taxProvider": "Tax provider",
       "targets": {
         "label": "Targets",
         "hint": "Select the targets that this tax rate will apply to.",
@@ -2471,7 +2478,6 @@
       "createTaxRate": "Create Tax Rate",
       "createTaxRateHint": "Create a new tax rate for the region.",
       "deleteRateDescription": "You are about to delete the tax rate {{name}}. This action cannot be undone.",
-      "editTaxRate": "Edit Tax Rate",
       "editRateAction": "Edit rate",
       "editOverridesAction": "Edit overrides",
       "editOverridesTitle": "Edit Tax Rate Overrides",
