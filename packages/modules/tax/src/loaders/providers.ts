@@ -4,25 +4,35 @@ import {
   LoaderOptions,
   ModuleProvider,
   ModulesSdkTypes,
+  CreateTaxProviderDTO,
 } from "@medusajs/framework/types"
-import { asFunction, Lifetime } from "awilix"
+import { asFunction, asValue, Lifetime } from "awilix"
 
 import * as providers from "../providers"
+import TaxProviderService from "../services/tax-provider"
+import { MedusaError } from "@medusajs/framework/utils"
+
+const PROVIDER_REGISTRATION_KEY = "tax_providers" as const
 
 const registrationFn = async (klass, container, pluginOptions) => {
+  if (!klass?.identifier) {
+    throw new MedusaError(
+      MedusaError.Types.INVALID_ARGUMENT,
+      `Trying to register a tax provider without a provider identifier.`
+    )
+  }
+
+  const key = `tp_${klass.identifier}${
+    pluginOptions.id ? `_${pluginOptions.id}` : ""
+  }`
+
   container.register({
-    [`tp_${klass.identifier}`]: asFunction(
-      (cradle) => new klass(cradle, pluginOptions),
-      { lifetime: klass.LIFE_TIME || Lifetime.SINGLETON }
-    ),
+    [key]: asFunction((cradle) => new klass(cradle, pluginOptions.options), {
+      lifetime: klass.LIFE_TIME || Lifetime.SINGLETON,
+    }),
   })
 
-  container.registerAdd(
-    "tax_providers",
-    asFunction((cradle) => new klass(cradle, pluginOptions), {
-      lifetime: klass.LIFE_TIME || Lifetime.SINGLETON,
-    })
-  )
+  container.registerAdd(PROVIDER_REGISTRATION_KEY, asValue(key))
 }
 
 export default async ({
@@ -36,7 +46,7 @@ export default async ({
 >): Promise<void> => {
   // Local providers
   for (const provider of Object.values(providers)) {
-    await registrationFn(provider, container, {})
+    await registrationFn(provider, container, { id: "system" })
   }
 
   await moduleProviderLoader({
@@ -44,4 +54,33 @@ export default async ({
     providers: options?.providers || [],
     registerServiceFn: registrationFn,
   })
+
+  await registerProvidersInDb({ container })
+}
+
+const registerProvidersInDb = async ({
+  container,
+}: LoaderOptions): Promise<void> => {
+  const providersToLoad = container.resolve<string[]>(PROVIDER_REGISTRATION_KEY)
+  const taxProviderService =
+    container.resolve<TaxProviderService>("taxProviderService")
+
+  const existingProviders = await taxProviderService.list(
+    { id: providersToLoad },
+    {}
+  )
+
+  const upsertData: CreateTaxProviderDTO[] = []
+
+  for (const { id } of existingProviders) {
+    if (!providersToLoad.includes(id)) {
+      upsertData.push({ id, is_enabled: false })
+    }
+  }
+
+  for (const id of providersToLoad) {
+    upsertData.push({ id, is_enabled: true })
+  }
+
+  await taxProviderService.upsert(upsertData)
 }

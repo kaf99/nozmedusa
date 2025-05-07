@@ -1188,55 +1188,53 @@ export default class ProductModuleService
     )
 
     const collections: InferEntityType<typeof ProductCollection>[] = []
+    const toUpdate: {
+      selector: ProductTypes.FilterableProductProps
+      data: ProductTypes.UpdateProductDTO
+    }[] = []
 
-    const updateSelectorAndData = updatedCollections.flatMap(
-      (collectionData) => {
-        const input = normalizedInput.find((c) => c.id === collectionData.id)
-        const productsToUpdate = (input as any)?.products
+    updatedCollections.forEach((collectionData) => {
+      const input = normalizedInput.find((c) => c.id === collectionData.id)
+      const productsToUpdate = (input as any)?.products
 
-        const dissociateSelector = {
-          collection_id: collectionData.id,
-        }
-        const associateSelector = {}
-
-        if (!!productsToUpdate?.length) {
-          const productIds = productsToUpdate.map((p) => p.id)
-
-          dissociateSelector["id"] = { $nin: productIds }
-          associateSelector["id"] = { $in: productIds }
-        } else if (!isDefined(productsToUpdate)) {
-          return []
-        }
-
-        const result: Record<string, any>[] = [
-          {
-            selector: dissociateSelector,
-            data: {
-              collection_id: null,
-            },
-          },
-        ]
-
-        if (isPresent(associateSelector)) {
-          result.push({
-            selector: associateSelector,
-            data: {
-              collection_id: collectionData.id,
-            },
-          })
-        }
-
-        collections.push({
-          ...collectionData,
-          products: productsToUpdate ?? [],
-        } as InferEntityType<typeof ProductCollection>)
-
-        return result
+      const dissociateSelector = {
+        collection_id: collectionData.id,
       }
-    )
+      const associateSelector = {}
 
-    if (updateSelectorAndData.length) {
-      await this.productService_.update(updateSelectorAndData, sharedContext)
+      if (isDefined(productsToUpdate)) {
+        const productIds = productsToUpdate.map((p) => p.id)
+
+        dissociateSelector["id"] = { $nin: productIds }
+        associateSelector["id"] = { $in: productIds }
+      }
+
+      if (isPresent(dissociateSelector["id"])) {
+        toUpdate.push({
+          selector: dissociateSelector,
+          data: {
+            collection_id: null,
+          },
+        })
+      }
+
+      if (isPresent(associateSelector["id"])) {
+        toUpdate.push({
+          selector: associateSelector,
+          data: {
+            collection_id: collectionData.id,
+          },
+        })
+      }
+
+      collections.push({
+        ...collectionData,
+        products: productsToUpdate ?? [],
+      } as InferEntityType<typeof ProductCollection>)
+    })
+
+    if (toUpdate.length) {
+      await this.productService_.update(toUpdate, sharedContext)
     }
 
     return collections

@@ -27,7 +27,7 @@ use the [listShippingOptionsForCartWithPricingWorkflow](../core_flows.Cart.Workf
 You can use this workflow within your own customizations or custom workflows, allowing you to wrap custom logic around to retrieve the shipping options of a cart
 in your custom flows.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/cart/workflows/list-shipping-options-for-cart.ts#L82" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/6f8ffcf53c709d40dfeb5980f3769cd0bb810e3e/packages/core/core-flows/src/cart/workflows/list-shipping-options-for-cart.ts#L82" />
 
 ## Examples
 
@@ -154,6 +154,55 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### setPricingContext
 
+This hook is executed before the shipping options are retrieved. You can consume this hook to return any custom context useful for the prices retrieval of shipping options.
+
+For example, assuming you have the following custom pricing rule:
+
+```json
+{
+  "attribute": "location_id",
+  "operator": "eq",
+  "value": "sloc_123",
+}
+```
+
+You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
+
+```ts
+import { listShippingOptionsForCartWorkflow } from "@medusajs/medusa/core-flows";
+import { StepResponse } from "@medusajs/workflows-sdk";
+
+listShippingOptionsForCartWorkflow.hooks.setPricingContext((
+  { cart, fulfillmentSetIds, additional_data }, { container }
+) => {
+  return new StepResponse({
+    location_id: "sloc_123", // Special price for in-store purchases
+  });
+});
+```
+
+The shipping options' prices will now be retrieved using the context you return.
+
+:::note
+
+Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
+
+:::
+
+#### Example
+
+```ts
+import { listShippingOptionsForCartWorkflow } from "@medusajs/medusa/core-flows"
+
+listShippingOptionsForCartWorkflow.hooks.setPricingContext(
+  (async ({ cart, fulfillmentSetIds, additional_data }, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"`object`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"fulfillmentSetIds","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"additional_data","type":"`Record<string, unknown> | undefined`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="setPricingContext"/>
+<TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-9)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"fulfillmentSetIds","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"additional_data","type":"`Record<string, unknown> | undefined`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="setPricingContext"/>

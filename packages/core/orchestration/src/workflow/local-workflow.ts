@@ -386,7 +386,8 @@ export class LocalWorkflow {
 
     const transaction = await orchestrator.retrieveExistingTransaction(
       uniqueTransactionId,
-      handler(this.container_, context)
+      handler(this.container_, context),
+      { isCancelling: context?.isCancelling }
     )
 
     return transaction

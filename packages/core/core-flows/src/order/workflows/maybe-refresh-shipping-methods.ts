@@ -68,8 +68,34 @@ export type MaybeRefreshShippingMethodsWorkflowInput = {
 export const maybeRefreshShippingMethodsWorkflowId =
   "maybe-refresh-shipping-methods"
 /**
- * This workflows refreshes shipping method an order (used in RMA flows).
- * The shipping method and the action is updated if the shipping option is calculated.
+ * This workflows refreshes shipping method prices of an order and its changes. It's used in Return Merchandise Authorization (RMA) flows. It's used
+ * by other workflows, such as {@link refreshExchangeShippingWorkflow}.
+ * 
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
+ * refreshing shipping methods in your custom flows.
+ * 
+ * @example
+ * const { result } = await maybeRefreshShippingMethodsWorkflow(container)
+ * .run({
+ *   input: {
+ *     shipping_method_id: "shipping_method_123",
+ *     order_id: "order_123",
+ *     action_id: "orchact_123",
+ *     context: {
+ *       return_id: "ret_123",
+ *       return_items: [
+ *         {
+ *            id: "orli_123",
+ *            quantity: 1,
+ *         }
+ *       ]
+ *     }
+ *  }
+ * })
+ * 
+ * @summary
+ * 
+ * Refreshes the shipping method prices of an order and its changes.
  */
 export const maybeRefreshShippingMethodsWorkflow = createWorkflow(
   maybeRefreshShippingMethodsWorkflowId,

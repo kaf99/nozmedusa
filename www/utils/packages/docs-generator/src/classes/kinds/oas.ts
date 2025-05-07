@@ -7,13 +7,17 @@ import { capitalize, kebabToTitle } from "utils"
 import { parse, stringify } from "yaml"
 import { DEFAULT_OAS_RESPONSES, SUMMARY_PLACEHOLDER } from "../../constants.js"
 import {
+  OasEvent,
   OpenApiDocument,
   OpenApiOperation,
   OpenApiSchema,
 } from "../../types/index.js"
 import formatOas from "../../utils/format-oas.js"
 import getCorrectZodTypeName from "../../utils/get-correct-zod-type-name.js"
-import { getOasOutputBasePath } from "../../utils/get-output-base-paths.js"
+import {
+  getEventsOutputBasePath,
+  getOasOutputBasePath,
+} from "../../utils/get-output-base-paths.js"
 import isZodObject from "../../utils/is-zod-object.js"
 import parseOas, { ExistingOas } from "../../utils/parse-oas.js"
 import OasExamplesGenerator from "../examples/oas.js"
@@ -32,6 +36,7 @@ import {
   isLevelExceeded,
   maybeIncrementLevel,
 } from "../../utils/level-utils.js"
+import { MedusaEvent } from "types"
 
 const RES_STATUS_REGEX = /^res[\s\S]*\.status\((\d+)\)/
 
@@ -134,6 +139,7 @@ class OasKindGenerator extends FunctionKindGenerator {
   protected oasSchemaHelper: OasSchemaHelper
   protected schemaFactory: SchemaFactory
   protected typesHelper: TypesHelper
+  protected events: MedusaEvent[] = []
 
   constructor(options: GeneratorOptions) {
     super(options)
@@ -242,6 +248,7 @@ class OasKindGenerator extends FunctionKindGenerator {
     if (!this.isAllowed(node)) {
       return await super.getDocBlock(node, options)
     }
+    this.readEventsJson()
 
     const actualNode = ts.isVariableStatement(node)
       ? this.extractFunctionNode(node)
@@ -421,6 +428,11 @@ class OasKindGenerator extends FunctionKindGenerator {
 
     // get associated workflow
     oas["x-workflow"] = this.getAssociatedWorkflow(node)
+
+    if (oas["x-workflow"]) {
+      // get associated events
+      oas["x-events"] = this.getOasEvents(oas["x-workflow"])
+    }
 
     return formatOas(oas, oasPrefix)
   }
@@ -749,6 +761,11 @@ class OasKindGenerator extends FunctionKindGenerator {
 
     // get associated workflow
     oas["x-workflow"] = this.getAssociatedWorkflow(node)
+
+    if (oas["x-workflow"]) {
+      // get associated events
+      oas["x-events"] = this.getOasEvents(oas["x-workflow"])
+    }
 
     return formatOas(oas, oasPrefix)
   }
@@ -2646,6 +2663,38 @@ class OasKindGenerator extends FunctionKindGenerator {
     return Object.keys(responseContent).some((responseType) =>
       fnText.includes(responseType)
     )
+  }
+
+  readEventsJson() {
+    if (this.events.length) {
+      return
+    }
+
+    const eventsJsonPath = getEventsOutputBasePath()
+
+    this.events = JSON.parse(readFileSync(eventsJsonPath, "utf-8"))
+  }
+
+  getOasEvents(workflow: string): OasEvent[] {
+    const events: OasEvent[] = []
+
+    const workflowEvents = this.events.filter((event) =>
+      event.workflows.includes(workflow)
+    )
+
+    if (workflowEvents.length) {
+      events.push(
+        ...workflowEvents.map((event) => ({
+          name: event.name,
+          payload: event.payload,
+          description: event.description,
+          deprecated: event.deprecated,
+          deprecated_message: event.deprecated_message,
+        }))
+      )
+    }
+
+    return events
   }
 }
 

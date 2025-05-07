@@ -46,7 +46,7 @@ const COMMON_OPTIONS_FIELDS = [
 /**
  * The data to create a shipping method for an order edit.
  */
-export type FetchShippingOptionForOrderWorkflowInput = {
+export type FetchShippingOptionForOrderWorkflowInput = AdditionalData & {
   /**
    * The ID of the shipping option to fetch.
    */
@@ -165,7 +165,7 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  */
 export const fetchShippingOptionForOrderWorkflow = createWorkflow(
   fetchShippingOptionsForOrderWorkflowId,
-  function (input: FetchShippingOptionForOrderWorkflowInput & AdditionalData) {
+  function (input: FetchShippingOptionForOrderWorkflowInput) {
     const initialOption = useRemoteQueryStep({
       entry_point: "shipping_option",
       variables: { id: input.shipping_option_id },

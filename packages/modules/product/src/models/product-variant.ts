@@ -25,6 +25,7 @@ const ProductVariant = model
       .belongsTo(() => Product, {
         mappedBy: "variants",
       })
+      .searchable()
       .nullable(),
     options: model.manyToMany(() => ProductOptionValue, {
       pivotTable: "product_variant_option",

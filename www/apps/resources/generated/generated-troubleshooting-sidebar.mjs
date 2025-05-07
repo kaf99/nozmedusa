@@ -248,6 +248,14 @@ const generatedgeneratedTroubleshootingSidebarSidebar = {
           "path": "/troubleshooting/medusa-admin/blocked-request",
           "title": "Blocked Request",
           "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "link",
+          "path": "/troubleshooting/medusa-admin/build-error",
+          "title": "index.html Error",
+          "children": []
         }
       ]
     },

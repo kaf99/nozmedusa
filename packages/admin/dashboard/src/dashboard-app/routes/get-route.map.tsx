@@ -1627,6 +1627,11 @@ export function getRouteMap({
                       ],
                     },
                     {
+                      path: "edit",
+                      lazy: () =>
+                        import("../../routes/tax-regions/tax-region-edit"),
+                    },
+                    {
                       path: "provinces/:province_id",
                       lazy: async () => {
                         const { Component, Breadcrumb, loader } = await import(

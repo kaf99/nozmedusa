@@ -25,7 +25,7 @@ you can delete custom records linked to the product variants.
 
 You can also use this workflow within your own custom workflows, allowing you to wrap custom logic around product-variant deletion.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/product/workflows/delete-product-variants.ts#L54" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/ecf3556589c1fb64ad8bdc0b88307b11a6f7c89f/packages/core/core-flows/src/product/workflows/delete-product-variants.ts#L54" />
 
 ## Examples
 
@@ -148,6 +148,61 @@ Learn more about [Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/
 
 ### productVariantsDeleted
 
+This hook is executed after the variants are deleted. You can consume this hook to perform custom actions on the deleted variants.
+
+#### Example
+
+```ts
+import { deleteProductVariantsWorkflow } from "@medusajs/medusa/core-flows"
+
+deleteProductVariantsWorkflow.hooks.productVariantsDeleted(
+  (async ({ ids }, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
 Handlers consuming this hook accept the following input.
 
-<TypeList types={[{"name":"input","type":"`object`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"ids","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="productVariantsDeleted"/>
+<TypeList types={[{"name":"input","type":"[input](../../../core_flows.Product.Workflows_Product/page.mdx#__type-19)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"ids","type":"`string`[]","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="productVariantsDeleted"/>
+
+## Emitted Events
+
+This section lists the events that are either triggered by the `emitEventStep` in the workflow, or by another workflow executed within this workflow.
+
+You can listen to these events in a subscriber, as explained in the [Subscribers](https://docs.medusajs.com/learn/fundamentals/events-and-subscribers) documentation.
+
+<Table>
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCell>
+Event
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Description
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Payload
+</Table.HeaderCell>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>
+`product-variant.deleted`
+</Table.Cell>
+      <Table.Cell>
+Emitted when product variants are deleted.
+</Table.Cell>
+      <Table.Cell>
+```ts blockStyle="inline"
+[{
+  id, // The ID of the product variant
+}]
+```
+</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>

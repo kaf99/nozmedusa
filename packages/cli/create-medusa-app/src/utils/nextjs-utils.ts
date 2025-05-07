@@ -17,7 +17,7 @@ export async function askForNextjsStarter(): Promise<boolean> {
     {
       type: "confirm",
       name: "installNextjs",
-      message: `Would you like to create the Next.js storefront? You can also create it later`,
+      message: `Would you like to install the Next.js Starter Storefront? You can also install it later.`,
       default: false,
     },
   ])
@@ -42,7 +42,7 @@ export async function installNextjsStarter({
 }: InstallOptions): Promise<string> {
   factBoxOptions.interval = displayFactBox({
     ...factBoxOptions,
-    title: "Installing Next.js Storefront...",
+    title: "Installing Next.js Starter Storefront...",
   })
 
   let nextjsDirectory = `${directoryName}-storefront`
@@ -94,7 +94,7 @@ export async function installNextjsStarter({
     }
 
     logMessage({
-      message: `An error occurred while installing Next.js storefront: ${e}`,
+      message: `An error occurred while installing Next.js Starter Storefront: ${e}`,
       type: "error",
     })
   }
@@ -111,7 +111,7 @@ export async function installNextjsStarter({
 
   displayFactBox({
     ...factBoxOptions,
-    message: `Installed Next.js Starter successfully in the ${nextjsDirectory} directory.`,
+    message: `Installed Next.js Starter Storefront successfully in the ${nextjsDirectory} directory.`,
   })
 
   return nextjsDirectory

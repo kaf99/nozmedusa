@@ -31,6 +31,7 @@ export type WorkflowOrchestratorRunOptions<T> = Omit<
   "container"
 > & {
   transactionId?: string
+  runId?: string
   container?: ContainerLike
 }
 
@@ -140,7 +141,7 @@ export class WorkflowOrchestratorService {
     let { throwOnError, context } = options ?? {}
     throwOnError ??= true
     context ??= {}
-    context.transactionId = transactionId ?? ulid()
+    context.transactionId = transactionId ?? "auto-" + ulid()
 
     const workflowId = isString(workflowIdOrWorkflow)
       ? workflowIdOrWorkflow
@@ -259,7 +260,10 @@ export class WorkflowOrchestratorService {
     const transaction = await this.getRunningTransaction(
       workflowId,
       transactionId,
-      options
+      {
+        ...options,
+        isCancelling: true,
+      }
     )
 
     if (!transaction) {

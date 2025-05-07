@@ -1,5 +1,6 @@
 import {
   DistributedTransactionType,
+  TransactionState,
   WorkflowManager,
 } from "@medusajs/framework/orchestration"
 import {
@@ -10,6 +11,7 @@ import {
 import {
   Module,
   Modules,
+  promiseAll,
   TransactionHandlerType,
 } from "@medusajs/framework/utils"
 import {
@@ -21,6 +23,7 @@ import {
 import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { WorkflowsModuleService } from "@services"
 import { asFunction } from "awilix"
+import { ulid } from "ulid"
 import { setTimeout as setTimeoutSync } from "timers"
 import { setTimeout as setTimeoutPromise } from "timers/promises"
 import "../__fixtures__"
@@ -29,6 +32,8 @@ import {
   conditionalStep3Invoke,
   workflow2Step2Invoke,
   workflow2Step3Invoke,
+  workflowNotIdempotentWithRetentionStep2Invoke,
+  workflowNotIdempotentWithRetentionStep3Invoke,
 } from "../__fixtures__"
 import {
   eventGroupWorkflowId,
@@ -43,7 +48,7 @@ const failTrap = (done) => {
   setTimeoutSync(() => {
     // REF:https://stackoverflow.com/questions/78028715/jest-async-test-with-event-emitter-isnt-ending
     console.warn(
-      "Jest is breaking the event emit with its debouncer. This allows to continue the test by managing the timeout of the test manually."
+      `Jest is breaking the event emit with its debouncer. This allows to continue the test by managing the timeout of the test manually.`
     )
     done()
   }, 5000)
@@ -94,8 +99,53 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
               serviceName: "workflows",
               field: "workflowExecution",
             },
+            run_id: {
+              linkable: "workflow_execution_run_id",
+              entity: "WorkflowExecution",
+              primaryKey: "run_id",
+              serviceName: "workflows",
+              field: "workflowExecution",
+            },
           },
         })
+      })
+
+      it("should prevent executing twice the same workflow in perfect concurrency with the same transactionId and non idempotent and not async but retention time is set", async () => {
+        const transactionId = "transaction_id"
+        const workflowId = "workflow_id" + ulid()
+
+        const step1 = createStep("step1", async () => {
+          await setTimeoutPromise(100)
+          return new StepResponse("step1")
+        })
+
+        createWorkflow(
+          {
+            name: workflowId,
+            retentionTime: 1000,
+          },
+          function () {
+            return new WorkflowResponse(step1())
+          }
+        )
+
+        const [result1, result2] = await promiseAll([
+          workflowOrcModule.run(workflowId, {
+            input: {},
+            transactionId,
+          }),
+          workflowOrcModule
+            .run(workflowId, {
+              input: {},
+              transactionId,
+            })
+            .catch((e) => e),
+        ])
+
+        expect(result1.result).toEqual("step1")
+        expect(result2.message).toEqual(
+          "Transaction already started for transactionId: " + transactionId
+        )
       })
 
       it("should execute an async workflow keeping track of the event group id provided in the context", async () => {
@@ -232,6 +282,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
                     { obj: "return from 2" },
                     { obj: "return from 3" },
                   ])
+                  done()
                 }
               },
             })
@@ -309,13 +360,13 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             stepResponse: { uhuuuu: "yeaah!" },
           })
 
-          expect(workflow2Step2Invoke).toBeCalledTimes(2)
+          expect(workflow2Step2Invoke).toHaveBeenCalledTimes(2)
           expect(workflow2Step2Invoke.mock.calls[0][0]).toEqual({ hey: "oh" })
           expect(workflow2Step2Invoke.mock.calls[1][0]).toEqual({
             hey: "async hello",
           })
 
-          expect(workflow2Step3Invoke).toBeCalledTimes(1)
+          expect(workflow2Step3Invoke).toHaveBeenCalledTimes(1)
           expect(workflow2Step3Invoke.mock.calls[0][0]).toEqual({
             uhuuuu: "yeaah!",
           })
@@ -325,6 +376,72 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           }))
 
           expect(executionsList).toHaveLength(1)
+        })
+
+        it("should return a list of workflow executions and keep it saved when there is a retentionTime set but allow for executing the same workflow multiple times with different run_id if the workflow is considered done", async () => {
+          const transactionId = "transaction_1"
+          await workflowOrcModule.run(
+            "workflow_not_idempotent_with_retention",
+            {
+              input: {
+                value: "123",
+              },
+              transactionId,
+            }
+          )
+
+          let { data: executionsList } = await query.graph({
+            entity: "workflow_executions",
+            fields: ["id", "run_id", "transaction_id"],
+          })
+
+          expect(executionsList).toHaveLength(1)
+
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke
+          ).toHaveBeenCalledTimes(2)
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke.mock.calls[0][0]
+          ).toEqual({ hey: "oh" })
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke.mock.calls[1][0]
+          ).toEqual({
+            hey: "hello",
+          })
+          expect(
+            workflowNotIdempotentWithRetentionStep3Invoke
+          ).toHaveBeenCalledTimes(1)
+          expect(
+            workflowNotIdempotentWithRetentionStep3Invoke.mock.calls[0][0]
+          ).toEqual({
+            notAsyncResponse: "hello",
+          })
+
+          await workflowOrcModule.run(
+            "workflow_not_idempotent_with_retention",
+            {
+              input: {
+                value: "123",
+              },
+              transactionId,
+            }
+          )
+
+          const { data: executionsList2 } = await query.graph({
+            entity: "workflow_executions",
+            filters: {
+              id: { $nin: executionsList.map((e) => e.id) },
+            },
+            fields: ["id", "run_id", "transaction_id"],
+          })
+
+          expect(executionsList2).toHaveLength(1)
+          expect(executionsList2[0].run_id).not.toEqual(
+            executionsList[0].run_id
+          )
+          expect(executionsList2[0].transaction_id).toEqual(
+            executionsList[0].transaction_id
+          )
         })
 
         it("should revert the entire transaction when a step timeout expires", async () => {
@@ -402,6 +519,37 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           expect(transaction.getFlow().state).toEqual("reverted")
         })
 
+        it("should cancel and revert a non idempotent completed workflow with rentention time given a specific transaction id", async () => {
+          const workflowId = "workflow_not_idempotent_with_retention"
+          const transactionId = "trx_123"
+
+          await workflowOrcModule.run(workflowId, {
+            input: {
+              value: "123",
+            },
+            transactionId,
+          })
+
+          let executions = await workflowOrcModule.listWorkflowExecutions({
+            transaction_id: transactionId,
+          })
+
+          expect(executions.length).toEqual(1)
+          expect(executions[0].state).toEqual(TransactionState.DONE)
+          expect(executions[0].transaction_id).toEqual(transactionId)
+
+          await workflowOrcModule.cancel(workflowId, {
+            transactionId,
+          })
+
+          executions = await workflowOrcModule.listWorkflowExecutions({
+            transaction_id: transactionId,
+          })
+
+          expect(executions.length).toEqual(1)
+          expect(executions[0].state).toEqual(TransactionState.REVERTED)
+        })
+
         it("should run conditional steps if condition is true", (done) => {
           void workflowOrcModule.subscribe({
             workflowId: "workflow_conditional_step",
@@ -449,8 +597,8 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
 
       describe("Scheduled workflows", () => {
         beforeEach(() => {
-          jest.useFakeTimers()
           jest.clearAllMocks()
+          jest.useFakeTimers()
 
           // Register test-value in the container for all tests
           const sharedContainer =

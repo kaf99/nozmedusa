@@ -38,7 +38,7 @@ export const CartWorkflowEvents = {
   CUSTOMER_UPDATED: "cart.customer_updated",
   /**
    * Emitted when the cart's region is updated. This
-   * event is emitted alongside the {@link CartWorkflowEvents.UPDATED} event.
+   * event is emitted alongside the `cart.updated` event.
    * 
    * @eventPayload
    * ```ts
