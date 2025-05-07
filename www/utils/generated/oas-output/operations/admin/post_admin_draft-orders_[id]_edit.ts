@@ -3,7 +3,8 @@
  * operationId: PostDraftOrdersIdEdit
  * summary: Create a Draft Order Edit
  * x-sidebar-summary: Create Edit
- * description: Create an edit on a draft order. This will allow you to make changes to the draft order's items, shipping methods, or promotions. Once you've made the necessar changes, you can later either request the edit (which requires a confirmation from the customer), or force-confirm the edit.
+ * description: Create an edit on a draft order. This will allow you to make changes to the draft order's items, shipping methods, or promotions. Once you've made the necessar changes, you can later
+ *   either request the edit (which requires a confirmation from the customer), or force-confirm the edit.
  * x-authenticated: true
  * parameters:
  *   - name: id
@@ -57,6 +58,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: beginDraftOrderEditWorkflow
+ * x-events: []
  * 
 */
 

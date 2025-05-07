@@ -1679,6 +1679,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createApiKeysWorkflow
+      x-events: []
   /admin/api-keys/{id}:
     get:
       operationId: GetApiKeysId
@@ -1832,6 +1833,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateApiKeysWorkflow
+      x-events: []
     delete:
       operationId: DeleteApiKeysId
       summary: Delete an Api Key
@@ -1913,6 +1915,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteApiKeysWorkflow
+      x-events: []
   /admin/api-keys/{id}/revoke:
     post:
       operationId: PostApiKeysIdRevoke
@@ -1991,6 +1994,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: revokeApiKeysWorkflow
+      x-events: []
   /admin/api-keys/{id}/sales-channels:
     post:
       operationId: PostApiKeysIdSalesChannels
@@ -2088,6 +2092,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: linkSalesChannelsToApiKeyWorkflow
+      x-events: []
   /admin/campaigns:
     get:
       operationId: GetCampaigns
@@ -2366,6 +2371,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCampaignsWorkflow
+      x-events: []
   /admin/campaigns/{id}:
     get:
       operationId: GetCampaignsId
@@ -2580,6 +2586,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCampaignsWorkflow
+      x-events: []
     delete:
       operationId: DeleteCampaignsId
       summary: Delete a Campaign
@@ -2661,6 +2668,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCampaignsWorkflow
+      x-events: []
   /admin/campaigns/{id}/promotions:
     post:
       operationId: PostCampaignsIdPromotions
@@ -2758,6 +2766,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addOrRemoveCampaignPromotionsWorkflow
+      x-events: []
   /admin/claims:
     get:
       operationId: GetClaims
@@ -3693,6 +3702,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginClaimOrderWorkflow
+      x-events: []
   /admin/claims/{id}:
     get:
       operationId: GetClaimsId
@@ -3831,6 +3841,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelOrderClaimWorkflow
+      x-events: []
   /admin/claims/{id}/claim-items:
     post:
       operationId: PostClaimsIdClaimItems
@@ -3916,6 +3927,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderClaimItemWorkflow
+      x-events: []
   /admin/claims/{id}/claim-items/{action_id}:
     post:
       operationId: PostClaimsIdClaimItemsAction_id
@@ -4008,6 +4020,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateClaimItemWorkflow
+      x-events: []
     delete:
       operationId: DeleteClaimsIdClaimItemsAction_id
       summary: Remove a Claim Item from a Claim
@@ -4092,6 +4105,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemClaimActionWorkflow
+      x-events: []
   /admin/claims/{id}/inbound/items:
     post:
       operationId: PostClaimsIdInboundItems
@@ -4171,6 +4185,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderClaimRequestItemReturnWorkflow
+      x-events: []
   /admin/claims/{id}/inbound/items/{action_id}:
     post:
       operationId: PostClaimsIdInboundItemsAction_id
@@ -4254,6 +4269,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateRequestItemReturnWorkflow
+      x-events: []
     delete:
       operationId: DeleteClaimsIdInboundItemsAction_id
       summary: Remove an Inbound Item from Claim
@@ -4326,6 +4342,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemReturnActionWorkflow
+      x-events: []
   /admin/claims/{id}/inbound/shipping-method:
     post:
       operationId: PostClaimsIdInboundShippingMethod
@@ -4405,6 +4422,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createClaimShippingMethodWorkflow
+      x-events: []
   /admin/claims/{id}/inbound/shipping-method/{action_id}:
     post:
       operationId: PostClaimsIdInboundShippingMethodAction_id
@@ -4498,6 +4516,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReturnShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteClaimsIdInboundShippingMethodAction_id
       summary: Remove Inbound Shipping Method from Claim
@@ -4570,6 +4589,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeClaimShippingMethodWorkflow
+      x-events: []
   /admin/claims/{id}/outbound/items:
     post:
       operationId: PostClaimsIdOutboundItems
@@ -4657,6 +4677,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderClaimAddNewItemWorkflow
+      x-events: []
   /admin/claims/{id}/outbound/items/{action_id}:
     post:
       operationId: PostClaimsIdOutboundItemsAction_id
@@ -4750,6 +4771,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateClaimAddItemWorkflow
+      x-events: []
     delete:
       operationId: DeleteClaimsIdOutboundItemsAction_id
       summary: Remove an Outbound Item from Claim
@@ -4832,6 +4854,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeAddItemClaimActionWorkflow
+      x-events: []
   /admin/claims/{id}/outbound/shipping-method:
     post:
       operationId: PostClaimsIdOutboundShippingMethod
@@ -4921,6 +4944,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createClaimShippingMethodWorkflow
+      x-events: []
   /admin/claims/{id}/outbound/shipping-method/{action_id}:
     post:
       operationId: PostClaimsIdOutboundShippingMethodAction_id
@@ -5014,6 +5038,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateClaimShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteClaimsIdOutboundShippingMethodAction_id
       summary: Remove Outbound Shipping Method from Claim
@@ -5096,6 +5121,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeClaimShippingMethodWorkflow
+      x-events: []
   /admin/claims/{id}/request:
     post:
       operationId: PostClaimsIdRequest
@@ -5172,6 +5198,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmClaimRequestWorkflow
+      x-events:
+        - name: order.claim_created
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              claim_id, // The ID of the claim
+            }
+            ```
+          description: Emitted when a claim is created for an order.
+          deprecated: false
     delete:
       operationId: DeleteClaimsIdRequest
       summary: Cancel Claim Request
@@ -5235,6 +5272,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelBeginOrderClaimWorkflow
+      x-events: []
   /admin/collections:
     get:
       operationId: GetCollections
@@ -6168,6 +6206,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCollectionsWorkflow
+      x-events:
+        - name: product-collection.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product collection
+            }]
+            ```
+          description: Emitted when product collections are created.
+          deprecated: false
   /admin/collections/{id}:
     get:
       operationId: GetCollectionsId
@@ -6321,6 +6369,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCollectionsWorkflow
+      x-events:
+        - name: product-collection.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product collection
+            }]
+            ```
+          description: Emitted when product collections are updated.
+          deprecated: false
     delete:
       operationId: DeleteCollectionsId
       summary: Delete a Collection
@@ -6382,6 +6440,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCollectionsWorkflow
+      x-events:
+        - name: product-collection.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product collection
+            }]
+            ```
+          description: Emitted when product collections are deleted.
+          deprecated: false
   /admin/collections/{id}/products:
     post:
       operationId: PostCollectionsIdProducts
@@ -6479,6 +6547,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchLinkProductsToCollectionWorkflow
+      x-events: []
   /admin/currencies:
     get:
       operationId: GetCurrencies
@@ -7662,6 +7731,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCustomerGroupsWorkflow
+      x-events: []
   /admin/customer-groups/{id}:
     get:
       operationId: GetCustomerGroupsId
@@ -7816,6 +7886,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomerGroupsWorkflow
+      x-events: []
     delete:
       operationId: DeleteCustomerGroupsId
       summary: Delete a Customer Group
@@ -7896,6 +7967,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCustomerGroupsWorkflow
+      x-events: []
   /admin/customer-groups/{id}/customers:
     post:
       operationId: PostCustomerGroupsIdCustomers
@@ -7993,6 +8065,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: linkCustomersToCustomerGroupWorkflow
+      x-events: []
   /admin/customers:
     get:
       operationId: GetCustomers
@@ -11518,6 +11591,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCustomersWorkflow
+      x-events:
+        - name: customer.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is created.
+          deprecated: false
   /admin/customers/{id}:
     get:
       operationId: GetCustomersId
@@ -11717,6 +11800,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomersWorkflow
+      x-events:
+        - name: customer.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is updated.
+          deprecated: false
     delete:
       operationId: DeleteCustomersId
       summary: Delete a Customer
@@ -11796,6 +11889,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeCustomerAccountWorkflow
+      x-events:
+        - name: customer.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is deleted.
+          deprecated: false
   /admin/customers/{id}/addresses:
     get:
       operationId: GetCustomersIdAddresses
@@ -11904,13 +12007,21 @@ paths:
             oneOf:
               - type: string
                 title: province
-                description: Filter by a province.
+                description: Filter by an ISO 3166-2 province code. Must be lower-case.
+                example: us-ca
+                externalDocs:
+                  url: https://en.wikipedia.org/wiki/ISO_3166-2
+                  description: Learn more about ISO 3166-2
               - type: array
-                description: Filter by provinces.
+                description: Filter by ISO 3166-2 provinces.
                 items:
                   type: string
                   title: province
-                  description: A province code.
+                  description: A ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
         - name: postal_code
           in: query
           required: false
@@ -12113,7 +12224,11 @@ paths:
                     province:
                       type: string
                       title: province
-                      description: The address's province.
+                      description: The address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
                     postal_code:
                       type: string
                       title: postal_code
@@ -12170,7 +12285,7 @@ paths:
               "address_2": "{value}",
               "city": "{value}",
               "country_code": "{value}",
-              "province": "{value}",
+              "province": "us-ca",
               "postal_code": "{value}",
               "phone": "{value}",
               "metadata": {}
@@ -12197,6 +12312,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCustomerAddressesWorkflow
+      x-events: []
   /admin/customers/{id}/addresses/{address_id}:
     get:
       operationId: GetCustomersIdAddressesAddress_id
@@ -12371,7 +12487,11 @@ paths:
                     province:
                       type: string
                       title: province
-                      description: The address's province.
+                      description: The address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
                     postal_code:
                       type: string
                       title: postal_code
@@ -12455,6 +12575,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomerAddressesWorkflow
+      x-events: []
     delete:
       operationId: DeleteCustomersIdAddressesAddress_id
       summary: Remove an Address from Customer
@@ -12555,6 +12676,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCustomerAddressesWorkflow
+      x-events: []
   /admin/customers/{id}/customer-groups:
     post:
       operationId: PostCustomersIdCustomerGroups
@@ -12656,6 +12778,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: linkCustomerGroupsToCustomerWorkflow
+      x-events: []
   /admin/draft-orders:
     get:
       operationId: GetDraftOrders
@@ -14126,6 +14249,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrdersListWorkflow
+      x-events: []
     post:
       operationId: PostDraftOrders
       summary: Create Draft Order
@@ -14232,7 +14356,11 @@ paths:
                         province:
                           type: string
                           title: province
-                          description: The billing address's province.
+                          description: The billing address's ISO 3166-2 province code. Must be lower-case.
+                          example: us-ca
+                          externalDocs:
+                            url: https://en.wikipedia.org/wiki/ISO_3166-2
+                            description: Learn more about ISO 3166-2
                         postal_code:
                           type: string
                           title: postal_code
@@ -14291,7 +14419,11 @@ paths:
                         province:
                           type: string
                           title: province
-                          description: The shipping address's province.
+                          description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+                          example: us-ca
+                          externalDocs:
+                            url: https://en.wikipedia.org/wiki/ISO_3166-2
+                            description: Learn more about ISO 3166-2
                         postal_code:
                           type: string
                           title: postal_code
@@ -14510,6 +14642,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderWorkflow
+      x-events: []
   /admin/draft-orders/{id}:
     get:
       operationId: GetDraftOrdersId
@@ -14585,6 +14718,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrderDetailWorkflow
+      x-events: []
     post:
       operationId: PostDraftOrdersId
       summary: Update a Draft Order
@@ -14666,6 +14800,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateDraftOrderWorkflow
+      x-events:
+        - name: order.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: |-
+            Emitted when the details of an order or draft order is updated. This
+            doesn't include updates made by an edit.
+          deprecated: false
   /admin/draft-orders/{id}/convert-to-order:
     post:
       operationId: PostDraftOrdersIdConvertToOrder
@@ -14738,6 +14884,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: convertDraftOrderWorkflow
+      x-events:
+        - name: order.placed
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: |-
+            Emitted when an order is placed, or when a draft order is converted to an
+            order.
+          deprecated: false
   /admin/draft-orders/{id}/edit:
     post:
       operationId: PostDraftOrdersIdEdit
@@ -14797,6 +14955,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginDraftOrderEditWorkflow
+      x-events: []
     delete:
       operationId: DeleteDraftOrdersIdEdit
       summary: Cancel Edit on Draft Order
@@ -14855,6 +15014,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelDraftOrderEditWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/confirm:
     post:
       operationId: PostDraftOrdersIdEditConfirm
@@ -14914,6 +15074,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmDraftOrderEditWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/items:
     post:
       operationId: PostDraftOrdersIdEditItems
@@ -14985,6 +15146,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addDraftOrderItemsWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/items/item/{item_id}:
     post:
       operationId: PostDraftOrdersIdEditItemsItemItem_id
@@ -15061,6 +15223,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateDraftOrderItemWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/items/{action_id}:
     post:
       operationId: PostDraftOrdersIdEditItemsAction_id
@@ -15140,6 +15303,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateDraftOrderActionItemWorkflow
+      x-events: []
     delete:
       operationId: DeleteDraftOrdersIdEditItemsAction_id
       summary: Remove Item from Draft Order Edit
@@ -15207,6 +15371,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeDraftOrderActionItemWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/promotions:
     post:
       operationId: PostDraftOrdersIdEditPromotions
@@ -15283,6 +15448,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addDraftOrderPromotionWorkflow
+      x-events: []
     delete:
       operationId: DeleteDraftOrdersIdEditPromotions
       summary: Remove Promotions from Draft Order Edit
@@ -15349,6 +15515,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AdminRemoveDraftOrderPromotions'
+      x-events: []
   /admin/draft-orders/{id}/edit/request:
     post:
       operationId: PostDraftOrdersIdEditRequest
@@ -15408,6 +15575,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: requestDraftOrderEditWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/shipping-methods:
     post:
       operationId: PostDraftOrdersIdEditShippingMethods
@@ -15478,6 +15646,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addDraftOrderShippingMethodsWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/shipping-methods/method/{method_id}:
     post:
       operationId: PostDraftOrdersIdEditShippingMethodsMethodMethod_id
@@ -15550,6 +15719,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateDraftOrderShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteDraftOrdersIdEditShippingMethodsMethodMethod_id
       summary: Remove Shipping Method from Draft Order Edit
@@ -15617,6 +15787,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeDraftOrderShippingMethodWorkflow
+      x-events: []
   /admin/draft-orders/{id}/edit/shipping-methods/{action_id}:
     post:
       operationId: PostDraftOrdersIdEditShippingMethodsAction_id
@@ -15696,6 +15867,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateDraftOrderActionShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteDraftOrdersIdEditShippingMethodsAction_id
       summary: Remove New Shipping Method from Draft Order
@@ -15763,6 +15935,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeDraftOrderActionShippingMethodWorkflow
+      x-events: []
   /admin/exchanges:
     get:
       operationId: GetExchanges
@@ -16697,6 +16870,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginExchangeOrderWorkflow
+      x-events: []
   /admin/exchanges/{id}:
     get:
       operationId: GetExchangesId
@@ -16835,6 +17009,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelOrderExchangeWorkflow
+      x-events: []
   /admin/exchanges/{id}/inbound/items:
     post:
       operationId: PostExchangesIdInboundItems
@@ -16908,6 +17083,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderExchangeRequestItemReturnWorkflow
+      x-events: []
   /admin/exchanges/{id}/inbound/items/{action_id}:
     post:
       operationId: PostExchangesIdInboundItemsAction_id
@@ -16991,6 +17167,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateRequestItemReturnWorkflow
+      x-events: []
     delete:
       operationId: DeleteExchangesIdInboundItemsAction_id
       summary: Remove Inbound Item from Exchange
@@ -17063,6 +17240,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemReturnActionWorkflow
+      x-events: []
   /admin/exchanges/{id}/inbound/shipping-method:
     post:
       operationId: PostExchangesIdInboundShippingMethod
@@ -17137,6 +17315,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createExchangeShippingMethodWorkflow
+      x-events: []
   /admin/exchanges/{id}/inbound/shipping-method/{action_id}:
     post:
       operationId: PostExchangesIdInboundShippingMethodAction_id
@@ -17230,6 +17409,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReturnShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteExchangesIdInboundShippingMethodAction_id
       summary: Remove Inbound Shipping Method from Exchange
@@ -17302,6 +17482,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeReturnShippingMethodWorkflow
+      x-events: []
   /admin/exchanges/{id}/outbound/items:
     post:
       operationId: PostExchangesIdOutboundItems
@@ -17384,6 +17565,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderExchangeAddNewItemWorkflow
+      x-events: []
   /admin/exchanges/{id}/outbound/items/{action_id}:
     post:
       operationId: PostExchangesIdOutboundItemsAction_id
@@ -17477,6 +17659,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateExchangeAddItemWorkflow
+      x-events: []
     delete:
       operationId: DeleteExchangesIdOutboundItemsAction_id
       summary: Remove Outbound Item from Exchange
@@ -17559,6 +17742,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemExchangeActionWorkflow
+      x-events: []
   /admin/exchanges/{id}/outbound/shipping-method:
     post:
       operationId: PostExchangesIdOutboundShippingMethod
@@ -17643,6 +17827,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createExchangeShippingMethodWorkflow
+      x-events: []
   /admin/exchanges/{id}/outbound/shipping-method/{action_id}:
     post:
       operationId: PostExchangesIdOutboundShippingMethodAction_id
@@ -17736,6 +17921,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateExchangeShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteExchangesIdOutboundShippingMethodAction_id
       summary: Remove Outbound Shipping Method from Exchange
@@ -17818,6 +18004,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeExchangeShippingMethodWorkflow
+      x-events: []
   /admin/exchanges/{id}/request:
     post:
       operationId: PostExchangesIdRequest
@@ -17890,6 +18077,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmExchangeRequestWorkflow
+      x-events:
+        - name: order.exchange_created
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              exchange_id, // The ID of the exchange
+            }
+            ```
+          description: Emitted when an exchange is created for an order.
+          deprecated: false
     delete:
       operationId: DeleteExchangesIdRequest
       summary: Cancel Exchange Request
@@ -17951,6 +18149,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelBeginOrderExchangeWorkflow
+      x-events: []
   /admin/fulfillment-providers:
     get:
       operationId: GetFulfillmentProviders
@@ -18211,6 +18410,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteFulfillmentSetsWorkflow
+      x-events: []
   /admin/fulfillment-sets/{id}/service-zones:
     post:
       operationId: PostFulfillmentSetsIdServiceZones
@@ -18299,7 +18499,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                       - type: object
                         description: A city geo zone
                         required:
@@ -18324,7 +18528,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                           city:
                             type: string
                             title: city
@@ -18354,7 +18562,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                           city:
                             type: string
                             title: city
@@ -18417,6 +18629,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createServiceZonesWorkflow
+      x-events: []
   /admin/fulfillment-sets/{id}/service-zones/{zone_id}:
     get:
       operationId: GetFulfillmentSetsIdServiceZonesZone_id
@@ -18593,7 +18806,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                           id:
                             type: string
                             title: id
@@ -18626,7 +18843,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                           id:
                             type: string
                             title: id
@@ -18660,7 +18881,11 @@ paths:
                           province_code:
                             type: string
                             title: province_code
-                            description: The geo zone's province code.
+                            description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                            example: us-ca
+                            externalDocs:
+                              url: https://en.wikipedia.org/wiki/ISO_3166-2
+                              description: Learn more about ISO 3166-2
                           postal_expression:
                             type: object
                             description: The geo zone's postal expression or ZIP code.
@@ -18723,6 +18948,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateServiceZonesWorkflow
+      x-events: []
     delete:
       operationId: DeleteFulfillmentSetsIdServiceZonesZone_id
       summary: Remove a Service Zone from Fulfillment Set
@@ -18792,6 +19018,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteServiceZonesWorkflow
+      x-events: []
   /admin/fulfillments:
     post:
       operationId: PostFulfillments
@@ -18871,7 +19098,7 @@ paths:
                 "address_2": "{value}",
                 "city": "{value}",
                 "country_code": "{value}",
-                "province": "{value}",
+                "province": "us-ca",
                 "postal_code": "{value}",
                 "metadata": {}
               },
@@ -18924,6 +19151,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createFulfillmentWorkflow
+      x-events: []
   /admin/fulfillments/{id}/cancel:
     post:
       operationId: PostFulfillmentsIdCancel
@@ -18999,6 +19227,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelFulfillmentWorkflow
+      x-events: []
   /admin/fulfillments/{id}/shipment:
     post:
       operationId: PostFulfillmentsIdShipment
@@ -19095,6 +19324,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createShipmentWorkflow
+      x-events: []
   /admin/inventory-items:
     get:
       operationId: GetInventoryItems
@@ -19640,6 +19870,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createInventoryItemsWorkflow
+      x-events: []
   /admin/inventory-items/location-levels/batch:
     post:
       operationId: PostInventoryItemsLocationLevelsBatch
@@ -19729,6 +19960,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchInventoryItemLevelsWorkflow
+      x-events: []
   /admin/inventory-items/{id}:
     get:
       operationId: GetInventoryItemsId
@@ -19951,6 +20183,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateInventoryItemsWorkflow
+      x-events: []
     delete:
       operationId: DeleteInventoryItemsId
       summary: Delete Inventory Item
@@ -20031,6 +20264,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteInventoryItemWorkflow
+      x-events: []
   /admin/inventory-items/{id}/location-levels:
     get:
       operationId: GetInventoryItemsIdLocationLevels
@@ -20257,6 +20491,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createInventoryLevelsWorkflow
+      x-events: []
   /admin/inventory-items/{id}/location-levels/batch:
     post:
       operationId: PostInventoryItemsIdLocationLevelsBatch
@@ -20327,6 +20562,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchInventoryItemLevelsWorkflow
+      x-events: []
   /admin/inventory-items/{id}/location-levels/{location_id}:
     post:
       operationId: PostInventoryItemsIdLocationLevelsLocation_id
@@ -20427,6 +20663,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateInventoryLevelsWorkflow
+      x-events: []
     delete:
       operationId: DeleteInventoryItemsIdLocationLevelsLocation_id
       summary: Remove Inventory Level of Inventory Item
@@ -20534,6 +20771,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteInventoryLevelsWorkflow
+      x-events: []
   /admin/invites:
     get:
       operationId: GetInvites
@@ -21154,6 +21392,18 @@ paths:
         - api_token: []
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: invite.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the invite
+            }]
+            ```
+          description: |-
+            Emitted when invites are created. You can listen to this event
+            to send an email to the invited users, for example.
+          deprecated: false
   /admin/invites/accept:
     post:
       operationId: PostInvitesAccept
@@ -21261,6 +21511,25 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: user.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the user
+            }]
+            ```
+          description: Emitted when users are created.
+          deprecated: false
+        - name: invite.accepted
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the invite
+            }
+            ```
+          description: Emitted when an invite is accepted.
+          deprecated: false
   /admin/invites/{id}:
     get:
       operationId: GetInvitesId
@@ -21408,6 +21677,16 @@ paths:
         - api_token: []
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: invite.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the invite
+            }]
+            ```
+          description: Emitted when invites are deleted.
+          deprecated: false
   /admin/invites/{id}/resend:
     post:
       operationId: PostInvitesIdResend
@@ -21478,6 +21757,19 @@ paths:
         - api_token: []
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: invite.resent
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the invite
+            }]
+            ```
+          description: |-
+            Emitted when invites should be resent because their token was
+            refreshed. You can listen to this event to send an email to the invited users,
+            for example.
+          deprecated: false
   /admin/notifications:
     get:
       operationId: GetNotifications
@@ -21765,6 +22057,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginOrderEditOrderWorkflow
+      x-events: []
   /admin/order-edits/{id}:
     delete:
       operationId: DeleteOrderEditsId
@@ -21846,6 +22139,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelBeginOrderEditWorkflow
+      x-events:
+        - name: order-edit.canceled
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
+            }
+            ```
+          description: Emitted when an order edit request is canceled.
+          deprecated: false
   /admin/order-edits/{id}/confirm:
     post:
       operationId: PostOrderEditsIdConfirm
@@ -21908,6 +22212,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmOrderEditRequestWorkflow
+      x-events:
+        - name: order-edit.confirmed
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
+            ```
+          description: Emitted when an order edit request is confirmed.
+          deprecated: false
   /admin/order-edits/{id}/items:
     post:
       operationId: PostOrderEditsIdItems
@@ -21983,6 +22297,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderEditAddNewItemWorkflow
+      x-events: []
   /admin/order-edits/{id}/items/item/{item_id}:
     post:
       operationId: PostOrderEditsIdItemsItemItem_id
@@ -22067,6 +22382,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: orderEditUpdateItemQuantityWorkflow
+      x-events: []
   /admin/order-edits/{id}/items/{action_id}:
     post:
       operationId: PostOrderEditsIdItemsAction_id
@@ -22150,6 +22466,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateOrderEditAddItemWorkflow
+      x-events: []
     delete:
       operationId: DeleteOrderEditsIdItemsAction_id
       summary: Remove Item from Order Edit
@@ -22224,6 +22541,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemOrderEditActionWorkflow
+      x-events: []
   /admin/order-edits/{id}/request:
     post:
       operationId: PostOrderEditsIdRequest
@@ -22286,6 +22604,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: requestOrderEditRequestWorkflow
+      x-events:
+        - name: order-edit.requested
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
+            }
+            ```
+          description: Emitted when an order edit is requested.
+          deprecated: false
   /admin/order-edits/{id}/shipping-method:
     post:
       operationId: PostOrderEditsIdShippingMethod
@@ -22341,6 +22670,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderEditShippingMethodWorkflow
+      x-events: []
   /admin/order-edits/{id}/shipping-method/{action_id}:
     post:
       operationId: PostOrderEditsIdShippingMethodAction_id
@@ -22401,6 +22731,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateOrderEditShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteOrderEditsIdShippingMethodAction_id
       summary: Remove Shipping Method from Order Edit
@@ -22455,6 +22786,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeOrderEditShippingMethodWorkflow
+      x-events: []
   /admin/orders:
     get:
       operationId: GetOrders
@@ -23136,6 +23468,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrdersListWorkflow
+      x-events: []
   /admin/orders/{id}:
     get:
       operationId: GetOrdersId
@@ -23256,6 +23589,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrderDetailWorkflow
+      x-events: []
     post:
       operationId: PostOrdersId
       summary: Update Order
@@ -23345,6 +23679,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateOrderWorkflow
+      x-events:
+        - name: order.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: |-
+            Emitted when the details of an order or draft order is updated. This
+            doesn't include updates made by an edit.
+          deprecated: false
   /admin/orders/{id}/archive:
     post:
       operationId: PostOrdersIdArchive
@@ -23404,6 +23750,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: archiveOrderWorkflow
+      x-events:
+        - name: order.archived
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the order
+            }]
+            ```
+          description: Emitted when an order is archived.
+          deprecated: false
   /admin/orders/{id}/cancel:
     post:
       operationId: PostOrdersIdCancel
@@ -23484,6 +23840,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelOrderWorkflow
+      x-events:
+        - name: order.canceled
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: Emitted when an order is canceld.
+          deprecated: false
   /admin/orders/{id}/changes:
     get:
       operationId: GetOrdersIdChanges
@@ -23632,6 +23998,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: completeOrderWorkflow
+      x-events:
+        - name: order.completed
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the order
+            }]
+            ```
+          description: Emitted when orders are completed.
+          deprecated: false
   /admin/orders/{id}/credit-lines:
     post:
       operationId: PostOrdersIdCreditLines
@@ -23726,6 +24102,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderCreditLinesWorkflow
+      x-events: []
   /admin/orders/{id}/fulfillments:
     post:
       operationId: PostOrdersIdFulfillments
@@ -23865,6 +24242,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderFulfillmentWorkflow
+      x-events:
+        - name: order.fulfillment_created
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              fulfillment_id, // The ID of the fulfillment
+              no_notification, // (boolean) Whether to notify the customer
+            }
+            ```
+          description: Emitted when a fulfillment is created for an order.
+          deprecated: false
   /admin/orders/{id}/fulfillments/{fulfillment_id}/cancel:
     post:
       operationId: PostOrdersIdFulfillmentsFulfillment_idCancel
@@ -23968,6 +24357,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelOrderFulfillmentWorkflow
+      x-events:
+        - name: order.fulfillment_canceled
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              fulfillment_id, // The ID of the fulfillment
+              no_notification, // (boolean) Whether to notify the customer
+            }
+            ```
+          description: Emitted when an order's fulfillment is canceled.
+          deprecated: false
   /admin/orders/{id}/fulfillments/{fulfillment_id}/mark-as-delivered:
     post:
       operationId: PostOrdersIdFulfillmentsFulfillment_idMarkAsDelivered
@@ -24051,6 +24452,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: markOrderFulfillmentAsDeliveredWorkflow
+      x-events:
+        - name: delivery.created
+          payload: |-
+            ```ts
+            {
+              id, // the ID of the fulfillment
+            }
+            ```
+          description: Emitted when a fulfillment is marked as delivered.
+          deprecated: false
   /admin/orders/{id}/fulfillments/{fulfillment_id}/shipments:
     post:
       operationId: PostOrdersIdFulfillmentsFulfillment_idShipments
@@ -24217,6 +24628,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderShipmentWorkflow
+      x-events:
+        - name: shipment.created
+          payload: |-
+            ```ts
+            {
+              id, // the ID of the shipment
+              no_notification, // (boolean) whether to notify the customer
+            }
+            ```
+          description: Emitted when a shipment is created for an order.
+          deprecated: false
   /admin/orders/{id}/line-items:
     get:
       operationId: GetOrdersIdLineItems
@@ -24535,6 +24957,19 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: requestOrderTransferWorkflow
+      x-events:
+        - name: order.transfer_requested
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+              order_change_id, // The ID of the order change created for the transfer
+            }
+            ```
+          description: |-
+            Emitted when an order is requested to be transferred to
+            another customer.
+          deprecated: false
   /admin/orders/{id}/transfer/cancel:
     post:
       operationId: PostOrdersIdTransferCancel
@@ -24611,6 +25046,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelOrderTransferRequestWorkflow
+      x-events: []
   /admin/payment-collections:
     post:
       operationId: PostPaymentCollections
@@ -24701,6 +25137,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createOrderPaymentCollectionWorkflow
+      x-events: []
   /admin/payment-collections/{id}:
     delete:
       operationId: DeletePaymentCollectionsId
@@ -24763,6 +25200,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteOrderPaymentCollections
+      x-events: []
   /admin/payment-collections/{id}/mark-as-paid:
     post:
       operationId: PostPaymentCollectionsIdMarkAsPaid
@@ -24855,6 +25293,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: markPaymentCollectionAsPaid
+      x-events: []
   /admin/payments:
     get:
       operationId: GetPayments
@@ -25704,6 +26143,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: capturePaymentWorkflow
+      x-events: []
   /admin/payments/{id}/refund:
     post:
       operationId: PostPaymentsIdRefund
@@ -25795,6 +26235,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: refundPaymentWorkflow
+      x-events: []
   /admin/plugins:
     get:
       operationId: GetPlugins
@@ -26337,6 +26778,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPriceListsWorkflow
+      x-events: []
   /admin/price-lists/{id}:
     get:
       operationId: GetPriceListsId
@@ -26492,6 +26934,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updatePriceListsWorkflow
+      x-events: []
     delete:
       operationId: DeletePriceListsId
       summary: Delete a Price List
@@ -26553,6 +26996,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deletePriceListsWorkflow
+      x-events: []
   /admin/price-lists/{id}/prices/batch:
     post:
       operationId: PostPriceListsIdPricesBatch
@@ -26720,6 +27164,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchPriceListPricesWorkflow
+      x-events: []
   /admin/price-lists/{id}/products:
     post:
       operationId: PostPriceListsIdProducts
@@ -26799,6 +27244,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchPriceListPricesWorkflow
+      x-events: []
   /admin/price-preferences:
     get:
       operationId: GetPricePreferences
@@ -27036,6 +27482,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPricePreferencesWorkflow
+      x-events: []
   /admin/price-preferences/{id}:
     get:
       operationId: GetPricePreferencesId
@@ -27185,6 +27632,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updatePricePreferencesWorkflow
+      x-events: []
     delete:
       operationId: DeletePricePreferencesId
       summary: Delete a Price Preference
@@ -27246,6 +27694,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deletePricePreferencesWorkflow
+      x-events: []
   /admin/product-categories:
     get:
       operationId: GetProductCategories
@@ -27902,6 +28351,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductCategoriesWorkflow
+      x-events:
+        - name: product-category.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product category
+            }]
+            ```
+          description: Emitted when product categories are created.
+          deprecated: false
   /admin/product-categories/{id}:
     get:
       operationId: GetProductCategoriesId
@@ -28105,6 +28564,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductCategoriesWorkflow
+      x-events:
+        - name: product-category.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product category
+            }]
+            ```
+          description: Emitted when product categories are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductCategoriesId
       summary: Delete a Product Category
@@ -28166,6 +28635,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductCategoriesWorkflow
+      x-events:
+        - name: product-category.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product category
+            }]
+            ```
+          description: Emitted when product categories are deleted.
+          deprecated: false
   /admin/product-categories/{id}/products:
     post:
       operationId: PostProductCategoriesIdProducts
@@ -28263,6 +28742,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchLinkProductsToCategoryWorkflow
+      x-events: []
   /admin/product-tags:
     get:
       operationId: GetProductTags
@@ -28844,6 +29324,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductTagsWorkflow
+      x-events:
+        - name: product-tag.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product tag
+            }]
+            ```
+          description: Emitted when product tags are created.
+          deprecated: false
   /admin/product-tags/{id}:
     get:
       operationId: GetProductTagsId
@@ -29006,6 +29496,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductTagsWorkflow
+      x-events:
+        - name: product-tag.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product tag
+            }]
+            ```
+          description: Emitted when product tags are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductTagsId
       summary: Delete a Product Tag
@@ -29067,6 +29567,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductTagsWorkflow
+      x-events:
+        - name: product-tag.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product tag
+            }]
+            ```
+          description: Emitted when product tags are deleted.
+          deprecated: false
   /admin/product-types:
     get:
       operationId: GetProductTypes
@@ -29648,6 +30158,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductTypesWorkflow
+      x-events:
+        - name: product-type.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product type
+            }]
+            ```
+          description: Emitted when product types are created.
+          deprecated: false
   /admin/product-types/{id}:
     get:
       operationId: GetProductTypesId
@@ -29810,6 +30330,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductTypesWorkflow
+      x-events:
+        - name: product-type.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product type
+            }]
+            ```
+          description: Emitted when product types are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductTypesId
       summary: Delete a Product Type
@@ -29871,6 +30401,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductTypesWorkflow
+      x-events:
+        - name: product-type.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product type
+            }]
+            ```
+          description: Emitted when product types are deleted.
+          deprecated: false
   /admin/product-variants:
     get:
       operationId: GetProductVariants
@@ -31573,6 +32113,25 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductsWorkflow
+      x-events:
+        - name: product-variant.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are created.
+          deprecated: false
+        - name: product.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are created.
+          deprecated: false
   /admin/products/batch:
     post:
       operationId: PostProductsBatch
@@ -31673,6 +32232,43 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchProductsWorkflow
+      x-events:
+        - name: product-variant.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are created.
+          deprecated: false
+        - name: product.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are updated.
+          deprecated: false
+        - name: product.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are created.
+          deprecated: false
+        - name: product.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are deleted.
+          deprecated: false
   /admin/products/export:
     post:
       operationId: PostProductsExport
@@ -31743,6 +32339,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: exportProductsWorkflow
+      x-events: []
   /admin/products/import:
     post:
       operationId: PostProductsImport
@@ -31805,6 +32402,43 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: importProductsWorkflow
+      x-events:
+        - name: product-variant.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are created.
+          deprecated: false
+        - name: product.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are updated.
+          deprecated: false
+        - name: product.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are created.
+          deprecated: false
+        - name: product.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are deleted.
+          deprecated: false
   /admin/products/import/{transaction_id}/confirm:
     post:
       operationId: PostProductsImportTransaction_idConfirm
@@ -32019,6 +32653,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductsWorkflow
+      x-events:
+        - name: product.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductsId
       summary: Delete a Product
@@ -32080,6 +32724,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductsWorkflow
+      x-events:
+        - name: product.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product
+            }]
+            ```
+          description: Emitted when products are deleted.
+          deprecated: false
   /admin/products/{id}/options:
     get:
       operationId: GetProductsIdOptions
@@ -32320,7 +32974,7 @@ paths:
             })
 
             sdk.admin.product.createOption(
-              "prod_123", 
+              "prod_123",
               {
                 title: "Color",
                 values: ["Green", "Blue"]
@@ -32363,6 +33017,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductOptionsWorkflow
+      x-events:
+        - name: product-option.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product option
+            }]
+            ```
+          description: Emitted when product options are created.
+          deprecated: false
   /admin/products/{id}/options/{option_id}:
     get:
       operationId: GetProductsIdOptionsOption_id
@@ -32505,7 +33169,7 @@ paths:
             })
 
             sdk.admin.product.updateOption(
-              "prod_123", 
+              "prod_123",
               "prodopt_123",
               {
                 title: "Color"
@@ -32541,6 +33205,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductOptionsWorkflow
+      x-events:
+        - name: product-option.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product option
+            }]
+            ```
+          description: Emitted when product options are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductsIdOptionsOption_id
       summary: Delete an Option from Product
@@ -32622,6 +33296,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductOptionsWorkflow
+      x-events:
+        - name: product-option.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product option
+            }]
+            ```
+          description: Emitted when product options are deleted.
+          deprecated: false
   /admin/products/{id}/variants:
     get:
       operationId: GetProductsIdVariants
@@ -33267,6 +33951,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createProductVariantsWorkflow
+      x-events:
+        - name: product-variant.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are created.
+          deprecated: false
   /admin/products/{id}/variants/batch:
     post:
       operationId: PostProductsIdVariantsBatch
@@ -33362,6 +34056,34 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchProductVariantsWorkflow
+      x-events:
+        - name: product-variant.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are updated.
+          deprecated: false
+        - name: product-variant.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are created.
+          deprecated: false
+        - name: product-variant.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are deleted.
+          deprecated: false
   /admin/products/{id}/variants/inventory-items/batch:
     post:
       operationId: PostProductsIdVariantsInventoryItemsBatch
@@ -33466,7 +34188,7 @@ paths:
             })
 
             sdk.admin.product.batchVariantInventoryItems(
-              "prod_123", 
+              "prod_123",
               {
                 create: [
                   {
@@ -33520,6 +34242,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchLinksWorkflow
+      x-events: []
   /admin/products/{id}/variants/{variant_id}:
     get:
       operationId: GetProductsIdVariantsVariant_id
@@ -33662,7 +34385,7 @@ paths:
             })
 
             sdk.admin.product.updateVariant(
-              "prod_123", 
+              "prod_123",
               "variant_123",
                 {
                 title: "Blue Shirt",
@@ -33698,6 +34421,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateProductVariantsWorkflow
+      x-events:
+        - name: product-variant.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are updated.
+          deprecated: false
     delete:
       operationId: DeleteProductsIdVariantsVariant_id
       summary: Delete Product Variant
@@ -33776,6 +34509,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteProductVariantsWorkflow
+      x-events:
+        - name: product-variant.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the product variant
+            }]
+            ```
+          description: Emitted when product variants are deleted.
+          deprecated: false
   /admin/products/{id}/variants/{variant_id}/inventory-items:
     post:
       operationId: PostProductsIdVariantsVariant_idInventoryItems
@@ -33848,6 +34591,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createLinksWorkflow
+      x-events: []
   /admin/products/{id}/variants/{variant_id}/inventory-items/{inventory_item_id}:
     post:
       operationId: PostProductsIdVariantsVariant_idInventoryItemsInventory_item_id
@@ -33925,6 +34669,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateLinksWorkflow
+      x-events: []
     delete:
       operationId: DeleteProductsIdVariantsVariant_idInventoryItemsInventory_item_id
       summary: Remove Inventory Item Association with Product Variant
@@ -33992,6 +34737,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: dismissLinksWorkflow
+      x-events: []
   /admin/promotions:
     get:
       operationId: GetPromotions
@@ -34949,6 +35695,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPromotionsWorkflow
+      x-events: []
   /admin/promotions/rule-attribute-options/{rule_type}:
     get:
       operationId: GetPromotionsRuleAttributeOptionsRule_type
@@ -35450,6 +36197,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updatePromotionsWorkflow
+      x-events: []
     delete:
       operationId: DeletePromotionsId
       summary: Delete a Promotion
@@ -35530,6 +36278,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deletePromotionsWorkflow
+      x-events: []
   /admin/promotions/{id}/buy-rules/batch:
     post:
       operationId: PostPromotionsIdBuyRulesBatch
@@ -35650,6 +36399,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchPromotionRulesWorkflow
+      x-events: []
   /admin/promotions/{id}/rules/batch:
     post:
       operationId: PostPromotionsIdRulesBatch
@@ -35770,6 +36520,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchPromotionRulesWorkflow
+      x-events: []
   /admin/promotions/{id}/target-rules/batch:
     post:
       operationId: PostPromotionsIdTargetRulesBatch
@@ -35890,6 +36641,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchPromotionRulesWorkflow
+      x-events: []
   /admin/promotions/{id}/{rule_type}:
     get:
       operationId: GetPromotionsIdRule_type
@@ -36207,6 +36959,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createRefundReasonsWorkflow
+      x-events: []
   /admin/refund-reasons/{id}:
     get:
       operationId: GetRefundReasonsId
@@ -36334,6 +37087,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateRefundReasonsWorkflow
+      x-events: []
     delete:
       operationId: DeleteRefundReasonsId
       summary: Delete a Refund Reason
@@ -36397,6 +37151,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteRefundReasonsWorkflow
+      x-events: []
   /admin/regions:
     get:
       operationId: GetRegions
@@ -37023,6 +37778,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createRegionsWorkflow
+      x-events:
+        - name: region.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the region
+            }]
+            ```
+          description: Emitted when regions are created.
+          deprecated: false
   /admin/regions/{id}:
     get:
       operationId: GetRegionsId
@@ -37211,6 +37976,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateRegionsWorkflow
+      x-events:
+        - name: region.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the region
+            }]
+            ```
+          description: Emitted when regions are updated.
+          deprecated: false
     delete:
       operationId: DeleteRegionsId
       summary: Delete a Region
@@ -37291,6 +38066,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteRegionsWorkflow
+      x-events:
+        - name: region.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the region
+            }]
+            ```
+          description: Emitted when regions are deleted.
+          deprecated: false
   /admin/reservations:
     get:
       operationId: GetReservations
@@ -37962,6 +38747,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createReservationsWorkflow
+      x-events: []
   /admin/reservations/{id}:
     get:
       operationId: GetReservationsId
@@ -38133,6 +38919,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReservationsWorkflow
+      x-events: []
     delete:
       operationId: DeleteReservationsId
       summary: Delete a Reservation
@@ -38213,6 +39000,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteReservationsWorkflow
+      x-events: []
   /admin/return-reasons:
     get:
       operationId: GetReturnReasons
@@ -38839,6 +39627,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createReturnReasonsWorkflow
+      x-events: []
   /admin/return-reasons/{id}:
     get:
       operationId: GetReturnReasonsId
@@ -38989,6 +39778,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReturnReasonsWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnReasonsId
       summary: Delete a Return Reason
@@ -39050,6 +39840,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteReturnReasonsWorkflow
+      x-events: []
   /admin/returns:
     get:
       operationId: GetReturns
@@ -39820,6 +40611,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginReturnOrderWorkflow
+      x-events: []
   /admin/returns/{id}:
     get:
       operationId: GetReturnsId
@@ -39973,6 +40765,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReturnWorkflow
+      x-events: []
   /admin/returns/{id}/cancel:
     post:
       operationId: PostReturnsIdCancel
@@ -40040,6 +40833,7 @@ paths:
             schema:
               $ref: '#/components/schemas/AdminPostCancelReturnReqSchema'
       x-workflow: cancelReturnWorkflow
+      x-events: []
   /admin/returns/{id}/dismiss-items:
     post:
       operationId: PostReturnsIdDismissItems
@@ -40122,6 +40916,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: dismissItemReturnRequestWorkflow
+      x-events: []
   /admin/returns/{id}/dismiss-items/{action_id}:
     post:
       operationId: PostReturnsIdDismissItemsAction_id
@@ -40211,6 +41006,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReceiveItemReturnRequestWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnsIdDismissItemsAction_id
       summary: Remove Damaged Item from Return
@@ -40292,6 +41088,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemReturnActionWorkflow
+      x-events: []
   /admin/returns/{id}/receive:
     post:
       operationId: PostReturnsIdReceive
@@ -40384,6 +41181,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: beginReceiveReturnWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnsIdReceive
       summary: Cancel Return Receival
@@ -40464,6 +41262,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelReturnReceiveWorkflow
+      x-events: []
   /admin/returns/{id}/receive-items:
     post:
       operationId: PostReturnsIdReceiveItems
@@ -40546,6 +41345,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: receiveItemReturnRequestWorkflow
+      x-events: []
   /admin/returns/{id}/receive-items/{action_id}:
     post:
       operationId: PostReturnsIdReceiveItemsAction_id
@@ -40635,6 +41435,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReceiveItemReturnRequestWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnsIdReceiveItemsAction_id
       summary: Remove a Received Item from Return
@@ -40716,6 +41517,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemReceiveReturnActionWorkflow
+      x-events: []
   /admin/returns/{id}/receive/confirm:
     post:
       operationId: PostReturnsIdReceiveConfirm
@@ -40796,6 +41598,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmReturnReceiveWorkflow
+      x-events:
+        - name: order.return_received
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return is marked as received.
+          deprecated: false
   /admin/returns/{id}/request:
     post:
       operationId: PostReturnsIdRequest
@@ -40876,6 +41689,17 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: confirmReturnRequestWorkflow
+      x-events:
+        - name: order.return_requested
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return request is confirmed.
+          deprecated: false
     delete:
       operationId: DeleteReturnsIdRequest
       summary: Cancel Return Request
@@ -40956,6 +41780,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: cancelReturnRequestWorkflow
+      x-events: []
   /admin/returns/{id}/request-items:
     post:
       operationId: PostReturnsIdRequestItems
@@ -41037,6 +41862,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: requestItemReturnWorkflow
+      x-events: []
   /admin/returns/{id}/request-items/{action_id}:
     post:
       operationId: PostReturnsIdRequestItemsAction_id
@@ -41126,6 +41952,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateRequestItemReturnWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnsIdRequestItemsAction_id
       summary: Remove Item from Return
@@ -41207,6 +42034,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeItemReturnActionWorkflow
+      x-events: []
   /admin/returns/{id}/shipping-method:
     post:
       operationId: PostReturnsIdShippingMethod
@@ -41291,6 +42119,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createReturnShippingMethodWorkflow
+      x-events: []
   /admin/returns/{id}/shipping-method/{action_id}:
     post:
       operationId: PostReturnsIdShippingMethodAction_id
@@ -41380,6 +42209,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateReturnShippingMethodWorkflow
+      x-events: []
     delete:
       operationId: DeleteReturnsIdShippingMethodAction_id
       summary: Remove Shipping Method from Return
@@ -41461,6 +42291,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: removeReturnShippingMethodWorkflow
+      x-events: []
   /admin/sales-channels:
     get:
       operationId: GetSalesChannels
@@ -42116,6 +42947,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createSalesChannelsWorkflow
+      x-events:
+        - name: sales-channel.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the sales channel
+            }]
+            ```
+          description: Emitted when sales channels are created.
+          deprecated: false
   /admin/sales-channels/{id}:
     get:
       operationId: GetSalesChannelsId
@@ -42273,6 +43114,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateSalesChannelsWorkflow
+      x-events:
+        - name: sales-channel.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the sales channel
+            }]
+            ```
+          description: Emitted when sales channels are updated.
+          deprecated: false
     delete:
       operationId: DeleteSalesChannelsId
       summary: Delete a Sales Channel
@@ -42334,6 +43185,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteSalesChannelsWorkflow
+      x-events:
+        - name: sales-channel.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the sales channel
+            }]
+            ```
+          description: Emitted when sales channels are deleted.
+          deprecated: false
   /admin/sales-channels/{id}/products:
     post:
       operationId: PostSalesChannelsIdProducts
@@ -42431,6 +43292,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: linkProductsToSalesChannelWorkflow
+      x-events: []
   /admin/shipping-options:
     get:
       operationId: GetShippingOptions
@@ -43105,6 +43967,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createShippingOptionsWorkflow
+      x-events: []
   /admin/shipping-options/{id}:
     get:
       operationId: GetShippingOptionsId
@@ -43422,6 +44285,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateShippingOptionsWorkflow
+      x-events: []
     delete:
       operationId: DeleteShippingOptionsId
       summary: Delete a Shipping Option
@@ -43483,6 +44347,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteShippingOptionsWorkflow
+      x-events: []
   /admin/shipping-options/{id}/rules/batch:
     post:
       operationId: PostShippingOptionsIdRulesBatch
@@ -43622,6 +44487,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchShippingOptionRulesWorkflow
+      x-events: []
   /admin/shipping-profiles:
     get:
       operationId: GetShippingProfiles
@@ -44235,6 +45101,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createShippingProfilesWorkflow
+      x-events: []
   /admin/shipping-profiles/{id}:
     get:
       operationId: GetShippingProfilesId
@@ -44401,6 +45268,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateShippingProfilesWorkflow
+      x-events: []
     delete:
       operationId: DeleteShippingProfilesId
       summary: Delete a Shipping Profile
@@ -44462,6 +45330,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteShippingProfileWorkflow
+      x-events: []
   /admin/stock-locations:
     get:
       operationId: GetStockLocations
@@ -45073,6 +45942,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createStockLocationsWorkflow
+      x-events: []
   /admin/stock-locations/{id}:
     get:
       operationId: GetStockLocationsId
@@ -45227,6 +46097,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateStockLocationsWorkflow
+      x-events: []
     delete:
       operationId: DeleteStockLocationsId
       summary: Delete a Stock Location
@@ -45288,6 +46159,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteStockLocationsWorkflow
+      x-events: []
   /admin/stock-locations/{id}/fulfillment-providers:
     post:
       operationId: PostStockLocationsIdFulfillmentProviders
@@ -45385,6 +46257,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: batchLinksWorkflow
+      x-events: []
   /admin/stock-locations/{id}/fulfillment-sets:
     post:
       operationId: PostStockLocationsIdFulfillmentSets
@@ -45484,6 +46357,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createLocationFulfillmentSetWorkflow
+      x-events: []
   /admin/stock-locations/{id}/sales-channels:
     post:
       operationId: PostStockLocationsIdSalesChannels
@@ -45581,6 +46455,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: linkSalesChannelsToStockLocationWorkflow
+      x-events: []
   /admin/stores:
     get:
       operationId: GetStores
@@ -45885,6 +46760,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateStoresWorkflow
+      x-events: []
   /admin/tax-rates:
     get:
       operationId: GetTaxRates
@@ -46571,6 +47447,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createTaxRatesWorkflow
+      x-events: []
   /admin/tax-rates/{id}:
     get:
       operationId: GetTaxRatesId
@@ -46725,6 +47602,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateTaxRatesWorkflow
+      x-events: []
     delete:
       operationId: DeleteTaxRatesId
       summary: Delete a Tax Rate
@@ -46786,6 +47664,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteTaxRatesWorkflow
+      x-events: []
   /admin/tax-rates/{id}/rules:
     post:
       operationId: PostTaxRatesIdRules
@@ -46852,6 +47731,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createTaxRateRulesWorkflow
+      x-events: []
   /admin/tax-rates/{id}/rules/{rule_id}:
     delete:
       operationId: DeleteTaxRatesIdRulesRule_id
@@ -46939,6 +47819,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteTaxRateRulesWorkflow
+      x-events: []
   /admin/tax-regions:
     get:
       operationId: GetTaxRegions
@@ -47072,13 +47953,21 @@ paths:
             oneOf:
               - type: string
                 title: province_code
-                description: Filter by a province code.
+                description: Filter by a ISO 3166-2 province code. Must be lower-case.
+                example: us-ca
+                externalDocs:
+                  url: https://en.wikipedia.org/wiki/ISO_3166-2
+                  description: Learn more about ISO 3166-2
               - type: array
-                description: Filter by province codes.
+                description: Filter by ISO 3166-2 province codes.
                 items:
                   type: string
                   title: province_code
-                  description: A province code.
+                  description: A ISO 3166-2 province code.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
               - type: object
                 description: Apply filters on the province code.
                 properties:
@@ -48057,7 +48946,7 @@ paths:
             -H 'Content-Type: application/json' \
             --data-raw '{
               "country_code": "{value}",
-              "province_code": "{value}",
+              "province_code": "us-ca",
               "parent_id": "{value}",
               "metadata": {}
             }'
@@ -48083,6 +48972,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createTaxRegionsWorkflow
+      x-events: []
   /admin/tax-regions/{id}:
     get:
       operationId: GetTaxRegionsId
@@ -48189,6 +49079,25 @@ paths:
             schema:
               $ref: '#/components/schemas/AdminUpdateTaxRegion'
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            export const sdk = new Medusa({
+              baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+              debug: import.meta.env.DEV,
+              auth: {
+                type: "session",
+              },
+            })
+
+            sdk.admin.taxRegion.update("txreg_123", {
+              province_code: "ca",
+            })
+            .then(({ tax_region }) => {
+              console.log(tax_region)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -48216,6 +49125,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateTaxRegionsWorkflow
+      x-events: []
     delete:
       operationId: DeleteTaxRegionsId
       summary: Delete a Tax Region
@@ -48277,6 +49187,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteTaxRegionsWorkflow
+      x-events: []
   /admin/uploads:
     post:
       operationId: PostUploads
@@ -48389,6 +49300,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: uploadFilesWorkflow
+      x-events: []
   /admin/uploads/{id}:
     get:
       operationId: GetUploadsId
@@ -48540,6 +49452,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteFilesWorkflow
+      x-events: []
   /admin/users:
     get:
       operationId: GetUsers
@@ -49247,6 +50160,16 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: user.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the user
+            }]
+            ```
+          description: Emitted when users are updated.
+          deprecated: false
     delete:
       operationId: DeleteUsersId
       summary: Delete a User
@@ -49305,6 +50228,16 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: user.deleted
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the user
+            }]
+            ```
+          description: Emitted when users are deleted.
+          deprecated: false
   /admin/workflows-executions:
     get:
       operationId: GetWorkflowsExecutions
@@ -50418,6 +51351,20 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: generateResetPasswordTokenWorkflow
+      x-events:
+        - name: auth.password_reset
+          payload: |-
+            ```ts
+            {
+              entity_id, // The identifier of the user or customer. For example, an email address.
+              actor_type, // The type of actor. For example, "customer", "user", or custom.
+              token, // The generated token.
+            }
+            ```
+          description: |-
+            Emitted when a reset password token is generated. You can listen to this event
+            to send a reset password email to the user or customer, for example.
+          deprecated: false
   /auth/user/{auth_provider}/update:
     post:
       operationId: PostActor_typeAuth_providerUpdate
@@ -51824,7 +52771,11 @@ components:
             province:
               type: string
               title: province
-              description: The delivery address's province.
+              description: The delivery address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -52968,7 +53919,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         parent_id:
           type: string
           title: parent_id
@@ -53311,7 +54266,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -55282,7 +56241,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -55630,7 +56593,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The geo zone's province code.
+          description: The geo zone's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         city:
           type: string
           title: city
@@ -56318,7 +57285,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -61551,7 +62522,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
       required:
         - id
         - address_1
@@ -61916,7 +62891,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
@@ -62094,7 +63073,11 @@ components:
             province:
               type: string
               title: province
-              description: The shipping address's province.
+              description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -62142,7 +63125,11 @@ components:
             province:
               type: string
               title: province
-              description: The billing address's province.
+              description: The billing address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -62277,7 +63264,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -62325,7 +63316,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -62822,7 +63817,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
         address_id:
           type: string
           title: address_id
@@ -62934,7 +63933,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
@@ -63009,7 +64012,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
     AdminUser:
       type: object
       description: The user's details.
@@ -64608,7 +65615,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: US-CA
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -66681,7 +67692,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -67499,7 +68514,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -69346,7 +70365,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -70561,7 +71584,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -70949,7 +71976,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -78172,7 +79203,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code

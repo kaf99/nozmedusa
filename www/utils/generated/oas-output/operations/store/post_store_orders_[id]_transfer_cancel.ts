@@ -92,6 +92,7 @@
  * security:
  *   - cookie_auth: []
  *   - jwt_token: []
+ * x-events: []
  * 
 */
 

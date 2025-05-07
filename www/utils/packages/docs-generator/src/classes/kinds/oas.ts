@@ -2690,6 +2690,7 @@ class OasKindGenerator extends FunctionKindGenerator {
           description: event.description,
           deprecated: event.deprecated,
           deprecated_message: event.deprecated_message,
+          version: event.version,
         }))
       )
     }

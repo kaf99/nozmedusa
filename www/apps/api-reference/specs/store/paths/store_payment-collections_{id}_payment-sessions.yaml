@@ -78,3 +78,4 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: createPaymentSessionsWorkflow
+  x-events: []

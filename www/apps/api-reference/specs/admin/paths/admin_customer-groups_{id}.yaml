@@ -134,6 +134,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateCustomerGroupsWorkflow
+  x-events: []
 delete:
   operationId: DeleteCustomerGroupsId
   summary: Delete a Customer Group
@@ -200,3 +201,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteCustomerGroupsWorkflow
+  x-events: []

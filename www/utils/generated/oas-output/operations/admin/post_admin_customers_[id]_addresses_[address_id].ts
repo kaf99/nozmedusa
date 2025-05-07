@@ -101,7 +101,7 @@
  *                 type: string
  *                 title: province
  *                 description: The address's ISO 3166-2 province code. Must be lower-case.
- *                 example: "us-ca"
+ *                 example: us-ca
  *                 externalDocs:
  *                   url: https://en.wikipedia.org/wiki/ISO_3166-2
  *                   description: Learn more about ISO 3166-2
@@ -188,6 +188,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: updateCustomerAddressesWorkflow
+ * x-events: []
  * 
 */
 

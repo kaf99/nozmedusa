@@ -147,6 +147,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateShippingProfilesWorkflow
+  x-events: []
 delete:
   operationId: DeleteShippingProfilesId
   summary: Delete a Shipping Profile
@@ -194,3 +195,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteShippingProfileWorkflow
+  x-events: []

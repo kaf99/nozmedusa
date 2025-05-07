@@ -46,4 +46,5 @@ export declare type OasEvent = {
   description?: string
   deprecated?: boolean
   deprecated_message?: string
+  version?: string
 }

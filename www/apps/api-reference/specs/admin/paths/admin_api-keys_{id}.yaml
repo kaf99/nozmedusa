@@ -134,6 +134,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateApiKeysWorkflow
+  x-events: []
 delete:
   operationId: DeleteApiKeysId
   summary: Delete an Api Key
@@ -201,3 +202,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteApiKeysWorkflow
+  x-events: []

@@ -202,6 +202,7 @@
  *   - cookie_auth: []
  *   - jwt_token: []
  * x-workflow: getOrdersListWorkflow
+ * x-events: []
  * 
 */
 

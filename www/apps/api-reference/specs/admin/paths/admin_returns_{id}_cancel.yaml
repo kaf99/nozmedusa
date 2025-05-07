@@ -50,3 +50,4 @@ post:
         schema:
           $ref: ../components/schemas/AdminPostCancelReturnReqSchema.yaml
   x-workflow: cancelReturnWorkflow
+  x-events: []

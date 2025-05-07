@@ -151,6 +151,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateReservationsWorkflow
+  x-events: []
 delete:
   operationId: DeleteReservationsId
   summary: Delete a Reservation
@@ -217,3 +218,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteReservationsWorkflow
+  x-events: []

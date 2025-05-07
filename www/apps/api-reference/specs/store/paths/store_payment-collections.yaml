@@ -72,3 +72,4 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: createPaymentCollectionForCartWorkflow
+  x-events: []
