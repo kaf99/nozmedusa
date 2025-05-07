@@ -380,9 +380,9 @@ export class CSVNormalizer {
     row: Record<string, string | boolean | number>,
     rowNumber: number
   ) {
-    const productId = isPresent(row["Product Id"])
-    const productHandle = isPresent(row["Product Handle"])
-    if (!productId && !productHandle) {
+    const productId = row["Product Id"]
+    const productHandle = row["Product Handle"]
+    if (!isPresent(productId) && !isPresent(productHandle)) {
       throw new Error(
         `Row ${rowNumber}: Missing product id and handle. One of them are required to process the row`
       )
@@ -492,7 +492,7 @@ export class CSVNormalizer {
    * Process CSV rows. The return value is a tree of products
    */
   proccess() {
-    this.#rows.forEach((row, index) => this.#processRow(row, index))
+    this.#rows.forEach((row, index) => this.#processRow(row, index + 1))
     return this.#products
   }
 }

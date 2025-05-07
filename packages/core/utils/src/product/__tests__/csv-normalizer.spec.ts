@@ -13,7 +13,7 @@ describe("CSV processor", () => {
     const processor = new CSVNormalizer([{}])
 
     expect(() => processor.proccess()).toThrow(
-      "Missing product id and handle. Atleast of it is required for process a row"
+      "Row 1: Missing product id and handle. One of them are required to process the row"
     )
   })
 
