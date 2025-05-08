@@ -1,5 +1,5 @@
 import type { MedusaAppLoader } from "@medusajs/framework"
-import { MedusaContainer } from "@medusajs/framework/types"
+import { Logger, MedusaContainer } from "@medusajs/framework/types"
 import {
   ContainerRegistrationKeys,
   getResolvedPlugins,
@@ -38,7 +38,8 @@ export async function migrateDatabase(appLoader: MedusaAppLoader) {
 export async function syncLinks(
   appLoader: MedusaAppLoader,
   directory: string,
-  container: MedusaContainer
+  container: MedusaContainer,
+  logger: Logger
 ) {
   try {
     await loadCustomLinks(directory, container)
@@ -46,11 +47,11 @@ export async function syncLinks(
     const planner = await appLoader.getLinksExecutionPlanner()
     const actionPlan = await planner.createPlan()
     actionPlan.forEach((action) => {
-      console.log(`Sync links: "${action.action}" ${action.tableName}`)
+      logger.info(`Sync links: "${action.action}" ${action.tableName}`)
     })
     await planner.executePlan(actionPlan)
   } catch (err) {
-    console.error("Something went wrong while syncing links")
+    logger.error("Something went wrong while syncing links")
     throw err
   }
 }
