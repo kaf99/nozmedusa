@@ -1070,6 +1070,10 @@ export class TransactionOrchestrator extends EventEmitter {
         }
       })
       .catch(async (error) => {
+        console.log("executeAsyncStep error", error)
+        console.log("step id", step.id)
+        console.log("step definition", step.definition)
+
         if (SkipExecutionError.isSkipExecutionError(error)) {
           return
         }
