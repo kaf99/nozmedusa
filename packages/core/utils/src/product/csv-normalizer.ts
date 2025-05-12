@@ -73,9 +73,7 @@ function parseVariantPriceColumn(columnName: string, rowNumber: number) {
     }
 
     return {
-      iso: iso
-        .replace(new RegExp(`^[`), "")
-        .replace(new RegExp(`]$`), "")
+      iso: iso.replace(/^\[|\]$/g, "")
         .toLowerCase(),
       region: priceTokens.find((token) => token !== iso),
     }
