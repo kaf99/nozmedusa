@@ -8,6 +8,7 @@ import {
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import {
   groupProductsForBatchStep,
+  // normalizeCsvStep,
   parseProductCsvStep,
   waitConfirmationProductImportStep,
 } from "../steps"
@@ -96,8 +97,10 @@ export const importProductsWorkflow = createWorkflow(
   ): WorkflowResponse<WorkflowTypes.ProductWorkflow.ImportProductsSummary> => {
     const products = parseProductCsvStep(input.fileContent)
     const batchRequest = groupProductsForBatchStep(products)
+    // const batchRequest1 = normalizeCsvStep(input.fileContent)
 
     const summary = transform({ batchRequest }, (data) => {
+      console.log(JSON.stringify(data.batchRequest, null, 2))
       return {
         toCreate: data.batchRequest.create.length,
         toUpdate: data.batchRequest.update.length,

@@ -97,6 +97,10 @@ export const batchProductsWorkflow = createWorkflow(
   (
     input: WorkflowData<BatchProductWorkflowInput>
   ): WorkflowResponse<BatchWorkflowOutput<ProductTypes.ProductDTO>> => {
+    transform(input, (d) => {
+      console.log({ d })
+    })
+
     const res = parallelize(
       conditionallyCreateProducts(input),
       conditionallyUpdateProducts(input),

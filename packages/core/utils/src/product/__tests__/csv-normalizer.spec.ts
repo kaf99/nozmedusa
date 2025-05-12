@@ -66,11 +66,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-S",
@@ -137,11 +137,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-M",
@@ -158,11 +158,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-L",
@@ -179,11 +179,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-XL",
@@ -259,11 +259,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-M",
@@ -281,11 +281,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-BLACK",
@@ -304,11 +304,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-XL",
@@ -378,11 +378,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHORTS-S",
@@ -399,11 +399,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHORTS-M",
@@ -420,11 +420,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHORTS-L",
@@ -441,11 +441,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHORTS-XL",
@@ -499,11 +499,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATPANTS-S",
@@ -520,11 +520,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATPANTS-M",
@@ -541,11 +541,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATPANTS-L",
@@ -562,11 +562,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATPANTS-XL",
@@ -644,11 +644,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-S-BLACK",
@@ -666,11 +666,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-S-WHITE",
@@ -688,11 +688,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-M-BLACK",
@@ -710,11 +710,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-M-WHITE",
@@ -732,11 +732,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-L-BLACK",
@@ -754,11 +754,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-L-WHITE",
@@ -776,11 +776,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-XL-BLACK",
@@ -798,11 +798,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SHIRT-XL-WHITE",
@@ -859,11 +859,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-S",
@@ -880,11 +880,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-M",
@@ -901,11 +901,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-L",
@@ -922,11 +922,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 10,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 15,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "sku": "SWEATSHIRT-XL",
@@ -971,11 +971,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 1000,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 1200,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "title": "One Size",
@@ -1025,11 +1025,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 2950,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 3350,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "title": "S",
@@ -1045,11 +1045,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 2950,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 3350,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "title": "M",
@@ -1065,11 +1065,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 2950,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 3350,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "title": "L",
@@ -1085,11 +1085,11 @@ describe("CSV processor", () => {
                 "prices": [
                   {
                     "amount": 2950,
-                    "currency_code": "EUR",
+                    "currency_code": "eur",
                   },
                   {
                     "amount": 3350,
-                    "currency_code": "USD",
+                    "currency_code": "usd",
                   },
                 ],
                 "title": "XL",

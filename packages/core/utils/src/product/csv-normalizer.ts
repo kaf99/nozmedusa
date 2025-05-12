@@ -1,4 +1,4 @@
-import { isPresent } from "../common"
+import { isPresent, tryConvertToNumber, tryConvertToBoolean } from "../common"
 import { AdminCreateProduct, AdminCreateProductVariant } from "@medusajs/types"
 
 /**
@@ -8,8 +8,154 @@ import { AdminCreateProduct, AdminCreateProductVariant } from "@medusajs/types"
 type ColumnProcessor<Output> = (
   csvRow: Record<string, string | boolean | number>,
   rowColumns: string[],
+  rowNumber: number,
   output: Output
 ) => void
+
+/**
+ * Creates an error with the CSV row number
+ */
+function createError(rowNumber: number, message: string) {
+  return new Error(`Row ${rowNumber}: ${message}`)
+}
+
+/**
+ * Normalizes a CSV value by removing the leading "\r" from the
+ * value.
+ */
+function normalizeValue<T>(value: T): T {
+  if (typeof value === "string") {
+    return value.replace(/\\r$/, "") as T
+  }
+  return value
+}
+
+/**
+ * Parses different patterns to extract variant price iso
+ * and the region name. The iso is converted to lowercase
+ */
+function parseVariantPriceColumn(columnName: string, rowNumber: number) {
+  const priceTokens = normalizeValue(columnName)
+    .replace("Variant Price ", "")
+    .split(" ")
+
+  /**
+   * The price was specified as "Variant Price EUR" or "Variant Price USD"
+   */
+  if (priceTokens.length === 1) {
+    return {
+      region: null,
+      iso: priceTokens[0].toLowerCase(),
+    }
+  }
+
+  /**
+   * The price was specified as "Variant Price [EUR]" or "Variant Price Europe [EUR]"
+   */
+  if (priceTokens.length === 2) {
+    const iso = priceTokens.find(
+      (token) => token.startsWith("[") && token.endsWith("]")
+    )
+
+    if (!iso) {
+      throw createError(
+        rowNumber,
+        `Invalid price format used by "${columnName}". Expect column name to contain the ISO code inside square brackets. For example: "Variant Price [USD]"`
+      )
+    }
+
+    return {
+      iso: iso
+        .replace(new RegExp(`^[`), "")
+        .replace(new RegExp(`]$`), "")
+        .toLowerCase(),
+      region: priceTokens.find((token) => token !== iso),
+    }
+  }
+
+  throw createError(
+    rowNumber,
+    `Invalid price format used by "${columnName}". Expect column name to contain the ISO code. For example: "Variant Price USD"`
+  )
+}
+
+/**
+ * Processes a column value as a string
+ */
+function processAsString<Output>(
+  inputKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, _, __, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      output[outputKey as any] = value
+    }
+  }
+}
+
+/**
+ * Processes the column value as a string
+ */
+function processAsBoolean<Output>(
+  inputKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, _, __, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      output[outputKey as any] = tryConvertToBoolean(value, value)
+    }
+  }
+}
+
+/**
+ * Processes the column value as a number
+ */
+function processAsNumber<Output>(
+  inputKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, _, rowNumber, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      const numericValue = tryConvertToNumber(value)
+      if (numericValue === undefined) {
+        throw createError(
+          rowNumber,
+          `Invalid value provided for "${inputKey}". Expected value to be a number`
+        )
+      } else {
+        output[outputKey as any] = numericValue
+      }
+    }
+  }
+}
+
+/**
+ * Processes the CSV column as a counter value. The counter values
+ * are defined as "<Column Name> <1>". Duplicate values are not
+ * added twice.
+ */
+function processAsCounterValue<Output extends Record<string, any[]>>(
+  inputMatcher: RegExp,
+  arrayItemKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, rowColumns, _, output) => {
+    output[outputKey] = output[outputKey] ?? []
+    const existingIds = output[outputKey].map((item) => item[arrayItemKey])
+
+    rowColumns
+      .filter((rowKey) => inputMatcher.test(rowKey))
+      .forEach((rowKey) => {
+        const value = normalizeValue(csvRow[rowKey])
+        if (!existingIds.includes(value) && isPresent(value)) {
+          output[outputKey].push({ [arrayItemKey]: value })
+        }
+      })
+  }
+}
 
 /**
  * Collection of static product columns whose values must be copied
@@ -17,114 +163,42 @@ type ColumnProcessor<Output> = (
  */
 const productStaticColumns: {
   [columnName: string]: ColumnProcessor<{
-    [K in keyof AdminCreateProduct]?: any
+    [K in keyof AdminCreateProduct | "id"]?: any
   }>
 } = {
-  "Product Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Id"])) {
-      output["id"] = csvRow["Product Id"]
-    }
-  },
-  "Product Handle": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Handle"])) {
-      output["handle"] = csvRow["Product Handle"]
-    }
-  },
-  "Product Title": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Title"])) {
-      output["title"] = csvRow["Product Title"]
-    }
-  },
-  "Product Status": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Status"])) {
-      output["status"] = csvRow["Product Status"]
-    }
-  },
-  "Product Description": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Description"])) {
-      output["description"] = csvRow["Product Description"]
-    }
-  },
-  "Product Subtitle": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Subtitle"])) {
-      output["subtitle"] = csvRow["Product Subtitle"]
-    }
-  },
-  "Product External Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product External Id"])) {
-      output["external_id"] = csvRow["Product External Id"]
-    }
-  },
-  "Product Thumbnail": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Thumbnail"])) {
-      output["thumbnail"] = csvRow["Product Thumbnail"]
-    }
-  },
-  "Product Collection Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Collection Id"])) {
-      output["collection_id"] = csvRow["Product Collection Id"]
-    }
-  },
-  "Product Type Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Type Id"])) {
-      output["type_id"] = csvRow["Product Type Id"]
-    }
-  },
-  "Product Discountable": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Discountable"])) {
-      output["discountable"] = csvRow["Product Discountable"]
-    }
-  },
-  "Product Height": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Height"])) {
-      output["height"] = csvRow["Product Height"]
-    }
-  },
-  "Product Hs Code": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Hs Code"])) {
-      output["hs_code"] = csvRow["Product Hs Code"]
-    }
-  },
-  "Product Length": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Length"])) {
-      output["length"] = csvRow["Product Length"]
-    }
-  },
-  "Product Material": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Material"])) {
-      output["material"] = csvRow["Product Material"]
-    }
-  },
-  "Product Mid Code": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Mid Code"])) {
-      output["mid_code"] = csvRow["Product Mid Code"]
-    }
-  },
-  "Product Origin Country": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Origin Country"])) {
-      output["origin_country"] = csvRow["Product Origin Country"]
-    }
-  },
-  "Product Weight": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Weight"])) {
-      output["weight"] = csvRow["Product Weight"]
-    }
-  },
-  "Product Width": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Width"])) {
-      output["width"] = csvRow["Product Width"]
-    }
-  },
-  "Product Metadata": (csvRow, _, output) => {
-    if (isPresent(csvRow["Product Metadata"])) {
-      output["metadata"] = csvRow["Product Metadata"]
-    }
-  },
-  "Shipping Profile Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Shipping Profile Id"])) {
-      output["shipping_profile_id"] = csvRow["Shipping Profile Id"]
-    }
-  },
+  "Product Id": processAsString("Product Id", "id"),
+  "Product Handle": processAsString("Product Handle", "handle"),
+  "Product Title": processAsString("Product Title", "title"),
+  "Product Status": processAsString("Product Status", "status"),
+  "Product Description": processAsString("Product Description", "description"),
+  "Product Subtitle": processAsString("Product Subtitle", "subtitle"),
+  "Product External Id": processAsString("Product External Id", "external_id"),
+  "Product Thumbnail": processAsString("Product Thumbnail", "thumbnail"),
+  "Product Collection Id": processAsString(
+    "Product Collection Id",
+    "collection_id"
+  ),
+  "Product Type Id": processAsString("Product Type Id", "type_id"),
+  "Product Discountable": processAsBoolean(
+    "Product Discountable",
+    "discountable"
+  ),
+  "Product Height": processAsNumber("Product Height", "height"),
+  "Product Hs Code": processAsString("Product Hs Code", "hs_code"),
+  "Product Length": processAsNumber("Product Length", "length"),
+  "Product Material": processAsString("Product Material", "material"),
+  "Product Mid Code": processAsString("Product Mid Code", "mid_code"),
+  "Product Origin Country": processAsString(
+    "Product Origin Country",
+    "origin_country"
+  ),
+  "Product Weight": processAsNumber("Product Weight", "weight"),
+  "Product Width": processAsNumber("Product Width", "width"),
+  "Product Metadata": processAsString("Product Metadata", "metadata"),
+  "Shipping Profile Id": processAsString(
+    "Shipping Profile Id",
+    "shipping_profile_id"
+  ),
 }
 
 /**
@@ -136,38 +210,18 @@ const productWildcardColumns: {
     [K in keyof AdminCreateProduct]?: any
   }>
 } = {
-  "Product Category": (csvRow, rowColumns, output) => {
-    const matcher = /Product Category \d/
-    output["categories"] = rowColumns
-      .filter((rowKey) => matcher.test(rowKey) && isPresent(csvRow[rowKey]))
-      .map((rowKey) => ({
-        id: csvRow[rowKey],
-      }))
-  },
-  "Product Image": (csvRow, rowColumns, output) => {
-    const matcher = /Product Image \d/
-    output["images"] = rowColumns
-      .filter((rowKey) => matcher.test(rowKey) && isPresent(csvRow[rowKey]))
-      .map((rowKey) => ({
-        url: csvRow[rowKey],
-      }))
-  },
-  "Product Tag": (csvRow, rowColumns, output) => {
-    const matcher = /Product Tag \d/
-    output["tags"] = rowColumns
-      .filter((rowKey) => matcher.test(rowKey) && isPresent(csvRow[rowKey]))
-      .map((rowKey) => ({
-        id: csvRow[rowKey],
-      }))
-  },
-  "Product Sales Channel": (csvRow, rowColumns, output) => {
-    const matcher = /Product Sales Channel \d/
-    output["sales_channels"] = rowColumns
-      .filter((rowKey) => matcher.test(rowKey) && isPresent(csvRow[rowKey]))
-      .map((rowKey) => ({
-        id: csvRow[rowKey],
-      }))
-  },
+  "Product Category": processAsCounterValue(
+    /Product Category \d/,
+    "id",
+    "categories"
+  ),
+  "Product Image": processAsCounterValue(/Product Image \d/, "url", "images"),
+  "Product Tag": processAsCounterValue(/Product Tag \d/, "id", "tags"),
+  "Product Sales Channel": processAsCounterValue(
+    /Product Sales Channel \d/,
+    "id",
+    "sales_channels"
+  ),
 }
 
 /**
@@ -176,99 +230,39 @@ const productWildcardColumns: {
  */
 const variantStaticColumns: {
   [columnName: string]: ColumnProcessor<{
-    [K in keyof AdminCreateProductVariant]?: any
+    [K in keyof AdminCreateProductVariant | "id"]?: any
   }>
 } = {
-  "Variant Id": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Id"])) {
-      output["id"] = csvRow["Variant Id"]
-    }
-  },
-  "Variant Title": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Title"])) {
-      output["title"] = csvRow["Variant Title"]
-    }
-  },
-  "Variant Sku": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Sku"])) {
-      output["sku"] = csvRow["Variant Sku"]
-    }
-  },
-  "Variant Upc": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Upc"])) {
-      output["upc"] = csvRow["Variant Upc"]
-    }
-  },
-  "Variant Ean": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Ean"])) {
-      output["ean"] = csvRow["Variant Ean"]
-    }
-  },
-  "Variant Hs Code": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Hs Code"])) {
-      output["hs_code"] = csvRow["Variant Hs Code"]
-    }
-  },
-  "Variant Mid Code": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Mid Code"])) {
-      output["mid_code"] = csvRow["Variant Mid Code"]
-    }
-  },
-  "Variant Manage Inventory": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Manage Inventory"])) {
-      output["manage_inventory"] = csvRow["Variant Manage Inventory"]
-    }
-  },
-  "Variant Allow Backorder": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Allow Backorder"])) {
-      output["allow_backorder"] = csvRow["Variant Allow Backorder"]
-    }
-  },
-  "Variant Barcode": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Barcode"])) {
-      output["barcode"] = csvRow["Variant Barcode"]
-    }
-  },
-  "Variant Height": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Height"])) {
-      output["height"] = csvRow["Variant Height"]
-    }
-  },
-  "Variant Length": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Length"])) {
-      output["length"] = csvRow["Variant Length"]
-    }
-  },
-  "Variant Material": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Material"])) {
-      output["material"] = csvRow["Variant Material"]
-    }
-  },
-  "Variant Metadata": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Metadata"])) {
-      output["metadata"] = csvRow["Variant Metadata"]
-    }
-  },
-  "Variant Origin Country": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Origin Country"])) {
-      output["origin_country"] = csvRow["Variant Origin Country"]
-    }
-  },
-  "Variant Variant Rank": (csvRow, rowColumns, output) => {
-    if (isPresent(csvRow["Variant Variant Rank"])) {
-      output["variant_rank"] = csvRow["Variant Variant Rank"]
-    }
-  },
-  "Variant Width": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Width"])) {
-      output["width"] = csvRow["Variant Width"]
-    }
-  },
-  "Variant Weight": (csvRow, _, output) => {
-    if (isPresent(csvRow["Variant Weight"])) {
-      output["weight"] = csvRow["Variant Weight"]
-    }
-  },
+  "Variant Id": processAsString("Variant Id", "id"),
+  "Variant Title": processAsString("Variant Title", "title"),
+  "Variant Sku": processAsString("Variant Sku", "sku"),
+  "Variant Upc": processAsString("Variant Upc", "upc"),
+  "Variant Ean": processAsString("Variant Ean", "ean"),
+  "Variant Hs Code": processAsString("Variant Hs Code", "hs_code"),
+  "Variant Mid Code": processAsString("Variant Mid Code", "mid_code"),
+  "Variant Manage Inventory": processAsBoolean(
+    "Variant Manage Inventory",
+    "manage_inventory"
+  ),
+  "Variant Allow Backorder": processAsBoolean(
+    "Variant Allow Backorder",
+    "allow_backorder"
+  ),
+  "Variant Barcode": processAsString("Variant Barcode", "barcode"),
+  "Variant Height": processAsNumber("Variant Height", "height"),
+  "Variant Length": processAsNumber("Variant Length", "length"),
+  "Variant Material": processAsString("Variant Material", "material"),
+  "Variant Metadata": processAsString("Variant Metadata", "metadata"),
+  "Variant Origin Country": processAsString(
+    "Variant Origin Country",
+    "origin_country"
+  ),
+  "Variant Variant Rank": processAsString(
+    "Variant Variant Rank",
+    "variant_rank"
+  ),
+  "Variant Width": processAsNumber("Variant Width", "width"),
+  "Variant Weight": processAsNumber("Variant Weight", "weight"),
 }
 
 /**
@@ -280,33 +274,20 @@ const variantWildcardColumns: {
     [K in keyof AdminCreateProductVariant]?: any
   }>
 } = {
-  "Variant Price": (csvRow, rowColumns, output) => {
+  "Variant Price": (csvRow, rowColumns, rowNumber, output) => {
     const pricesColumns = rowColumns.filter((rowKey) => {
       return rowKey.startsWith("Variant Price ") && isPresent(csvRow[rowKey])
     })
+    output["prices"] = output["prices"] ?? []
 
-    output["prices"] = pricesColumns.map((columnName) => {
-      const priceTokens = columnName.replace("Variant Price ", "").split(" ")
-      if (priceTokens.length === 1) {
-        return {
-          currency_code: priceTokens[0],
-          amount: csvRow[columnName],
-        }
-      }
+    pricesColumns.forEach((columnName) => {
+      const { iso } = parseVariantPriceColumn(columnName, rowNumber)
+      const value = normalizeValue(csvRow[columnName])
 
-      if (priceTokens.length === 2) {
-        const currencyCode = priceTokens.find(
-          (token) => token.startsWith("[") && token.endsWith("]")
-        )
-        return {
-          currency_code: currencyCode
-            ?.replace(new RegExp(`^[`), "")
-            .replace(new RegExp(`]$`), ""),
-          amount: csvRow[columnName],
-        }
-      }
-
-      throw new Error(`Invalid format for pricing column "${columnName}"`)
+      output["prices"].push({
+        currency_code: iso,
+        amount: value,
+      })
     })
   },
 }
@@ -320,18 +301,19 @@ const optionColumns: {
     options: { key: any; value: any }[]
   }>
 } = {
-  "Variant Option": (csvRow, rowColumns, output) => {
+  "Variant Option": (csvRow, rowColumns, rowNumber, output) => {
     const matcher = /Variant Option \d+ Name/
     const optionNameColumns = rowColumns.filter((rowKey) => {
-      return matcher.test(rowKey) && isPresent(csvRow[rowKey])
+      return matcher.test(rowKey) && isPresent(normalizeValue(csvRow[rowKey]))
     })
 
     output["options"] = optionNameColumns.map((columnName) => {
       const [, , counter] = columnName.split(" ")
-      const key = csvRow[columnName]
-      const value = csvRow[`Variant Option ${counter} Value`]
+      const key = normalizeValue(csvRow[columnName])
+      const value = normalizeValue(csvRow[`Variant Option ${counter} Value`])
+
       if (!isPresent(value)) {
-        throw new Error(`Missing option value for "${columnName}"`)
+        throw createError(rowNumber, `Missing option value for "${columnName}"`)
       }
 
       return {
@@ -383,8 +365,9 @@ export class CSVNormalizer {
     const productId = row["Product Id"]
     const productHandle = row["Product Handle"]
     if (!isPresent(productId) && !isPresent(productHandle)) {
-      throw new Error(
-        `Row ${rowNumber}: Missing product id and handle. One of them are required to process the row`
+      throw createError(
+        rowNumber,
+        "Missing product id and handle. One of them are required to process the row"
       )
     }
 
@@ -438,10 +421,10 @@ export class CSVNormalizer {
       ? this.#getOrInitializeProductById(String(productId))
       : this.#getOrInitializeProductByHandle(String(productHandle))
     Object.keys(productStaticColumns).forEach((column) => {
-      productStaticColumns[column](row, rowColumns, product)
+      productStaticColumns[column](row, rowColumns, rowNumber, product)
     })
     Object.keys(productWildcardColumns).forEach((column) => {
-      productWildcardColumns[column](row, rowColumns, product)
+      productWildcardColumns[column](row, rowColumns, rowNumber, product)
     })
 
     /**
@@ -452,18 +435,18 @@ export class CSVNormalizer {
       [K in keyof AdminCreateProductVariant]?: any
     } = {}
     Object.keys(variantStaticColumns).forEach((column) => {
-      variantStaticColumns[column](row, rowColumns, variant)
+      variantStaticColumns[column](row, rowColumns, rowNumber, variant)
     })
     Object.keys(variantWildcardColumns).forEach((column) => {
-      variantWildcardColumns[column](row, rowColumns, variant)
+      variantWildcardColumns[column](row, rowColumns, rowNumber, variant)
     })
 
     /**
      * Process variant options as a standalone array
      */
-    const options = { options: [] }
+    const options: { options: { key: any; value: any }[] } = { options: [] }
     Object.keys(optionColumns).forEach((column) => {
-      optionColumns[column](row, rowColumns, options)
+      optionColumns[column](row, rowColumns, rowNumber, options)
     })
 
     /**
@@ -474,7 +457,9 @@ export class CSVNormalizer {
       variant.options[key] = value
 
       product.options = product.options ?? []
-      const matchingKey = product.options.find((option) => option.title === key)
+      const matchingKey = product.options.find(
+        (option: any) => option.title === key
+      )
       if (!matchingKey) {
         product.options.push({ title: key, values: [value] })
       } else {
