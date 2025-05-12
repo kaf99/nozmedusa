@@ -1,4 +1,9 @@
-import { isPresent, tryConvertToNumber, tryConvertToBoolean } from "../common"
+import {
+  isPresent,
+  tryConvertToNumber,
+  tryConvertToBoolean,
+  MedusaError,
+} from "../common"
 import { AdminCreateProduct, AdminCreateProductVariant } from "@medusajs/types"
 
 /**
@@ -16,7 +21,10 @@ type ColumnProcessor<Output> = (
  * Creates an error with the CSV row number
  */
 function createError(rowNumber: number, message: string) {
-  return new Error(`Row ${rowNumber}: ${message}`)
+  return new MedusaError(
+    MedusaError.Types.INVALID_DATA,
+    `Row ${rowNumber}: ${message}`
+  )
 }
 
 /**
@@ -123,7 +131,7 @@ function processAsNumber<Output>(
       if (numericValue === undefined) {
         throw createError(
           rowNumber,
-          `Invalid value provided for "${inputKey}". Expected value to be a number`
+          `Invalid value provided for "${inputKey}". Expected value to be a number, received "${value}"`
         )
       } else {
         output[outputKey as any] = numericValue
