@@ -2,8 +2,7 @@ import { updateTaxRegionsStep, useQueryGraphStep } from "@medusajs/core-flows"
 import { MedusaModule } from "@medusajs/framework/modules-sdk"
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
-import { transform, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
-import { createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow, transform, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
 
 const assignSystemProviderToTaxRegionsWorkflow = createWorkflow(
   "assign-system-provider-to-tax-regions",
@@ -23,7 +22,7 @@ const assignSystemProviderToTaxRegionsWorkflow = createWorkflow(
         )
         .map((taxRegion) => ({
           id: taxRegion.id,
-          provider_id: "tp_system_system",
+          provider_id: "tp_system",
         }))
     })
 

@@ -1,16 +1,16 @@
 import { moduleProviderLoader } from "@medusajs/framework/modules-sdk"
 
 import {
+  CreateTaxProviderDTO,
   LoaderOptions,
   ModuleProvider,
   ModulesSdkTypes,
-  CreateTaxProviderDTO,
 } from "@medusajs/framework/types"
 import { asFunction, asValue, Lifetime } from "awilix"
 
+import { MedusaError } from "@medusajs/framework/utils"
 import * as providers from "../providers"
 import TaxProviderService from "../services/tax-provider"
-import { MedusaError } from "@medusajs/framework/utils"
 
 const PROVIDER_REGISTRATION_KEY = "tax_providers" as const
 
@@ -46,7 +46,7 @@ export default async ({
 >): Promise<void> => {
   // Local providers
   for (const provider of Object.values(providers)) {
-    await registrationFn(provider, container, { id: "system" })
+    await registrationFn(provider, container, {})
   }
 
   await moduleProviderLoader({
