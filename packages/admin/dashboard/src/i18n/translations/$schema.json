@@ -6462,14 +6462,14 @@
             "errors": {
               "type": "object",
               "properties": {
-                "rateIsRequired": {
+                "missingProvider": {
                   "type": "string"
                 },
-                "nameIsRequired": {
+                "missingCountry": {
                   "type": "string"
                 }
               },
-              "required": ["rateIsRequired", "nameIsRequired"],
+              "required": ["missingProvider", "missingCountry"],
               "additionalProperties": false
             },
             "successToast": {

@@ -18,21 +18,40 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { Combobox } from "../../../../../components/inputs/combobox"
 import { formatProvider } from "../../../../../lib/format-provider"
 import { sdk } from "../../../../../lib/client"
+import { i18n } from "../../../../../components/utilities/i18n"
 
 type TaxRegionCreateFormProps = {
   parentId?: string
 }
 
-const TaxRegionCreateSchema = z.object({
-  name: z.string().optional(),
-  code: z.string().optional(),
-  rate: z.object({
-    float: z.number().optional(),
-    value: z.string().optional(),
-  }),
-  country_code: z.string().min(1),
-  provider_id: z.string(),
-})
+const TaxRegionCreateSchema = z
+  .object({
+    name: z.string().optional(),
+    code: z.string().optional(),
+    rate: z.object({
+      float: z.number().optional(),
+      value: z.string().optional(),
+    }),
+    country_code: z.string(),
+    provider_id: z.string(),
+  })
+  .superRefine(({ provider_id, country_code }, ctx) => {
+    if (!provider_id) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: i18n.t("taxRegions.create.errors.missingProvider"),
+        path: ["provider_id"],
+      })
+    }
+
+    if (!country_code) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: i18n.t("taxRegions.create.errors.missingCountry"),
+        path: ["country_code"],
+      })
+    }
+  })
 
 export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
   const { t } = useTranslation()

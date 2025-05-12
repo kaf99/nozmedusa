@@ -1718,8 +1718,8 @@
       "header": "Create Tax Region",
       "hint": "Create a new tax region to define tax rates for a specific country.",
       "errors": {
-        "rateIsRequired": "Tax rate is required when creating a default tax rate.",
-        "nameIsRequired": "Name is required when creating a default tax rate."
+        "missingProvider": "Provider is required when creating a tax region.",
+        "missingCountry": "Country is required when creating a tax region."
       },
       "successToast": "The tax region was successfully created."
     },
