@@ -122,7 +122,8 @@ function processAsBoolean<Output>(
  */
 function processAsNumber<Output>(
   inputKey: string,
-  outputKey: keyof Output
+  outputKey: keyof Output,
+  options?: { asNumericString: boolean }
 ): ColumnProcessor<Output> {
   return (csvRow, _, rowNumber, output) => {
     const value = normalizeValue(csvRow[inputKey])
@@ -134,7 +135,11 @@ function processAsNumber<Output>(
           `Invalid value provided for "${inputKey}". Expected value to be a number, received "${value}"`
         )
       } else {
-        output[outputKey as any] = numericValue
+        if (options?.asNumericString) {
+          output[outputKey as any] = String(numericValue)
+        } else {
+          output[outputKey as any] = numericValue
+        }
       }
     }
   }
@@ -191,17 +196,25 @@ const productStaticColumns: {
     "Product Discountable",
     "discountable"
   ),
-  "Product Height": processAsNumber("Product Height", "height"),
+  "Product Height": processAsNumber("Product Height", "height", {
+    asNumericString: true,
+  }),
   "Product Hs Code": processAsString("Product Hs Code", "hs_code"),
-  "Product Length": processAsNumber("Product Length", "length"),
+  "Product Length": processAsNumber("Product Length", "length", {
+    asNumericString: true,
+  }),
   "Product Material": processAsString("Product Material", "material"),
   "Product Mid Code": processAsString("Product Mid Code", "mid_code"),
   "Product Origin Country": processAsString(
     "Product Origin Country",
     "origin_country"
   ),
-  "Product Weight": processAsNumber("Product Weight", "weight"),
-  "Product Width": processAsNumber("Product Width", "width"),
+  "Product Weight": processAsNumber("Product Weight", "weight", {
+    asNumericString: true,
+  }),
+  "Product Width": processAsNumber("Product Width", "width", {
+    asNumericString: true,
+  }),
   "Product Metadata": processAsString("Product Metadata", "metadata"),
   "Shipping Profile Id": processAsString(
     "Shipping Profile Id",
@@ -257,8 +270,12 @@ const variantStaticColumns: {
     "allow_backorder"
   ),
   "Variant Barcode": processAsString("Variant Barcode", "barcode"),
-  "Variant Height": processAsNumber("Variant Height", "height"),
-  "Variant Length": processAsNumber("Variant Length", "length"),
+  "Variant Height": processAsNumber("Variant Height", "height", {
+    asNumericString: true,
+  }),
+  "Variant Length": processAsNumber("Variant Length", "length", {
+    asNumericString: true,
+  }),
   "Variant Material": processAsString("Variant Material", "material"),
   "Variant Metadata": processAsString("Variant Metadata", "metadata"),
   "Variant Origin Country": processAsString(
@@ -269,8 +286,12 @@ const variantStaticColumns: {
     "Variant Variant Rank",
     "variant_rank"
   ),
-  "Variant Width": processAsNumber("Variant Width", "width"),
-  "Variant Weight": processAsNumber("Variant Weight", "weight"),
+  "Variant Width": processAsNumber("Variant Width", "width", {
+    asNumericString: true,
+  }),
+  "Variant Weight": processAsNumber("Variant Weight", "weight", {
+    asNumericString: true,
+  }),
 }
 
 /**
@@ -292,10 +313,18 @@ const variantWildcardColumns: {
       const { iso } = parseVariantPriceColumn(columnName, rowNumber)
       const value = normalizeValue(csvRow[columnName])
 
-      output["prices"].push({
-        currency_code: iso,
-        amount: value,
-      })
+      const numericValue = tryConvertToNumber(value)
+      if (numericValue === undefined) {
+        throw createError(
+          rowNumber,
+          `Invalid value provided for "${columnName}". Expected value to be a number, received "${value}"`
+        )
+      } else {
+        output["prices"].push({
+          currency_code: iso,
+          amount: String(numericValue),
+        })
+      }
     })
   },
 }
