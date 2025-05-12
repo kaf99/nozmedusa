@@ -584,14 +584,58 @@ export interface ITaxModuleService extends IModuleService {
 
   /**
    * This method retrieves a paginated list of tax providers based on optional filters and configuration.
+   * 
+   * @version 2.8.0
    *
    * @param {FilterableTaxProviderProps} filters - The filters to apply on the retrieved tax providers.
-   * @param {FindConfig<TaxProviderDTO>} config - The configurations determining how the tax provider is retrieved.
+   * @param {FindConfig<TaxProviderDTO>} config - The configurations determining how the tax provider is retrieved. Its properties, such as `select` or `relations`, accept the
+   * attributes or relations associated with a tax provider.
    * @param {Context} sharedContext - A context used to share resources, such as transaction manager, between the application and the module.
    * @returns {Promise<TaxProviderDTO[]>} The list of tax providers.
    *
    * @example
-   * const taxProviders = await taxModuleService.listTaxProviders()
+   * To retrieve a list of tax providers using their associated tax rate's ID:
+   *
+   * ```ts
+   * const taxProviders = await taxModuleService.listTaxProviders({
+   *   id: ["tp_custom_custom"],
+   * })
+   * ```
+   *
+   * To specify relations that should be retrieved within the tax provider:
+   * 
+   * :::note
+   * 
+   * You can only retrieve data models defined in the same module. To retrieve linked data models
+   * from other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.
+   * 
+   * :::
+   *
+   * ```ts
+   * const taxProviders = await taxModuleService.listTaxProviders(
+   *   {
+   *     id: ["tp_custom_custom"],
+   *   },
+   *   {
+   *     relations: ["regions"],
+   *   }
+   * )
+   * ```
+   *
+   * By default, only the first `15` records are retrieved. You can control pagination by specifying the `skip` and `take` properties of the `config` parameter:
+   *
+   * ```ts
+   * const taxProviders = await taxModuleService.listTaxProviders(
+   *   {
+   *     id: ["tp_custom_custom"],
+   *   },
+   *   {
+   *     relations: ["regions"],
+   *     take: 20,
+   *     skip: 2,
+   *   }
+   * )
+   * ```
    */
 
   listTaxProviders(

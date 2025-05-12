@@ -1,8 +1,8 @@
-import { Product } from "@models"
+import { Product, ProductOption } from "@models"
 
-import { Context, DAL } from "@medusajs/framework/types"
-import { DALUtils } from "@medusajs/framework/utils"
-import { SqlEntityManager } from "@mikro-orm/postgresql"
+import { Context, DAL, InferEntityType } from "@medusajs/framework/types"
+import { buildQuery, DALUtils } from "@medusajs/framework/utils"
+import { SqlEntityManager, wrap } from "@mikro-orm/postgresql"
 
 // eslint-disable-next-line max-len
 export class ProductRepository extends DALUtils.mikroOrmBaseRepositoryFactory(
@@ -11,6 +11,68 @@ export class ProductRepository extends DALUtils.mikroOrmBaseRepositoryFactory(
   constructor(...args: any[]) {
     // @ts-ignore
     super(...arguments)
+  }
+
+  async deepUpdate(
+    updates: any[],
+    validateVariantOptions: (
+      variants: any[],
+      options: InferEntityType<typeof ProductOption>[]
+    ) => void,
+    context: Context = {}
+  ): Promise<InferEntityType<typeof Product>[]> {
+    const products = await this.find(
+      buildQuery({ id: updates.map((p) => p.id) }, { relations: ["*"] }),
+      context
+    )
+    const productsMap = new Map(products.map((p) => [p.id, p]))
+
+    for (const update of updates) {
+      const product = productsMap.get(update.id)!
+
+      // Assign the options first, so they'll be available for the variants loop below
+      if (update.options) {
+        wrap(product).assign({ options: update.options })
+        delete update.options // already assigned above, so no longer necessary
+      }
+
+      if (update.variants) {
+        validateVariantOptions(update.variants, product.options)
+
+        update.variants.forEach((variant: any) => {
+          if (variant.options) {
+            variant.options = Object.entries(variant.options).map(
+              ([key, value]) => {
+                const productOption = product.options.find(
+                  (option) => option.title === key
+                )!
+                const productOptionValue = productOption.values?.find(
+                  (optionValue) => optionValue.value === value
+                )!
+                return productOptionValue.id
+              }
+            )
+          }
+        })
+      }
+
+      if (update.tags) {
+        update.tags = update.tags.map((t: { id: string }) => t.id)
+      }
+      if (update.categories) {
+        update.categories = update.categories.map((c: { id: string }) => c.id)
+      }
+      if (update.images) {
+        update.images = update.images.map((image: any, index: number) => ({
+          ...image,
+          rank: index,
+        }))
+      }
+
+      wrap(product!).assign(update)
+    }
+
+    return products
   }
 
   /**

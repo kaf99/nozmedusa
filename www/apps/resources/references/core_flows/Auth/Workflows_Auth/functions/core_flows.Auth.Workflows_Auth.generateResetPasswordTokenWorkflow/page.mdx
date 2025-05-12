@@ -176,6 +176,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -195,6 +198,18 @@ to send a reset password email to the user or customer, for example.
   token, // The generated token.
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "auth.password_reset",
+        payload: `\`\`\`ts
+{
+  entity_id, // The identifier of the user or customer. For example, an email address.
+  actor_type, // The type of actor. For example, "customer", "user", or custom.
+  token, // The generated token.
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

@@ -6482,11 +6482,17 @@
         "edit": {
           "type": "object",
           "properties": {
+            "header": {
+              "type": "string"
+            },
+            "hint": {
+              "type": "string"
+            },
             "successToast": {
               "type": "string"
             }
           },
-          "required": ["successToast"],
+          "required": ["header", "hint", "successToast"],
           "additionalProperties": false
         },
         "province": {

@@ -163,6 +163,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -180,6 +183,17 @@ Emitted when a claim is created for an order.
   claim_id, // The ID of the claim
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "order.claim_created",
+        payload: `\`\`\`ts
+{
+  order_id, // The ID of the order
+  claim_id, // The ID of the claim
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

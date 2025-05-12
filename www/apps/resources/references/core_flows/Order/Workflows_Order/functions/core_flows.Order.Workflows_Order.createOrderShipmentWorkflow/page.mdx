@@ -23,7 +23,7 @@ allows you to create custom data models linked to the shipment.
 
 You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around creating a shipment.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/ecf3556589c1fb64ad8bdc0b88307b11a6f7c89f/packages/core/core-flows/src/order/workflows/create-shipment.ts#L198" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/196f6b7015d8349f311eea6194223af60b9e59c5/packages/core/core-flows/src/order/workflows/create-shipment.ts#L198" />
 
 ## Examples
 
@@ -216,6 +216,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -230,9 +233,20 @@ Emitted when a shipment is created for an order.
 ```ts blockStyle="inline"
 {
   id, // the ID of the shipment
-  no_notification, // whether to notify the customer
+  no_notification, // (boolean) whether to notify the customer
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "shipment.created",
+        payload: `\`\`\`ts
+{
+  id, // the ID of the shipment
+  no_notification, // (boolean) whether to notify the customer
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

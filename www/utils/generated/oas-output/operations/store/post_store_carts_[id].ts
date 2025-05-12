@@ -113,15 +113,6 @@
  *       ```
  *     description: Emitted when a cart's details are updated.
  *     deprecated: false
- *   - name: cart.customer_updated
- *     payload: |-
- *       ```ts
- *       {
- *         id, // The ID of the cart
- *       }
- *       ```
- *     description: Emitted when the customer in the cart is updated.
- *     deprecated: false
  *   - name: cart.region_updated
  *     payload: |-
  *       ```ts

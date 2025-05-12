@@ -246,8 +246,8 @@ medusaIntegrationTestRunner({
               }),
               items: expect.arrayContaining([
                 expect.objectContaining({
-                  title: "Test variant",
-                  subtitle: "Test product",
+                  title: "Test product",
+                  subtitle: "Test variant",
                   product_title: "Test product",
                   product_description: null,
                   product_subtitle: null,
@@ -313,8 +313,8 @@ medusaIntegrationTestRunner({
                   }),
                 }),
                 expect.objectContaining({
-                  title: "Variant variable",
-                  subtitle: "Another product",
+                  title: "Another product",
+                  subtitle: "Variant variable",
                   raw_unit_price: expect.objectContaining({
                     value: "200",
                   }),

@@ -165,6 +165,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -182,6 +185,16 @@ to send an email to the invited users, for example.
   id, // The ID of the invite
 }]
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "invite.created",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the invite
+}]
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

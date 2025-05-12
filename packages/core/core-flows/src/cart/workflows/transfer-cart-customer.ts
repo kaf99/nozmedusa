@@ -6,9 +6,10 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { useQueryGraphStep } from "../../common"
+import { emitEventStep, useQueryGraphStep } from "../../common"
 import { updateCartsStep } from "../steps"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
+import { CartWorkflowEvents } from "@medusajs/framework/utils"
 
 /**
  * The cart ownership transfer details.
@@ -109,6 +110,14 @@ export const transferCartCustomerWorkflow = createWorkflow(
 
         refreshCartItemsWorkflow.runAsStep({
           input: { cart_id: input.id, force_refresh: true },
+        })
+
+        emitEventStep({
+          eventName: CartWorkflowEvents.CUSTOMER_TRANSFERRED,
+          data: {
+            id: input.id,
+            customer_id: customer.customer_id,
+          },
         })
       }
     )

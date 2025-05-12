@@ -166,7 +166,14 @@ export interface IFileModuleService extends IModuleService {
   ): Promise<[FileDTO[], number]>
 
   /**
-   * Get the file contents as a readable stream.
+   * This method retrieves a file by its ID and returns a stream to download the file. Under the hood, it will use the
+   * file provider that was used to upload the file to retrievethe stream.
+   * 
+   * @version 2.8.0
+   * 
+   * @param {string} id - The ID of the file.
+   * @param {Context} sharedContext - A context used to share resources, such as transaction manager, between the application and the module.
+   * @returns {Promise<Readable>} A readable stream of the file contents.
    *
    * @example
    * const stream = await fileModuleService.getDownloadStream("file_123")
@@ -175,7 +182,14 @@ export interface IFileModuleService extends IModuleService {
   getDownloadStream(id: string, sharedContext?: Context): Promise<Readable>
 
   /**
-   * Get the file contents as a Node.js Buffer
+   * This method retrieves a file by its ID and returns the file contents as a buffer. Under the hood, it will use the
+   * file provider that was used to upload the file to retrieve the buffer.
+   * 
+   * @version 2.8.0
+   * 
+   * @param {string} id - The ID of the file.
+   * @param {Context} sharedContext - A context used to share resources, such as transaction manager, between the application and the module.
+   * @returns {Promise<Buffer>} A buffer of the file contents.
    *
    * @example
    * const contents = await fileModuleService.getAsBuffer("file_123")

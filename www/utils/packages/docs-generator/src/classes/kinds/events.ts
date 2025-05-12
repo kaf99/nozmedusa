@@ -124,8 +124,18 @@ class EventsKindGenerator extends DefaultKindGenerator<ts.VariableDeclaration> {
       }
 
       this.workflows[workflowName] = workflowFile
-      if (workflowFile.includes("emitEventStep")) {
-        this.workflowsEmittingEvents[workflowName] = workflowFile
+      // remove comments in case the emitEventStep is commented out
+      const workflowWithoutComments = workflowFile.replace(
+        /\/\*[\s\S]*?\*\/|\/\/.*/g,
+        ""
+      )
+      // the emitEventStep should be mentioned at least twice in the workflow
+      // including the import statement
+      const emitEventStepCount = (
+        workflowWithoutComments.match(/emitEventStep/g) || []
+      ).length
+      if (emitEventStepCount >= 2) {
+        this.workflowsEmittingEvents[workflowName] = workflowWithoutComments
       }
     }
   }

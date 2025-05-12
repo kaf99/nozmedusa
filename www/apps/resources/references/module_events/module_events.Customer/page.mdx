@@ -50,7 +50,11 @@ Emitted when a customer is deleted.
   </Table.Body>
 </Table>
 
-## `customer.created`
+<EventHeader headerLvl="2" headerProps={{ id: "customercreated", children: (<>customer.created</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="customer.created" payload={`\`\`\`ts
+[{
+  id, // The ID of the customer
+}]
+\`\`\``} />
 
 Emitted when a customer is created.
 
@@ -64,12 +68,18 @@ Emitted when a customer is created.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [createCustomersWorkflow](/references/medusa-workflows/createCustomersWorkflow)
 - [createCustomerAccountWorkflow](/references/medusa-workflows/createCustomerAccountWorkflow)
 
 ---
 
-## `customer.updated`
+<EventHeader headerLvl="2" headerProps={{ id: "customerupdated", children: (<>customer.updated</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="customer.updated" payload={`\`\`\`ts
+[{
+  id, // The ID of the customer
+}]
+\`\`\``} />
 
 Emitted when a customer is updated.
 
@@ -83,11 +93,17 @@ Emitted when a customer is updated.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [updateCustomersWorkflow](/references/medusa-workflows/updateCustomersWorkflow)
 
 ---
 
-## `customer.deleted`
+<EventHeader headerLvl="2" headerProps={{ id: "customerdeleted", children: (<>customer.deleted</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="customer.deleted" payload={`\`\`\`ts
+[{
+  id, // The ID of the customer
+}]
+\`\`\``} />
 
 Emitted when a customer is deleted.
 
@@ -100,6 +116,8 @@ Emitted when a customer is deleted.
 ```
 
 ### Workflows Emitting this Event
+
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
 
 - [deleteCustomersWorkflow](/references/medusa-workflows/deleteCustomersWorkflow)
 - [removeCustomerAccountWorkflow](/references/medusa-workflows/removeCustomerAccountWorkflow)

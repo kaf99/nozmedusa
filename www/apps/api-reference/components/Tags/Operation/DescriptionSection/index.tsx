@@ -8,10 +8,11 @@ import dynamic from "next/dynamic"
 import TagsOperationDescriptionSectionParameters from "./Parameters"
 import MDXContentClient from "@/components/MDXContent/Client"
 import { useArea } from "../../../../providers/area"
-import { Feedback, Badge, Link, FeatureFlagNotice, H2 } from "docs-ui"
+import { Feedback, Badge, Link, FeatureFlagNotice, H2, Tooltip } from "docs-ui"
 import { usePathname } from "next/navigation"
 import { TagsOperationDescriptionSectionWorkflowBadgeProps } from "./WorkflowBadge"
 import { TagsOperationDescriptionSectionEventsProps } from "./Events"
+import { TagsOperationDescriptionSectionDeprecationNoticeProps } from "./DeprecationNotice"
 
 const TagsOperationDescriptionSectionSecurity =
   dynamic<TagsOperationDescriptionSectionSecurityProps>(
@@ -38,6 +39,11 @@ const TagsOperationDescriptionSectionEvents =
     async () => import("./Events")
   ) as React.FC<TagsOperationDescriptionSectionEventsProps>
 
+const TagsOperationDescriptionSectionDeprecationNotice =
+  dynamic<TagsOperationDescriptionSectionDeprecationNoticeProps>(
+    async () => import("./DeprecationNotice")
+  ) as React.FC<TagsOperationDescriptionSectionDeprecationNoticeProps>
+
 type TagsOperationDescriptionSectionProps = {
   operation: OpenAPI.Operation
 }
@@ -52,9 +58,10 @@ const TagsOperationDescriptionSection = ({
       <H2>
         {operation.summary}
         {operation.deprecated && (
-          <Badge variant="orange" className="ml-0.5">
-            deprecated
-          </Badge>
+          <TagsOperationDescriptionSectionDeprecationNotice
+            deprecationMessage={operation["x-deprecated_message"]}
+            className="ml-0.5"
+          />
         )}
         {operation["x-featureFlag"] && (
           <FeatureFlagNotice
@@ -62,6 +69,15 @@ const TagsOperationDescriptionSection = ({
             tooltipTextClassName="font-normal text-medusa-fg-base"
             badgeClassName="ml-0.5"
           />
+        )}
+        {operation["x-version"] && (
+          <Tooltip
+            text={`This API route is available since v${operation["x-version"]}`}
+          >
+            <Badge variant="blue" className="ml-0.5">
+              v{operation["x-version"]}
+            </Badge>
+          </Tooltip>
         )}
       </H2>
       <div className="my-1">

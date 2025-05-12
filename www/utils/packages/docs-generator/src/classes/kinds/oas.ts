@@ -434,6 +434,22 @@ class OasKindGenerator extends FunctionKindGenerator {
       oas["x-events"] = this.getOasEvents(oas["x-workflow"])
     }
 
+    // check deprecation and version in tags
+    const { deprecatedTag, versionTag } = this.getInformationFromTags(node)
+
+    if (deprecatedTag) {
+      oas.deprecated = true
+      oas["x-deprecated_message"] = deprecatedTag.comment
+        ? (deprecatedTag.comment as string)
+        : undefined
+    }
+
+    if (versionTag) {
+      oas["x-version"] = versionTag.comment
+        ? (versionTag.comment as string)
+        : undefined
+    }
+
     return formatOas(oas, oasPrefix)
   }
 
@@ -765,6 +781,27 @@ class OasKindGenerator extends FunctionKindGenerator {
     if (oas["x-workflow"]) {
       // get associated events
       oas["x-events"] = this.getOasEvents(oas["x-workflow"])
+    }
+
+    // check deprecation and version in tags
+    const { deprecatedTag, versionTag } = this.getInformationFromTags(node)
+
+    if (deprecatedTag) {
+      oas.deprecated = true
+      oas["x-deprecated_message"] = deprecatedTag.comment
+        ? (deprecatedTag.comment as string)
+        : undefined
+    } else {
+      delete oas.deprecated
+      delete oas["x-deprecated_message"]
+    }
+
+    if (versionTag) {
+      oas["x-version"] = versionTag.comment
+        ? (versionTag.comment as string)
+        : undefined
+    } else {
+      delete oas["x-version"]
     }
 
     return formatOas(oas, oasPrefix)

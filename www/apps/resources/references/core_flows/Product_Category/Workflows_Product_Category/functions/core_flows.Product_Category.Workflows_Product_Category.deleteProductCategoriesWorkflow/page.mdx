@@ -174,6 +174,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -190,6 +193,16 @@ Emitted when product categories are deleted.
   id, // The ID of the product category
 }]
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "product-category.deleted",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the product category
+}]
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

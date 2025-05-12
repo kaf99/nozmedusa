@@ -455,7 +455,7 @@ You create a step with `createStep` from the Workflows SDK. It accepts two param
 
 In the step function, you resolve the Review Module's service from the Medusa container using its `resolve` method, passing it the module's name as a parameter.
 
-Then, you create the review using the `createReview` method. As you remember, the Review Module's service extends the `MedusaService` which generates data-management methods for you.
+Then, you create the review using the `createReviews` method. As you remember, the Review Module's service extends the `MedusaService` which generates data-management methods for you.
 
 A step function must return a `StepResponse` instance. The `StepResponse` constructor accepts two parameters:
 

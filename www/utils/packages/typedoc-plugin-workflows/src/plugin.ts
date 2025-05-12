@@ -915,6 +915,12 @@ class WorkflowsPlugin {
             commentText += ` -- ${event.deprecated_message}`
           }
         }
+        if (event.version) {
+          commentText += ` -- version: ${event.version}`
+        }
+        if (event.name === "order-edit.canceled") {
+          console.log(event, commentText)
+        }
         return new CommentTag(`@workflowEvent`, [
           {
             kind: "text",

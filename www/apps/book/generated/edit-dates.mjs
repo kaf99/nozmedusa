@@ -22,7 +22,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/admin/widgets/page.mdx": "2024-12-09T16:43:24.260Z",
   "app/learn/fundamentals/data-models/page.mdx": "2025-03-18T07:55:56.252Z",
   "app/learn/fundamentals/modules/remote-link/page.mdx": "2024-09-30T08:43:53.127Z",
-  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2025-03-17T11:47:10.101Z",
+  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2025-05-09T07:57:32.929Z",
   "app/learn/fundamentals/workflows/add-workflow-hook/page.mdx": "2024-12-09T14:42:39.693Z",
   "app/learn/fundamentals/events-and-subscribers/data-payload/page.mdx": "2025-05-01T15:30:08.421Z",
   "app/learn/fundamentals/workflows/advanced-example/page.mdx": "2024-09-11T10:46:59.975Z",
@@ -46,7 +46,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/admin/tips/page.mdx": "2025-03-11T08:54:12.028Z",
   "app/learn/fundamentals/api-routes/cors/page.mdx": "2025-03-11T08:54:26.281Z",
   "app/learn/fundamentals/admin/ui-routes/page.mdx": "2025-02-24T09:35:11.752Z",
-  "app/learn/fundamentals/api-routes/middlewares/page.mdx": "2025-03-24T06:43:02.362Z",
+  "app/learn/fundamentals/api-routes/middlewares/page.mdx": "2025-05-09T07:56:04.125Z",
   "app/learn/fundamentals/modules/isolation/page.mdx": "2024-12-09T11:02:38.087Z",
   "app/learn/fundamentals/data-models/index/page.mdx": "2025-03-18T07:59:07.798Z",
   "app/learn/fundamentals/custom-cli-scripts/page.mdx": "2024-10-23T07:08:55.898Z",
@@ -119,5 +119,6 @@ export const generatedEditDates = {
   "app/learn/fundamentals/data-models/properties/page.mdx": "2025-03-18T07:57:17.826Z",
   "app/learn/fundamentals/framework/page.mdx": "2025-04-25T14:26:25.000Z",
   "app/learn/fundamentals/api-routes/retrieve-custom-links/page.mdx": "2025-04-25T14:26:25.000Z",
-  "app/learn/fundamentals/workflows/errors/page.mdx": "2025-04-25T14:26:25.000Z"
+  "app/learn/fundamentals/workflows/errors/page.mdx": "2025-04-25T14:26:25.000Z",
+  "app/learn/fundamentals/api-routes/override/page.mdx": "2025-05-09T08:01:24.493Z"
 }

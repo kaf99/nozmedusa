@@ -136,7 +136,8 @@ export class AbstractFileProviderService implements IFileProvider {
    *   // ...
    *   async delete(file: ProviderDeleteFileDTO): Promise<void> {
    *     // TODO logic to remove the file from storage
-   *     // Use the `file.fileKey` to delete the file
+   *     // Use the `file.fileKey` to delete the file, which is the identifier of the file
+   *    // in the provider's storage.
    *     // for example:
    *     this.client.delete(file.fileKey)
    *   }
@@ -164,7 +165,8 @@ export class AbstractFileProviderService implements IFileProvider {
    *     fileData: ProviderGetFileDTO
    *   ): Promise<string> {
    *     // TODO logic to get the presigned URL
-   *     // Use the `file.fileKey` to delete the file
+   *     // Use the `file.fileKey` to delete the file, which is the identifier of the file
+   *    // in the provider's storage.
    *     // for example:
    *     return this.client.getPresignedUrl(fileData.fileKey)
    *   }
@@ -177,12 +179,22 @@ export class AbstractFileProviderService implements IFileProvider {
   }
 
   /**
-   * Get the file contents as a readable stream.
+   * This method retrieves an uploaded file as a stream. This is useful when streaming
+   * a file to clients or you want to process the file in chunks.
+   * 
+   * @param {FileTypes.ProviderGetFileDTO} fileData - The details of the file to get its stream.
+   * @returns {Promise<Readable>} The file's stream.
+   * 
+   * @version 2.8.0
    *
    * @example
    * class MyFileProviderService extends AbstractFileProviderService {
    *   // ...
    *   async getAsStream(file: ProviderDeleteFileDTO): Promise<Readable> {
+   *    // TODO logic to get the file as a stream
+   *    // Use the `file.fileKey` to get the file, which is the identifier of the file
+   *    // in the provider's storage.
+   *    // for example:
    *     this.client.getAsStream(file.fileKey)
    *   }
    * }
@@ -192,12 +204,22 @@ export class AbstractFileProviderService implements IFileProvider {
   }
 
   /**
-   * Get the file contents as a Node.js Buffer
+   * This method retrieves an uploaded file as a buffer. This is useful when you want to
+   * process the entire file in memory or send it as a response.
+   * 
+   * @param {FileTypes.ProviderGetFileDTO} fileData - The details of the file to get its buffer.
+   * @returns {Promise<Buffer>} The file's buffer.
+   * 
+   * @version 2.8.0
    *
    * @example
    * class MyFileProviderService extends AbstractFileProviderService {
    *   // ...
    *   async getAsBuffer(file: ProviderDeleteFileDTO): Promise<Buffer> {
+   *     // TODO logic to get the file as a buffer
+   *     // Use the `file.fileKey` to get the file, which is the identifier of the file
+   *     // in the provider's storage.
+   *     // for example:
    *     this.client.getAsBuffer(file.fileKey)
    *   }
    * }

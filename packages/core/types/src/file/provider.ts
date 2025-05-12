@@ -30,7 +30,12 @@ export type ProviderFileResultDTO = {
  */
 export type ProviderGetFileDTO = {
   /**
-   * The file's key as returned during upload.
+   * The file's key allowing you to later
+   * identify the file in the third-party
+   * system. For example, the S3 Module Provider
+   * returns the file's key in S3, whereas the
+   * Local File Module Provider returns the file's
+   * path.
    */
   fileKey: string
   [x: string]: unknown

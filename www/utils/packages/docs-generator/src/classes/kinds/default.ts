@@ -595,6 +595,42 @@ class DefaultKindGenerator<T extends ts.Node = ts.Node> {
   nodeHasComments(node: ts.Node): boolean {
     return this.getNodeCommentsFromRange(node) !== undefined
   }
+
+  /**
+   * Retrieve information from the tags of a node.
+   *
+   * @param node - The node to retrieve the information from.
+   * @returns An object containing the deprecated and version tags, if available.
+   */
+  getInformationFromTags(node: ts.Node): {
+    deprecatedTag: ts.JSDocTag | undefined
+    versionTag: ts.JSDocTag | undefined
+  } {
+    const nodeComments = ts.getJSDocCommentsAndTags(node)
+    let deprecatedTag: ts.JSDocTag | undefined
+    let versionTag: ts.JSDocTag | undefined
+
+    nodeComments.forEach((comment) => {
+      if (!("tags" in comment)) {
+        return
+      }
+
+      comment.tags?.forEach((tag) => {
+        if (tag.tagName.getText() === "deprecated") {
+          deprecatedTag = tag
+        }
+
+        if (tag.tagName.getText() === "version") {
+          versionTag = tag
+        }
+      })
+    })
+
+    return {
+      deprecatedTag,
+      versionTag,
+    }
+  }
 }
 
 export default DefaultKindGenerator

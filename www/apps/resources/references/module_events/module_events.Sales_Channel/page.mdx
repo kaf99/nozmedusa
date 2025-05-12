@@ -50,7 +50,11 @@ Emitted when sales channels are deleted.
   </Table.Body>
 </Table>
 
-## `sales-channel.created`
+<EventHeader headerLvl="2" headerProps={{ id: "sales-channelcreated", children: (<>sales-channel.created</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="sales-channel.created" payload={`\`\`\`ts
+[{
+  id, // The ID of the sales channel
+}]
+\`\`\``} />
 
 Emitted when sales channels are created.
 
@@ -64,11 +68,17 @@ Emitted when sales channels are created.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [createSalesChannelsWorkflow](/references/medusa-workflows/createSalesChannelsWorkflow)
 
 ---
 
-## `sales-channel.updated`
+<EventHeader headerLvl="2" headerProps={{ id: "sales-channelupdated", children: (<>sales-channel.updated</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="sales-channel.updated" payload={`\`\`\`ts
+[{
+  id, // The ID of the sales channel
+}]
+\`\`\``} />
 
 Emitted when sales channels are updated.
 
@@ -82,11 +92,17 @@ Emitted when sales channels are updated.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [updateSalesChannelsWorkflow](/references/medusa-workflows/updateSalesChannelsWorkflow)
 
 ---
 
-## `sales-channel.deleted`
+<EventHeader headerLvl="2" headerProps={{ id: "sales-channeldeleted", children: (<>sales-channel.deleted</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="sales-channel.deleted" payload={`\`\`\`ts
+[{
+  id, // The ID of the sales channel
+}]
+\`\`\``} />
 
 Emitted when sales channels are deleted.
 
@@ -99,5 +115,7 @@ Emitted when sales channels are deleted.
 ```
 
 ### Workflows Emitting this Event
+
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
 
 - [deleteSalesChannelsWorkflow](/references/medusa-workflows/deleteSalesChannelsWorkflow)

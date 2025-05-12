@@ -67,7 +67,7 @@ function formatEventsType(
     eventVariable.name.replaceAll("WorkflowEvents", "")
   )
   if (showHeader) {
-    content.push(`## ${header} Events`)
+    content.push(`${"#".repeat(subtitleLevel - 1)} ${header} Events`)
   }
   content.push("")
 
@@ -93,9 +93,7 @@ function formatEventsType(
         .find((tag) => tag.tag === "@eventName")
         ?.content.map((content) => content.text)
         .join("") || ""
-    eventName = `[${eventName}](#${slugify(eventName.replace(".", ""), {
-      lower: true,
-    })})`
+    eventName = `[${eventName}](#${getEventNameSlug(eventName)})`
     const eventDescription = event.comment?.summary
       .map((content) => content.text)
       .join("")
@@ -116,6 +114,21 @@ function formatEventsType(
       if (deprecationText.length) {
         eventName += `</Tooltip>`
       }
+    }
+
+    const versionTag = event.comment?.blockTags.find(
+      (tag) => tag.tag === "@version"
+    )
+
+    if (versionTag) {
+      eventName += `\n`
+      const versionText = versionTag.content
+        .map((content) => content.text)
+        .join("")
+        .trim()
+      eventName += `<Tooltip text="This event was added in version v${versionText}">`
+      eventName += `<Badge variant="blue">v${versionText}</Badge>`
+      eventName += `</Tooltip>`
     }
 
     content.push(`    <Table.Row>`)
@@ -149,32 +162,40 @@ function formatEventsType(
     const deprecatedTag = event.comment?.blockTags.find(
       (tag) => tag.tag === "@deprecated"
     )
+    const deprecatedMessage = deprecatedTag?.content
+      .map((content) => content.text)
+      .join("")
+      .trim()
 
-    content.push(`${subHeaderPrefix} \`${eventName}\``)
+    const versionTag = event.comment?.blockTags.find(
+      (tag) => tag.tag === "@version"
+    )
+
+    content.push(
+      getEventHeading({
+        titleLevel: subtitleLevel,
+        eventName: eventName || "",
+        payload: eventPayload || "",
+        deprecated: !!deprecatedTag,
+        deprecatedMessage,
+        version: versionTag
+          ? versionTag.content
+              .map((content) => content.text)
+              .join("")
+              .trim()
+          : undefined,
+      })
+    )
     content.push("")
-    if (deprecatedTag) {
-      const deprecationText = deprecatedTag.content
-        .map((content) => content.text)
-        .join("")
-        .trim()
-      if (deprecationText.length) {
-        content.push(`<Tooltip text="${deprecationText}">`)
-      }
-
-      content.push(`<Badge variant="orange">Deprecated</Badge>`)
-
-      if (deprecationText.length) {
-        content.push(`</Tooltip>`)
-      }
-      content.push("")
-    }
     content.push(eventDescription || "")
     content.push("")
     content.push(`${subHeaderPrefix}# Payload`)
     content.push("")
     content.push(eventPayload || "")
     content.push("")
-    content.push(`${subHeaderPrefix}# Workflows Emitting this Event`)
+    content.push(
+      `${subHeaderPrefix}# Workflows Emitting this Event\n\nThe following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.`
+    )
     content.push("")
     workflows?.forEach((workflow) => {
       content.push(`- [${workflow}](/references/medusa-workflows/${workflow})`)
@@ -187,4 +208,53 @@ function formatEventsType(
   })
 
   return content.join("\n")
+}
+
+function getEventHeading({
+  titleLevel,
+  eventName,
+  payload,
+  deprecated = false,
+  deprecatedMessage,
+  version,
+}: {
+  titleLevel: number
+  eventName: string
+  payload: string
+  deprecated?: boolean
+  deprecatedMessage?: string
+  version?: string
+}) {
+  const heading = [eventName]
+  if (deprecated) {
+    if (deprecatedMessage?.length) {
+      heading.push(`<Tooltip text="${deprecatedMessage}">`)
+    }
+
+    heading.push(`<Badge variant="orange">Deprecated</Badge>`)
+
+    if (deprecatedMessage?.length) {
+      heading.push(`</Tooltip>`)
+    }
+  }
+  if (version) {
+    if (deprecated) {
+      heading.push(`\n`)
+    }
+    heading.push(`<Tooltip text="This event was added in version v${version}">`)
+    heading.push(`<Badge variant="blue">v${version}</Badge>`)
+    heading.push(`</Tooltip>`)
+  }
+  return `<EventHeader headerLvl="${titleLevel}" headerProps={{ id: "${getEventNameSlug(
+    eventName
+  )}", children: (<>${heading.join(
+    "\n"
+  )}</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="${eventName}" payload={\`${payload.replaceAll(
+    "`",
+    "\\`"
+  )}\`} />`
+}
+
+function getEventNameSlug(eventName: string) {
+  return slugify(eventName.replace(".", ""), { lower: true })
 }

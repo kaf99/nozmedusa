@@ -35,7 +35,13 @@ to send a reset password email to the user or customer, for example.
   </Table.Body>
 </Table>
 
-## `auth.password_reset`
+<EventHeader headerLvl="2" headerProps={{ id: "authpassword_reset", children: (<>auth.password_reset</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="auth.password_reset" payload={`\`\`\`ts
+{
+  entity_id, // The identifier of the user or customer. For example, an email address.
+  actor_type, // The type of actor. For example, "customer", "user", or custom.
+  token, // The generated token.
+}
+\`\`\``} />
 
 Emitted when a reset password token is generated. You can listen to this event
 to send a reset password email to the user or customer, for example.
@@ -51,5 +57,7 @@ to send a reset password email to the user or customer, for example.
 ```
 
 ### Workflows Emitting this Event
+
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
 
 - [generateResetPasswordTokenWorkflow](/references/medusa-workflows/generateResetPasswordTokenWorkflow)

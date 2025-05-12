@@ -50,7 +50,11 @@ Emitted when regions are deleted.
   </Table.Body>
 </Table>
 
-## `region.updated`
+<EventHeader headerLvl="2" headerProps={{ id: "regionupdated", children: (<>region.updated</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="region.updated" payload={`\`\`\`ts
+[{
+  id, // The ID of the region
+}]
+\`\`\``} />
 
 Emitted when regions are updated.
 
@@ -64,11 +68,17 @@ Emitted when regions are updated.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [updateRegionsWorkflow](/references/medusa-workflows/updateRegionsWorkflow)
 
 ---
 
-## `region.created`
+<EventHeader headerLvl="2" headerProps={{ id: "regioncreated", children: (<>region.created</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="region.created" payload={`\`\`\`ts
+[{
+  id, // The ID of the region
+}]
+\`\`\``} />
 
 Emitted when regions are created.
 
@@ -82,11 +92,17 @@ Emitted when regions are created.
 
 ### Workflows Emitting this Event
 
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
+
 - [createRegionsWorkflow](/references/medusa-workflows/createRegionsWorkflow)
 
 ---
 
-## `region.deleted`
+<EventHeader headerLvl="2" headerProps={{ id: "regiondeleted", children: (<>region.deleted</>), className: "flex flex-wrap justify-center gap-docs_0.25" }} eventName="region.deleted" payload={`\`\`\`ts
+[{
+  id, // The ID of the region
+}]
+\`\`\``} />
 
 Emitted when regions are deleted.
 
@@ -99,5 +115,7 @@ Emitted when regions are deleted.
 ```
 
 ### Workflows Emitting this Event
+
+The following workflows emit this event when they're executed. These workflows are executed by Medusa's API routes. You can also view the events emitted by API routes in the [Store](https://docs.medusajs.com/api/store) and [Admin](https://docs.medusajs.com/api/admin) API references.
 
 - [deleteRegionsWorkflow](/references/medusa-workflows/deleteRegionsWorkflow)

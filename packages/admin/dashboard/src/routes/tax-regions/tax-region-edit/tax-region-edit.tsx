@@ -21,10 +21,10 @@ export const TaxRegionEdit = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>{t("taxRegions.taxRates.edit.header")}</Heading>
+          <Heading>{t("taxRegions.edit.header")}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description className="sr-only">
-          {t("taxRegions.taxRates.edit.hint")}
+          {t("taxRegions.edit.hint")}
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {ready && <TaxRegionEditForm taxRegion={tax_region} />}

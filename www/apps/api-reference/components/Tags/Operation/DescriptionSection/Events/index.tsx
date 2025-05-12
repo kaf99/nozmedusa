@@ -3,18 +3,23 @@
 import {
   Badge,
   DetailsSummary,
+  DropdownMenu,
   Link,
   MarkdownContent,
+  parseEventPayload,
   Tabs,
   TabsContent,
   TabsContentWrapper,
   TabsList,
   TabsTrigger,
   Tooltip,
+  useCopy,
+  useGenerateSnippet,
 } from "docs-ui"
 import { useMemo } from "react"
 import type { OpenAPI } from "types"
 import TagOperationParameters from "../../Parameters"
+import { Brackets, CheckCircle, SquareTwoStack, Tag } from "@medusajs/icons"
 
 export type TagsOperationDescriptionSectionEventsProps = {
   events: OpenAPI.OasEvents[]
@@ -68,62 +73,73 @@ const TagsOperationDescriptionSectionEvent = ({
 }: {
   event: OpenAPI.OasEvents
 }) => {
-  const parsedPayload: OpenAPI.SchemaObject = useMemo(() => {
-    const payloadParams = event.payload.matchAll(
-      /([\w_]+),? \/\/ (\(\w*\) )*(.*)/g
-    )
-    const payload = Array.from(payloadParams).map((match) => {
-      return {
-        name: match[1],
-        type: match[2]?.replace(/\(|\)/g, "") || "string",
-        description: match[3],
-      }
-    })
-    return {
-      type: "object",
-      required: ["payload"],
-      properties: {
-        payload: {
-          type: "object",
-          description: "The payload emitted with the event",
-          required: [...payload.map((param) => param.name)],
-          properties: payload.reduce(
-            (acc, curr) => {
-              acc[curr.name] = {
-                type: curr.type as OpenAPI.OpenAPIV3.NonArraySchemaObjectType,
-                description: curr.description,
-                properties: {},
-              }
-              return acc
-            },
-            {} as Record<string, OpenAPI.SchemaObject>
-          ),
-        },
-      },
-    }
+  const {
+    parsed_payload: parsedPayload,
+    payload_for_snippet: payloadForSnippet,
+  } = useMemo(() => {
+    return parseEventPayload(event.payload)
   }, [event.payload])
+  const { snippet } = useGenerateSnippet({
+    type: "subscriber",
+    options: {
+      event: event.name,
+      payload: payloadForSnippet,
+    },
+  })
+  const { handleCopy: handleEventNameCopy, isCopied: eventNameCopied } =
+    useCopy(event.name)
+  const { handleCopy: handleSnippetCopy, isCopied: snippetCopied } =
+    useCopy(snippet)
   return (
     <TabsContent value={event.name}>
-      <div className="my-1 flex flex-wrap gap-1">
-        <MarkdownContent
-          allowedElements={["code", "p", "a"]}
-          className={"[&_p:last-child]:!mb-1"}
-        >
-          {`\`${event.name}\`: ${event.description}`}
-        </MarkdownContent>
-        {event.deprecated &&
-          (event.deprecated_message ? (
-            <Tooltip text={event.deprecated_message}>
+      <div className="my-1 flex flex-wrap justify-between items-start mb-1">
+        <div className="flex flex-wrap items-center gap-0.5 flex-1">
+          <MarkdownContent
+            allowedElements={["code", "p", "a"]}
+            className={"[&_p:last-child]:!mb-0"}
+          >
+            {event.description}
+          </MarkdownContent>
+          {event.deprecated &&
+            (event.deprecated_message ? (
+              <Tooltip text={event.deprecated_message}>
+                <Badge variant="orange">Deprecated</Badge>
+              </Tooltip>
+            ) : (
               <Badge variant="orange">Deprecated</Badge>
+            ))}
+          {event.version && (
+            <Tooltip text={`This event is emitted since v${event.version}`}>
+              <Badge variant="blue">v{event.version}</Badge>
             </Tooltip>
-          ) : (
-            <Badge variant="orange">Deprecated</Badge>
-          ))}
-        {event.version && (
-          <Tooltip text={`This event is emitted since v${event.version}`}>
-            <Badge variant="blue">v{event.version}</Badge>
-          </Tooltip>
-        )}
+          )}
+        </div>
+        <DropdownMenu
+          dropdownButtonContent={
+            <>
+              {eventNameCopied || snippetCopied ? (
+                <CheckCircle />
+              ) : (
+                <SquareTwoStack />
+              )}
+            </>
+          }
+          menuItems={[
+            {
+              type: "action",
+              title: "Copy event name",
+              action: () => handleEventNameCopy(),
+              icon: <Tag />,
+            },
+            {
+              type: "action",
+              title: "Copy subscriber for event",
+              action: () => handleSnippetCopy(),
+              icon: <Brackets />,
+            },
+          ]}
+          menuClassName="z-10"
+        />
       </div>
       <TagOperationParameters
         schemaObject={parsedPayload}

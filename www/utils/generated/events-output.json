@@ -25,17 +25,6 @@
     "deprecated": false
   },
   {
-    "name": "cart.customer_updated",
-    "parentName": "CartWorkflowEvents",
-    "propertyName": "CUSTOMER_UPDATED",
-    "payload": "```ts\n{\n  id, // The ID of the cart\n}\n```",
-    "description": "Emitted when the customer in the cart is updated.",
-    "workflows": [
-      "updateCartWorkflow"
-    ],
-    "deprecated": false
-  },
-  {
     "name": "cart.region_updated",
     "parentName": "CartWorkflowEvents",
     "propertyName": "REGION_UPDATED",

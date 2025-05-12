@@ -5,7 +5,7 @@ import React from "react"
 import { CopyButton, Link } from "@/components"
 import { useHeadingUrl, useLayout } from "../../.."
 
-type H3Props = React.HTMLAttributes<HTMLHeadingElement> & {
+export type H3Props = React.HTMLAttributes<HTMLHeadingElement> & {
   id?: string
 }
 

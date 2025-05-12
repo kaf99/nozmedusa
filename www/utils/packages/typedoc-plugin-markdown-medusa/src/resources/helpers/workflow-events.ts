@@ -25,6 +25,7 @@ export default function () {
       str += `      <Table.HeaderCell>\nEvent\n</Table.HeaderCell>\n`
       str += `      <Table.HeaderCell>\nDescription\n</Table.HeaderCell>\n`
       str += `      <Table.HeaderCell>\nPayload\n</Table.HeaderCell>\n`
+      str += `      <Table.HeaderCell>\nAction\n</Table.HeaderCell>\n`
       str += `    </Table.Row>\n`
       str += `  </Table.Header>\n`
       str += `  <Table.Body>\n`
@@ -33,29 +34,56 @@ export default function () {
           .map((c) => c.text)
           .join(" ")
           .split("--")
-        let eventName = `\`${commentContent[0].trim()}\``
+        const eventName = commentContent[0].trim()
+        const eventPayload = commentContent[2]?.trim() || ""
+        let eventNameFormatted = `\`${eventName}\``
         const eventDescription = commentContent[1]?.trim() || ""
-        const eventPayload = (commentContent[2]?.trim() || "")
+        const eventPayloadFormatted = eventPayload
           .replace("```ts\n", "")
           .replace("\n```", "")
-        const isDeprecated = commentContent.length >= 4
+        const isDeprecatedOrHasVersion = commentContent.length >= 4
+        const deprecatedIndex = isDeprecatedOrHasVersion
+          ? commentContent.slice(3).findIndex((c) => c.trim() === "deprecated")
+          : -1
+        const isDeprecated = deprecatedIndex !== -1
+        const deprecatedText = (
+          isDeprecated ? commentContent[3 + deprecatedIndex] || "" : ""
+        ).trim()
+        const version = isDeprecatedOrHasVersion
+          ? commentContent
+              .slice(3)
+              .find((c) => c.trim().startsWith("version: "))
+          : undefined
+        const versionText = (
+          version ? version.replace("version: ", "") : ""
+        ).trim()
 
         if (isDeprecated) {
-          const deprecatedText = commentContent[4]?.trim()
-          eventName += `\n`
+          eventNameFormatted += `\n`
           if (deprecatedText) {
-            eventName += `<Tooltip text="${deprecatedText}">`
+            eventNameFormatted += `<Tooltip text="${deprecatedText}">`
           }
-          eventName += `<Badge variant="orange">Deprecated</Badge>`
+          eventNameFormatted += `<Badge variant="orange">Deprecated</Badge>`
           if (deprecatedText) {
-            eventName += `</Tooltip>`
+            eventNameFormatted += `</Tooltip>`
           }
         }
 
+        if (versionText) {
+          eventNameFormatted += `\n\n`
+          eventNameFormatted += `<Tooltip text="This event was added in version v${versionText}">`
+          eventNameFormatted += `<Badge variant="blue">v${versionText}</Badge>`
+          eventNameFormatted += `</Tooltip>\n`
+        }
+
         str += `    <Table.Row>\n`
-        str += `      <Table.Cell>\n${eventName}\n</Table.Cell>\n`
+        str += `      <Table.Cell>\n${eventNameFormatted}\n</Table.Cell>\n`
         str += `      <Table.Cell>\n${eventDescription}\n</Table.Cell>\n`
-        str += `      <Table.Cell>\n\`\`\`ts blockStyle="inline"\n${eventPayload}\n\`\`\`\n</Table.Cell>\n`
+        str += `      <Table.Cell>\n\`\`\`ts blockStyle="inline"\n${eventPayloadFormatted}\n\`\`\`\n</Table.Cell>\n`
+        str += `      <Table.Cell>\n<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "${eventName}",
+        payload: \`${eventPayload.replaceAll("`", "\\`")}\`
+        }}/>\n</Table.Cell>\n`
         str += `    </Table.Row>\n`
       })
       str += `  </Table.Body>\n`

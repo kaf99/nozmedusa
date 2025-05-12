@@ -13,6 +13,7 @@ type ComboboxExternalData = {
 }
 
 type ComboboxQueryParams = {
+  id?: string
   q?: string
   offset?: number
   limit?: number

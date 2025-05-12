@@ -1,4 +1,5 @@
-import { MDXRemote } from "next-mdx-remote/rsc"
+import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote/rsc"
+import { serialize } from "next-mdx-remote/serialize"
 import path from "path"
 import { promises as fs } from "fs"
 import { notFound } from "next/navigation"
@@ -93,6 +94,7 @@ export async function generateMetadata({
   }
 
   metadata.title = pageTitleMatch.groups.title
+  metadata.keywords = (fileData.source.frontmatter?.keywords || []) as string[]
 
   return metadata
 }
@@ -103,6 +105,7 @@ const loadFile = cache(
   ): Promise<
     | {
         content: string
+        source: MDXRemoteSerializeResult
         path: string
       }
     | undefined
@@ -120,8 +123,14 @@ const loadFile = cache(
       return undefined
     }
     const fullPath = path.join(monoRepoPath, fileDetails.filePath)
+
+    const fileContent = await fs.readFile(fullPath, "utf-8")
+    const serialized = await serialize(fileContent, {
+      parseFrontmatter: true,
+    })
     return {
-      content: await fs.readFile(fullPath, "utf-8"),
+      content: fileContent,
+      source: serialized,
       path: fullPath,
     }
   }

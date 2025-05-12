@@ -1,4 +1,5 @@
 import { AcademicCapSolid, BoltSolid, PuzzleSolid } from "@medusajs/icons"
+import { ChildDocs } from "docs-ui"
 
 export const metadata = {
   title: `Digital Products Recipe`,
@@ -7,6 +8,10 @@ export const metadata = {
 # {metadata.title}
 
 This recipe provides the general steps to implement digital products in your Medusa application.
+
+## Example Guides
+
+<ChildDocs type="item" onlyTopLevel={true} />
 
 ## Overview
 
@@ -90,31 +95,33 @@ Medusa facilitates implementing data-management features using the service facto
 
 ---
 
-## Add Custom API Routes
-
-API routes expose your features to external applications, such as the admin dashboard or the storefront.
-
-You can create custom API routes that allow merchants to list and create digital products. In these API routes, you resolve the Digital Product Module’s main service to use its data-management features.
-
-<Card
-  href="!docs!/learn/fundamentals/api-routes"
-  title="API Routes"
-  text="Learn how to create an API route."
-  icon={AcademicCapSolid}
-/>
-
----
-
 ## Implement Workflows
 
 Your use case most likely has flows, such as creating digital products, that require multiple steps.
 
 Create workflows to implement these flows, then utilize these workflows in other resources, such as an API route.
 
+In the workflow's steps, you can resolve the Digital Product Module's service and use its data-management methods to manage digital products.
+
 <Card
   href="!docs!/learn/fundamentals/workflows"
   title="Workflows"
   text="Learn how to create a workflow."
+  icon={AcademicCapSolid}
+/>
+
+---
+
+## Add Custom API Routes
+
+API routes expose your features to external applications, such as the admin dashboard or the storefront.
+
+You can create custom API routes that allow merchants to list and create digital products.
+
+<Card
+  href="!docs!/learn/fundamentals/api-routes"
+  title="API Routes"
+  text="Learn how to create an API route."
   icon={AcademicCapSolid}
 />
 
@@ -185,7 +192,7 @@ You can create or install a fulfillment module provider that handles the logic o
 
 Customers use your storefront to browse your digital products and purchase them. You can also provide other helpful features, such as previewing the digital product before purchase.
 
-Medusa provides a Next.js storefront with standard commerce features including listing products, placing orders, and managing accounts. You can customize the storefront and cater its functionalities to support digital products.
+Medusa provides a Next.js Starter Storefront with standard commerce features including listing products, placing orders, and managing accounts. You can customize the storefront and cater its functionalities to support digital products.
 
 Alternatively, you can build the storefront with your preferred tech stack.
 

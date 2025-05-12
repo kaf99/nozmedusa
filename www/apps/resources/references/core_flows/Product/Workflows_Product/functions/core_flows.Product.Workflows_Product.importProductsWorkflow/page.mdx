@@ -223,6 +223,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -240,6 +243,16 @@ Emitted when product variants are created.
 }]
 ```
 </Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "product-variant.created",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the product variant
+}]
+\`\`\``
+        }}/>
+</Table.Cell>
     </Table.Row>
     <Table.Row>
       <Table.Cell>
@@ -254,6 +267,16 @@ Emitted when products are updated.
   id, // The ID of the product
 }]
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "product.updated",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the product
+}]
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
     <Table.Row>
@@ -270,6 +293,16 @@ Emitted when products are created.
 }]
 ```
 </Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "product.created",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the product
+}]
+\`\`\``
+        }}/>
+</Table.Cell>
     </Table.Row>
     <Table.Row>
       <Table.Cell>
@@ -284,6 +317,16 @@ Emitted when products are deleted.
   id, // The ID of the product
 }]
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "product.deleted",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the product
+}]
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

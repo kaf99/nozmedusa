@@ -114,17 +114,17 @@ export function medusaIntegrationTestRunner({
     })
 
     try {
-      console.log(`Creating database ${dbName}`)
+      logger.info(`Creating database ${dbName}`)
       await dbUtils.create(dbName)
       dbUtils.pgConnection_ = await initDb()
     } catch (error) {
-      console.error("Error initializing database", error?.message)
+      logger.error(`Error initializing database: ${error?.message}`)
       throw error
     }
 
-    console.log(`Migrating database with core migrations and links ${dbName}`)
+    logger.info(`Migrating database with core migrations and links ${dbName}`)
     await migrateDatabase(appLoader)
-    await syncLinks(appLoader, cwd, container)
+    await syncLinks(appLoader, cwd, container, logger)
     await clearInstances()
 
     let containerRes: MedusaContainer = container
@@ -147,7 +147,7 @@ export function medusaIntegrationTestRunner({
       serverShutdownRes = shutdown
       portRes = port
     } catch (error) {
-      console.error("Error starting the app", error?.message)
+      logger.error(`Error starting the app:  error?.message`)
       throw error
     }
 
@@ -156,9 +156,9 @@ export function medusaIntegrationTestRunner({
      * an application
      */
     if (inApp) {
-      console.log(`Migrating database with core migrations and links ${dbName}`)
+      logger.info(`Migrating database with core migrations and links ${dbName}`)
       await migrateDatabase(appLoader)
-      await syncLinks(appLoader, cwd, containerRes)
+      await syncLinks(appLoader, cwd, containerRes, logger)
     }
 
     const { default: axios } = (await import("axios")) as any

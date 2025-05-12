@@ -1724,6 +1724,8 @@
       "successToast": "The tax region was successfully created."
     },
     "edit": {
+      "header": "Edit Tax Region",
+      "hint": "Edit the tax region details.",
       "successToast": "The tax region was successfully updated."
     },
     "province": {

@@ -679,7 +679,7 @@ medusaIntegrationTestRunner({
                   unit_price: 1500,
                   compare_at_unit_price: null,
                   is_tax_inclusive: true,
-                  title: "S / Black",
+                  title: "Medusa T-Shirt",
                   quantity: 2,
                   tax_lines: [
                     expect.objectContaining({
@@ -714,7 +714,7 @@ medusaIntegrationTestRunner({
                   compare_at_unit_price: null,
                   is_tax_inclusive: true,
                   quantity: 2,
-                  title: "S / Black",
+                  title: "Medusa T-Shirt",
                   tax_lines: [
                     expect.objectContaining({
                       description: "CA Default Rate",
@@ -729,7 +729,7 @@ medusaIntegrationTestRunner({
                   compare_at_unit_price: null,
                   is_tax_inclusive: true,
                   quantity: 1,
-                  title: "S / White",
+                  title: "Medusa T-Shirt",
                   tax_lines: [
                     expect.objectContaining({
                       description: "CA Default Rate",
@@ -1603,11 +1603,11 @@ medusaIntegrationTestRunner({
                 expect.objectContaining({
                   items: expect.arrayContaining([
                     expect.objectContaining({
-                      title: "2-pack",
+                      subtitle: "2-pack",
                       quantity: 1,
                     }),
                     expect.objectContaining({
-                      title: "3-pack",
+                      subtitle: "3-pack",
                       quantity: 1,
                     }),
                   ]),

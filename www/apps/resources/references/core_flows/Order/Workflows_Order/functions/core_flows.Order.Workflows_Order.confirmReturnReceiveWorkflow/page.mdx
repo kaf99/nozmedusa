@@ -160,6 +160,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -177,6 +180,17 @@ Emitted when a return is marked as received.
   return_id, // The ID of the return
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "order.return_received",
+        payload: `\`\`\`ts
+{
+  order_id, // The ID of the order
+  return_id, // The ID of the return
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

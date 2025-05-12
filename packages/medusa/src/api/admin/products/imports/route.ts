@@ -7,6 +7,9 @@ import type { HttpTypes } from "@medusajs/framework/types"
 import { importProductsWorkflow } from "@medusajs/core-flows"
 import type { AdminImportProductsType } from "../validators"
 
+/**
+ * @version 2.8.0
+ */
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminImportProductsType>,
   res: MedusaResponse<HttpTypes.AdminImportProductResponse>

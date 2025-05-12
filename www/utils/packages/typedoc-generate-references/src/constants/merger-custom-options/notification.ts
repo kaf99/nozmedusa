@@ -77,7 +77,13 @@ export default ModuleProvider(Modules.NOTIFICATION, {
 })
 \`\`\`
 
-This exports the module provider's definition, indicating that the \`MyNotificationProviderService\` is the module provider's service.`,
+This exports the module provider's definition, indicating that the \`MyNotificationProviderService\` is the module provider's service.
+
+<Note title="Tip>
+
+A notification module provider can have export multiple provider services, where each are registered as a separate notification provider.
+
+</Note>`,
       `## 4. Use Module Provider
 
 To use your Notification Module Provider, add it to the \`providers\` array of the Notification Module in \`medusa-config.ts\`:

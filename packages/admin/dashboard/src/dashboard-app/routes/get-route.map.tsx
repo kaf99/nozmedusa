@@ -1590,6 +1590,11 @@ export function getRouteMap({
                       },
                       children: [
                         {
+                          path: "edit",
+                          lazy: () =>
+                            import("../../routes/tax-regions/tax-region-edit"),
+                        },
+                        {
                           path: "provinces/create",
                           lazy: () =>
                             import(
@@ -1625,11 +1630,6 @@ export function getRouteMap({
                             ),
                         },
                       ],
-                    },
-                    {
-                      path: "edit",
-                      lazy: () =>
-                        import("../../routes/tax-regions/tax-region-edit"),
                     },
                     {
                       path: "provinces/:province_id",

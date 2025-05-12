@@ -11,6 +11,7 @@ const lockingOptions: FormattingOptionsType = {
       slug: "/references/locking-module-provider",
       tags: ["locking", "server", "how to"],
       sidebar_label: "Create Locking Provider",
+      keywords: ["locking", "provider", "integration"],
     },
     reflectionTitle: {
       fullReplacement: "How to Create a Locking Module Provider",

@@ -159,6 +159,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -175,6 +178,16 @@ Emitted when a fulfillment is marked as delivered.
   id, // the ID of the fulfillment
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "delivery.created",
+        payload: `\`\`\`ts
+{
+  id, // the ID of the fulfillment
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

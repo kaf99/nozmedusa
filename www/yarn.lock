@@ -1868,21 +1868,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/icons@npm:2.6.0":
-  version: 2.6.0
-  resolution: "@medusajs/icons@npm:2.6.0"
+"@medusajs/icons@npm:2.7.1, @medusajs/icons@npm:~2.7.1":
+  version: 2.7.1
+  resolution: "@medusajs/icons@npm:2.7.1"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-  checksum: cb8628018398aba010bb7b1f653cb7dc91d9bd59a40f1e7ee4cdc7732559e75062db790fb609fd3f748a9b80ccc0f421267a414ed9f5a7a4e079ef643e65333e
-  languageName: node
-  linkType: hard
-
-"@medusajs/icons@npm:^2.5.1, @medusajs/icons@npm:~2.5.1":
-  version: 2.5.1
-  resolution: "@medusajs/icons@npm:2.5.1"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-  checksum: f7fbe17475d8c39bd584103ec662f90aa5c8f07159f5820648eba8a0adf42a0d48057518da5a22503e5d5eaca552cbb7b26792613e2ec84827be1bbbafb64201
+  checksum: 6c271671b8ca5d912b14c8f6e91adcd9312e4290b13e9fabe2ad6eb2635051c769fadaa7f2157c90161d8a90f57fd5fb6f8b24b4f86024248414871478f0997c
   languageName: node
   linkType: hard
 
@@ -1898,11 +1889,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/ui@npm:4.0.6":
-  version: 4.0.6
-  resolution: "@medusajs/ui@npm:4.0.6"
+"@medusajs/ui-preset@npm:2.7.1":
+  version: 2.7.1
+  resolution: "@medusajs/ui-preset@npm:2.7.1"
   dependencies:
-    "@medusajs/icons": ^2.5.1
+    "@tailwindcss/forms": ^0.5.3
+    tailwindcss-animate: ^1.0.6
+  peerDependencies:
+    tailwindcss: ">=3.0.0"
+  checksum: 6b67c5a614e1a8f985cac256c7a363292ca3326ee02a067ec310fec4b3b24b36726e5bc34427b75efb3a395cba2c4e7ba7bd97acc2fb2bb25004570b979e63c0
+  languageName: node
+  linkType: hard
+
+"@medusajs/ui@npm:4.0.9":
+  version: 4.0.9
+  resolution: "@medusajs/ui@npm:4.0.9"
+  dependencies:
+    "@medusajs/icons": 2.7.1
     "@tanstack/react-table": 8.20.5
     clsx: ^1.2.1
     copy-to-clipboard: ^3.3.3
@@ -1918,7 +1921,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
     react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-  checksum: ff45b909b3573fd6b443eee0aac47a2f13dbd145ed161e0485f7e22e1e963345e2e38dba236d1b927715feaa79d3dc79671bdeb2075c6f83682dcf8827e6f962
+  checksum: 17f265fa8075cd26f54cda0ef96ffc9afe853fdf10bd42d82ce830f64bc0b932e93f43a9863606a482875fc1f6214a8acb43fd2a6c4fc8f593fa6a4521fbae76
   languageName: node
   linkType: hard
 
@@ -6237,8 +6240,8 @@ __metadata:
   dependencies:
     "@mdx-js/loader": ^3.1.0
     "@mdx-js/react": ^3.1.0
-    "@medusajs/icons": 2.6.0
-    "@medusajs/ui": 4.0.6
+    "@medusajs/icons": 2.7.1
+    "@medusajs/ui": 4.0.9
     "@next/bundle-analyzer": 15.3.1
     "@next/mdx": 15.3.1
     "@react-hook/resize-observer": ^2.0.2
@@ -6617,7 +6620,7 @@ __metadata:
   dependencies:
     "@mdx-js/loader": ^3.1.0
     "@mdx-js/react": ^3.1.0
-    "@medusajs/icons": ~2.5.1
+    "@medusajs/icons": ~2.7.1
     "@next/mdx": 15.3.1
     "@types/mdx": ^2.0.13
     "@types/node": ^20
@@ -7979,8 +7982,8 @@ __metadata:
   resolution: "docs-ui@workspace:packages/docs-ui"
   dependencies:
     "@emotion/is-prop-valid": ^1.3.1
-    "@medusajs/icons": 2.6.0
-    "@medusajs/ui": 4.0.6
+    "@medusajs/icons": 2.7.1
+    "@medusajs/ui": 4.0.9
     "@next/third-parties": 15.3.1
     "@octokit/request": ^8.1.1
     "@react-hook/resize-observer": ^1.2.6
@@ -15011,7 +15014,7 @@ __metadata:
   dependencies:
     "@mdx-js/loader": ^3.1.0
     "@mdx-js/react": ^3.1.0
-    "@medusajs/icons": ~2.5.1
+    "@medusajs/icons": ~2.7.1
     "@next/bundle-analyzer": ^15.1.1
     "@next/mdx": 15.3.1
     "@types/mdx": ^2.0.13
@@ -16737,7 +16740,7 @@ turbo@latest:
   version: 0.0.0-use.local
   resolution: "types@workspace:packages/types"
   dependencies:
-    "@medusajs/icons": 2.6.0
+    "@medusajs/icons": 2.7.1
     "@types/node": ^20.11.20
     openapi-types: ^12.1.3
     rimraf: ^5.0.5
@@ -16826,9 +16829,9 @@ turbo@latest:
   dependencies:
     "@faker-js/faker": ^8.0.2
     "@mdx-js/react": ^3.1.0
-    "@medusajs/icons": 2.6.0
-    "@medusajs/ui": 4.0.6
-    "@medusajs/ui-preset": 2.6.0
+    "@medusajs/icons": 2.7.1
+    "@medusajs/ui": 4.0.9
+    "@medusajs/ui-preset": 2.7.1
     "@types/node": 20.4.9
     "@types/react": "npm:types-react@rc"
     "@types/react-dom": "npm:types-react@rc"
@@ -17220,7 +17223,7 @@ turbo@latest:
   dependencies:
     "@mdx-js/loader": ^3.1.0
     "@mdx-js/react": ^3.1.0
-    "@medusajs/icons": ~2.5.1
+    "@medusajs/icons": ~2.7.1
     "@next/mdx": 15.0.4
     "@types/mdx": ^2.0.13
     "@types/node": ^20

@@ -11,6 +11,8 @@ export declare type OpenApiOperation = Partial<OpenAPIV3.OperationObject> & {
   "x-codeSamples"?: CodeSample[]
   "x-workflow"?: string
   "x-events"?: OasEvent[]
+  "x-deprecated_message"?: string
+  "x-version"?: string
 }
 
 export declare type CommonCliOptions = {

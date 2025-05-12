@@ -3,9 +3,8 @@
 import React, { useRef, useState } from "react"
 import { useAiAssistant, useSiteConfig } from "../../providers"
 import { usePathname } from "next/navigation"
-import { Button } from "../Button"
 import { AiAssistent, Book } from "@medusajs/icons"
-import { Menu } from "../Menu"
+import { DropdownMenu, Menu } from "../Menu"
 import { MarkdownIcon } from "../Icons/Markdown"
 import { useAiAssistantChat } from "../../providers/AiAssistant/Chat"
 import clsx from "clsx"
@@ -30,43 +29,41 @@ export const LlmDropdown = () => {
   const pageUrl = `${baseUrl}${basePath}${pathname}`
 
   return (
-    <div className="relative hidden md:block">
-      <Button
-        variant="transparent"
-        onClick={() => setOpen(!open)}
-        className="!p-[6px] text-medusa-fg-subtle"
-        buttonRef={ref}
-      >
-        <Book />
-      </Button>
-      <Menu
-        items={[
-          {
-            type: "link",
-            title: "View as Markdown",
-            link: `${pageUrl}/index.html.md`,
-            icon: <MarkdownIcon width={19} height={19} />,
-            openInNewTab: true,
-          },
-          {
-            type: "action",
-            title: "Ask AI Assistant",
-            action: () => {
-              if (loading) {
-                return
-              }
-              setQuestion(`Explain the page ${pageUrl}`)
-              setChatOpened(true)
-              setOpen(false)
+    <DropdownMenu
+      open={open}
+      setOpen={setOpen}
+      dropdownButtonContent={<Book />}
+      menuComponent={
+        <Menu
+          items={[
+            {
+              type: "link",
+              title: "View as Markdown",
+              link: `${pageUrl}/index.html.md`,
+              icon: <MarkdownIcon width={19} height={19} />,
+              openInNewTab: true,
             },
-            icon: <AiAssistent />,
-          },
-        ]}
-        className={clsx(
-          "absolute right-0 top-[calc(100%+8px)] w-max",
-          !open && "hidden"
-        )}
-      />
-    </div>
+            {
+              type: "action",
+              title: "Ask AI Assistant",
+              action: () => {
+                if (loading) {
+                  return
+                }
+                setQuestion(`Explain the page ${pageUrl}`)
+                setChatOpened(true)
+                setOpen(false)
+              },
+              icon: <AiAssistent />,
+            },
+          ]}
+          className={clsx(
+            "absolute right-0 top-[calc(100%+8px)] w-max",
+            !open && "hidden"
+          )}
+        />
+      }
+      className="hidden md:block"
+    />
   )
 }

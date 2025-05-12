@@ -180,6 +180,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -196,6 +199,16 @@ Emitted when users are created.
   id, // The ID of the user
 }]
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "user.created",
+        payload: `\`\`\`ts
+[{
+  id, // The ID of the user
+}]
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

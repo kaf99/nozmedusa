@@ -10,6 +10,7 @@ const notificationServiceOptions: FormattingOptionsType = {
       slug: "/references/notification-service",
       tags: ["notification", "server", "how to"],
       sidebar_label: "Use Notification Module",
+      keywords: ["notification", "provider", "integration"],
     },
     reflectionTitle: {
       fullReplacement: "How to Use Notification Module",

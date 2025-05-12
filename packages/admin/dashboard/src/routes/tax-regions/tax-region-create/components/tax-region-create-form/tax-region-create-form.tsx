@@ -129,6 +129,29 @@ export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
                       )
                     }}
                   />
+                  <Form.Field
+                    control={form.control}
+                    name="provider_id"
+                    render={({ field }) => (
+                      <Form.Item>
+                        <Form.Label>
+                          {t("taxRegions.fields.taxProvider")}
+                        </Form.Label>
+                        <Form.Control>
+                          <Combobox
+                            {...field}
+                            options={taxProviders.options}
+                            searchValue={taxProviders.searchValue}
+                            onSearchValueChange={
+                              taxProviders.onSearchValueChange
+                            }
+                            fetchNextPage={taxProviders.fetchNextPage}
+                          />
+                        </Form.Control>
+                        <Form.ErrorMessage />
+                      </Form.Item>
+                    )}
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-4">
@@ -208,29 +231,6 @@ export const TaxRegionCreateForm = ({ parentId }: TaxRegionCreateFormProps) => {
                           </Form.Item>
                         )
                       }}
-                    />
-                    <Form.Field
-                      control={form.control}
-                      name="provider_id"
-                      render={({ field }) => (
-                        <Form.Item>
-                          <Form.Label>
-                            {t("taxRegions.fields.taxProvider")}
-                          </Form.Label>
-                          <Form.Control>
-                            <Combobox
-                              {...field}
-                              options={taxProviders.options}
-                              searchValue={taxProviders.searchValue}
-                              onSearchValueChange={
-                                taxProviders.onSearchValueChange
-                              }
-                              fetchNextPage={taxProviders.fetchNextPage}
-                            />
-                          </Form.Control>
-                          <Form.ErrorMessage />
-                        </Form.Item>
-                      )}
                     />
                   </div>
                 </div>

@@ -6,6 +6,9 @@ import {
 
 import { HttpTypes } from "@medusajs/framework/types"
 
+/**
+ * @version 2.8.0
+ */
 export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminGetTaxProvidersParams>,
   res: MedusaResponse<HttpTypes.AdminTaxProviderListResponse>

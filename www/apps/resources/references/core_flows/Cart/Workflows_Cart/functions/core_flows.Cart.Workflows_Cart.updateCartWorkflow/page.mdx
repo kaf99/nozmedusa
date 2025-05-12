@@ -274,6 +274,9 @@ Description
       <Table.HeaderCell>
 Payload
 </Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
     </Table.Row>
   </Table.Header>
   <Table.Body>
@@ -291,20 +294,15 @@ Emitted when a cart's details are updated.
 }
 ```
 </Table.Cell>
-    </Table.Row>
-    <Table.Row>
       <Table.Cell>
-`cart.customer_updated`
-</Table.Cell>
-      <Table.Cell>
-Emitted when the customer in the cart is updated.
-</Table.Cell>
-      <Table.Cell>
-```ts blockStyle="inline"
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "cart.updated",
+        payload: `\`\`\`ts
 {
   id, // The ID of the cart
 }
-```
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
     <Table.Row>
@@ -321,6 +319,16 @@ event is emitted alongside the `cart.updated` event.
   id, // The ID of the cart
 }
 ```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "cart.region_updated",
+        payload: `\`\`\`ts
+{
+  id, // The ID of the cart
+}
+\`\`\``
+        }}/>
 </Table.Cell>
     </Table.Row>
   </Table.Body>

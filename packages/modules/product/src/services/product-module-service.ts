@@ -39,10 +39,10 @@ import {
   MedusaService,
   Modules,
   ProductStatus,
-  promiseAll,
   removeUndefined,
   toHandle,
 } from "@medusajs/framework/utils"
+import { ProductRepository } from "../repositories"
 import {
   UpdateCategoryInput,
   UpdateCollectionInput,
@@ -57,6 +57,7 @@ import { joinerConfig } from "./../joiner-config"
 
 type InjectedDependencies = {
   baseRepository: DAL.RepositoryService
+  productRepository: ProductRepository
   productService: ModulesSdkTypes.IMedusaInternalService<any, any>
   productVariantService: ModulesSdkTypes.IMedusaInternalService<any, any>
   productTagService: ModulesSdkTypes.IMedusaInternalService<any>
@@ -113,6 +114,7 @@ export default class ProductModuleService
   implements ProductTypes.IProductModuleService
 {
   protected baseRepository_: DAL.RepositoryService
+  protected readonly productRepository_: ProductRepository
   protected readonly productService_: ModulesSdkTypes.IMedusaInternalService<
     InferEntityType<typeof Product>
   >
@@ -143,6 +145,7 @@ export default class ProductModuleService
   constructor(
     {
       baseRepository,
+      productRepository,
       productService,
       productVariantService,
       productTagService,
@@ -161,6 +164,7 @@ export default class ProductModuleService
     super(...arguments)
 
     this.baseRepository_ = baseRepository
+    this.productRepository_ = productRepository
     this.productService_ = productService
     this.productVariantService_ = productVariantService
     this.productTagService_ = productTagService
@@ -1661,124 +1665,11 @@ export default class ProductModuleService
       this.validateProductUpdatePayload(product)
     }
 
-    const { entities: productData } =
-      await this.productService_.upsertWithReplace(
-        normalizedProducts,
-        {
-          relations: ["tags", "categories"],
-        },
-        sharedContext
-      )
-
-    // There is more than 1-level depth of relations here, so we need to handle the options and variants manually
-    await promiseAll(
-      // Note: It's safe to rely on the order here as `upsertWithReplace` preserves the order of the input
-      normalizedProducts.map(async (product, i) => {
-        const upsertedProduct: any = productData[i]
-        let allOptions: any[] = []
-
-        if (product.options?.length) {
-          const { entities: productOptions } =
-            await this.productOptionService_.upsertWithReplace(
-              product.options?.map((option) => ({
-                ...option,
-                product_id: upsertedProduct.id,
-              })) ?? [],
-              { relations: ["values"] },
-              sharedContext
-            )
-          upsertedProduct.options = productOptions
-
-          // Since we handle the options and variants outside of the product upsert, we need to clean up manually
-          await this.productOptionService_.delete(
-            {
-              product_id: upsertedProduct.id,
-              id: {
-                $nin: upsertedProduct.options.map(({ id }) => id),
-              },
-            },
-            sharedContext
-          )
-          allOptions = upsertedProduct.options
-        } else {
-          // If the options weren't affected, but the user is changing the variants, make sure we have all options available locally
-          if (product.variants?.length) {
-            allOptions = await this.productOptionService_.list(
-              { product_id: upsertedProduct.id },
-              { relations: ["values"] },
-              sharedContext
-            )
-          }
-        }
-
-        if (product.variants?.length) {
-          const productVariantsWithOptions =
-            ProductModuleService.assignOptionsToVariants(
-              product.variants.map((v) => ({
-                ...v,
-                product_id: upsertedProduct.id,
-              })) ?? [],
-              allOptions
-            )
-
-          ProductModuleService.checkIfVariantsHaveUniqueOptionsCombinations(
-            productVariantsWithOptions as any
-          )
-
-          const { entities: productVariants } =
-            await this.productVariantService_.upsertWithReplace(
-              productVariantsWithOptions,
-              { relations: ["options"] },
-              sharedContext
-            )
-
-          upsertedProduct.variants = productVariants
-
-          await this.productVariantService_.delete(
-            {
-              product_id: upsertedProduct.id,
-              id: {
-                $nin: upsertedProduct.variants.map(({ id }) => id),
-              },
-            },
-            sharedContext
-          )
-        }
-
-        if (Array.isArray(product.images)) {
-          if (product.images.length) {
-            const { entities: productImages } =
-              await this.productImageService_.upsertWithReplace(
-                product.images.map((image, rank) => ({
-                  ...image,
-                  product_id: upsertedProduct.id,
-                  rank,
-                })),
-                {},
-                sharedContext
-              )
-            upsertedProduct.images = productImages
-
-            await this.productImageService_.delete(
-              {
-                product_id: upsertedProduct.id,
-                id: {
-                  $nin: productImages.map(({ id }) => id),
-                },
-              },
-              sharedContext
-            )
-          } else {
-            await this.productImageService_.delete(
-              { product_id: upsertedProduct.id },
-              sharedContext
-            )
-          }
-        }
-      })
+    return this.productRepository_.deepUpdate(
+      normalizedProducts,
+      ProductModuleService.validateVariantOptions,
+      sharedContext
     )
-
-    return productData
   }
 
   // @ts-expect-error
@@ -2052,6 +1943,26 @@ export default class ProductModuleService
     return collectionData
   }
 
+  protected static validateVariantOptions(
+    variants:
+      | ProductTypes.CreateProductVariantDTO[]
+      | ProductTypes.UpdateProductVariantDTO[],
+    options: InferEntityType<typeof ProductOption>[]
+  ) {
+    const variantsWithOptions = ProductModuleService.assignOptionsToVariants(
+      variants.map((v) => ({
+        ...v,
+        // adding product_id to the variant to make it valid for the assignOptionsToVariants function
+        ...(options.length ? { product_id: options[0].product_id } : {}),
+      })),
+      options
+    )
+
+    ProductModuleService.checkIfVariantsHaveUniqueOptionsCombinations(
+      variantsWithOptions as any
+    )
+  }
+
   protected static assignOptionsToVariants(
     variants:
       | ProductTypes.CreateProductVariantDTO[]
@@ -2063,7 +1974,6 @@ export default class ProductModuleService
     if (!variants.length) {
       return variants
     }
-
     const variantsWithOptions = variants.map((variant: any) => {
       const numOfProvidedVariantOptionValues = Object.keys(
         variant.options || {}
@@ -2079,7 +1989,7 @@ export default class ProductModuleService
       ) {
         throw new MedusaError(
           MedusaError.Types.INVALID_DATA,
-          `Product has ${productsOptions.length} but there were ${numOfProvidedVariantOptionValues} provided option values for the variant: ${variant.title}.`
+          `Product has ${productsOptions.length} option values but there were ${numOfProvidedVariantOptionValues} provided option values for the variant: ${variant.title}.`
         )
       }
 
