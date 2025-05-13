@@ -1,0 +1,503 @@
+---
+sidebar_label: "Integrate Klarna"
+tags:
+    - server
+    - name: payment
+      label: "Integrate Klarna"
+    - tutorial
+keywords:
+    - klarna
+    - payment provider
+    - integration
+    - tutorial
+---
+
+import { Card, Prerequisites, Details, WorkflowDiagram } from "docs-ui"
+import { Github, PlaySolid } from "@medusajs/icons"
+
+export const ogImage = "https://res.cloudinary.com/dza7lstvk/image/upload/v1746006829/Medusa%20Resources/localization_dtiqtb.jpg"
+
+export const metadata = {
+  title: `Integrate Klarna into Medusa Application and Storefront`,
+  openGraph: {
+    images: [
+      {
+        url: ogImage,
+        width: 1600,
+        height: 900,
+        type: "image/jpeg"
+      }
+    ],
+  },
+  twitter: {
+    images: [
+      {
+        url: ogImage,
+        width: 1600,
+        height: 900,
+        type: "image/jpeg"
+      }
+    ]
+  }
+}
+
+# {metadata.title}
+
+In this tutorial, you'll learn how to integrate Klarna into your Medusa application and storefront.
+
+When you install a Medusa application, you get a fully-fledged commerce platform with a Framework for customization. Medusa facilitates integrating third-party services, such as payment providers, allowing you to create a tailored experience for your customers.
+
+[Klarna](https://www.klarna.com/) is a payment provider that allows you to offer flexible payment options to your customers. Customers can pay by installments through Klarna, while you manage and process the order through Medusa.
+
+## Summary
+
+By following this tutorial, you'll learn how to:
+
+- Install and set up Medusa.
+- Integrate Klarna as a Payment Module Provider.
+- Customize the Next.js Starter Storefront to support Klarna.
+
+You can follow this tutorial whether you're new to Medusa or an advanced Medusa developer.
+
+{/* TODO add diagram */}
+
+<Card
+  href="https://github.com/medusajs/examples/tree/main/klarna-integration"
+  title="Klarna Integration Repository"
+  text="Find the full code for this guide in this repository."
+  icon={Github}
+/>
+
+---
+
+## Step 1: Install a Medusa Application
+
+<Prerequisites items={[
+  {
+    text: "Node.js v20+",
+    link: "https://nodejs.org/en/download"
+  },
+  {
+    text: "Git CLI tool",
+    link: "https://git-scm.com/downloads"
+  },
+  {
+    text: "PostgreSQL",
+    link: "https://www.postgresql.org/download/"
+  }
+]} />
+
+Start by installing the Medusa application on your machine with the following command:
+
+```bash
+npx create-medusa-app@latest
+```
+
+First, you'll be asked for the project's name. Then, when prompted about installing the [Next.js starter storefront](../../../nextjs-starter/page.mdx), choose "Yes."
+
+Afterwards, the installation process will start, which will install the Medusa application in a directory with your project's name and the Next.js Starter Storefront in a separate directory named `{project-name}-storefront`.
+
+<Note title="Why is the storefront installed separately?">
+
+The Medusa application is composed of a headless Node.js server and an admin dashboard. The storefront is installed or custom-built separately and connects to the Medusa application through its REST endpoints, called [API routes](!docs!/learn/fundamentals/api-routes). Learn more in [Medusa's Architecture documentation](!docs!/learn/introduction/architecture).
+
+</Note>
+
+Once the installation finishes successfully, the Medusa Admin dashboard will open with a form to create a new user. Enter the user's credentials and submit the form. Afterwards, you can log in with the new user and explore the dashboard.
+
+<Note title="Ran into Errors?">
+
+Check out the [troubleshooting guides](../../../troubleshooting/create-medusa-app-errors/page.mdx) for help.
+
+</Note>
+
+---
+
+## Step 2: Create Klarna Payment Module Provider
+
+In Medusa, you integrate custom payment providers by creating a [Payment Module Provider](../../../commerce-modules/payment/payment-provider/page.mdx). Then, you can use that payment provider in select regions of your store, allowing customers to make purchases with the payment provider.
+
+In this step, you'll create a Klarna Payment Module Provider. You'll implement the necessary methods to process payments in Medusa with Klarna. Later, you'll test the integration when you customize the Next.js Starter Storefront.
+
+<Note title="Good to Know">
+
+A Payment Module Provider doesn't need to handle processing of payment models in Medusa (which is handled in Medusa's [Payment Module](../../../commerce-modules/payment/page.mdx)). It only interacts with the third-party payment provider as needed by the Medusa application.
+
+</Note>
+
+### a. Create Module Directory
+
+Modules are created under the `src/modules` directory of your Medusa application. So, start by creating the directory `src/modules/klarna`.
+
+### b. Create Klarna Service
+
+A module has a service that contains its logic. For payment providers, this service interacts with third-party providers to process payments.
+
+To create the service for the Klarna Module, create the file `src/modules/klarna/service.ts` with the following content:
+
+```ts title="src/modules/klarna/service.ts"
+import { AbstractPaymentProvider } from "@medusajs/framework/utils"
+import axios, { AxiosInstance } from "axios"
+
+type Options = {
+  baseUrl: string
+  username: string
+  password: string
+  auto_capture?: boolean
+  merchant_urls: {
+    authorization: string
+    [key: string]: string
+  }
+}
+
+class KlarnaPaymentProviderService extends AbstractPaymentProvider<
+  Options
+> {
+  static identifier = "klarna"
+  private options: Options
+  private client: AxiosInstance
+
+  constructor(container, options: Options) {
+    super(container, options)
+    this.options = options
+    this.client = axios.create({
+      baseURL: options.baseUrl,
+      auth: {
+        username: options.username,
+        password: options.password,
+      },
+    })
+  }
+}
+
+export default KlarnaPaymentProviderService
+```
+
+A Payment Module Provider's service must extend the `AbstractPaymentProvider` class. You'll get a type error about implementing the abstract methods of that class, which you'll add in the next steps.
+
+A Payment Module Provider must also have a static `identifier` property. This identifier is used to register the module in Medusa.
+
+A module provider's constructor receives two parameters:
+
+- `container`: The [module's container](!docs!/learn/fundamentals/modules/container) that contains Framework resources available to the module. While you won't use it in this tutorial, you can use it to access resources like the [Logger](!docs!/learn/debugging-and-testing/logging).
+- `options`: Options that are passed to the module provider when it's registerd in Medusa's configurations. You define the following options:
+    - `baseUrl`: The base URL of the Klarna API.
+    - `username`: The username for the Klarna API.
+    - `password`: The password for the Klarna API.
+    - `auto_capture`: Whether to automatically capture payments when creating an order in Klarna. This is optional and defaults to `false`.
+    - `merchant_urls`: Merchant-related URLs to pass to Klarna. Most importantly, you need the `authorization` URL, which is a webhook that Klarna will call when the payment is authorized. You can set the other URLs like `push` and `notification`.
+
+<Note>
+
+{/* TODO add link to section? */}
+
+You'll learn how to set these options later.
+
+</Note>
+
+In the constructor, you set the options and create an Axios client to interact with the Klarna API. You'll use this client in the service's methods to send requests to Klarna's APIs.
+
+In the next sections, you'll implement the methods of the `AbstractPaymentProvider` class.
+
+<Note>
+
+Refer to the [Create Payment Module Provider](/references/payment/provider) guide for detailed information about the methods.
+
+</Note>
+
+### c. Implement validateOptions Method
+
+The `validateOptions` method is used to validate the options passed to the module provider. If the method throws an error, the Medusa application won't start.
+
+So, add the `validateOptions` method to the `KlarnaPaymentProviderService` class:
+
+```ts title="src/modules/klarna/service.ts"
+// other imports...
+import { MedusaError } from "@medusajs/framework/utils"
+
+class KlarnaPaymentProviderService extends AbstractPaymentProvider<
+  Options
+> {
+  // ...
+  static validateOptions(options: Record<any, any>) {
+    if (!options.baseUrl) {
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, "baseUrl is required")
+    }
+    if (!options.username) {
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, "username is required")
+    }
+    if (!options.password) {
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, "password is required")
+    }
+    if (!options.merchant_urls?.authorization) {
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, "authorization is required")
+    }
+  }
+}
+```
+
+The `validateOptions` method receives the options passed to the module provider as a parameter.
+
+In the method, you throw an error if any of the required options are missing.
+
+### d. Implement initiatePayment Method
+
+During checkout, when the customer selects Klarna as the payment method, the Medusa application will call the `initiatePayment` method of the Klarna service to initiate the payment in Klarna.
+
+To initiate the payment in Klarna, you need to [Create a session](https://docs.klarna.com/api/payments/#operation/createCreditSession).
+
+Add the `initiatePayment` method to the `KlarnaPaymentProviderService` class:
+
+```ts title="src/modules/klarna/service.ts"
+// other imports...
+import { 
+  InitiatePaymentInput, 
+  InitiatePaymentOutput, 
+} from "@medusajs/framework/types"
+import { BigNumber } from "@medusajs/framework/utils"
+
+class KlarnaPaymentProviderService extends AbstractPaymentProvider<
+  Options
+> {
+  // ...
+  async initiatePayment(
+    input: InitiatePaymentInput
+  ): Promise<InitiatePaymentOutput> {
+    const {
+      amount,
+      currency_code,
+      context,
+      data
+    } = input
+
+    const normalizedAmount = new BigNumber(amount).bigNumber?.multipliedBy(100).toNumber()
+
+    try {
+      const { data: response } = await this.client.post(`/payments/v1/sessions`, {
+        locale: data?.locale || "en-FR",
+        purchase_country: data?.country_code || context?.customer?.billing_address?.country_code || "FR",
+        purchase_currency: currency_code || "EUR",
+        order_amount: normalizedAmount,
+        order_tax_amount: 0,
+        order_lines: [
+          {
+            name: "Item",
+            quantity: 1,
+            total_amount: normalizedAmount,
+            unit_price: normalizedAmount,
+            total_tax_amount: 0,
+            tax_rate: 0,
+          }
+        ],
+        intent: "buy",
+        merchant_urls: this.options.merchant_urls,
+        merchant_reference1: context?.idempotency_key,
+      })
+
+      return {
+        id: response.session_id,
+        data: {
+          session_id: response.session_id,
+        },
+      }
+    } catch (error) {
+      throw new MedusaError(MedusaError.Types.UNEXPECTED_STATE, `Failed to initiate Klarna payment: ${error.response.data}`)
+    }
+  }
+}
+```
+
+#### Parameters
+
+The `initiatePayment` method receives an object parameter with the following properties:
+
+- `amount`: The amount to be charged. This is the cart's total.
+- `currency_code`: The currency code of the cart.
+- `context`: The context of the payment. This contains information about the customer and the payment session in Medusa.
+- `data`: Custom data passed from the storefront that can include custom fields useful for the payment provider.
+
+#### Method Logic
+
+In the method, you first normalize the amount to cents. Klarna requires the amount to be in cents, so you multiply the amount by `100`.
+
+Then, you send a POST request to the [Klarna API to create a session](https://docs.klarna.com/api/payments/#operation/createCreditSession). You pass the following parameters:
+
+- `locale`: The customer's locale. Assuming it's passed from the storefront, you can use the `data.locale` property.
+- `purchase_country`: The customer's country code. You either use the `country_code` property from the `data` object or the `country_code` property from the customer's billing address.
+- `purchase_currency`: The currency code of the cart. You can use the `currency_code` property.
+- `order_amount`: The amount to be charged. You use the normalized amount.
+- `order_tax_amount`: The tax amount. You can set it to `0` for now.
+- `order_lines`: An array of order lines. You can set it to a single item for now.
+- `intent`: The Klarna intent, which is `buy` for one-time payments.
+    - Learn about other intents in [Klarna's documentation](https://docs.klarna.com/payments/web-payments/integrate-with-klarna-payments/step-1-initiate-a-payment/#payment-scenarios-and-intent)
+- `merchant_urls`: The merchant URLs you defined in the options. This includes the `authorization` URL and any other URLs you'll pass later.
+- `merchant_reference1`: You associate Klarna's payment session with the ID of the Medusa payment session, which is available in the `context.idempotency_key` property. This allows you later to identify the Medusa payment session when Klarna calls the webhook.
+
+#### Return Value
+
+Finally, you return an object with two properties:
+
+- `id`: The ID of the Klarna payment session.
+- `data`: Custom data related to the payment provider that is stored within Medusa's [PaymentSession](/references/payment/models/PaymentSession). This data is later passed to other methods processing the payment. So, you pass the Klarna session ID here.
+
+This method will be called when the customer selects Klarna as the payment method during checkout, which you'll test out in the storefront later.
+
+### e. Implement authorizePayment Method
+
+Once the customer finishes the checkout process and places their order, the Medusa application will call the `authorizePayment` method of the Klarna service to authorize the payment in Klarna.
+
+To authorize the payment in Klarna, you need to [Create an Order](https://docs.klarna.com/api/payments/#operation/createOrder).
+
+Add the `authorizePayment` method to the `KlarnaPaymentProviderService` class:
+
+```ts title="src/modules/klarna/service.ts"
+// other imports...
+import { 
+  AuthorizePaymentInput, 
+  AuthorizePaymentOutput, 
+} from "@medusajs/framework/types"
+
+class KlarnaPaymentProviderService extends AbstractPaymentProvider<
+  Options
+> {
+  // ...
+  async authorizePayment(input: AuthorizePaymentInput): Promise<AuthorizePaymentOutput> {
+    const {
+      data,
+    } = input
+
+    if (!data?.session_id) {
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, "session_id is required to authorize payment")
+    }
+
+    try {
+      // retrieve authorization token from session
+      const { data: sessionResponse } = await this.client.get(`/payments/v1/sessions/${data.session_id}`)
+
+      if (!sessionResponse.authorization_token) {
+        throw new MedusaError(MedusaError.Types.INVALID_DATA, "authorization_token is required to authorize payment")
+      }
+
+      const { data: response } = await this.client.post(`/payments/v1/authorizations/${sessionResponse.authorization_token}/order`, {
+        order_amount: sessionResponse.order_amount,
+        order_lines: sessionResponse.order_lines,
+        purchase_currency: sessionResponse.purchase_currency,
+        purchase_country: sessionResponse.purchase_country,
+        locale: sessionResponse.locale,
+        shipping_address: sessionResponse.shipping_address,
+        billing_address: sessionResponse.billing_address,
+        merchant_urls: this.options.merchant_urls,
+        auto_capture: this.options.auto_capture,
+      })
+
+      return {
+        data: {
+          order_id: response.order_id,
+        },
+        status: "authorized",
+      }
+
+    } catch (error) {
+      throw new MedusaError(MedusaError.Types.UNEXPECTED_STATE, `Failed to authorize Klarna payment: ${error.response.data}`)
+    }
+  }
+}
+```
+
+#### Parameters
+
+The `authorizePayment` method receives an object parameter with the `data` property of the Medusa payment session. This will hold the `data` returned by the `initiatePayment` method, which contains the Klarna session ID.
+
+<Note>
+
+The method receives other parameters, which you can find in the [Create Payment Module Provider](/references/payment/provider#authorizepayment) guide.
+
+</Note>
+
+#### Method Logic
+
+In the method, you first check if the `session_id` is present in the `data` object. If not, you throw an error.
+
+Then, you [retrieve the session details from Klarna](https://docs.klarna.com/api/payments/#operation/readCreditSession) using the `session_id`. Specifically, you need the `authorization_token` to authorize the payment. If it's not present, you throw an error.
+
+Next, you [Create an Order in Klarna](https://docs.klarna.com/api/payments/#operation/createOrder) using the `authorization_token`. You pass the same parameters you used in the `initiatePayment` method, but you also include the shipping and billing addresses of the customer.
+
+#### Return Value
+
+Finally, you return an object with two properties:
+
+- `data`: Custom data related to the payment provider that is stored within Medusa's [Payment](/references/payment/models/Payment). This data is later passed to other methods processing the payment. So, you pass the Klarna order ID here.
+- `status`: The status of the payment. You set it to `authorized`.
+
+This method will be called when the customer places their order, which you'll test out in the storefront later.
+
+### f. Implement getWebhookActionAndData Method
+
+When the customer places the order and completes the payment with Klarna, Klarna will call the webhook you defined in the `merchant_urls.authorization` option to notify you about the payment status.
+
+This is useful if the payment process was interrupted in the storefront and the order wasn't created in Medusa. Medusa provides a webhook that, when called, executes the `getWebhookActionAndData` method of the relevant payment provider to determine the status of the payment, and whether Medusa should create an order.
+
+Add the `getWebhookActionAndData` method to the `KlarnaPaymentProviderService` class:
+
+```ts title="src/modules/klarna/service.ts"
+// other imports...
+import { 
+  ProviderWebhookPayload, 
+  WebhookActionResult
+} from "@medusajs/framework/types"
+
+class KlarnaPaymentProviderService extends AbstractPaymentProvider<
+  Options
+> {
+  // ...
+  async getWebhookActionAndData(payload: ProviderWebhookPayload["payload"]): Promise<WebhookActionResult> {
+    const {
+      data,
+    } = payload
+
+    try {
+      // retrieve session
+      const { data: sessionResponse } = await this.client.get(`/payments/v1/sessions/${data.session_id}`)
+
+      return {
+        action: sessionResponse.status === "complete" ? 
+          this.options.auto_capture ? 
+            "captured" : "authorized" 
+          : "pending",
+        data: {
+          session_id: sessionResponse.merchant_reference1,
+          amount: new BigNumber(sessionResponse.order_amount as number).bigNumber?.dividedBy(100)!,
+        },
+      }
+    } catch (error) {
+      throw new MedusaError(MedusaError.Types.UNEXPECTED_STATE, `Failed to get Klarna webhook action and data: ${error.response.data}`)
+    }
+  }
+}
+```
+
+#### Parameters
+
+The `getWebhookActionAndData` method receives a `payload` parameter with a `data` property, which holds the body parameters of the Klarna request sent to the webhook.
+
+<Note>
+
+The method receives other parameters, which you can find in the [Create Payment Module Provider](/references/payment/provider#getwebhookactionanddata) guide.
+
+</Note>
+
+#### Method Logic
+
+In the method, you use the `session_id` from the `data` property to [retrieve the session details from Klarna](https://docs.klarna.com/api/payments/#operation/readCreditSession).
+
+#### Return Value
+
+You return an object with two properties:
+
+- `action`: The action that was performed on the payment. You set it to `captured` if the payment was completed and `auto_capture` is enabled. Otherwise, you set it to `authorized`. If the payment is still not completed, you set it to `pending`.
+- `data`: An object having the following properties:
+    - `session_id`: The ID of the Medusa payment session, which you set in the `merchant_reference1` property when you created the Klarna session.
+    - `amount`: The amount of the payment. You normalize it to the format used in Medusa by dividing it by `100`.
+
+This method will be called when Klarna calls the webhook you'll define in the `merchant_urls.authorization` option.
+
