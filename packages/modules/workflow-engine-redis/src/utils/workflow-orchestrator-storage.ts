@@ -4,6 +4,7 @@ import {
   IDistributedSchedulerStorage,
   IDistributedTransactionStorage,
   SchedulerOptions,
+  SkipCancelledExecutionError,
   SkipExecutionError,
   TransactionCheckpoint,
   TransactionContext,
@@ -630,6 +631,19 @@ export class RedisDistributedTransactionStorage
        * The already finished execution would have deleted the checkpoint already.
        */
       throw new SkipExecutionError("Already finished by another execution")
+    }
+
+    // First ensure that the latest execution was not cancelled, otherwise we skip the execution
+    const latestTransactionCancelledAt = latestUpdatedFlow.cancelledAt
+    const currentTransactionCancelledAt = currentFlow.cancelledAt
+
+    if (
+      !!latestTransactionCancelledAt &&
+      currentTransactionCancelledAt == null
+    ) {
+      throw new SkipCancelledExecutionError(
+        "Workflow execution has been cancelled during the execution"
+      )
     }
 
     const currentFlowSteps = Object.values(currentFlow.steps || {})

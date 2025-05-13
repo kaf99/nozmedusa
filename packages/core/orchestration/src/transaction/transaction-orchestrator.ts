@@ -31,6 +31,7 @@ import {
 import { EventEmitter } from "events"
 import {
   PermanentStepFailureError,
+  SkipCancelledExecutionError,
   SkipExecutionError,
   SkipStepResponse,
   TransactionStepTimeoutError,
@@ -494,6 +495,7 @@ export class TransactionOrchestrator extends EventEmitter {
     response: unknown
   ): Promise<{
     stopExecution: boolean
+    transactionIsCancelling?: boolean
   }> {
     const hasStepTimedOut =
       step.getStates().state === TransactionStepState.TIMEOUT
@@ -519,10 +521,20 @@ export class TransactionOrchestrator extends EventEmitter {
     }
 
     let shouldEmit = true
+    let transactionIsCancelling = false
     try {
       await transaction.saveCheckpoint()
     } catch (error) {
-      shouldEmit = false
+      if (
+        !SkipCancelledExecutionError.isSkipCancelledExecutionError(error) &&
+        !SkipExecutionError.isSkipExecutionError(error)
+      ) {
+        throw error
+      }
+
+      transactionIsCancelling =
+        SkipCancelledExecutionError.isSkipCancelledExecutionError(error)
+      shouldEmit = !SkipExecutionError.isSkipExecutionError(error)
     }
 
     const cleaningUp: Promise<unknown>[] = []
@@ -544,6 +556,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
     return {
       stopExecution: !shouldEmit,
+      transactionIsCancelling,
     }
   }
 
@@ -555,6 +568,7 @@ export class TransactionOrchestrator extends EventEmitter {
     step: TransactionStep
   }): Promise<{
     stopExecution: boolean
+    transactionIsCancelling?: boolean
   }> {
     const hasStepTimedOut =
       step.getStates().state === TransactionStepState.TIMEOUT
@@ -565,13 +579,22 @@ export class TransactionOrchestrator extends EventEmitter {
     }
 
     let shouldEmit = true
+    let transactionIsCancelling = false
     try {
       await transaction.saveCheckpoint()
     } catch (error) {
+      if (
+        !SkipCancelledExecutionError.isSkipCancelledExecutionError(error) &&
+        !SkipExecutionError.isSkipExecutionError(error)
+      ) {
+        throw error
+      }
+
+      transactionIsCancelling =
+        SkipCancelledExecutionError.isSkipCancelledExecutionError(error)
+
       if (SkipExecutionError.isSkipExecutionError(error)) {
         shouldEmit = false
-      } else {
-        throw error
       }
     }
 
@@ -592,6 +615,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
     return {
       stopExecution: !shouldEmit,
+      transactionIsCancelling,
     }
   }
 
@@ -649,6 +673,7 @@ export class TransactionOrchestrator extends EventEmitter {
     timeoutError?: TransactionStepTimeoutError | TransactionTimeoutError
   ): Promise<{
     stopExecution: boolean
+    transactionIsCancelling?: boolean
   }> {
     if (SkipExecutionError.isSkipExecutionError(error)) {
       return {
@@ -734,14 +759,23 @@ export class TransactionOrchestrator extends EventEmitter {
       }
     }
 
+    let transactionIsCancelling = false
     let shouldEmit = true
     try {
       await transaction.saveCheckpoint()
     } catch (error) {
+      if (
+        !SkipCancelledExecutionError.isSkipCancelledExecutionError(error) &&
+        !SkipExecutionError.isSkipExecutionError(error)
+      ) {
+        throw error
+      }
+
+      transactionIsCancelling =
+        SkipCancelledExecutionError.isSkipCancelledExecutionError(error)
+
       if (SkipExecutionError.isSkipExecutionError(error)) {
         shouldEmit = false
-      } else {
-        throw error
       }
     }
 
@@ -760,6 +794,7 @@ export class TransactionOrchestrator extends EventEmitter {
 
     return {
       stopExecution: !shouldEmit,
+      transactionIsCancelling,
     }
   }
 
@@ -1130,6 +1165,10 @@ export class TransactionOrchestrator extends EventEmitter {
       response
     )
 
+    if (ret.transactionIsCancelling) {
+      return await this.cancelTransaction(transaction)
+    }
+
     if (isAsync && !ret.stopExecution) {
       // Schedule to continue the execution of async steps because they are not awaited on purpose and can be handled by another machine
       await transaction.scheduleRetry(step, 0)
@@ -1156,12 +1195,16 @@ export class TransactionOrchestrator extends EventEmitter {
       )
     }
 
-    await TransactionOrchestrator.setStepFailure(
+    const ret = await TransactionOrchestrator.setStepFailure(
       transaction,
       step,
       error,
       isPermanent ? 0 : step.definition.maxRetries
     )
+
+    if (ret.transactionIsCancelling) {
+      return await this.cancelTransaction(transaction)
+    }
   }
 
   /**
@@ -1244,6 +1287,8 @@ export class TransactionOrchestrator extends EventEmitter {
 
     flow.state = TransactionState.WAITING_TO_COMPENSATE
     flow.cancelledAt = Date.now()
+
+    await transaction.saveCheckpoint()
 
     await this.executeNext(transaction)
   }
