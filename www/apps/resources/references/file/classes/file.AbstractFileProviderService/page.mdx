@@ -101,7 +101,7 @@ export default MyFileProviderService
 ### identifier
 
 Each file provider has a unique ID used to identify it. The provider's ID
-will be stored as `fs_{identifier}_{id}`, where `{id}` is the provider's `id` 
+will be stored as `fs_{identifier}_{id}`, where `{id}` is the provider's `id`
 property in the `medusa-config.ts`.
 
 #### Example
@@ -188,7 +188,8 @@ class MyFileProviderService extends AbstractFileProviderService {
   // ...
   async delete(file: ProviderDeleteFileDTO): Promise<void> {
     // TODO logic to remove the file from storage
-    // Use the `file.fileKey` to delete the file
+    // Use the `file.fileKey` to delete the file, which is the identifier of the file
+   // in the provider's storage.
     // for example:
     this.client.delete(file.fileKey)
   }
@@ -220,7 +221,8 @@ class MyFileProviderService extends AbstractFileProviderService {
     fileData: ProviderGetFileDTO
   ): Promise<string> {
     // TODO logic to get the presigned URL
-    // Use the `file.fileKey` to delete the file
+    // Use the `file.fileKey` to delete the file, which is the identifier of the file
+   // in the provider's storage.
     // for example:
     return this.client.getPresignedUrl(fileData.fileKey)
   }
@@ -229,11 +231,79 @@ class MyFileProviderService extends AbstractFileProviderService {
 
 #### Parameters
 
-<TypeList types={[{"name":"fileData","type":"[ProviderGetFileDTO](../../../types/FileTypes/interfaces/types.FileTypes.ProviderGetFileDTO/page.mdx)","description":"The details of the file to get its\npresigned URL.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"fileKey","type":"`string`","description":"The file's key as returned during upload.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getPresignedDownloadUrl"/>
+<TypeList types={[{"name":"fileData","type":"[ProviderGetFileDTO](../../../types/FileTypes/interfaces/types.FileTypes.ProviderGetFileDTO/page.mdx)","description":"The details of the file to get its\npresigned URL.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"fileKey","type":"`string`","description":"The file's key allowing you to later\nidentify the file in the third-party\nsystem. For example, the S3 Module Provider\nreturns the file's key in S3, whereas the\nLocal File Module Provider returns the file's\npath.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getPresignedDownloadUrl"/>
 
 #### Returns
 
 <TypeList types={[{"name":"Promise","type":"Promise&#60;string&#62;","optional":false,"defaultValue":"","description":"The file's presigned URL.","expandable":false,"children":[{"name":"string","type":"`string`","optional":false,"defaultValue":"","description":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getPresignedDownloadUrl"/>
+
+### getDownloadStream
+
+This method retrieves an uploaded file as a stream. This is useful when streaming
+a file to clients or you want to process the file in chunks.
+
+:::note
+
+This is only available after Medusa `v2.8.0`.
+
+:::
+
+#### Example
+
+```ts
+class MyFileProviderService extends AbstractFileProviderService {
+  // ...
+  async getAsStream(file: ProviderDeleteFileDTO): Promise<Readable> {
+   // TODO logic to get the file as a stream
+   // Use the `file.fileKey` to get the file, which is the identifier of the file
+   // in the provider's storage.
+   // for example:
+    this.client.getAsStream(file.fileKey)
+  }
+}
+```
+
+#### Parameters
+
+<TypeList types={[{"name":"fileData","type":"[ProviderGetFileDTO](../../../types/FileTypes/interfaces/types.FileTypes.ProviderGetFileDTO/page.mdx)","description":"The details of the file to get its stream.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"fileKey","type":"`string`","description":"The file's key allowing you to later\nidentify the file in the third-party\nsystem. For example, the S3 Module Provider\nreturns the file's key in S3, whereas the\nLocal File Module Provider returns the file's\npath.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getDownloadStream"/>
+
+#### Returns
+
+<TypeList types={[{"name":"Promise","type":"Promise&#60;Readable&#62;","optional":false,"defaultValue":"","description":"The file's stream.","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getDownloadStream"/>
+
+### getAsBuffer
+
+This method retrieves an uploaded file as a buffer. This is useful when you want to
+process the entire file in memory or send it as a response.
+
+:::note
+
+This is only available after Medusa `v2.8.0`.
+
+:::
+
+#### Example
+
+```ts
+class MyFileProviderService extends AbstractFileProviderService {
+  // ...
+  async getAsBuffer(file: ProviderDeleteFileDTO): Promise<Buffer> {
+    // TODO logic to get the file as a buffer
+    // Use the `file.fileKey` to get the file, which is the identifier of the file
+    // in the provider's storage.
+    // for example:
+    this.client.getAsBuffer(file.fileKey)
+  }
+}
+```
+
+#### Parameters
+
+<TypeList types={[{"name":"fileData","type":"[ProviderGetFileDTO](../../../types/FileTypes/interfaces/types.FileTypes.ProviderGetFileDTO/page.mdx)","description":"The details of the file to get its buffer.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"fileKey","type":"`string`","description":"The file's key allowing you to later\nidentify the file in the third-party\nsystem. For example, the S3 Module Provider\nreturns the file's key in S3, whereas the\nLocal File Module Provider returns the file's\npath.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getAsBuffer"/>
+
+#### Returns
+
+<TypeList types={[{"name":"Promise","type":"Promise&#60;Buffer&#62;","optional":false,"defaultValue":"","description":"The file's buffer.","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="getAsBuffer"/>
 
 ---
 

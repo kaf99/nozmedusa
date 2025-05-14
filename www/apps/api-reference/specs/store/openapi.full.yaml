@@ -127,7 +127,7 @@ tags:
       url: https://docs.medusajs.com/resources/storefront-development/regions
     x-associatedSchema:
       $ref: '#/components/schemas/StoreRegion'
-  - name: Return
+  - name: Returns
     description: |
       Customers can request to return items in their order. The admin user then receives and handles the return.
 
@@ -1330,7 +1330,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: transferCartCustomerWorkflow
-      x-events: []
+      x-events:
+        - name: cart.customer_transferred
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+              customer_id, // The ID of the customer
+            }
+            ```
+          description: Emitted when the customer in the cart is transferred.
+          deprecated: false
+          version: 2.8.0
   /store/carts/{id}/line-items:
     post:
       operationId: PostCartsIdLineItems
@@ -8251,72 +8262,6 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
-  /store/return:
-    post:
-      operationId: PostReturn
-      summary: Create Return
-      description: Create a return for an order's items. The admin receives the return and process it from their side.
-      x-authenticated: false
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StoreCreateReturn'
-      x-codeSamples:
-        - lang: Shell
-          label: cURL
-          source: |-
-            curl -X POST '{backend_url}/store/return' \
-            -H 'Content-Type: application/json' \
-            -H 'x-publishable-api-key: {your_publishable_api_key}' \
-            --data-raw '{
-              "order_id": "{value}",
-              "items": [
-                {
-                  "id": "id_XbfptxUVo2io9EI",
-                  "quantity": 7916429753974784,
-                  "reason_id": "{value}",
-                  "note": "{value}"
-                }
-              ],
-              "return_shipping": {
-                "option_id": "{value}",
-                "price": 1068364080349184
-              },
-              "note": "{value}",
-              "location_id": "{value}"
-            }'
-      tags:
-        - Return
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StoreReturnResponse'
-        '400':
-          $ref: '#/components/responses/400_error'
-        '401':
-          $ref: '#/components/responses/unauthorized'
-        '404':
-          $ref: '#/components/responses/not_found_error'
-        '409':
-          $ref: '#/components/responses/invalid_state_error'
-        '422':
-          $ref: '#/components/responses/invalid_request_error'
-        '500':
-          $ref: '#/components/responses/500_error'
-      x-workflow: createAndCompleteReturnOrderWorkflow
-      parameters:
-        - name: x-publishable-api-key
-          in: header
-          description: Publishable API Key created in the Medusa Admin.
-          required: true
-          schema:
-            type: string
-            externalDocs:
-              url: https://docs.medusajs.com/api/store#publishable-api-key
   /store/return-reasons:
     get:
       operationId: GetReturnReasons
@@ -8484,6 +8429,94 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+  /store/returns:
+    post:
+      operationId: PostReturns
+      summary: Create Return
+      description: Create a return for an order's items. The admin receives the return and process it from their side.
+      x-authenticated: false
+      parameters:
+        - name: x-publishable-api-key
+          in: header
+          description: Publishable API Key created in the Medusa Admin.
+          required: true
+          schema:
+            type: string
+            externalDocs:
+              url: https://docs.medusajs.com/api/store#publishable-api-key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCreateReturn'
+      x-codeSamples:
+        - lang: Shell
+          label: cURL
+          source: |-
+            curl -X POST '{backend_url}/store/returns' \
+            -H 'x-publishable-api-key: {your_publishable_api_key}' \
+            -H 'Content-Type: application/json' \
+            --data-raw '{
+              "order_id": "order_123",
+              "items": [
+                {
+                  "id": "id_XbfptxUVo2io9EI",
+                  "quantity": 7916429753974784,
+                  "reason_id": "{value}",
+                  "note": "{value}"
+                }
+              ],
+              "return_shipping": {
+                "option_id": "{value}",
+                "price": 1068364080349184
+              },
+              "note": "{value}",
+              "location_id": "{value}"
+            }'
+      tags:
+        - Returns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReturnResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createAndCompleteReturnOrderWorkflow
+      x-events:
+        - name: order.return_requested
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return request is confirmed.
+          deprecated: false
+        - name: order.return_received
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return is marked as received.
+          deprecated: false
+      x-version: 2.8.0
   /store/shipping-options:
     get:
       operationId: GetShippingOptions
@@ -9774,6 +9807,11 @@ components:
           description: The list of claims.
           items:
             $ref: '#/components/schemas/AdminClaim'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminClaimOrderResponse:
       type: object
       description: The created claim's details.
@@ -9931,6 +9969,11 @@ components:
           description: The list of product collections.
           items:
             $ref: '#/components/schemas/AdminCollection'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminCollectionResponse:
       type: object
       description: The collection's details.
@@ -9958,24 +10001,6 @@ components:
           enum:
             - publishable
             - secret
-    AdminCreateCollection:
-      type: object
-      description: the product collection's details.
-      x-schemaName: AdminCreateCollection
-      required:
-        - title
-      properties:
-        title:
-          type: string
-          title: title
-          description: The collection's title.
-        handle:
-          type: string
-          title: handle
-          description: The collection's handle.
-        metadata:
-          type: object
-          description: The collection's metadata, used to store custom key-value pairs.
     AdminCreateCustomerGroup:
       type: object
       description: The customer group's details.
@@ -11240,6 +11265,10 @@ components:
         metadata:
           type: object
           description: The tax region's metadata, used to store custom key-value pairs.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider used to calculate the tax rate in this tax region.
     AdminCreateVariantInventoryItem:
       type: object
       description: The details of the variant-inventory item association.
@@ -11377,6 +11406,11 @@ components:
           description: The list of currencies.
           items:
             $ref: '#/components/schemas/AdminCurrency'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminCurrencyResponse:
       type: object
       description: The currency's details.
@@ -12491,6 +12525,11 @@ components:
           description: The list of draft orders.
           items:
             $ref: '#/components/schemas/AdminDraftOrder'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminDraftOrderPreview:
       type: object
       description: The draft order preview's details.
@@ -13708,6 +13747,11 @@ components:
           description: The list of fulfillment providers.
           items:
             $ref: '#/components/schemas/AdminFulfillmentProvider'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminFulfillmentProviderOption:
       type: object
       description: The fulfillment option's details.
@@ -13751,6 +13795,11 @@ components:
           description: The list of fulfillment options.
           items:
             $ref: '#/components/schemas/AdminFulfillmentProviderOption'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminFulfillmentResponse:
       type: object
       description: A fulfillment's details.
@@ -14250,6 +14299,11 @@ components:
           description: The list of notifications.
           items:
             $ref: '#/components/schemas/AdminNotification'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminNotificationResponse:
       type: object
       description: The notification's details.
@@ -17213,6 +17267,11 @@ components:
           description: The list of price lists.
           items:
             $ref: '#/components/schemas/AdminPriceList'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminPriceListPrice:
       type: object
       description: The details of a price list's price.
@@ -17390,6 +17449,11 @@ components:
           description: The list of price preferences.
           items:
             $ref: '#/components/schemas/AdminPricePreference'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminPricePreferenceResponse:
       type: object
       description: The price preference's details.
@@ -17700,6 +17764,11 @@ components:
           description: The list of product categories.
           items:
             $ref: '#/components/schemas/AdminProductCategory'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductCategoryResponse:
       type: object
       description: The product category's details.
@@ -17982,6 +18051,11 @@ components:
           description: The list of product tags.
           items:
             $ref: '#/components/schemas/AdminProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductTagResponse:
       type: object
       description: The product tag's details.
@@ -18076,6 +18150,11 @@ components:
           description: The list of product types.
           items:
             $ref: '#/components/schemas/AdminProductType'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductTypeResponse:
       type: object
       description: The product type's details.
@@ -19034,6 +19113,11 @@ components:
           description: The list of return reasons.
           items:
             $ref: '#/components/schemas/AdminReturnReason'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminReturnReasonResponse:
       type: object
       description: The return reason's details.
@@ -19866,6 +19950,11 @@ components:
           description: The list of stock locations.
           items:
             $ref: '#/components/schemas/AdminStockLocation'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminStockLocationResponse:
       type: object
       description: The stock location's details.
@@ -20003,6 +20092,11 @@ components:
           description: The list of stores.
           items:
             $ref: '#/components/schemas/AdminStore'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminStoreResponse:
       type: object
       description: The store's details.
@@ -20012,6 +20106,23 @@ components:
       properties:
         store:
           $ref: '#/components/schemas/AdminStore'
+    AdminTaxProvider:
+      type: object
+      description: The tax provider's details.
+      x-schemaName: AdminTaxProvider
+      required:
+        - id
+        - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tax provider's ID.
+          example: tp_taxjar_taxjar
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the tax provider is enabled in the Medusa application.
     AdminTaxRate:
       type: object
       description: The tax rate's details.
@@ -20275,22 +20386,6 @@ components:
           type: string
           title: title
           description: The API key's title.
-    AdminUpdateCollection:
-      type: object
-      description: The details to update in a collection.
-      x-schemaName: AdminUpdateCollection
-      properties:
-        title:
-          type: string
-          title: title
-          description: The collection's title.
-        handle:
-          type: string
-          title: handle
-          description: The collection's handle.
-        metadata:
-          type: object
-          description: The collection's metadata, can hold custom key-value pairs.
     AdminUpdateCustomerGroup:
       type: object
       description: The details to update in a customer group.
@@ -21221,6 +21316,10 @@ components:
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider to use when calculating taxes for this tax region.
     AdminUpdateUser:
       type: object
       description: The properties to update in a user.
@@ -21400,6 +21499,11 @@ components:
           description: The list of users.
           items:
             $ref: '#/components/schemas/AdminUser'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminUserResponse:
       type: object
       description: The user's details.
@@ -22896,7 +23000,7 @@ components:
           type: string
           title: province
           description: The address's lower-case ISO 3166-2 province code.
-          example: US-CA
+          example: us-ca
           externalDocs:
             url: https://en.wikipedia.org/wiki/ISO_3166-2
             description: Learn more about ISO 3166-2
@@ -28709,6 +28813,11 @@ components:
           description: The list of currencies.
           items:
             $ref: '#/components/schemas/StoreCurrency'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreCurrencyResponse:
       type: object
       description: The currency's details.
@@ -28917,6 +29026,11 @@ components:
           description: The list of addresses.
           items:
             $ref: '#/components/schemas/StoreCustomerAddress'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreCustomerAddressResponse:
       type: object
       description: The address's details.
@@ -35578,6 +35692,11 @@ components:
           description: The list of product categories.
           items:
             $ref: '#/components/schemas/StoreProductCategory'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductCategoryResponse:
       type: object
       description: The product category's details.
@@ -35783,6 +35902,11 @@ components:
           description: The list of product tags.
           items:
             $ref: '#/components/schemas/StoreProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductTagResponse:
       type: object
       description: The product tag's details.
@@ -35855,6 +35979,11 @@ components:
           description: The list of product types.
           items:
             $ref: '#/components/schemas/StoreProductType'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductTypeResponse:
       type: object
       description: The product type's details.
@@ -36104,60 +36233,72 @@ components:
         - canceled_at
         - received_at
       properties:
-        id:
-          type: string
-          title: id
-          description: The return's ID.
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this return is created for.
-        status:
-          type: string
-          title: status
-          description: The return's status.
-        exchange_id:
-          type: string
-          title: exchange_id
-          description: The ID of the associated exchange.
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location the items are returned to.
-        claim_id:
-          type: string
-          title: claim_id
-          description: The ID of the associated claim.
-        display_id:
-          type: number
-          title: display_id
-          description: The return's display ID.
-        refund_amount:
-          type: number
-          title: refund_amount
-          description: The return's refunded amount.
         items:
           type: array
           description: The return's items.
           items:
             $ref: '#/components/schemas/StoreReturnItem'
-        received_at:
+        status:
           type: string
-          title: received_at
-          description: The date the return was received.
+          description: The return's status.
+          enum:
+            - received
+            - canceled
+            - requested
+            - open
+            - partially_received
+        id:
+          type: string
+          title: id
+          description: The return's ID.
+        display_id:
+          type: number
+          title: display_id
+          description: The return's display ID.
         created_at:
           type: string
           format: date-time
           title: created_at
           description: The date the return was created.
+        order_id:
+          type: string
+          title: order_id
+          description: The ID of the order this return belongs to.
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the location the return items are being returned to.
         canceled_at:
           type: string
           title: canceled_at
-          description: The date the return was updated.
+          description: The date the return was canceled.
+        exchange_id:
+          type: string
+          title: exchange_id
+          description: The ID of the associated exchange.
+        claim_id:
+          type: string
+          title: claim_id
+          description: The ID of the associated claim.
+        refund_amount:
+          type: number
+          title: refund_amount
+          description: The amount to be refunded.
+        received_at:
+          type: string
+          title: received_at
+          description: The date the return items were received.
     StoreReturnItem:
       type: object
       description: The return item's details.
       x-schemaName: StoreReturnItem
+      required:
+        - id
+        - quantity
+        - received_quantity
+        - damaged_quantity
+        - item_id
+        - return_id
       properties:
         id:
           type: string
@@ -36194,13 +36335,6 @@ components:
         metadata:
           type: object
           description: The item's metadata, can hold custom key-value pairs.
-      required:
-        - id
-        - quantity
-        - received_quantity
-        - damaged_quantity
-        - item_id
-        - return_id
     StoreReturnReason:
       type: object
       description: The return reason's details.

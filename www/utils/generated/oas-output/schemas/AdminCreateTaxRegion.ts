@@ -15,7 +15,7 @@
  *     type: string
  *     title: province_code
  *     description: The tax region's ISO 3166-2 province code. Must be lower-case.
- *     example: "us-ca"
+ *     example: us-ca
  *     externalDocs:
  *       url: https://en.wikipedia.org/wiki/ISO_3166-2
  *       description: Learn more about ISO 3166-2
@@ -55,6 +55,10 @@
  *   metadata:
  *     type: object
  *     description: The tax region's metadata, used to store custom key-value pairs.
+ *   provider_id:
+ *     type: string
+ *     title: provider_id
+ *     description: The ID of the tax provider used to calculate the tax rate in this tax region.
  * 
 */
 

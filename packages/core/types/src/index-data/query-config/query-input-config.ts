@@ -69,6 +69,10 @@ export type IndexQueryConfig<TEntry extends string> = {
 export type QueryFunctionReturnPagination = {
   skip: number
   take: number
+  /**
+   * @featureFlag index_engine
+   * @version 2.8.0
+   */
   estimate_count: number
 }
 

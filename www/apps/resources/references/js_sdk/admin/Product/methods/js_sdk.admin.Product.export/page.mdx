@@ -4,12 +4,12 @@ import { TypeList } from "docs-ui"
 
 This method starts a product export process to retrieve a CSV of exported products.
 
-You'll receive in the response the transaction ID of the workflow generating the CSV file. 
-To check the status of the execution, send a `GET` request to 
-`/admin/workflows-executions/export-products/:transaction-id`. 
+You'll receive in the response the transaction ID of the workflow generating the CSV file.
+To check the status of the execution, send a `GET` request to
+`/admin/workflows-executions/export-products/:transaction-id`.
 
-Once the execution finishes successfully, a notification is created for the export. 
-You can retrieve the notifications using the `/admin/notification` API route to 
+Once the execution finishes successfully, a notification is created for the export.
+You can retrieve the notifications using the `/admin/notification` API route to
 retrieve the file's download URL.
 
 This method sends a request to the [Export Product](https://docs.medusajs.com/api/admin#products\_postproductsexport)

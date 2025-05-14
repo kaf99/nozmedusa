@@ -39,7 +39,10 @@ export type PaginatedResponse<T> = {
    */
   count: number
   /**
-   * The estimated number of items.
+   * The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+   * 
+   * @featureFlag index_engine
+   * @version 2.8.0
    */
   estimate_count?: number
 } & T

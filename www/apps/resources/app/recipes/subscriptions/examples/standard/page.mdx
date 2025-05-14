@@ -346,7 +346,7 @@ import CustomerModule from "@medusajs/medusa/customer"
 
 export default defineLink(
   {
-    linkable: SubscriptionModule.linkable.subscription,
+    linkable: SubscriptionModule.linkable.subscription.id,
     isList: true,
   },
   CustomerModule.linkable.customer
@@ -367,7 +367,7 @@ import OrderModule from "@medusajs/medusa/order"
 export default defineLink(
   SubscriptionModule.linkable.subscription,
   {
-    linkable: OrderModule.linkable.order,
+    linkable: OrderModule.linkable.order.id,
     isList: true,
   }
 )

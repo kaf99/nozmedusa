@@ -2,7 +2,7 @@
  * @oas [delete] /admin/order-edits/{id}
  * operationId: DeleteOrderEditsId
  * summary: Cancel Order Edit
- * description: Cancel an order edit.
+ * description: Cancel a requested order edit.
  * x-authenticated: true
  * parameters:
  *   - name: id
@@ -79,6 +79,18 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: cancelBeginOrderEditWorkflow
+ * x-events:
+ *   - name: order-edit.canceled
+ *     payload: |-
+ *       ```ts
+ *       {
+ *         order_id, // The ID of the order
+ *         actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order
+ *       }
+ *       ```
+ *     description: Emitted when an order edit request is canceled.
+ *     deprecated: false
+ *     version: 2.8.0
  * 
 */
 

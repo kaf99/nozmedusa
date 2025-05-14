@@ -31,7 +31,28 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminUpdateCollection"
+ *         allOf:
+ *           - type: object
+ *             description: The details to update in a collection.
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 title: title
+ *                 description: The collection's title.
+ *               handle:
+ *                 type: string
+ *                 title: handle
+ *                 description: The collection's handle.
+ *               metadata:
+ *                 type: object
+ *                 description: The collection's metadata.
+ *           - type: object
+ *             description: The details to update in a collection.
+ *             properties:
+ *               additional_data:
+ *                 type: object
+ *                 description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+ *         description: The details to update in a collection.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

@@ -278,12 +278,12 @@ const generatedgeneratedStoreSidebarSidebar = {
     },
     {
       "type": "category",
-      "title": "Return",
+      "title": "Return Reasons",
       "children": [
         {
           "type": "link",
-          "path": "return_return_schema",
-          "title": "Return Object",
+          "path": "return-reasons_returnreason_schema",
+          "title": "ReturnReason Object",
           "loaded": true,
           "badge": {
             "variant": "neutral",
@@ -296,12 +296,12 @@ const generatedgeneratedStoreSidebarSidebar = {
     },
     {
       "type": "category",
-      "title": "Return Reasons",
+      "title": "Returns",
       "children": [
         {
           "type": "link",
-          "path": "return-reasons_returnreason_schema",
-          "title": "ReturnReason Object",
+          "path": "returns_return_schema",
+          "title": "Return Object",
           "loaded": true,
           "badge": {
             "variant": "neutral",
