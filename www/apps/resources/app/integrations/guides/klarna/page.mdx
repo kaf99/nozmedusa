@@ -296,9 +296,7 @@ class KlarnaPaymentProviderService extends AbstractPaymentProvider<
 
       return {
         id: response.session_id,
-        data: {
-          session_id: response.session_id,
-        },
+        data: response,
       }
     } catch (error) {
       throw new MedusaError(MedusaError.Types.UNEXPECTED_STATE, `Failed to initiate Klarna payment: ${error.response.data}`)
@@ -338,7 +336,8 @@ Then, you send a POST request to the [Klarna API to create a session](https://do
 Finally, you return an object with two properties:
 
 - `id`: The ID of the Klarna payment session.
-- `data`: Custom data related to the payment provider that is stored within Medusa's [PaymentSession](/references/payment/models/PaymentSession). This data is later passed to other methods processing the payment. So, you pass the Klarna session ID here.
+- `data`: Custom data related to the payment provider that is stored within Medusa's [PaymentSession](/references/payment/models/PaymentSession). This data is later passed to other methods processing the payment, and is available to the storefront during the checkout flow.
+    - You pass the Klarna response, which holds the session ID, client token, and [other information that you can use on the storefront](https://docs.klarna.com/payments/web-payments/integrate-with-klarna-payments/step-2-checkout/#display-klarna-load-call).
 
 This method will be called when the customer selects Klarna as the payment method during checkout, which you'll test out in the storefront later.
 
