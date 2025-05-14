@@ -18,7 +18,7 @@ This documentation provides a reference to the `sdk.admin.product` set of method
 This method creates a product import. The products are only imported after
 the import is confirmed using the [confirmImport](../../../Product/methods/js_sdk.admin.Product.confirmImport/page.mdx) method.
 
-This method sends a request to the 
+This method sends a request to the
 [Create Product Import](https://docs.medusajs.com/api/admin#products\_postproductsimport)
 API route.
 
@@ -39,14 +39,14 @@ sdk.admin.product.import({
 
 ### Returns
 
-<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminImportProductResponse](../../../../../types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The import's details.","expandable":false,"children":[{"name":"transaction_id","type":"`string`","description":"The ID of the import product workflow execution's transaction. \nThis is useful to confirm the import using the `/admin/products/:transaction-id/import` API route.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"summary","type":"`object`","description":"Details of the products to create or update when the import is confirmed.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"toCreate","type":"`number`","description":"The number of products that will be created by the import.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"toUpdate","type":"`number`","description":"The number of products that will be updated by the import.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="import"/>
+<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminImportProductResponse](../../../../../types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The import's details.","expandable":false,"children":[{"name":"transaction_id","type":"`string`","description":"The ID of the import product workflow execution's transaction.\nThis is useful to confirm the import using the `/admin/products/:transaction-id/import` API route.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"summary","type":"`object`","description":"Details of the products to create or update when the import is confirmed.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"toCreate","type":"`number`","description":"The number of products that will be created by the import.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"toUpdate","type":"`number`","description":"The number of products that will be updated by the import.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="import"/>
 
 ___
 
 ## confirmImport
 
 This method confirms a product import created using the method [import](../../../Product/methods/js_sdk.admin.Product.import/page.mdx).
-It sends a request to the 
+It sends a request to the
 [Confirm Product Import](https://docs.medusajs.com/api/admin#products\_postproductsimporttransaction\_idconfirm)
 API route.
 
@@ -65,7 +65,7 @@ sdk.admin.product.confirmImport("transaction_123")
 
 ### Returns
 
-<TypeList types={[{"name":"Promise","type":"Promise&#60;object&#62;","optional":false,"defaultValue":"","description":"This method confirms a product import created using the method [import](../../../Product/methods/js_sdk.admin.Product.import/page.mdx).\nIt sends a request to the \n[Confirm Product Import](https://docs.medusajs.com/api/admin#products\\_postproductsimporttransaction\\_idconfirm)\nAPI route.","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="confirmImport"/>
+<TypeList types={[{"name":"Promise","type":"Promise&#60;object&#62;","optional":false,"defaultValue":"","description":"This method confirms a product import created using the method [import](../../../Product/methods/js_sdk.admin.Product.import/page.mdx).\nIt sends a request to the\n[Confirm Product Import](https://docs.medusajs.com/api/admin#products\\_postproductsimporttransaction\\_idconfirm)\nAPI route.","expandable":false,"children":[]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="confirmImport"/>
 
 ___
 
@@ -73,12 +73,12 @@ ___
 
 This method starts a product export process to retrieve a CSV of exported products.
 
-You'll receive in the response the transaction ID of the workflow generating the CSV file. 
-To check the status of the execution, send a `GET` request to 
-`/admin/workflows-executions/export-products/:transaction-id`. 
+You'll receive in the response the transaction ID of the workflow generating the CSV file.
+To check the status of the execution, send a `GET` request to
+`/admin/workflows-executions/export-products/:transaction-id`.
 
-Once the execution finishes successfully, a notification is created for the export. 
-You can retrieve the notifications using the `/admin/notification` API route to 
+Once the execution finishes successfully, a notification is created for the export.
+You can retrieve the notifications using the `/admin/notification` API route to
 retrieve the file's download URL.
 
 This method sends a request to the [Export Product](https://docs.medusajs.com/api/admin#products\_postproductsexport)
@@ -105,7 +105,7 @@ ___
 
 ## batch
 
-This method manages products to create, update, or delete them. It sends a request to the 
+This method manages products to create, update, or delete them. It sends a request to the
 [Manage Products](https://docs.medusajs.com/api/admin#products\_postproductsbatch)
 API route.
 
@@ -154,7 +154,7 @@ ___
 
 ## create
 
-This method creates a product. It sends a request to the 
+This method creates a product. It sends a request to the
 [Create Product](https://docs.medusajs.com/api/admin#products\_postproducts)
 API route.
 
@@ -222,7 +222,7 @@ ___
 
 ## list
 
-This method retrieves a paginated list of products. It sends a request to the 
+This method retrieves a paginated list of products. It sends a request to the
 [List Products](https://docs.medusajs.com/api/admin#products\_getproducts) API route.
 
 ### Example
@@ -270,13 +270,13 @@ Learn more about the `fields` property in the [API reference](https://docs.medus
 
 ### Returns
 
-<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of products.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="list"/>
+<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of products.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"estimate_count","type":"`number`","description":"The estimated number of items.","optional":true,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="list"/>
 
 ___
 
 ## retrieve
 
-This method retrieves a product by its ID. It sends a request to the 
+This method retrieves a product by its ID. It sends a request to the
 [Get Product](https://docs.medusajs.com/api/admin#products\_getproductsid)
 API route.
 
@@ -427,7 +427,7 @@ API route.
 
 ```ts
 sdk.admin.product.updateVariant(
-  "prod_123", 
+  "prod_123",
   "variant_123",
     {
     title: "Blue Shirt",
@@ -450,7 +450,7 @@ ___
 
 ## listVariants
 
-This method retrieves a paginated list of products. It sends a request to the 
+This method retrieves a paginated list of products. It sends a request to the
 [List Products](https://docs.medusajs.com/api/admin#products\_getproductsidvariants) API route.
 
 ### Example
@@ -498,7 +498,7 @@ Learn more about the `fields` property in the [API reference](https://docs.medus
 
 ### Returns
 
-<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductVariantListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductVariantListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of product variants.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="listVariants"/>
+<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductVariantListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductVariantListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of product variants.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"estimate_count","type":"`number`","description":"The estimated number of items.","optional":true,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="listVariants"/>
 
 ___
 
@@ -576,10 +576,10 @@ ___
 
 ## batchVariantInventoryItems
 
-This method manages a product's variant's inventories to associate them with inventory items, 
+This method manages a product's variant's inventories to associate them with inventory items,
 update their inventory items, or delete their association with inventory items.
 
-It sends a request to the 
+It sends a request to the
 [Manage Variant Inventory](https://docs.medusajs.com/api/admin#products\_postproductsidvariantsinventoryitemsbatch)
 API route.
 
@@ -587,7 +587,7 @@ API route.
 
 ```ts
 sdk.admin.product.batchVariantInventoryItems(
-  "prod_123", 
+  "prod_123",
   {
     create: [
       {
@@ -636,7 +636,7 @@ API route.
 
 ```ts
 sdk.admin.product.createOption(
-  "prod_123", 
+  "prod_123",
   {
     title: "Color",
     values: ["Green", "Blue"]
@@ -667,7 +667,7 @@ API route.
 
 ```ts
 sdk.admin.product.updateOption(
-  "prod_123", 
+  "prod_123",
   "prodopt_123",
   {
     title: "Color"
@@ -690,7 +690,7 @@ ___
 
 ## listOptions
 
-This method retrieves a paginated list of product options. It sends a request to the 
+This method retrieves a paginated list of product options. It sends a request to the
 [List Options](https://docs.medusajs.com/api/admin#products\_getproductsidoptions) API route.
 
 ### Example
@@ -738,7 +738,7 @@ Learn more about the `fields` property in the [API reference](https://docs.medus
 
 ### Returns
 
-<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductOptionListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductOptionListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of product options.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="listOptions"/>
+<TypeList types={[{"name":"Promise","type":"Promise&#60;[AdminProductOptionListResponse](../../../../../types/HttpTypes/types/types.HttpTypes.AdminProductOptionListResponse/page.mdx)&#62;","optional":false,"defaultValue":"","description":"The paginated list of product options.","expandable":false,"children":[{"name":"limit","type":"`number`","description":"The maximum number of items retrieved.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"offset","type":"`number`","description":"The number of items to skip before retrieving the returned items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"count","type":"`number`","description":"The total number of items.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"estimate_count","type":"`number`","description":"The estimated number of items.","optional":true,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" sectionTitle="listOptions"/>
 
 ___
 
@@ -791,7 +791,7 @@ ___
 
 ## deleteOption
 
-This method deletes a product's option. It sends a request to the 
+This method deletes a product's option. It sends a request to the
 [Delete Option](https://docs.medusajs.com/api/admin#products\_deleteproductsidoptionsoption\_id)
 API route.
 

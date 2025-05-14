@@ -51,6 +51,8 @@ export const CartWorkflowEvents = {
 
   /**
    * Emitted when the customer in the cart is transferred.
+   * 
+   * @version 2.8.0
    *
    * @eventPayload
    * ```ts

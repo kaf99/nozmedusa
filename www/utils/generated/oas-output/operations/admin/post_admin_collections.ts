@@ -25,7 +25,30 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminCreateCollection"
+ *         allOf:
+ *           - type: object
+ *             description: The collection's details.
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 title: title
+ *                 description: The collection's title.
+ *               handle:
+ *                 type: string
+ *                 title: handle
+ *                 description: The collection's handle.
+ *               metadata:
+ *                 type: object
+ *                 description: The collection's metadata. Can hold custom key-value pairs.
+ *           - type: object
+ *             description: The collection's details.
+ *             properties:
+ *               additional_data:
+ *                 type: object
+ *                 description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+ *         description: the product collection's details.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

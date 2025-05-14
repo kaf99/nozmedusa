@@ -2864,6 +2864,10 @@ export const filesMap = [
     "pathname": "/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.refreshPaymentCollectionForCartWorkflow"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.refundPaymentAndRecreatePaymentSessionWorkflow/page.mdx",
+    "pathname": "/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.refundPaymentAndRecreatePaymentSessionWorkflow"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.transferCartCustomerWorkflow/page.mdx",
     "pathname": "/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.transferCartCustomerWorkflow"
   },
@@ -2942,6 +2946,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.refreshPaymentCollectionForCartWorkflowId/page.mdx",
     "pathname": "/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.refreshPaymentCollectionForCartWorkflowId"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.refundPaymentAndRecreatePaymentSessionWorkflowId/page.mdx",
+    "pathname": "/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.refundPaymentAndRecreatePaymentSessionWorkflowId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.transferCartCustomerWorkflowId/page.mdx",
@@ -3426,6 +3434,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.confirmDraftOrderEditWorkflowId/page.mdx",
     "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.confirmDraftOrderEditWorkflowId"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflowId/page.mdx",
+    "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflowId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.removeDraftOrderActionItemWorkflowId/page.mdx",
@@ -4740,6 +4752,10 @@ export const filesMap = [
     "pathname": "/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.exchangeRequestItemReturnValidationStep"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.fetchShippingOptionForOrderWorkflow/page.mdx",
+    "pathname": "/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.fetchShippingOptionForOrderWorkflow"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.getOrderDetailWorkflow/page.mdx",
     "pathname": "/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.getOrderDetailWorkflow"
   },
@@ -4754,6 +4770,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.markPaymentCollectionAsPaid/page.mdx",
     "pathname": "/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.markPaymentCollectionAsPaid"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.maybeRefreshShippingMethodsWorkflow/page.mdx",
+    "pathname": "/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.maybeRefreshShippingMethodsWorkflow"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/functions/core_flows.Order.Workflows_Order.orderClaimAddNewItemValidationStep/page.mdx",
@@ -5236,6 +5256,10 @@ export const filesMap = [
     "pathname": "/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.dismissItemReturnRequestWorkflowId"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.fetchShippingOptionsForOrderWorkflowId/page.mdx",
+    "pathname": "/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.fetchShippingOptionsForOrderWorkflowId"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.getOrderDetailWorkflowId/page.mdx",
     "pathname": "/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.getOrderDetailWorkflowId"
   },
@@ -5250,6 +5274,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.markPaymentCollectionAsPaidId/page.mdx",
     "pathname": "/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.markPaymentCollectionAsPaidId"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.maybeRefreshShippingMethodsWorkflowId/page.mdx",
+    "pathname": "/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.maybeRefreshShippingMethodsWorkflowId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Order/Workflows_Order/variables/core_flows.Order.Workflows_Order.orderClaimAddNewItemWorkflowId/page.mdx",
@@ -5414,14 +5442,6 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Order/core_flows.Order.Workflows_Order/page.mdx",
     "pathname": "/references/core_flows/Order/core_flows.Order.Workflows_Order"
-  },
-  {
-    "filePath": "/www/apps/resources/references/core_flows/Order/functions/core_flows.Order.fetchShippingOptionForOrderWorkflow/page.mdx",
-    "pathname": "/references/core_flows/Order/functions/core_flows.Order.fetchShippingOptionForOrderWorkflow"
-  },
-  {
-    "filePath": "/www/apps/resources/references/core_flows/Order/variables/core_flows.Order.fetchShippingOptionsForOrderWorkflowId/page.mdx",
-    "pathname": "/references/core_flows/Order/variables/core_flows.Order.fetchShippingOptionsForOrderWorkflowId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Payment/Steps_Payment/functions/core_flows.Payment.Steps_Payment.authorizePaymentSessionStep/page.mdx",
@@ -7608,6 +7628,10 @@ export const filesMap = [
     "pathname": "/references/core_flows/interfaces/core_flows.PrepareAdjustmentsFromPromotionActionsStepOutput"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.ProcessPaymentWorkflowInput/page.mdx",
+    "pathname": "/references/core_flows/interfaces/core_flows.ProcessPaymentWorkflowInput"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.RemoteStepInput/page.mdx",
     "pathname": "/references/core_flows/interfaces/core_flows.RemoteStepInput"
   },
@@ -7734,6 +7758,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.ValidateVariantPricesStepInput/page.mdx",
     "pathname": "/references/core_flows/interfaces/core_flows.ValidateVariantPricesStepInput"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.refundPaymentAndRecreatePaymentSessionWorkflowInput/page.mdx",
+    "pathname": "/references/core_flows/interfaces/core_flows.refundPaymentAndRecreatePaymentSessionWorkflowInput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.AcceptOrderTransferValidationStepInput/page.mdx",
@@ -8690,6 +8718,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.MaybeListTaxRateRuleIdsStepInput/page.mdx",
     "pathname": "/references/core_flows/types/core_flows.MaybeListTaxRateRuleIdsStepInput"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/types/core_flows.MaybeRefreshShippingMethodsWorkflowInput/page.mdx",
+    "pathname": "/references/core_flows/types/core_flows.MaybeRefreshShippingMethodsWorkflowInput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.MaybeUnsetDefaultBillingAddressStepInput/page.mdx",
@@ -11564,6 +11596,10 @@ export const filesMap = [
     "pathname": "/references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.store"
   },
   {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.taxProvider/page.mdx",
+    "pathname": "/references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.taxProvider"
+  },
+  {
     "filePath": "/www/apps/resources/references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.taxRate/page.mdx",
     "pathname": "/references/js_sdk/admin/Admin/properties/js_sdk.admin.Admin.taxRate"
   },
@@ -12432,6 +12468,10 @@ export const filesMap = [
     "pathname": "/references/js_sdk/admin/Product/methods/js_sdk.admin.Product.create"
   },
   {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/Product/methods/js_sdk.admin.Product.createImport/page.mdx",
+    "pathname": "/references/js_sdk/admin/Product/methods/js_sdk.admin.Product.createImport"
+  },
+  {
     "filePath": "/www/apps/resources/references/js_sdk/admin/Product/methods/js_sdk.admin.Product.createOption/page.mdx",
     "pathname": "/references/js_sdk/admin/Product/methods/js_sdk.admin.Product.createOption"
   },
@@ -12988,6 +13028,14 @@ export const filesMap = [
     "pathname": "/references/js_sdk/admin/Store/properties/js_sdk.admin.Store.client"
   },
   {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/TaxProvider/methods/js_sdk.admin.TaxProvider.list/page.mdx",
+    "pathname": "/references/js_sdk/admin/TaxProvider/methods/js_sdk.admin.TaxProvider.list"
+  },
+  {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/TaxProvider/properties/js_sdk.admin.TaxProvider.client/page.mdx",
+    "pathname": "/references/js_sdk/admin/TaxProvider/properties/js_sdk.admin.TaxProvider.client"
+  },
+  {
     "filePath": "/www/apps/resources/references/js_sdk/admin/TaxRate/methods/js_sdk.admin.TaxRate.create/page.mdx",
     "pathname": "/references/js_sdk/admin/TaxRate/methods/js_sdk.admin.TaxRate.create"
   },
@@ -13026,6 +13074,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/TaxRegion/methods/js_sdk.admin.TaxRegion.retrieve/page.mdx",
     "pathname": "/references/js_sdk/admin/TaxRegion/methods/js_sdk.admin.TaxRegion.retrieve"
+  },
+  {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/TaxRegion/methods/js_sdk.admin.TaxRegion.update/page.mdx",
+    "pathname": "/references/js_sdk/admin/TaxRegion/methods/js_sdk.admin.TaxRegion.update"
   },
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/TaxRegion/properties/js_sdk.admin.TaxRegion.client/page.mdx",
@@ -13242,6 +13294,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/classes/js_sdk.admin.Store/page.mdx",
     "pathname": "/references/js_sdk/admin/classes/js_sdk.admin.Store"
+  },
+  {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/classes/js_sdk.admin.TaxProvider/page.mdx",
+    "pathname": "/references/js_sdk/admin/classes/js_sdk.admin.TaxProvider"
   },
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/classes/js_sdk.admin.TaxRate/page.mdx",
@@ -18304,6 +18360,10 @@ export const filesMap = [
     "pathname": "/references/tax/ITaxModuleService/methods/tax.ITaxModuleService.listAndCountTaxRates"
   },
   {
+    "filePath": "/www/apps/resources/references/tax/ITaxModuleService/methods/tax.ITaxModuleService.listTaxProviders/page.mdx",
+    "pathname": "/references/tax/ITaxModuleService/methods/tax.ITaxModuleService.listTaxProviders"
+  },
+  {
     "filePath": "/www/apps/resources/references/tax/ITaxModuleService/methods/tax.ITaxModuleService.listTaxRateRules/page.mdx",
     "pathname": "/references/tax/ITaxModuleService/methods/tax.ITaxModuleService.listTaxRateRules"
   },
@@ -18376,6 +18436,10 @@ export const filesMap = [
     "pathname": "/references/tax/interfaces/tax.CreateTaxRegionDTO"
   },
   {
+    "filePath": "/www/apps/resources/references/tax/interfaces/tax.FilterableTaxProviderProps/page.mdx",
+    "pathname": "/references/tax/interfaces/tax.FilterableTaxProviderProps"
+  },
+  {
     "filePath": "/www/apps/resources/references/tax/interfaces/tax.FilterableTaxRateProps/page.mdx",
     "pathname": "/references/tax/interfaces/tax.FilterableTaxRateProps"
   },
@@ -18442,6 +18506,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/tax/interfaces/tax.TaxLineDTO/page.mdx",
     "pathname": "/references/tax/interfaces/tax.TaxLineDTO"
+  },
+  {
+    "filePath": "/www/apps/resources/references/tax/interfaces/tax.TaxProviderDTO/page.mdx",
+    "pathname": "/references/tax/interfaces/tax.TaxProviderDTO"
   },
   {
     "filePath": "/www/apps/resources/references/tax/interfaces/tax.TaxRateDTO/page.mdx",
@@ -18734,6 +18802,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/types/CommonTypes/types/types.CommonTypes.Prettify/page.mdx",
     "pathname": "/references/types/CommonTypes/types/types.CommonTypes.Prettify"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/CommonTypes/types/types.CommonTypes.QueryContextType/page.mdx",
+    "pathname": "/references/types/CommonTypes/types/types.CommonTypes.QueryContextType"
   },
   {
     "filePath": "/www/apps/resources/references/types/CommonTypes/types/types.CommonTypes.RawRounding/page.mdx",
@@ -19764,6 +19836,10 @@ export const filesMap = [
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminGetReservationsParams"
   },
   {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminGetTaxProvidersParams/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminGetTaxProvidersParams"
+  },
+  {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminGetWorkflowExecutionsParams/page.mdx",
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminGetWorkflowExecutionsParams"
   },
@@ -19774,6 +19850,14 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductResponse/page.mdx",
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductResponse"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductsRequest/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductsRequest"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductsResponse/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminImportProductsResponse"
   },
   {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminInitiateOrderEditRequest/page.mdx",
@@ -20448,6 +20532,10 @@ export const filesMap = [
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminStoreResponse"
   },
   {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminTaxProvider/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminTaxProvider"
+  },
+  {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminTaxRate/page.mdx",
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminTaxRate"
   },
@@ -20712,8 +20800,20 @@ export const filesMap = [
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUpdateTaxRate"
   },
   {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUpdateTaxRegion/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUpdateTaxRegion"
+  },
+  {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUpdateUser/page.mdx",
     "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUpdateUser"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUploadPreSignedUrlRequest/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUploadPreSignedUrlRequest"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUploadPreSignedUrlResponse/page.mdx",
+    "pathname": "/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUploadPreSignedUrlResponse"
   },
   {
     "filePath": "/www/apps/resources/references/types/HttpTypes/interfaces/types.HttpTypes.AdminUser/page.mdx",
@@ -21432,6 +21532,10 @@ export const filesMap = [
     "pathname": "/references/types/HttpTypes/types/types.HttpTypes.AdminShippingProfileListResponse"
   },
   {
+    "filePath": "/www/apps/resources/references/types/HttpTypes/types/types.HttpTypes.AdminTaxProviderListResponse/page.mdx",
+    "pathname": "/references/types/HttpTypes/types/types.HttpTypes.AdminTaxProviderListResponse"
+  },
+  {
     "filePath": "/www/apps/resources/references/types/HttpTypes/types/types.HttpTypes.AdminTaxRateListResponse/page.mdx",
     "pathname": "/references/types/HttpTypes/types/types.HttpTypes.AdminTaxRateListResponse"
   },
@@ -21578,6 +21682,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/types/IndexTypes/types/types.IndexTypes.IndexQueryConfig/page.mdx",
     "pathname": "/references/types/IndexTypes/types/types.IndexTypes.IndexQueryConfig"
+  },
+  {
+    "filePath": "/www/apps/resources/references/types/IndexTypes/types/types.IndexTypes.IndexQueryInput/page.mdx",
+    "pathname": "/references/types/IndexTypes/types/types.IndexTypes.IndexQueryInput"
   },
   {
     "filePath": "/www/apps/resources/references/types/IndexTypes/types/types.IndexTypes.ObjectToIndexFields/page.mdx",
@@ -24244,6 +24352,22 @@ export const filesMap = [
     "pathname": "/references/user_models/variables/user_models.User"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/Auth/variables/utils.Auth.AuthWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Auth/variables/utils.Auth.AuthWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Cart/variables/utils.Cart.CartWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Cart/variables/utils.Cart.CartWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Customer/variables/utils.Customer.CustomerWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Customer/variables/utils.Customer.CustomerWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Fulfillment/variables/utils.Fulfillment.FulfillmentWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Fulfillment/variables/utils.Fulfillment.FulfillmentWorkflowEvents"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/FulfillmentUtils/enums/utils.FulfillmentUtils.GeoZoneType/page.mdx",
     "pathname": "/references/utils/FulfillmentUtils/enums/utils.FulfillmentUtils.GeoZoneType"
   },
@@ -24254,6 +24378,14 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/utils/GraphQLUtils/classes/utils.GraphQLUtils.GraphQLParser/page.mdx",
     "pathname": "/references/utils/GraphQLUtils/classes/utils.GraphQLUtils.GraphQLParser"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Order/variables/utils.Order.OrderEditWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Order/variables/utils.Order.OrderEditWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Order/variables/utils.Order.OrderWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Order/variables/utils.Order.OrderWorkflowEvents"
   },
   {
     "filePath": "/www/apps/resources/references/utils/OrderUtils/enums/utils.OrderUtils.ChangeActionType/page.mdx",
@@ -24294,6 +24426,34 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/utils/PricingUtils/enums/utils.PricingUtils.PricingRuleOperator/page.mdx",
     "pathname": "/references/utils/PricingUtils/enums/utils.PricingUtils.PricingRuleOperator"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductCategoryWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductCategoryWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductCollectionWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductCollectionWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductOptionWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductOptionWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductTagWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductTagWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductTypeWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductTypeWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductVariantWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductVariantWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Product/variables/utils.Product.ProductWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Product/variables/utils.Product.ProductWorkflowEvents"
   },
   {
     "filePath": "/www/apps/resources/references/utils/ProductUtils/enums/utils.ProductUtils.ProductStatus/page.mdx",
@@ -24344,8 +24504,24 @@ export const filesMap = [
     "pathname": "/references/utils/PromotionUtils/enums/utils.PromotionUtils.RuleType"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/Region/variables/utils.Region.RegionWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Region/variables/utils.Region.RegionWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/Sales_Channel/variables/utils.Sales_Channel.SalesChannelWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/Sales_Channel/variables/utils.Sales_Channel.SalesChannelWorkflowEvents"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/ShippingProfileUtils/enums/utils.ShippingProfileUtils.ShippingProfileType/page.mdx",
     "pathname": "/references/utils/ShippingProfileUtils/enums/utils.ShippingProfileUtils.ShippingProfileType"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/User/variables/utils.User.InviteWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/User/variables/utils.User.InviteWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/User/variables/utils.User.UserWorkflowEvents/page.mdx",
+    "pathname": "/references/utils/User/variables/utils.User.UserWorkflowEvents"
   },
   {
     "filePath": "/www/apps/resources/references/utils/enums/utils.NotificationStatus/page.mdx",
@@ -24388,8 +24564,24 @@ export const filesMap = [
     "pathname": "/references/utils/types/utils.VariantAvailabilityData"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/utils.Auth/page.mdx",
+    "pathname": "/references/utils/utils.Auth"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Cart/page.mdx",
+    "pathname": "/references/utils/utils.Cart"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/utils.CoreFlowsUitls/page.mdx",
     "pathname": "/references/utils/utils.CoreFlowsUitls"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Customer/page.mdx",
+    "pathname": "/references/utils/utils.Customer"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Fulfillment/page.mdx",
+    "pathname": "/references/utils/utils.Fulfillment"
   },
   {
     "filePath": "/www/apps/resources/references/utils/utils.FulfillmentUtils/page.mdx",
@@ -24408,12 +24600,20 @@ export const filesMap = [
     "pathname": "/references/utils/utils.LinkUtils"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/utils.Order/page.mdx",
+    "pathname": "/references/utils/utils.Order"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/utils.OrderUtils/page.mdx",
     "pathname": "/references/utils/utils.OrderUtils"
   },
   {
     "filePath": "/www/apps/resources/references/utils/utils.PricingUtils/page.mdx",
     "pathname": "/references/utils/utils.PricingUtils"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Product/page.mdx",
+    "pathname": "/references/utils/utils.Product"
   },
   {
     "filePath": "/www/apps/resources/references/utils/utils.ProductUtils/page.mdx",
@@ -24424,12 +24624,332 @@ export const filesMap = [
     "pathname": "/references/utils/utils.PromotionUtils"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/utils.Region/page.mdx",
+    "pathname": "/references/utils/utils.Region"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Sales_Channel/page.mdx",
+    "pathname": "/references/utils/utils.Sales_Channel"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/utils.ShippingProfileUtils/page.mdx",
     "pathname": "/references/utils/utils.ShippingProfileUtils"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/utils.User/page.mdx",
+    "pathname": "/references/utils/utils.User"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/utils.UserUtils/page.mdx",
     "pathname": "/references/utils/utils.UserUtils"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/BaseStepErrror/methods/workflows.BaseStepErrror.getStepResponse/page.mdx",
+    "pathname": "/references/workflows/BaseStepErrror/methods/workflows.BaseStepErrror.getStepResponse"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.addError/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.addError"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.addResponse/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.addResponse"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.canInvoke/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.canInvoke"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.canRevert/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.canRevert"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearRetry/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearStepTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearStepTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearTransactionTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.clearTransactionTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getContext/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getContext"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getErrors/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getErrors"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getFlow/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getFlow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getState/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getState"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getTemporaryData/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getTemporaryData"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.getTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasFinished/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasFinished"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasTemporaryData/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasTemporaryData"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.hasTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.loadTransaction/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.loadTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.saveCheckpoint/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.saveCheckpoint"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleRetry/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleStepTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleStepTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleTransactionTimeout/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.scheduleTransactionTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.setStorage/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.setStorage"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.setTemporaryData/page.mdx",
+    "pathname": "/references/workflows/DistributedTransaction/methods/workflows.DistributedTransaction.setTemporaryData"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearRetry/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearStepTimeout/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearStepTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearTransactionTimeout/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.clearTransactionTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.get/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.get"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.list/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.list"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.save/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.save"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleRetry/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleStepTimeout/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleStepTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleTransactionTimeout/page.mdx",
+    "pathname": "/references/workflows/IDistributedTransactionStorage/methods/workflows.IDistributedTransactionStorage.scheduleTransactionTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.clearMessages/page.mdx",
+    "pathname": "/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.clearMessages"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.getMessages/page.mdx",
+    "pathname": "/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.getMessages"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.save/page.mdx",
+    "pathname": "/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.save"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.saveRawMessageData/page.mdx",
+    "pathname": "/references/workflows/IMessageAggregator/methods/workflows.IMessageAggregator.saveRawMessageData"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.addAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.addAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.appendAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.appendAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.assertHandler/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.assertHandler"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.cancel/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.cancel"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.commit/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.commit"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.deleteAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.deleteAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.getFlow/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.getFlow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.getRunningTransaction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.getRunningTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.insertActionAfter/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.insertActionAfter"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.insertActionBefore/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.insertActionBefore"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.mergeActions/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.mergeActions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.moveAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.moveAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.moveAndMergeNextAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.moveAndMergeNextAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.pruneAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.pruneAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.registerStepFailure/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.registerStepFailure"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.registerStepSuccess/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.registerStepSuccess"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.replaceAction/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.replaceAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.run/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.run"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.setOptions/page.mdx",
+    "pathname": "/references/workflows/LocalWorkflow/methods/workflows.LocalWorkflow.setOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.addAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.addAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.appendAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.appendAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.appendTo/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.appendTo"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.build/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.build"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.deleteAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.deleteAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findLastStep/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findLastStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findOrThrowStepByAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findOrThrowStepByAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findParentStepByAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findParentStepByAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findStepByAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.findStepByAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.insertActionAfter/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.insertActionAfter"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.insertActionBefore/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.insertActionBefore"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.load/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.load"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.mergeActions/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.mergeActions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.move/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.move"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.moveAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.moveAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.moveAndMergeNextAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.moveAndMergeNextAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.pruneAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.pruneAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.replaceAction/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.replaceAction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.updateDepths/page.mdx",
+    "pathname": "/references/workflows/OrchestratorBuilder/methods/workflows.OrchestratorBuilder.updateDepths"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/SkipStepResponse/methods/workflows.SkipStepResponse.getStepResponse/page.mdx",
+    "pathname": "/references/workflows/SkipStepResponse/methods/workflows.SkipStepResponse.getStepResponse"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/SkipStepResponse/methods/workflows.SkipStepResponse.isSkipStepResponse/page.mdx",
+    "pathname": "/references/workflows/SkipStepResponse/methods/workflows.SkipStepResponse.isSkipStepResponse"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/StepExecutionContext/methods/workflows.StepExecutionContext._getStepResult/page.mdx",
@@ -24444,12 +24964,180 @@ export const filesMap = [
     "pathname": "/references/workflows/StepResponse/methods/workflows.StepResponse.skip"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.beginTransaction/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.beginTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.cancelTransaction/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.cancelTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.clone/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.clone"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getKeyName/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getKeyName"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getOptions/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getWorkflowOptions/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.getWorkflowOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.registerStepFailure/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.registerStepFailure"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.registerStepSuccess/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.registerStepSuccess"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.resume/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.resume"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.retrieveExistingTransaction/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.retrieveExistingTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.skipStep/page.mdx",
+    "pathname": "/references/workflows/TransactionOrchestrator/methods/workflows.TransactionOrchestrator.skipStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.beginCompensation/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.beginCompensation"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.canCancel/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.canCancel"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.canCompensate/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.canCompensate"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.canInvoke/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.canInvoke"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.canRetry/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.canRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.canRetryAwaiting/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.canRetryAwaiting"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.changeState/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.changeState"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.changeStatus/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.changeStatus"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.getStates/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.getStates"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.getTimeout/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.getTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasAwaitingRetry/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasAwaitingRetry"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasRetryInterval/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasRetryInterval"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasRetryScheduled/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasRetryScheduled"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasTimeout/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.hasTimeout"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.isCompensating/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.isCompensating"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/TransactionStep/methods/workflows.TransactionStep.isInvoking/page.mdx",
+    "pathname": "/references/workflows/TransactionStep/methods/workflows.TransactionStep.isInvoking"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.BaseStepErrror/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.BaseStepErrror"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.DistributedTransaction/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.DistributedTransaction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.LocalWorkflow/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.LocalWorkflow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.OrchestratorBuilder/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.OrchestratorBuilder"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.SkipStepResponse/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.SkipStepResponse"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/classes/workflows.StepResponse/page.mdx",
     "pathname": "/references/workflows/classes/workflows.StepResponse"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionCheckpoint/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionCheckpoint"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionContext/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionContext"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionOrchestrator/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionOrchestrator"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionPayload/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionPayload"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionStep/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/classes/workflows.TransactionStepError/page.mdx",
+    "pathname": "/references/workflows/classes/workflows.TransactionStepError"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/classes/workflows.WorkflowResponse/page.mdx",
     "pathname": "/references/workflows/classes/workflows.WorkflowResponse"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/enums/workflows.TransactionHandlerType/page.mdx",
+    "pathname": "/references/workflows/enums/workflows.TransactionHandlerType"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/enums/workflows.TransactionState/page.mdx",
+    "pathname": "/references/workflows/enums/workflows.TransactionState"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/enums/workflows.TransactionStepState/page.mdx",
+    "pathname": "/references/workflows/enums/workflows.TransactionStepState"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/enums/workflows.TransactionStepStatus/page.mdx",
+    "pathname": "/references/workflows/enums/workflows.TransactionStepStatus"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/functions/workflows.createHook/page.mdx",
@@ -24476,16 +25164,124 @@ export const filesMap = [
     "pathname": "/references/workflows/interfaces/workflows.ApplyStepOptions"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.Context/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.Context"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.IDistributedTransactionStorage/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.IDistributedTransactionStorage"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.IMessageAggregator/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.IMessageAggregator"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.InternalStep/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.InternalStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.JoinerServiceConfig/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.JoinerServiceConfig"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.JoinerServiceConfigAlias/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.JoinerServiceConfigAlias"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.Logger/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.Logger"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.MessageAggregatorFormat/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.MessageAggregatorFormat"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.ModuleImplementations/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.ModuleImplementations"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.StepExecutionContext/page.mdx",
     "pathname": "/references/workflows/interfaces/workflows.StepExecutionContext"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/interfaces/workflows.WorkflowDefinition/page.mdx",
+    "pathname": "/references/workflows/interfaces/workflows.WorkflowDefinition"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.BaseFlowRunOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.BaseFlowRunOptions"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.CompensateFn/page.mdx",
     "pathname": "/references/workflows/types/workflows.CompensateFn"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ConditionFunction/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ConditionFunction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.Constructor/page.mdx",
+    "pathname": "/references/workflows/types/workflows.Constructor"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ConvertHookToObject/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ConvertHookToObject"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ConvertHooksToFunctions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ConvertHooksToFunctions"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.CreateWorkflowComposerContext/page.mdx",
     "pathname": "/references/workflows/types/workflows.CreateWorkflowComposerContext"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.CustomModuleDefinition/page.mdx",
+    "pathname": "/references/workflows/types/workflows.CustomModuleDefinition"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.DistributedTransactionEvents/page.mdx",
+    "pathname": "/references/workflows/types/workflows.DistributedTransactionEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.Event/page.mdx",
+    "pathname": "/references/workflows/types/workflows.Event"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.EventMetadata/page.mdx",
+    "pathname": "/references/workflows/types/workflows.EventMetadata"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ExportedWorkflow/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ExportedWorkflow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ExternalModuleDeclaration/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ExternalModuleDeclaration"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.FlowCancelOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.FlowCancelOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.FlowRegisterStepFailureOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.FlowRegisterStepFailureOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.FlowRegisterStepSuccessOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.FlowRegisterStepSuccessOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.FlowRunOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.FlowRunOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.Func/page.mdx",
+    "pathname": "/references/workflows/types/workflows.Func"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.Func1/page.mdx",
+    "pathname": "/references/workflows/types/workflows.Func1"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.Hook/page.mdx",
@@ -24496,16 +25292,80 @@ export const filesMap = [
     "pathname": "/references/workflows/types/workflows.HookHandler"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.InternalModuleDeclaration/page.mdx",
+    "pathname": "/references/workflows/types/workflows.InternalModuleDeclaration"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.InvokeFn/page.mdx",
     "pathname": "/references/workflows/types/workflows.InvokeFn"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.JoinerRelationship/page.mdx",
+    "pathname": "/references/workflows/types/workflows.JoinerRelationship"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.KeysOfUnion/page.mdx",
+    "pathname": "/references/workflows/types/workflows.KeysOfUnion"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.LinkModulesExtraFields/page.mdx",
+    "pathname": "/references/workflows/types/workflows.LinkModulesExtraFields"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.LoadedModule/page.mdx",
+    "pathname": "/references/workflows/types/workflows.LoadedModule"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.LoaderOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.LoaderOptions"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.LocalStepConfig/page.mdx",
     "pathname": "/references/workflows/types/workflows.LocalStepConfig"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.MedusaContainer/page.mdx",
+    "pathname": "/references/workflows/types/workflows.MedusaContainer"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.Message/page.mdx",
+    "pathname": "/references/workflows/types/workflows.Message"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ModuleDefinition/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ModuleDefinition"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ModuleExports/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ModuleExports"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ModuleJoinerConfig/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ModuleJoinerConfig"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ModuleJoinerRelationship/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ModuleJoinerRelationship"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ModuleLoaderFunction/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ModuleLoaderFunction"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.RawMessageFormat/page.mdx",
+    "pathname": "/references/workflows/types/workflows.RawMessageFormat"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.ReturnWorkflow/page.mdx",
     "pathname": "/references/workflows/types/workflows.ReturnWorkflow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.SchedulerOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.SchedulerOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.StepFeatures/page.mdx",
+    "pathname": "/references/workflows/types/workflows.StepFeatures"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.StepFunction/page.mdx",
@@ -24518,6 +25378,38 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.StepFunctionReturnConfig/page.mdx",
     "pathname": "/references/workflows/types/workflows.StepFunctionReturnConfig"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.StepHandler/page.mdx",
+    "pathname": "/references/workflows/types/workflows.StepHandler"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.ThenFunc/page.mdx",
+    "pathname": "/references/workflows/types/workflows.ThenFunc"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionFlow/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionFlow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionMetadata/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionMetadata"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionModelOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionModelOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionOptions/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionOptions"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionStepHandler/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionStepHandler"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.TransactionStepsDefinition/page.mdx",
+    "pathname": "/references/workflows/types/workflows.TransactionStepsDefinition"
   },
   {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.UnwrapWorkflowInputDataType/page.mdx",
@@ -24536,7 +25428,27 @@ export const filesMap = [
     "pathname": "/references/workflows/types/workflows.WorkflowDataProperties"
   },
   {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.WorkflowHandler/page.mdx",
+    "pathname": "/references/workflows/types/workflows.WorkflowHandler"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.WorkflowResult/page.mdx",
+    "pathname": "/references/workflows/types/workflows.WorkflowResult"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.WorkflowStepHandler/page.mdx",
+    "pathname": "/references/workflows/types/workflows.WorkflowStepHandler"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/types/workflows.WorkflowStepHandlerArguments/page.mdx",
+    "pathname": "/references/workflows/types/workflows.WorkflowStepHandlerArguments"
+  },
+  {
     "filePath": "/www/apps/resources/references/workflows/types/workflows.WorkflowTransactionContext/page.mdx",
     "pathname": "/references/workflows/types/workflows.WorkflowTransactionContext"
+  },
+  {
+    "filePath": "/www/apps/resources/references/workflows/variables/workflows.SymbolWorkflowHook/page.mdx",
+    "pathname": "/references/workflows/variables/workflows.SymbolWorkflowHook"
   }
 ]

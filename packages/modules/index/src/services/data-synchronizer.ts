@@ -328,7 +328,7 @@ export class DataSynchronizer {
         break
       }
 
-      await setTimeout(0)
+      await setTimeout(0, undefined, { ref: false })
     }
 
     let acknoledgement: { lastCursor: string; done?: boolean; err?: Error } = {

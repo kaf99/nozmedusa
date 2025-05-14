@@ -1,5 +1,6 @@
 import type { MedusaAppLoader } from "@medusajs/framework"
 import { Logger, MedusaContainer } from "@medusajs/framework/types"
+import { logger } from "@medusajs/framework/logger"
 import {
   ContainerRegistrationKeys,
   getResolvedPlugins,
@@ -27,7 +28,7 @@ export async function migrateDatabase(appLoader: MedusaAppLoader) {
   try {
     await appLoader.runModulesMigrations()
   } catch (err) {
-    console.error("Something went wrong while running the migrations")
+    logger.error("Something went wrong while running the migrations")
     throw err
   }
 }

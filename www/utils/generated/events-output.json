@@ -36,6 +36,18 @@
     "deprecated": false
   },
   {
+    "name": "cart.customer_transferred",
+    "parentName": "CartWorkflowEvents",
+    "propertyName": "CUSTOMER_TRANSFERRED",
+    "payload": "```ts\n{\n  id, // The ID of the cart\n  customer_id, // The ID of the customer\n}\n```",
+    "description": "Emitted when the customer in the cart is transferred.",
+    "workflows": [
+      "transferCartCustomerWorkflow"
+    ],
+    "version": "2.8.0",
+    "deprecated": false
+  },
+  {
     "name": "customer.created",
     "parentName": "CustomerWorkflowEvents",
     "propertyName": "CREATED",
@@ -216,17 +228,19 @@
     "workflows": [
       "requestOrderEditRequestWorkflow"
     ],
+    "version": "2.8.0",
     "deprecated": false
   },
   {
     "name": "order-edit.confirmed",
     "parentName": "OrderEditWorkflowEvents",
     "propertyName": "CONFIRMED",
-    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order\n```",
+    "payload": "```ts\n{\n  order_id, // The ID of the order\n  actions, // (array) The [actions](https://docs.medusajs.com/resources/references/fulfillment/interfaces/fulfillment.OrderChangeActionDTO) to edit the order\n}\n```",
     "description": "Emitted when an order edit request is confirmed.",
     "workflows": [
       "confirmOrderEditRequestWorkflow"
     ],
+    "version": "2.8.0",
     "deprecated": false
   },
   {
@@ -238,6 +252,7 @@
     "workflows": [
       "cancelBeginOrderEditWorkflow"
     ],
+    "version": "2.8.0",
     "deprecated": false
   },
   {

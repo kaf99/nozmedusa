@@ -76,7 +76,7 @@ export default ModuleProvider(Modules.AUTH, {
 
 This exports the module provider's definition, indicating that the \`MyAuthProviderService\` is the module provider's service.
 
-<Note title="Tip>
+<Note title="Tip">
 
 A auth module provider can have export multiple provider services, where each are registered as a separate auth provider.
 

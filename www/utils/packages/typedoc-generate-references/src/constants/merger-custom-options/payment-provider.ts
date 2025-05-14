@@ -88,7 +88,7 @@ export default ModuleProvider(Modules.PAYMENT, {
 
 This exports the module provider's definition, indicating that the \`MyPaymentProviderService\` is the module provider's service.
 
-<Note title="Tip>
+<Note title="Tip">
 
 A payment module provider can have export multiple provider services, where each are registered as a separate payment provider.
 

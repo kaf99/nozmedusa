@@ -28,7 +28,6 @@ const allReferences = [
   "fulfillment-provider",
   "helper-steps",
   "js-sdk",
-  "medusa-config",
   "medusa",
   "modules-sdk",
   "notification",
@@ -43,6 +42,8 @@ const allReferences = [
   "event",
   "file-service",
   "notification-service",
+  "events",
+  "module-events",
 ]
 
 export default allReferences

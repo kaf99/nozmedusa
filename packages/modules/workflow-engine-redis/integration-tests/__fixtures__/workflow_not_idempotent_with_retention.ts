@@ -3,6 +3,7 @@ import {
   createWorkflow,
   StepResponse,
 } from "@medusajs/framework/workflows-sdk"
+import { isPresent } from "@medusajs/framework/utils"
 
 const step_1 = createStep(
   "step_1",
@@ -23,7 +24,7 @@ const step_1 = createStep(
 
 export const workflowNotIdempotentWithRetentionStep2Invoke = jest.fn(
   (input, context) => {
-    if (input) {
+    if (isPresent(input)) {
       return new StepResponse({ notAsyncResponse: input.hey })
     }
   }

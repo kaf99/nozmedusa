@@ -159,7 +159,7 @@ tags:
       url: https://docs.medusajs.com/resources/storefront-development/regions
     x-associatedSchema:
       $ref: ./components/schemas/StoreRegion.yaml
-  - name: Return
+  - name: Returns
     description: >
       Customers can request to return items in their order. The admin user then
       receives and handles the return.
@@ -281,12 +281,12 @@ paths:
     $ref: paths/store_regions.yaml
   /store/regions/{id}:
     $ref: paths/store_regions_{id}.yaml
-  /store/return:
-    $ref: paths/store_return.yaml
   /store/return-reasons:
     $ref: paths/store_return-reasons.yaml
   /store/return-reasons/{id}:
     $ref: paths/store_return-reasons_{id}.yaml
+  /store/returns:
+    $ref: paths/store_returns.yaml
   /store/shipping-options:
     $ref: paths/store_shipping-options.yaml
   /store/shipping-options/{id}/calculate:

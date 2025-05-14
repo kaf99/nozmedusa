@@ -349,6 +349,15 @@ const generatedgeneratedReferencesSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
+                  "path": "/references/medusa-workflows/refundPaymentAndRecreatePaymentSessionWorkflow",
+                  "title": "refundPaymentAndRecreatePaymentSessionWorkflow",
+                  "description": "Refund a payment and create a new payment session.",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
                   "path": "/references/medusa-workflows/transferCartCustomerWorkflow",
                   "title": "transferCartCustomerWorkflow",
                   "description": "Refresh a cart's payment collection details.",
@@ -2645,6 +2654,15 @@ const generatedgeneratedReferencesSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
+                  "path": "/references/medusa-workflows/fetchShippingOptionForOrderWorkflow",
+                  "title": "fetchShippingOptionForOrderWorkflow",
+                  "description": "Fetch a shipping option for an order.",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
                   "path": "/references/medusa-workflows/getOrderDetailWorkflow",
                   "title": "getOrderDetailWorkflow",
                   "description": "Retrieve an order's details.",
@@ -2666,6 +2684,15 @@ const generatedgeneratedReferencesSidebarSidebar = {
                   "path": "/references/medusa-workflows/markOrderFulfillmentAsDeliveredWorkflow",
                   "title": "markOrderFulfillmentAsDeliveredWorkflow",
                   "description": "Mark a fulfillment in an order as delivered.",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
+                  "path": "/references/medusa-workflows/maybeRefreshShippingMethodsWorkflow",
+                  "title": "maybeRefreshShippingMethodsWorkflow",
+                  "description": "Refreshes the shipping method prices of an order and its changes.",
                   "children": []
                 },
                 {

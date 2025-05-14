@@ -402,9 +402,17 @@ export class LocalWorkflow {
     this.medusaContext = context
     const { orchestrator } = this.workflow
 
-    const transaction = isString(transactionOrTransactionId)
+    let transaction = isString(transactionOrTransactionId)
       ? await this.getRunningTransaction(transactionOrTransactionId, context)
       : transactionOrTransactionId
+
+    // not a distributed transaction instance
+    if (!transaction.getFlow) {
+      transaction = await this.getRunningTransaction(
+        (transaction as any).flow.transactionId,
+        context
+      )
+    }
 
     if (this.medusaContext) {
       this.medusaContext.eventGroupId =

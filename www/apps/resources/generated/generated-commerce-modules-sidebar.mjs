@@ -16459,6 +16459,15 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "loaded": true,
                       "isPathHref": true,
                       "type": "link",
+                      "path": "/references/tax/listTaxProviders",
+                      "title": "listTaxProviders",
+                      "description": "",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "link",
                       "path": "/references/tax/listTaxRateRules",
                       "title": "listTaxRateRules",
                       "description": "",

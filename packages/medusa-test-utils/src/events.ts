@@ -25,6 +25,7 @@ export const waitSubscribersExecution = (
         )
       )
     }, timeout)
+    timeoutId.unref()
   })
 
   // If there are no existing listeners, resolve once the event happens. Otherwise, wrap the existing subscribers in a promise and resolve once they are done.

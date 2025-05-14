@@ -77,7 +77,7 @@ export default ModuleProvider(Modules.FULFILLMENT, {
 
 This exports the module provider's definition, indicating that the \`MyFulfillmentProviderService\` is the module provider's service.
 
-<Note title="Tip>
+<Note title="Tip">
 
 A fulfillment module provider can have export multiple provider services, where each are registered as a separate fulfillment provider.
 
