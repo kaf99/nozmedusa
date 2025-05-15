@@ -93,6 +93,7 @@ type PreparedVariantPrices = {
 }
 
 // Helper function to create a hash from variant properties
+// @ts-ignore
 function createVariantHash(variant: {
   title?: string
   sku?: string | null
@@ -289,6 +290,7 @@ function prepareVariantPrices({
       return []
     }
 
+    // Create a map of product IDs to their updated versions
     const productMap = updatedProducts.reduce((acc, product) => {
       acc[product.id] = product
       return acc
@@ -304,24 +306,41 @@ function prepareVariantPrices({
         return []
       }
 
-      const variantHashMap = new Map<string, string>()
+      const variantMap = new Map<string, string>()
+      const variantTitleOrSkuToProductMap = new Map<string, string>()
 
       updatedProduct.variants.forEach((variant) => {
-        const variantHash = createVariantHash(variant)
-        variantHashMap.set(variantHash, variant.id)
+        if (variant.id) {
+          variantMap.set(variant.id, variant.id)
+        }
+
+        if (variant.title || variant.sku) {
+          variantTitleOrSkuToProductMap.set(
+            variant.sku || variant.title,
+            variant.id
+          )
+        } else if (variant.options) {
+          const optionKey = JSON.stringify(variant.options)
+          variantMap.set(optionKey, variant.id)
+        }
       })
 
       return product.variants
         .map((variant) => {
           let variantId: string | undefined
 
-          if (variant.id) {
+          if (variant.id && variantMap.has(variant.id)) {
             variantId = variant.id
-          } else {
-            const variantHash = createVariantHash(variant)
-            if (variantHashMap.has(variantHash)) {
-              variantId = variantHashMap.get(variantHash)
-            }
+          } else if (
+            (variant.title || variant.sku) &&
+            variantTitleOrSkuToProductMap.get(variant.sku! || variant.title!)
+          ) {
+            variantId = variantTitleOrSkuToProductMap.get(
+              variant.sku! || variant.title!
+            )
+          } else if (variant.options) {
+            const optionKey = JSON.stringify(variant.options)
+            variantId = variantMap.get(optionKey)
           }
 
           if (!variantId) {
@@ -339,44 +358,81 @@ function prepareVariantPrices({
   }
 
   if (input.selector && input.update?.variants?.length) {
-    const variantIdMap = new Map<string, string>()
-    const variantHashMap = new Map<
-      string,
-      { productId: string; variantId: string }
-    >()
+    // For the selector case, create a map to correctly match variants with their associated product
+    const variantToProductMap = new Map<string, string>()
+    const variantTitleOrSkuToProductMap = new Map<string, string>()
 
     updatedProducts.forEach((product) => {
       product.variants.forEach((variant) => {
-        variantIdMap.set(variant.id, product.id)
-        const variantHash = createVariantHash(variant)
-        variantHashMap.set(variantHash, {
-          productId: product.id,
-          variantId: variant.id,
-        })
+        variantToProductMap.set(variant.id, product.id)
+        if (variant.title || variant.sku) {
+          variantTitleOrSkuToProductMap.set(
+            variant.sku || variant.title,
+            product.id
+          )
+        }
       })
     })
 
     return input.update.variants
       .flatMap((variant) => {
-        if (variant.id && variantIdMap.has(variant.id)) {
+        if (variant.id && variantToProductMap.has(variant.id)) {
           return {
-            product_id: variantIdMap.get(variant.id)!,
+            product_id: variantToProductMap.get(variant.id)!,
             variant_id: variant.id,
             prices: variant.prices,
           }
         }
 
-        const variantHash = createVariantHash(variant)
-        if (variantHashMap.has(variantHash)) {
-          const match = variantHashMap.get(variantHash)!
-          return {
-            product_id: match.productId,
-            variant_id: match.variantId,
-            prices: variant.prices,
-          }
+        // For newly created variants, we need to match them to the updated products
+        // We'll use additional properties like title or options to match
+        if (!variant.id) {
+          return updatedProducts
+            .map((product) => {
+              const matchingVariant = product.variants.find(
+                (updatedVariant) => {
+                  // Try to match by title and/or sku if available
+                  if (variant.title || variant.sku) {
+                    if (variant.title && variant.sku) {
+                      return (
+                        updatedVariant.title === variant.title &&
+                        updatedVariant.sku === variant.sku
+                      )
+                    }
+
+                    if (variant.sku) {
+                      return updatedVariant.sku === variant.sku
+                    }
+
+                    return updatedVariant.title === variant.title
+                  }
+
+                  // Try to match by options if available
+                  if (variant.options && updatedVariant.options) {
+                    const optionsMatch = Object.entries(variant.options).every(
+                      ([key, value]) => updatedVariant.options[key] === value
+                    )
+                    return optionsMatch
+                  }
+
+                  return false
+                }
+              )
+
+              if (matchingVariant) {
+                return {
+                  product_id: product.id,
+                  variant_id: matchingVariant.id,
+                  prices: variant.prices,
+                }
+              }
+
+              return
+            })
+            .filter(Boolean)
         }
 
-        return null
+        return
       })
       .filter((v): v is PreparedVariantPrices => !!v)
   }
