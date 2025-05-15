@@ -1759,8 +1759,6 @@ medusaIntegrationTestRunner({
 
           expect(response.status).toEqual(200)
 
-          console.log(JSON.stringify(response.data.product, null, 2))
-
           expect(response.data.product).toEqual(
             expect.objectContaining({
               id: baseProduct.id,
