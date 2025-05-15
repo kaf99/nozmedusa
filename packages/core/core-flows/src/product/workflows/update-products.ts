@@ -85,6 +85,12 @@ export type UpdateProductWorkflowInput =
   | UpdateProductsWorkflowInputSelector
   | UpdateProductsWorkflowInputProducts
 
+type PreparedVariantPrices = {
+  product_id: string
+  variant_id: string
+  prices: CreateMoneyAmountDTO[]
+}
+
 function prepareUpdateProductInput({
   input,
 }: {
@@ -247,43 +253,128 @@ function prepareVariantPrices({
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
   input: UpdateProductWorkflowInput
-}): {
-  variant_id: string
-  product_id: string
-  prices?: CreateMoneyAmountDTO[]
-}[] {
+}): PreparedVariantPrices[] {
   if ("products" in input) {
     if (!input.products.length) {
       return []
     }
 
-    // Note: We rely on the ordering of input and update here.
-    return input.products.flatMap((product, i) => {
-      if (!product.variants?.length) {
+    // Create a map of product IDs to their updated versions
+    const productMap = updatedProducts.reduce((acc, product) => {
+      acc[product.id] = product
+      return acc
+    }, {} as Record<string, ProductTypes.ProductDTO>)
+
+    return input.products.flatMap((product) => {
+      if (!product.variants?.length || !product.id) {
         return []
       }
 
-      const updatedProduct = updatedProducts[i]
-      return product.variants.map((variant, j) => {
-        const updatedVariant = updatedProduct.variants[j]
+      const updatedProduct = productMap[product.id as string]
+      if (!updatedProduct) {
+        return []
+      }
 
-        return {
-          product_id: updatedProduct.id,
-          variant_id: updatedVariant.id,
-          prices: variant.prices,
+      // Create a map of variant values to their updated IDs
+      const variantMap = new Map<string, string>()
+      updatedProduct.variants.forEach((variant) => {
+        if (variant.id) {
+          variantMap.set(variant.id, variant.id)
+        } else if (variant.title) {
+          variantMap.set(variant.title, variant.id)
+        } else if (variant.options) {
+          const optionKey = JSON.stringify(variant.options)
+          variantMap.set(optionKey, variant.id)
         }
       })
+
+      return product.variants
+        .map((variant) => {
+          let variantId: string | undefined
+
+          if (variant.id && variantMap.has(variant.id)) {
+            variantId = variant.id
+          } else if (variant.title && variantMap.has(variant.title)) {
+            variantId = variantMap.get(variant.title)
+          } else if (variant.options) {
+            const optionKey = JSON.stringify(variant.options)
+            variantId = variantMap.get(optionKey)
+          }
+
+          if (!variantId) {
+            return null
+          }
+
+          return {
+            product_id: updatedProduct.id,
+            variant_id: variantId,
+            prices: variant.prices,
+          }
+        })
+        .filter((v): v is PreparedVariantPrices => !!v)
     })
   }
 
   if (input.selector && input.update?.variants?.length) {
-    return updatedProducts.flatMap((p) => {
-      return input.update.variants!.map((variant, i) => ({
-        product_id: p.id,
-        variant_id: p.variants[i].id,
-        prices: variant.prices,
-      }))
+    // For the selector case, create a map to correctly match variants with their associated product
+    const variantToProductMap = new Map<string, string>()
+
+    updatedProducts.forEach((product) => {
+      product.variants.forEach((variant) => {
+        variantToProductMap.set(variant.id, product.id)
+      })
     })
+
+    return input.update.variants
+      .flatMap((variant) => {
+        if (variant.id && variantToProductMap.has(variant.id)) {
+          return {
+            product_id: variantToProductMap.get(variant.id)!,
+            variant_id: variant.id,
+            prices: variant.prices,
+          }
+        }
+
+        // For newly created variants, we need to match them to the updated products
+        // We'll use additional properties like title or options to match
+        if (!variant.id) {
+          return updatedProducts
+            .map((product) => {
+              const matchingVariant = product.variants.find(
+                (updatedVariant) => {
+                  // Try to match by title if available
+                  if (variant.title && updatedVariant.title === variant.title) {
+                    return true
+                  }
+
+                  // Try to match by options if available
+                  if (variant.options && updatedVariant.options) {
+                    const optionsMatch = Object.entries(variant.options).every(
+                      ([key, value]) => updatedVariant.options[key] === value
+                    )
+                    return optionsMatch
+                  }
+
+                  return false
+                }
+              )
+
+              if (matchingVariant) {
+                return {
+                  product_id: product.id,
+                  variant_id: matchingVariant.id,
+                  prices: variant.prices,
+                }
+              }
+
+              return
+            })
+            .filter(Boolean)
+        }
+
+        return
+      })
+      .filter((v): v is PreparedVariantPrices => !!v)
   }
 
   return []
@@ -343,12 +434,12 @@ export const updateProductsWorkflowId = "update-products"
  * allows you to update custom data models linked to the products.
  *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around product update.
- * 
+ *
  * :::note
- * 
- * Learn more about adding rules to the product variant's prices in the Pricing Module's 
+ *
+ * Learn more about adding rules to the product variant's prices in the Pricing Module's
  * [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
- * 
+ *
  * :::
  *
  * @example

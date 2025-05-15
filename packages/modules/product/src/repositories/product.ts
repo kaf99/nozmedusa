@@ -72,12 +72,14 @@ export class ProductRepository extends DALUtils.mikroOrmBaseRepositoryFactory(
       wrap(product!).assign(update)
     }
 
+    return products
+
     // Doing this to ensure updates are returned in the same order they were provided,
     // since some core flows rely on this.
     // This is a high level of coupling though.
-    return updates
-      .map((update) => productsMap.get(update.id))
-      .filter((product) => product !== undefined)
+    // return updates
+    //   .map((update) => productsMap.get(update.id))
+    //   .filter((product) => product !== undefined)
   }
 
   /**
