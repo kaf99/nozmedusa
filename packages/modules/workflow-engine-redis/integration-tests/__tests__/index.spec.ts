@@ -654,7 +654,6 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             "workflow_transaction_timeout",
             {
               input: {},
-              transactionId: "trx",
               throwOnError: false,
             }
           )) as Awaited<{
