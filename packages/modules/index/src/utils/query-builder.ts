@@ -1,6 +1,5 @@
 import { IndexTypes } from "@medusajs/framework/types"
 import {
-  compressName,
   isDefined,
   isObject,
   isString,
@@ -8,6 +7,7 @@ import {
 } from "@medusajs/framework/utils"
 import { Knex } from "@mikro-orm/knex"
 import { OrderBy, QueryFormat, QueryOptions, Select } from "@types"
+import { normalizeTableName } from "./normalze-table-name"
 
 function escapeJsonPathString(val: string): string {
   // Escape for JSONPath string
@@ -531,14 +531,14 @@ export class QueryBuilder {
       aliasMapping[currentAliasPath] = alias
 
       if (level > 0) {
-        const cName = entity.ref.entity.toLowerCase()
+        const cName = normalizeTableName(entity.ref.entity)
 
         let joinTable = `cat_${cName} AS ${alias}`
 
         if (entity.isInverse || parEntity.isInverse) {
           const pName =
             `${entity.ref.entity}${parEntity.ref.entity}`.toLowerCase()
-          const pivotTable = compressName(`cat_pivot_${pName}`)
+          const pivotTable = "cat_pivot_" + normalizeTableName(pName)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,
@@ -553,7 +553,7 @@ export class QueryBuilder {
         } else {
           const pName =
             `${parEntity.ref.entity}${entity.ref.entity}`.toLowerCase()
-          const pivotTable = compressName(`cat_pivot_${pName}`)
+          const pivotTable = "cat_pivot_" + normalizeTableName(pName)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,
@@ -817,7 +817,10 @@ export class QueryBuilder {
     }
 
     innerQueryBuilder.from(
-      `cat_${rootEntity} AS ${this.getShortAlias(aliasMapping, rootKey)}`
+      `cat_${normalizeTableName(rootEntity)} AS ${this.getShortAlias(
+        aliasMapping,
+        rootKey
+      )}`
     )
 
     joinParts.forEach((joinPart) => {
@@ -888,7 +891,10 @@ export class QueryBuilder {
     const innerQueryAlias = "paginated_ids"
 
     outerQueryBuilder.from(
-      `cat_${rootEntity} AS ${this.getShortAlias(aliasMapping, rootKey)}`
+      `cat_${normalizeTableName(rootEntity)} AS ${this.getShortAlias(
+        aliasMapping,
+        rootKey
+      )}`
     )
 
     outerQueryBuilder.joinRaw(

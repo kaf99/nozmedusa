@@ -1,7 +1,7 @@
 import { IndexTypes } from "@medusajs/framework/types"
-import { compressName } from "@medusajs/framework/utils"
 import { SqlEntityManager } from "@mikro-orm/postgresql"
 import { schemaObjectRepresentationPropertiesToOmit } from "@types"
+import { normalizeTableName } from "./normalze-table-name"
 
 export async function createPartitions(
   schemaObjectRepresentation: IndexTypes.SchemaObjectRepresentation,
@@ -19,7 +19,7 @@ export async function createPartitions(
         schemaObjectRepresentation[key].listeners.length > 0
     )
     .map((key) => {
-      const cName = key.toLowerCase()
+      const cName = normalizeTableName(key)
 
       if (createdPartitions.has(cName)) {
         return []
@@ -36,9 +36,8 @@ export async function createPartitions(
           continue
         }
 
-        const pName = compressName(
-          `cat_pivot_${parent.ref.entity}${key}`
-        ).toLowerCase()
+        const pName =
+          "cat_pivot_" + normalizeTableName(`${parent.ref.entity}${key}`)
 
         if (createdPartitions.has(pName)) {
           continue
@@ -67,7 +66,7 @@ export async function createPartitions(
         schemaObjectRepresentation[key].listeners.length > 0
     )
     .map((key) => {
-      const cName = key.toLowerCase()
+      const cName = normalizeTableName(key)
       const part: string[] = []
 
       part.push(
@@ -83,9 +82,9 @@ export async function createPartitions(
           continue
         }
 
-        const pName = compressName(
-          `cat_pivot_${parent.ref.entity}${key}`
-        ).toLowerCase()
+        const pName =
+          "cat_pivot_" + normalizeTableName(`${parent.ref.entity}${key}`)
+
         part.push(
           `CREATE INDEX CONCURRENTLY IF NOT EXISTS "IDX_${pName}_child_id" ON ${activeSchema}${pName} ("child_id")`
         )
