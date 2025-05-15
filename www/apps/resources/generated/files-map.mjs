@@ -360,6 +360,10 @@ export const filesMap = [
     "pathname": "/commerce-modules/payment/payment"
   },
   {
+    "filePath": "/www/apps/resources/app/commerce-modules/payment/payment-checkout-flow/page.mdx",
+    "pathname": "/commerce-modules/payment/payment-checkout-flow"
+  },
+  {
     "filePath": "/www/apps/resources/app/commerce-modules/payment/payment-collection/page.mdx",
     "pathname": "/commerce-modules/payment/payment-collection"
   },
@@ -13572,26 +13576,6 @@ export const filesMap = [
     "pathname": "/references/medusa/types/medusa.SubscriberConfig"
   },
   {
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.AdminOptions/page.mdx",
-    "pathname": "/references/medusa_config/interfaces/medusa_config.AdminOptions"
-  },
-  {
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.ConfigModule/page.mdx",
-    "pathname": "/references/medusa_config/interfaces/medusa_config.ConfigModule"
-  },
-  {
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.HttpCompressionOptions/page.mdx",
-    "pathname": "/references/medusa_config/interfaces/medusa_config.HttpCompressionOptions"
-  },
-  {
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.ProjectConfigOptions/page.mdx",
-    "pathname": "/references/medusa_config/interfaces/medusa_config.ProjectConfigOptions"
-  },
-  {
-    "filePath": "/www/apps/resources/references/medusa_config/types/medusa_config.PluginDetails/page.mdx",
-    "pathname": "/references/medusa_config/types/medusa_config.PluginDetails"
-  },
-  {
     "filePath": "/www/apps/resources/references/module_events/module_events.Auth/page.mdx",
     "pathname": "/references/module_events/module_events.Auth"
   },
@@ -13736,10 +13720,6 @@ export const filesMap = [
     "pathname": "/references/modules/medusa"
   },
   {
-    "filePath": "/www/apps/resources/references/modules/medusa_config/page.mdx",
-    "pathname": "/references/modules/medusa_config"
-  },
-  {
     "filePath": "/www/apps/resources/references/modules/module_events/page.mdx",
     "pathname": "/references/modules/module_events"
   },
@@ -13814,10 +13794,6 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/modules/sales_channel_models/page.mdx",
     "pathname": "/references/modules/sales_channel_models"
-  },
-  {
-    "filePath": "/www/apps/resources/references/modules/search/page.mdx",
-    "pathname": "/references/modules/search"
   },
   {
     "filePath": "/www/apps/resources/references/modules/stock_location_next/page.mdx",
@@ -17782,10 +17758,6 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/sales_channel_models/variables/sales_channel_models.SalesChannel/page.mdx",
     "pathname": "/references/sales_channel_models/variables/sales_channel_models.SalesChannel"
-  },
-  {
-    "filePath": "/www/apps/resources/references/search/classes/search.AbstractSearchService/page.mdx",
-    "pathname": "/references/search/classes/search.AbstractSearchService"
   },
   {
     "filePath": "/www/apps/resources/references/stock_location_next/IMessageAggregator/methods/stock_location_next.IMessageAggregator.clearMessages/page.mdx",

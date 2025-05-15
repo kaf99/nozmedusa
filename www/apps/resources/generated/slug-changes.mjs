@@ -4875,11 +4875,6 @@ export const slugChanges = [
     "filePath": "/www/apps/resources/references/locking/interfaces/locking.ILockingProvider/page.mdx"
   },
   {
-    "origSlug": "/references/medusa_config/interfaces/medusa_config.ConfigModule",
-    "newSlug": "/references/medusa-config",
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.ConfigModule/page.mdx"
-  },
-  {
     "origSlug": "/references/module_events/module_events.Auth",
     "newSlug": "/references/auth/events",
     "filePath": "/www/apps/resources/references/module_events/module_events.Auth/page.mdx"
@@ -7063,11 +7058,6 @@ export const slugChanges = [
     "origSlug": "/references/sales_channel_models/variables/sales_channel_models.SalesChannel",
     "newSlug": "/references/sales-channel/models/SalesChannel",
     "filePath": "/www/apps/resources/references/sales_channel_models/variables/sales_channel_models.SalesChannel/page.mdx"
-  },
-  {
-    "origSlug": "/references/search/classes/search.AbstractSearchService",
-    "newSlug": "/references/search-service",
-    "filePath": "/www/apps/resources/references/search/classes/search.AbstractSearchService/page.mdx"
   },
   {
     "origSlug": "/references/stock_location_next/IStockLocationService/methods/stock_location_next.IStockLocationService.createStockLocations",
