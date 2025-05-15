@@ -1,5 +1,6 @@
 import { IndexTypes } from "@medusajs/framework/types"
 import {
+  compressName,
   isDefined,
   isObject,
   isString,
@@ -537,7 +538,7 @@ export class QueryBuilder {
         if (entity.isInverse || parEntity.isInverse) {
           const pName =
             `${entity.ref.entity}${parEntity.ref.entity}`.toLowerCase()
-          const pivotTable = `cat_pivot_${pName}`
+          const pivotTable = compressName(`cat_pivot_${pName}`)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,
@@ -552,7 +553,7 @@ export class QueryBuilder {
         } else {
           const pName =
             `${parEntity.ref.entity}${entity.ref.entity}`.toLowerCase()
-          const pivotTable = `cat_pivot_${pName}`
+          const pivotTable = compressName(`cat_pivot_${pName}`)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,

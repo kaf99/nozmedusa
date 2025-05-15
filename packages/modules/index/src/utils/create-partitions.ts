@@ -1,4 +1,5 @@
 import { IndexTypes } from "@medusajs/framework/types"
+import { compressName } from "@medusajs/framework/utils"
 import { SqlEntityManager } from "@mikro-orm/postgresql"
 import { schemaObjectRepresentationPropertiesToOmit } from "@types"
 
@@ -35,7 +36,10 @@ export async function createPartitions(
           continue
         }
 
-        const pName = `cat_pivot_${parent.ref.entity}${key}`.toLowerCase()
+        const pName = compressName(
+          `cat_pivot_${parent.ref.entity}${key}`
+        ).toLowerCase()
+
         if (createdPartitions.has(pName)) {
           continue
         }
@@ -79,7 +83,9 @@ export async function createPartitions(
           continue
         }
 
-        const pName = `cat_pivot_${parent.ref.entity}${key}`.toLowerCase()
+        const pName = compressName(
+          `cat_pivot_${parent.ref.entity}${key}`
+        ).toLowerCase()
         part.push(
           `CREATE INDEX CONCURRENTLY IF NOT EXISTS "IDX_${pName}_child_id" ON ${activeSchema}${pName} ("child_id")`
         )
