@@ -2840,11 +2840,6 @@ export const slugChanges = [
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.getVariantAvailabilityStep/page.mdx"
   },
   {
-    "origSlug": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep",
-    "newSlug": "/references/medusa-workflows/steps/groupProductsForBatchStep",
-    "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep/page.mdx"
-  },
-  {
     "origSlug": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep",
     "newSlug": "/references/medusa-workflows/steps/normalizeCsvStep",
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep/page.mdx"

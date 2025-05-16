@@ -5936,10 +5936,6 @@ export const filesMap = [
     "pathname": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.getVariantAvailabilityStep"
   },
   {
-    "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep/page.mdx",
-    "pathname": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep"
-  },
-  {
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep/page.mdx",
     "pathname": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep"
   },
@@ -6050,10 +6046,6 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/variables/core_flows.Product.Steps_Product.getVariantAvailabilityId/page.mdx",
     "pathname": "/references/core_flows/Product/Steps_Product/variables/core_flows.Product.Steps_Product.getVariantAvailabilityId"
-  },
-  {
-    "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/variables/core_flows.Product.Steps_Product.groupProductsForBatchStepId/page.mdx",
-    "pathname": "/references/core_flows/Product/Steps_Product/variables/core_flows.Product.Steps_Product.groupProductsForBatchStepId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/variables/core_flows.Product.Steps_Product.normalizeCsvStepId/page.mdx",
@@ -8670,14 +8662,6 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.GetVariantAvailabilityStepInput/page.mdx",
     "pathname": "/references/core_flows/types/core_flows.GetVariantAvailabilityStepInput"
-  },
-  {
-    "filePath": "/www/apps/resources/references/core_flows/types/core_flows.GroupProductsForBatchStepInput/page.mdx",
-    "pathname": "/references/core_flows/types/core_flows.GroupProductsForBatchStepInput"
-  },
-  {
-    "filePath": "/www/apps/resources/references/core_flows/types/core_flows.GroupProductsForBatchStepOutput/page.mdx",
-    "pathname": "/references/core_flows/types/core_flows.GroupProductsForBatchStepOutput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.LinkCustomerGroupsToCustomerWorkflowInput/page.mdx",
@@ -24448,6 +24432,10 @@ export const filesMap = [
     "pathname": "/references/utils/ProductUtils/types/utils.ProductUtils.VariantAvailabilityResult"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/ProductUtils/utils.ProductUtils.productValidators/page.mdx",
+    "pathname": "/references/utils/ProductUtils/utils.ProductUtils.productValidators"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/PromotionUtils/enums/utils.PromotionUtils.ApplicationMethodAllocation/page.mdx",
     "pathname": "/references/utils/PromotionUtils/enums/utils.PromotionUtils.ApplicationMethodAllocation"
   },
@@ -24494,6 +24482,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/utils/Sales_Channel/variables/utils.Sales_Channel.SalesChannelWorkflowEvents/page.mdx",
     "pathname": "/references/utils/Sales_Channel/variables/utils.Sales_Channel.SalesChannelWorkflowEvents"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/SearchUtils/classes/utils.SearchUtils.AbstractSearchService/page.mdx",
+    "pathname": "/references/utils/SearchUtils/classes/utils.SearchUtils.AbstractSearchService"
   },
   {
     "filePath": "/www/apps/resources/references/utils/ShippingProfileUtils/enums/utils.ShippingProfileUtils.ShippingProfileType/page.mdx",
@@ -24614,6 +24606,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/utils/utils.Sales_Channel/page.mdx",
     "pathname": "/references/utils/utils.Sales_Channel"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.SearchUtils/page.mdx",
+    "pathname": "/references/utils/utils.SearchUtils"
   },
   {
     "filePath": "/www/apps/resources/references/utils/utils.ShippingProfileUtils/page.mdx",
