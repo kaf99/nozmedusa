@@ -7,7 +7,7 @@ import {
 } from "@medusajs/framework/utils"
 import { Knex } from "@mikro-orm/knex"
 import { OrderBy, QueryFormat, QueryOptions, Select } from "@types"
-import { normalizeTableName } from "./normalze-table-name"
+import { getPivotTableName, normalizeTableName } from "./normalze-table-name"
 
 function escapeJsonPathString(val: string): string {
   // Escape for JSONPath string
@@ -538,7 +538,7 @@ export class QueryBuilder {
         if (entity.isInverse || parEntity.isInverse) {
           const pName =
             `${entity.ref.entity}${parEntity.ref.entity}`.toLowerCase()
-          const pivotTable = "cat_pivot_" + normalizeTableName(pName)
+          const pivotTable = getPivotTableName(pName)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,
@@ -553,7 +553,7 @@ export class QueryBuilder {
         } else {
           const pName =
             `${parEntity.ref.entity}${entity.ref.entity}`.toLowerCase()
-          const pivotTable = "cat_pivot_" + normalizeTableName(pName)
+          const pivotTable = getPivotTableName(pName)
 
           joinBuilder.leftJoin(
             `${pivotTable} AS ${alias}_ref`,

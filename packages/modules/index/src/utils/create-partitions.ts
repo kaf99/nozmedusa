@@ -1,7 +1,7 @@
 import { IndexTypes } from "@medusajs/framework/types"
 import { SqlEntityManager } from "@mikro-orm/postgresql"
 import { schemaObjectRepresentationPropertiesToOmit } from "@types"
-import { normalizeTableName } from "./normalze-table-name"
+import { getPivotTableName, normalizeTableName } from "./normalze-table-name"
 
 export async function createPartitions(
   schemaObjectRepresentation: IndexTypes.SchemaObjectRepresentation,
@@ -36,8 +36,7 @@ export async function createPartitions(
           continue
         }
 
-        const pName =
-          "cat_pivot_" + normalizeTableName(`${parent.ref.entity}${key}`)
+        const pName = getPivotTableName(`${parent.ref.entity}${key}`)
 
         if (createdPartitions.has(pName)) {
           continue
@@ -82,8 +81,7 @@ export async function createPartitions(
           continue
         }
 
-        const pName =
-          "cat_pivot_" + normalizeTableName(`${parent.ref.entity}${key}`)
+        const pName = getPivotTableName(`${parent.ref.entity}${key}`)
 
         part.push(
           `CREATE INDEX CONCURRENTLY IF NOT EXISTS "IDX_${pName}_child_id" ON ${activeSchema}${pName} ("child_id")`
