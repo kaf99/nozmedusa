@@ -1,4 +1,5 @@
-import { camelToSnakeCase, simpleHash } from "@medusajs/framework/utils"
+import { camelToSnakeCase } from "./camel-to-snake-case"
+import { simpleHash } from "./simple-hash"
 
 export function compressName(name: string, limit = 58) {
   if (name.length <= limit) {
