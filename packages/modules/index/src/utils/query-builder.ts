@@ -24,6 +24,10 @@ function buildSafeJsonPathQuery(
     jsonPathOperator = "=="
   } else if (operator.toUpperCase().includes("LIKE")) {
     jsonPathOperator = "like_regex"
+  } else if (operator === "IS") {
+    jsonPathOperator = "=="
+  } else if (operator === "IS NOT") {
+    jsonPathOperator = "!="
   }
 
   if (typeof value === "string") {
@@ -33,6 +37,10 @@ function buildSafeJsonPathQuery(
       val = val.replace(/%/g, ".*").replace(/_/g, ".")
     }
     value = `"${escapeJsonPathString(val)}"`
+  } else {
+    if ((operator === "IS" || operator === "IS NOT") && value === null) {
+      value = "null"
+    }
   }
 
   return `$.${field} ${jsonPathOperator} ${value}`

@@ -284,6 +284,34 @@ describe("IndexModuleService query", function () {
 
   afterEach(afterEach_)
 
+  it("should query all products where sku not null", async () => {
+    const { data } = await module.query({
+      fields: ["product.*", "product.variants.*", "product.variants.prices.*"],
+      filters: {
+        product: {
+          variants: {
+            sku: { $ne: null },
+          },
+        },
+      },
+    })
+
+    expect(data.length).toEqual(1)
+
+    const { data: data2 } = await module.query({
+      fields: ["product.*", "product.variants.*", "product.variants.prices.*"],
+      filters: {
+        product: {
+          variants: {
+            sku: { $eq: null },
+          },
+        },
+      },
+    })
+
+    expect(data2.length).toEqual(0)
+  })
+
   it("should query all products ordered by sku DESC", async () => {
     const { data } = await module.query({
       fields: ["product.*", "product.variants.*", "product.variants.prices.*"],
