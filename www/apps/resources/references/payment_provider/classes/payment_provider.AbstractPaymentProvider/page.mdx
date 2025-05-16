@@ -330,7 +330,7 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
 ]} className="mb-1" />
 
 This method is used when creating an account holder in Medusa, allowing you to create
-the equivalent account in the third-party service. An account holder is useful to
+the equivalent account in the third-party payment provider. An account holder is useful to
 later save payment methods, such as credit cards, for a customer in the
 third-party payment provider using the [savePaymentMethod](../../../types/interfaces/types.IPaymentProvider/page.mdx#savepaymentmethod) method.
 
@@ -398,7 +398,7 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
 ]} className="mb-1" />
 
 This method is used when an account holder is deleted in Medusa, allowing you
-to also delete the equivalent account holder in the third-party service.
+to also delete the equivalent account holder in the third-party payment provider.
 
 :::note
 
@@ -930,7 +930,7 @@ class MyPaymentProviderService extends AbstractPaymentProvider<
 ]} className="mb-1" />
 
 This method is used when updating an account holder in Medusa, allowing you to update
-the equivalent account in the third-party service.
+the equivalent account in the third-party payment provider.
 
 The returned data will be stored in the account holder created in Medusa. For example,
 the returned `id` property will be stored in the account holder's `external_id` property.
