@@ -1,7 +1,7 @@
-import { CSVNormalizer } from "@medusajs/framework/utils"
+import { HttpTypes } from "@medusajs/framework/types"
+import { CSVNormalizer, productValidators } from "@medusajs/framework/utils"
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk"
-import { convertCsvToJson } from "../utlils"
-import { GroupProductsForBatchStepOutput } from "./group-products-for-batch"
+import { convertCsvToJson } from "../utils"
 
 /**
  * The CSV file content to parse.
@@ -18,7 +18,7 @@ export const normalizeCsvStepId = "normalize-product-csv"
  */
 export const normalizeCsvStep = createStep(
   normalizeCsvStepId,
-  async (fileContent: NormalizeProductCsvStepInput, { container }) => {
+  async (fileContent: NormalizeProductCsvStepInput) => {
     const csvProducts =
       convertCsvToJson<ConstructorParameters<typeof CSVNormalizer>[0][0]>(
         fileContent
@@ -27,22 +27,28 @@ export const normalizeCsvStep = createStep(
     const products = normalizer.proccess()
 
     const create = Object.keys(products.toCreate).reduce<
-      (typeof products)["toCreate"][keyof (typeof products)["toCreate"]][]
+      HttpTypes.AdminCreateProduct[]
     >((result, toCreateHandle) => {
-      result.push(products.toCreate[toCreateHandle])
+      result.push(
+        productValidators.CreateProduct.parse(
+          products.toCreate[toCreateHandle]
+        ) as HttpTypes.AdminCreateProduct
+      )
       return result
     }, [])
 
     const update = Object.keys(products.toUpdate).reduce<
-      (typeof products)["toUpdate"][keyof (typeof products)["toUpdate"]][]
-    >((result, toCreateId) => {
-      result.push(products.toUpdate[toCreateId])
+      HttpTypes.AdminUpdateProduct & { id: string }[]
+    >((result, toUpdateId) => {
+      result.push(
+        productValidators.UpdateProduct.parse(products.toUpdate[toUpdateId])
+      )
       return result
     }, [])
 
     return new StepResponse({
       create,
       update,
-    } as GroupProductsForBatchStepOutput)
+    })
   }
 )

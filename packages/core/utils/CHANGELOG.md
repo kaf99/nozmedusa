@@ -1,5 +1,14 @@
 # @medusajs/utils
 
+## 2.8.2
+
+### Patch Changes
+
+- [#12473](https://github.com/medusajs/medusa/pull/12473) [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: define validators and use normalize-products step
+
+- Updated dependencies [[`b2984f48f5fcf535177c98e921baa58fcf45bbe5`](https://github.com/medusajs/medusa/commit/b2984f48f5fcf535177c98e921baa58fcf45bbe5)]:
+  - @medusajs/types@2.8.2
+
 ## 2.8.1
 
 ### Patch Changes

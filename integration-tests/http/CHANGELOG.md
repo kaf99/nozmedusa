@@ -1,5 +1,35 @@
 # integration-tests-http
 
+## 1.0.14
+
+### Patch Changes
+
+- [#12473](https://github.com/medusajs/medusa/pull/12473) [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: define validators and use normalize-products step
+
+- Updated dependencies [[`9f4d32b2201d8c87d84c59b9a1ca59e00bcc6af1`](https://github.com/medusajs/medusa/commit/9f4d32b2201d8c87d84c59b9a1ca59e00bcc6af1), [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104)]:
+  - @medusajs/core-flows@2.8.2
+  - @medusajs/utils@2.8.2
+  - @medusajs/modules-sdk@2.8.2
+  - @medusajs/medusa@2.8.2
+  - @medusajs/test-utils@2.8.2
+  - @medusajs/api-key@2.8.2
+  - @medusajs/auth@2.8.2
+  - @medusajs/cache-inmemory@2.8.2
+  - @medusajs/customer@2.8.2
+  - @medusajs/event-bus-local@2.8.2
+  - @medusajs/fulfillment@2.8.2
+  - @medusajs/inventory@2.8.2
+  - @medusajs/pricing@2.8.2
+  - @medusajs/product@2.8.2
+  - @medusajs/promotion@2.8.2
+  - @medusajs/fulfillment-manual@2.8.2
+  - @medusajs/region@2.8.2
+  - @medusajs/stock-location@2.8.2
+  - @medusajs/store@2.8.2
+  - @medusajs/tax@2.8.2
+  - @medusajs/user@2.8.2
+  - @medusajs/workflow-engine-inmemory@2.8.2
+
 ## 1.0.13
 
 ### Patch Changes

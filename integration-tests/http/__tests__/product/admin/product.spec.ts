@@ -3043,12 +3043,20 @@ medusaIntegrationTestRunner({
       describe("batch methods", () => {
         it("successfully creates, updates, and deletes products", async () => {
           const createPayload = getProductFixture({
+            weight: 100,
+            length: 200,
+            height: 300,
+            width: 400,
             title: "Test batch create",
             handle: "test-batch-create",
             shipping_profile_id: shippingProfile.id,
           })
 
           const updatePayload = {
+            weight: 101,
+            length: 201,
+            height: 301,
+            width: 401,
             id: publishedProduct.id,
             title: "Test batch update",
           }

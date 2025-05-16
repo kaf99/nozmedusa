@@ -11,38 +11,103 @@ import {
   createAdminUser,
 } from "../../../../helpers/create-admin-user"
 import { getProductFixture } from "../../../../helpers/fixtures"
+import { csv2json } from "json-2-csv"
 
 jest.setTimeout(50000)
 
-const compareCSVs = async (filePath, expectedFilePath) => {
+const EXPORTED_COLUMNS = [
+  "Product Collection Id",
+  "Product Created At",
+  "Product Deleted At",
+  "Product Description",
+  "Product Discountable",
+  "Product External Id",
+  "Product Handle",
+  "Product Height",
+  "Product Hs Code",
+  "Product Id",
+  "Product Image *",
+  "Product Is Giftcard",
+  "Product Length",
+  "Product Material",
+  "Product Mid Code",
+  "Product Origin Country",
+  "Product Status",
+  "Product Subtitle",
+  "Product Tag *",
+  "Product Thumbnail",
+  "Product Title",
+  "Product Type Id",
+  "Product Updated At",
+  "Product Weight",
+  "Product Width",
+  "Variant Allow Backorder",
+  "Variant Barcode",
+  "Variant Created At",
+  "Variant Deleted At",
+  "Variant Ean",
+  "Variant Height",
+  "Variant Hs Code",
+  "Variant Id",
+  "Variant Length",
+  "Variant Manage Inventory",
+  "Variant Material",
+  "Variant Metadata",
+  "Variant Mid Code",
+  "Variant Option * Name",
+  "Variant Option * Value",
+  "Variant Origin Country",
+  "Variant Price [ISO]",
+  "Variant Product Id",
+  "Variant Sku",
+  "Variant Title",
+  "Variant Upc",
+  "Variant Updated At",
+  "Variant Variant Rank",
+  "Variant Weight",
+  "Variant Width",
+]
+
+const getCSVContents = async (filePath: string) => {
   const asLocalPath = filePath.replace("http://localhost:9000", process.cwd())
-  let fileContent = await fs.readFile(asLocalPath, { encoding: "utf-8" })
-  let fixturesContent = await fs.readFile(expectedFilePath, {
-    encoding: "utf-8",
-  })
+  const fileContent = await fs.readFile(asLocalPath, { encoding: "utf-8" })
   await fs.rm(path.dirname(asLocalPath), { recursive: true, force: true })
+  const csvRows = csv2json(fileContent)
 
-  // Normalize csv data to get rid of dynamic data
-  const idsToReplace = ["prod_", "pcol_", "variant_", "ptyp_", "pcat_"]
-  const dateRegex =
-    /(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})\.(\d{3})Z/g
-  idsToReplace.forEach((prefix) => {
-    fileContent = fileContent.replace(
-      new RegExp(`${prefix}\\w*\\d*`, "g"),
-      "<ID>"
-    )
-    fixturesContent = fixturesContent.replace(
-      new RegExp(`${prefix}\\w*\\d*`, "g"),
-      "<ID>"
-    )
+  return csvRows.reduce<any[]>((result, row) => {
+    const rowCopy = { ...row }
+    Object.keys(rowCopy).forEach((col) => {
+      if (
+        col.includes("Updated At") ||
+        col.includes("Created At") ||
+        col.includes("Deleted At")
+      ) {
+        rowCopy[col] = "<DateTime>"
+      }
+      if (col.includes("Id") || col.startsWith("Product Category ")) {
+        rowCopy[col] = "<ID>"
+      }
+    })
+
+    result.push(rowCopy)
+    return result
+  }, [])
+}
+
+const assertExportedColumns = (rows: any[]) => {
+  rows.forEach((row) => {
+    EXPORTED_COLUMNS.forEach((column) => {
+      if (column.includes("[ISO]")) {
+        expect(
+          Object.keys(row).filter((rowCol) =>
+            rowCol.startsWith("Variant Price ")
+          ).length
+        ).toBeGreaterThanOrEqual(1)
+      } else {
+        expect(row).toHaveProperty(column.replace("*", "1"))
+      }
+    })
   })
-  fileContent = fileContent.replace(dateRegex, "<DATE>")
-  fixturesContent = fixturesContent.replace(dateRegex, "<DATE>")
-
-  fixturesContent = fixturesContent.replace(/,Shipping Profile Id*/g, "")
-  fixturesContent = fixturesContent.replace(/,import-shipping-profile*/g, "")
-
-  expect(fileContent).toEqual(fixturesContent)
 }
 
 medusaIntegrationTestRunner({
@@ -121,11 +186,19 @@ medusaIntegrationTestRunner({
       ).data.product_category
 
       baseTag1 = (
-        await api.post("/admin/product-tags", { value: "123" }, adminHeaders)
+        await api.post(
+          "/admin/product-tags",
+          { value: "tag-123" },
+          adminHeaders
+        )
       ).data.product_tag
 
       baseTag2 = (
-        await api.post("/admin/product-tags", { value: "456" }, adminHeaders)
+        await api.post(
+          "/admin/product-tags",
+          { value: "tag-456" },
+          adminHeaders
+        )
       ).data.product_tag
 
       newTag = (
@@ -252,10 +325,12 @@ medusaIntegrationTestRunner({
           })
         )
 
-        await compareCSVs(
-          notifications[0].data.file.url,
-          path.join(__dirname, "__fixtures__", "exported-products-comma.csv")
+        const exportedFileContents = await getCSVContents(
+          notifications[0].data.file.url
         )
+
+        assertExportedColumns(exportedFileContents)
+        expect(exportedFileContents).toMatchSnapshot()
       })
 
       it("should export a csv file with categories", async () => {
@@ -278,10 +353,12 @@ medusaIntegrationTestRunner({
           await api.get("/admin/notifications", adminHeaders)
         ).data.notifications
 
-        await compareCSVs(
-          notifications[0].data.file.url,
-          path.join(__dirname, "__fixtures__", "product-with-categories.csv")
+        const exportedFileContents = await getCSVContents(
+          notifications[0].data.file.url
         )
+
+        assertExportedColumns(exportedFileContents)
+        expect(exportedFileContents).toMatchSnapshot()
       })
 
       it("should export a csv file with region prices", async () => {
@@ -338,10 +415,12 @@ medusaIntegrationTestRunner({
           await api.get("/admin/notifications", adminHeaders)
         ).data.notifications
 
-        await compareCSVs(
-          notifications[0].data.file.url,
-          path.join(__dirname, "__fixtures__", "prices-with-region.csv")
+        const exportedFileContents = await getCSVContents(
+          notifications[0].data.file.url
         )
+
+        assertExportedColumns(exportedFileContents)
+        expect(exportedFileContents).toMatchSnapshot()
       })
 
       it("should export a csv file filtered by specific products", async () => {
@@ -367,10 +446,12 @@ medusaIntegrationTestRunner({
 
         expect(notifications.length).toBe(1)
 
-        await compareCSVs(
-          notifications[0].data.file.url,
-          path.join(__dirname, "__fixtures__", "filtered-products.csv")
+        const exportedFileContents = await getCSVContents(
+          notifications[0].data.file.url
         )
+
+        assertExportedColumns(exportedFileContents)
+        expect(exportedFileContents).toMatchSnapshot()
       })
     })
   },
