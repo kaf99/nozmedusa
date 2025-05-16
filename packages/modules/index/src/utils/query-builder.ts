@@ -713,11 +713,9 @@ export class QueryBuilder {
   public buildQuery({
     hasPagination = true,
     hasCount = false,
-    returnIdOnly = false,
   }: {
     hasPagination?: boolean
     hasCount?: boolean
-    returnIdOnly?: boolean
   }): { sql: string; sqlCount?: string } {
     const selectOnlyStructure = this.selector.select
     const structure = this.requestedFields
@@ -924,13 +922,11 @@ export class QueryBuilder {
       outerQueryBuilder.joinRaw(joinPart)
     })
 
-    const finalSelectParts = !returnIdOnly
-      ? this.buildSelectParts(
-          selectOnlyStructure[rootKey] as Select,
-          rootKey,
-          aliasMapping
-        )
-      : { [`${rootKey}.id`]: `${rootAlias}.id` }
+    const finalSelectParts = this.buildSelectParts(
+      selectOnlyStructure[rootKey] as Select,
+      rootKey,
+      aliasMapping
+    )
 
     outerQueryBuilder.select(finalSelectParts)
 
