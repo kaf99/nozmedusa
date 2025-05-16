@@ -231,7 +231,7 @@ export class Query {
       pagination: {
         // We pass through `take` to force the `select-in` query strategy
         //   There might be a better way to do this, but for now this should do
-        take: queryOptions.pagination?.take,
+        take: queryOptions.pagination?.take ?? indexResponse.data.length,
       },
     }
 
