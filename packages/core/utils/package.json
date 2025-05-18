@@ -56,7 +56,8 @@
     "jsonwebtoken": "^9.0.2",
     "pg-connection-string": "^2.7.0",
     "pluralize": "^8.0.0",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "zod": "3.22.4"
   },
   "peerDependencies": {
     "@mikro-orm/core": "6.4.3",
