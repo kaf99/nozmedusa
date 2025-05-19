@@ -4996,8 +4996,8 @@ const generatedgeneratedReferencesSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
-                  "path": "/references/medusa-workflows/steps/groupProductsForBatchStep",
-                  "title": "groupProductsForBatchStep",
+                  "path": "/references/medusa-workflows/steps/normalizeCsvStep",
+                  "title": "normalizeCsvStep",
                   "description": "",
                   "children": []
                 },

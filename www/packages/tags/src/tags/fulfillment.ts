@@ -260,8 +260,16 @@ export const fulfillment = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/createReturnShippingMethodWorkflow"
   },
   {
+    "title": "fetchShippingOptionForOrderWorkflow",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/fetchShippingOptionForOrderWorkflow"
+  },
+  {
     "title": "markOrderFulfillmentAsDeliveredWorkflow",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/markOrderFulfillmentAsDeliveredWorkflow"
+  },
+  {
+    "title": "maybeRefreshShippingMethodsWorkflow",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/maybeRefreshShippingMethodsWorkflow"
   },
   {
     "title": "parseProductCsvStep",

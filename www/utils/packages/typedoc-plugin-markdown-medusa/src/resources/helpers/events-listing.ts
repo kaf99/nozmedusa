@@ -15,7 +15,8 @@ export default function () {
       const showHeader = (this.children?.length ?? 0) > 1
 
       function parseChildren(children: DeclarationReflection[]) {
-        children?.forEach((child, index) => {
+        let count = 0
+        children.forEach((child, index) => {
           content.push(
             formatEventsType(child as DeclarationReflection, {
               subtitleLevel,
@@ -27,13 +28,16 @@ export default function () {
             content.push("---")
             content.push("")
           }
+          count++
         })
+
+        return count
       }
 
       if (this.kind === ReflectionKind.Module) {
         this.children?.forEach((child, index) => {
-          parseChildren(child.children || [])
-          if (index < this.children!.length - 1) {
+          const count = parseChildren(child.children || [])
+          if (count > 0 && index < this.children!.length - 1) {
             content.push("")
             content.push("---")
             content.push("")
@@ -71,7 +75,9 @@ function formatEventsType(
   }
   content.push("")
 
-  const eventProperties = eventVariable.type.declaration.children || []
+  const eventProperties = (
+    eventVariable.type.declaration.children || []
+  ).filter((child) => (getEventWorkflows(child)?.length || 0) > 0)
 
   content.push(`${subHeaderPrefix} Summary`)
   content.push("")
@@ -154,11 +160,7 @@ function formatEventsType(
       .find((tag) => tag.tag === "@eventPayload")
       ?.content.map((content) => content.text)
       .join("")
-    const workflows = event.comment?.blockTags
-      .find((tag) => tag.tag === "@workflows")
-      ?.content.map((content) => content.text)
-      .join("")
-      .split(", ")
+    const workflows = getEventWorkflows(event)
     const deprecatedTag = event.comment?.blockTags.find(
       (tag) => tag.tag === "@deprecated"
     )
@@ -257,4 +259,12 @@ function getEventHeading({
 
 function getEventNameSlug(eventName: string) {
   return slugify(eventName.replace(".", ""), { lower: true })
+}
+
+function getEventWorkflows(event: DeclarationReflection): string[] | undefined {
+  return event.comment?.blockTags
+    .find((tag) => tag.tag === "@workflows")
+    ?.content.map((content) => content.text)
+    .join("")
+    .split(", ")
 }

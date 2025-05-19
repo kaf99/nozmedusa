@@ -2840,9 +2840,9 @@ export const slugChanges = [
     "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.getVariantAvailabilityStep/page.mdx"
   },
   {
-    "origSlug": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep",
-    "newSlug": "/references/medusa-workflows/steps/groupProductsForBatchStep",
-    "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.groupProductsForBatchStep/page.mdx"
+    "origSlug": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep",
+    "newSlug": "/references/medusa-workflows/steps/normalizeCsvStep",
+    "filePath": "/www/apps/resources/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.normalizeCsvStep/page.mdx"
   },
   {
     "origSlug": "/references/core_flows/Product/Steps_Product/functions/core_flows.Product.Steps_Product.parseProductCsvStep",
@@ -4868,11 +4868,6 @@ export const slugChanges = [
     "origSlug": "/references/locking/interfaces/locking.ILockingProvider",
     "newSlug": "/references/locking-module-provider",
     "filePath": "/www/apps/resources/references/locking/interfaces/locking.ILockingProvider/page.mdx"
-  },
-  {
-    "origSlug": "/references/medusa_config/interfaces/medusa_config.ConfigModule",
-    "newSlug": "/references/medusa-config",
-    "filePath": "/www/apps/resources/references/medusa_config/interfaces/medusa_config.ConfigModule/page.mdx"
   },
   {
     "origSlug": "/references/module_events/module_events.Auth",
@@ -7058,11 +7053,6 @@ export const slugChanges = [
     "origSlug": "/references/sales_channel_models/variables/sales_channel_models.SalesChannel",
     "newSlug": "/references/sales-channel/models/SalesChannel",
     "filePath": "/www/apps/resources/references/sales_channel_models/variables/sales_channel_models.SalesChannel/page.mdx"
-  },
-  {
-    "origSlug": "/references/search/classes/search.AbstractSearchService",
-    "newSlug": "/references/search-service",
-    "filePath": "/www/apps/resources/references/search/classes/search.AbstractSearchService/page.mdx"
   },
   {
     "origSlug": "/references/stock_location_next/IStockLocationService/methods/stock_location_next.IStockLocationService.createStockLocations",

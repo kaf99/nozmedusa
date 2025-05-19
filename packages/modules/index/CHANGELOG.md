@@ -1,5 +1,21 @@
 # @medusajs/index
 
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- [#12480](https://github.com/medusajs/medusa/pull/12480) [`c661e064885ca0a874a443b293f9bb48b2742cf7`](https://github.com/medusajs/medusa/commit/c661e064885ca0a874a443b293f9bb48b2742cf7) Thanks [@carlos-r-l-rodrigues](https://github.com/carlos-r-l-rodrigues)! - fix(index): query builder handle json array
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.1
+
 ## 2.8.0
 
 ### Patch Changes

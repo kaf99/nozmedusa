@@ -3712,6 +3712,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "loaded": true,
                       "isPathHref": true,
                       "type": "ref",
+                      "title": "fetchShippingOptionForOrderWorkflow",
+                      "path": "https://docs.medusajs.com/resources/references/medusa-workflows/fetchShippingOptionForOrderWorkflow",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
                       "title": "importProductsWorkflow",
                       "path": "https://docs.medusajs.com/resources/references/medusa-workflows/importProductsWorkflow",
                       "children": []
@@ -3738,6 +3746,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "type": "ref",
                       "title": "markOrderFulfillmentAsDeliveredWorkflow",
                       "path": "https://docs.medusajs.com/resources/references/medusa-workflows/markOrderFulfillmentAsDeliveredWorkflow",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
+                      "title": "maybeRefreshShippingMethodsWorkflow",
+                      "path": "https://docs.medusajs.com/resources/references/medusa-workflows/maybeRefreshShippingMethodsWorkflow",
                       "children": []
                     },
                     {
@@ -6644,6 +6660,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "loaded": true,
                       "isPathHref": true,
                       "type": "ref",
+                      "title": "maybeRefreshShippingMethodsWorkflow",
+                      "path": "https://docs.medusajs.com/resources/references/medusa-workflows/maybeRefreshShippingMethodsWorkflow",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
                       "title": "orderClaimAddNewItemWorkflow",
                       "path": "https://docs.medusajs.com/resources/references/medusa-workflows/orderClaimAddNewItemWorkflow",
                       "children": []
@@ -6710,6 +6734,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "type": "ref",
                       "title": "receiveItemReturnRequestWorkflow",
                       "path": "https://docs.medusajs.com/resources/references/medusa-workflows/receiveItemReturnRequestWorkflow",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
+                      "title": "refundPaymentAndRecreatePaymentSessionWorkflow",
+                      "path": "https://docs.medusajs.com/resources/references/medusa-workflows/refundPaymentAndRecreatePaymentSessionWorkflow",
                       "children": []
                     },
                     {
@@ -9053,6 +9085,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "link",
+              "path": "/commerce-modules/payment/payment-checkout-flow",
+              "title": "Payment in Checkout",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "link",
               "path": "/commerce-modules/payment/account-holder",
               "title": "Account Holder",
               "children": []
@@ -9413,6 +9453,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                       "type": "ref",
                       "title": "refreshPaymentCollectionForCartWorkflow",
                       "path": "https://docs.medusajs.com/resources/references/medusa-workflows/refreshPaymentCollectionForCartWorkflow",
+                      "children": []
+                    },
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
+                      "title": "refundPaymentAndRecreatePaymentSessionWorkflow",
+                      "path": "https://docs.medusajs.com/resources/references/medusa-workflows/refundPaymentAndRecreatePaymentSessionWorkflow",
                       "children": []
                     },
                     {
@@ -16321,6 +16369,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
                   "autogenerate_as_ref": true,
                   "sort_sidebar": "alphabetize",
                   "children": [
+                    {
+                      "loaded": true,
+                      "isPathHref": true,
+                      "type": "ref",
+                      "title": "taxProvider",
+                      "path": "https://docs.medusajs.com/resources/references/js-sdk/admin/taxProvider",
+                      "children": []
+                    },
                     {
                       "loaded": true,
                       "isPathHref": true,

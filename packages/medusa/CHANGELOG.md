@@ -1,5 +1,105 @@
 # Change Log
 
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies [[`9f4d32b2201d8c87d84c59b9a1ca59e00bcc6af1`](https://github.com/medusajs/medusa/commit/9f4d32b2201d8c87d84c59b9a1ca59e00bcc6af1), [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104)]:
+  - @medusajs/core-flows@2.8.2
+  - @medusajs/admin-bundler@2.8.2
+  - @medusajs/framework@2.8.2
+  - @medusajs/api-key@2.8.2
+  - @medusajs/auth@2.8.2
+  - @medusajs/cache-inmemory@2.8.2
+  - @medusajs/cache-redis@2.8.2
+  - @medusajs/cart@2.8.2
+  - @medusajs/currency@2.8.2
+  - @medusajs/customer@2.8.2
+  - @medusajs/event-bus-local@2.8.2
+  - @medusajs/event-bus-redis@2.8.2
+  - @medusajs/file@2.8.2
+  - @medusajs/fulfillment@2.8.2
+  - @medusajs/index@2.8.2
+  - @medusajs/inventory@2.8.2
+  - @medusajs/link-modules@2.8.2
+  - @medusajs/locking@2.8.2
+  - @medusajs/notification@2.8.2
+  - @medusajs/order@2.8.2
+  - @medusajs/payment@2.8.2
+  - @medusajs/pricing@2.8.2
+  - @medusajs/product@2.8.2
+  - @medusajs/promotion@2.8.2
+  - @medusajs/auth-emailpass@2.8.2
+  - @medusajs/auth-github@2.8.2
+  - @medusajs/auth-google@2.8.2
+  - @medusajs/file-local@2.8.2
+  - @medusajs/file-s3@2.8.2
+  - @medusajs/fulfillment-manual@2.8.2
+  - @medusajs/locking-postgres@2.8.2
+  - @medusajs/locking-redis@2.8.2
+  - @medusajs/notification-local@2.8.2
+  - @medusajs/notification-sendgrid@2.8.2
+  - @medusajs/payment-stripe@2.8.2
+  - @medusajs/region@2.8.2
+  - @medusajs/sales-channel@2.8.2
+  - @medusajs/stock-location@2.8.2
+  - @medusajs/store@2.8.2
+  - @medusajs/tax@2.8.2
+  - @medusajs/user@2.8.2
+  - @medusajs/workflow-engine-inmemory@2.8.2
+  - @medusajs/workflow-engine-redis@2.8.2
+  - @medusajs/telemetry@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`4602163b568962f8115b83971d67a6c55c2b8a98`](https://github.com/medusajs/medusa/commit/4602163b568962f8115b83971d67a6c55c2b8a98), [`c661e064885ca0a874a443b293f9bb48b2742cf7`](https://github.com/medusajs/medusa/commit/c661e064885ca0a874a443b293f9bb48b2742cf7), [`ab22faaa52008ad952d50f0a3b6b1148515b10c9`](https://github.com/medusajs/medusa/commit/ab22faaa52008ad952d50f0a3b6b1148515b10c9), [`142a1f0a5be60d2cc013ecb174bca7b1381c6551`](https://github.com/medusajs/medusa/commit/142a1f0a5be60d2cc013ecb174bca7b1381c6551)]:
+  - @medusajs/core-flows@2.8.1
+  - @medusajs/index@2.8.1
+  - @medusajs/workflow-engine-inmemory@2.8.1
+  - @medusajs/workflow-engine-redis@2.8.1
+  - @medusajs/product@2.8.1
+  - @medusajs/framework@2.8.1
+  - @medusajs/api-key@2.8.1
+  - @medusajs/auth@2.8.1
+  - @medusajs/cart@2.8.1
+  - @medusajs/currency@2.8.1
+  - @medusajs/customer@2.8.1
+  - @medusajs/file@2.8.1
+  - @medusajs/fulfillment@2.8.1
+  - @medusajs/inventory@2.8.1
+  - @medusajs/link-modules@2.8.1
+  - @medusajs/locking@2.8.1
+  - @medusajs/notification@2.8.1
+  - @medusajs/order@2.8.1
+  - @medusajs/payment@2.8.1
+  - @medusajs/pricing@2.8.1
+  - @medusajs/promotion@2.8.1
+  - @medusajs/region@2.8.1
+  - @medusajs/sales-channel@2.8.1
+  - @medusajs/stock-location@2.8.1
+  - @medusajs/store@2.8.1
+  - @medusajs/tax@2.8.1
+  - @medusajs/user@2.8.1
+  - @medusajs/cache-inmemory@2.8.1
+  - @medusajs/cache-redis@2.8.1
+  - @medusajs/event-bus-local@2.8.1
+  - @medusajs/event-bus-redis@2.8.1
+  - @medusajs/auth-emailpass@2.8.1
+  - @medusajs/auth-github@2.8.1
+  - @medusajs/auth-google@2.8.1
+  - @medusajs/file-local@2.8.1
+  - @medusajs/file-s3@2.8.1
+  - @medusajs/fulfillment-manual@2.8.1
+  - @medusajs/locking-postgres@2.8.1
+  - @medusajs/locking-redis@2.8.1
+  - @medusajs/notification-local@2.8.1
+  - @medusajs/notification-sendgrid@2.8.1
+  - @medusajs/payment-stripe@2.8.1
+  - @medusajs/admin-bundler@2.8.1
+  - @medusajs/telemetry@2.8.1
+
 ## 2.8.0
 
 ### Patch Changes

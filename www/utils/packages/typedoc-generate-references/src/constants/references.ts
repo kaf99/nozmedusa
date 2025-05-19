@@ -32,7 +32,6 @@ const allReferences = [
   "modules-sdk",
   "notification",
   "payment-provider",
-  "search",
   "tax-provider",
   "types",
   "utils",

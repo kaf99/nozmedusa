@@ -1,5 +1,21 @@
 # @medusajs/workflow-engine-inmemory
 
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- [#12439](https://github.com/medusajs/medusa/pull/12439) [`ab22faaa52008ad952d50f0a3b6b1148515b10c9`](https://github.com/medusajs/medusa/commit/ab22faaa52008ad952d50f0a3b6b1148515b10c9) Thanks [@adrien2p](https://github.com/adrien2p)! - Chore/test runner improvements
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.1
+
 ## 2.8.0
 
 ### Patch Changes

@@ -1,5 +1,25 @@
 # @medusajs/utils
 
+## 2.8.2
+
+### Patch Changes
+
+- [#12473](https://github.com/medusajs/medusa/pull/12473) [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: define validators and use normalize-products step
+
+- Updated dependencies [[`b2984f48f5fcf535177c98e921baa58fcf45bbe5`](https://github.com/medusajs/medusa/commit/b2984f48f5fcf535177c98e921baa58fcf45bbe5)]:
+  - @medusajs/types@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- [#12396](https://github.com/medusajs/medusa/pull/12396) [`4602163b568962f8115b83971d67a6c55c2b8a98`](https://github.com/medusajs/medusa/commit/4602163b568962f8115b83971d67a6c55c2b8a98) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: create CSV normalizer to normalize a CSV file
+
+- [#12486](https://github.com/medusajs/medusa/pull/12486) [`142a1f0a5be60d2cc013ecb174bca7b1381c6551`](https://github.com/medusajs/medusa/commit/142a1f0a5be60d2cc013ecb174bca7b1381c6551) Thanks [@peterlgh7](https://github.com/peterlgh7)! - fix returned updates order in upsertWithReplace
+
+- Updated dependencies []:
+  - @medusajs/types@2.8.1
+
 ## 2.8.0
 
 ### Patch Changes

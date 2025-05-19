@@ -14,7 +14,7 @@ import { TypeList, WorkflowDiagram } from "docs-ui"
 
 This documentation provides a reference to the `createOrderCreditLinesWorkflow`. It belongs to the `@medusajs/medusa/core-flows` package.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/e09fd61a8f649959a6c0819c1d867abf05ae0dc4/packages/core/core-flows/src/order/workflows/create-order-credit-lines.ts#L83" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/d73d8e99030415e76359c6406fe0d33fe809bbdc/packages/core/core-flows/src/order/workflows/create-order-credit-lines.ts#L83" />
 
 ## Examples
 
@@ -35,7 +35,7 @@ export async function POST(
   const { result } = await createOrderCreditLinesWorkflow(req.scope)
     .run({
       input: {
-        "id": "id_fgHLcc9LB1c",
+        "id": "id_k5i1W1GZvu9uznM7Be",
         "credit_lines": [
           "{value}"
         ]
@@ -63,7 +63,7 @@ export default async function handleOrderPlaced({
   const { result } = await createOrderCreditLinesWorkflow(container)
     .run({
       input: {
-        "id": "id_fgHLcc9LB1c",
+        "id": "id_k5i1W1GZvu9uznM7Be",
         "credit_lines": [
           "{value}"
         ]
@@ -91,7 +91,7 @@ export default async function myCustomJob(
   const { result } = await createOrderCreditLinesWorkflow(container)
     .run({
       input: {
-        "id": "id_fgHLcc9LB1c",
+        "id": "id_k5i1W1GZvu9uznM7Be",
         "credit_lines": [
           "{value}"
         ]
@@ -120,7 +120,7 @@ const myWorkflow = createWorkflow(
     const result = createOrderCreditLinesWorkflow
       .runAsStep({
         input: {
-          "id": "id_fgHLcc9LB1c",
+          "id": "id_k5i1W1GZvu9uznM7Be",
           "credit_lines": [
             "{value}"
           ]

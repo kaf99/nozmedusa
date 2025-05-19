@@ -24,8 +24,12 @@ import lt from "./lt.json"
 import vi from "./vi.json"
 import ko from "./ko.json"
 import nl from "./nl.json"
+import bs from "./bs.json"
 
 export default {
+  bs: {
+    translation: bs,
+  },
   bg: {
     translation: bg,
   },

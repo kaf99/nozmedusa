@@ -1,5 +1,21 @@
 # @medusajs/product
 
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- [#12486](https://github.com/medusajs/medusa/pull/12486) [`142a1f0a5be60d2cc013ecb174bca7b1381c6551`](https://github.com/medusajs/medusa/commit/142a1f0a5be60d2cc013ecb174bca7b1381c6551) Thanks [@peterlgh7](https://github.com/peterlgh7)! - fix returned updates order in upsertWithReplace
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.1
+
 ## 2.8.0
 
 ### Patch Changes
