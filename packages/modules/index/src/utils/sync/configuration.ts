@@ -35,9 +35,7 @@ export class Configuration {
   }
 
   async checkChanges(): Promise<InferEntityType<typeof IndexMetadata>[]> {
-    this.#logger.info(
-      "[Index engine] Checking for changes in the index configuration"
-    )
+    this.#logger.info("[Index engine] Checking for index changes")
     const schemaObjectRepresentation = this.#schemaObjectRepresentation
 
     const currentConfig = await this.#indexMetadataService.list()
@@ -145,9 +143,9 @@ export class Configuration {
     })
 
     this.#logger.info(
-      `[Index engine] Found ${changes.length} change${
+      `[Index engine] Found ${changes.length} index change${
         changes.length > 1 ? "s" : ""
-      } in the index configuration that are either pending or processing`
+      } that are either pending or processing`
     )
 
     return changes
