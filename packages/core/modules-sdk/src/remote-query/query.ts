@@ -248,6 +248,7 @@ export class Query {
     if (indexResponse.data.length) {
       finalResultset = await this.graph(graphOptions, {
         ...options,
+        initialData: indexResponse.data,
       })
     }
 
