@@ -1,13 +1,12 @@
-import { csv2json, json2csv } from "json-2-csv"
-import {
-  medusaIntegrationTestRunner,
-  TestEventUtils,
-} from "@medusajs/test-utils"
-import { IEventBusModuleService } from "@medusajs/types"
-import { CommonEvents, Modules } from "@medusajs/utils"
-import FormData from "form-data"
 import fs from "fs/promises"
-import path from "path"
+import path, { extname } from "path"
+import { csv2json, json2csv } from "json-2-csv"
+import { CommonEvents, Modules } from "@medusajs/utils"
+import { IEventBusModuleService, IFileModuleService } from "@medusajs/types"
+import {
+  TestEventUtils,
+  medusaIntegrationTestRunner,
+} from "@medusajs/test-utils"
 import {
   adminHeaders,
   createAdminUser,
@@ -27,15 +26,18 @@ const UNALLOWED_EXPORTED_COLUMNS = [
 
 jest.setTimeout(50000)
 
-const getUploadReq = (file: { name: string; content: string }) => {
-  const form = new FormData()
-  form.append("file", Buffer.from(file.content), file.name)
+const getUploadReq = (file: { key: string; name: string; size: number }) => {
   return {
-    form,
+    body: {
+      file_key: file.key,
+      originalname: file.name,
+      extension: extname(file.name),
+      size: file.size,
+      mime_type: "text/csv",
+    },
     meta: {
       headers: {
         ...adminHeaders.headers,
-        ...form.getHeaders(),
       },
     },
   }
@@ -68,8 +70,10 @@ medusaIntegrationTestRunner({
     let shippingProfile
 
     let eventBus: IEventBusModuleService
+    let fileModule: IFileModuleService
     beforeAll(async () => {
       eventBus = getContainer().resolve(Modules.EVENT_BUS)
+      fileModule = getContainer().resolve(Modules.FILE)
     })
 
     beforeEach(async () => {
@@ -166,7 +170,7 @@ medusaIntegrationTestRunner({
       ;(eventBus as any).eventEmitter_.removeAllListeners()
     })
 
-    describe("POST /admin/products/import", () => {
+    describe("POST /admin/products/imports", () => {
       // We want to ensure files with different delimiters are supported
       ;[
         {
@@ -211,15 +215,26 @@ medusaIntegrationTestRunner({
             shippingProfile.id
           )
 
-          const { form, meta } = getUploadReq({
+          const csvContents = prepareCSVForImport(
+            fileContent,
+            testcase.delimiter
+          )
+          const { id } = await fileModule.createFiles({
+            filename: "test.csv",
+            content: csvContents,
+            mimeType: "text/csv",
+          })
+
+          const { body, meta } = getUploadReq({
             name: "test.csv",
-            content: prepareCSVForImport(fileContent, testcase.delimiter),
+            key: id,
+            size: csvContents.length,
           })
 
           // BREAKING: The batch endpoints moved to the domain routes (admin/batch-jobs -> /admin/products/import). The payload and response changed as well.
           const batchJobRes = await api.post(
-            "/admin/products/import",
-            form,
+            "/admin/products/imports",
+            body,
             meta
           )
 
@@ -231,7 +246,7 @@ medusaIntegrationTestRunner({
           })
 
           await api.post(
-            `/admin/products/import/${transactionId}/confirm`,
+            `/admin/products/imports/${transactionId}/confirm`,
             {},
             meta
           )
@@ -470,12 +485,24 @@ medusaIntegrationTestRunner({
           shippingProfile.id
         )
 
-        const { form, meta } = getUploadReq({
-          name: "test.csv",
-          content: prepareCSVForImport(fileContent),
+        const csvContents = prepareCSVForImport(fileContent, ",")
+        const { id } = await fileModule.createFiles({
+          filename: "test.csv",
+          content: csvContents,
+          mimeType: "text/csv",
         })
 
-        const batchJobRes = await api.post("/admin/products/import", form, meta)
+        const { body, meta } = getUploadReq({
+          name: "test.csv",
+          key: id,
+          size: csvContents.length,
+        })
+
+        const batchJobRes = await api.post(
+          "/admin/products/imports",
+          body,
+          meta
+        )
 
         const transactionId = batchJobRes.data.transaction_id
         expect(transactionId).toBeTruthy()
@@ -485,7 +512,7 @@ medusaIntegrationTestRunner({
         })
 
         await api.post(
-          `/admin/products/import/${transactionId}/confirm`,
+          `/admin/products/imports/${transactionId}/confirm`,
           {},
           meta
         )
@@ -521,13 +548,21 @@ medusaIntegrationTestRunner({
           shippingProfile.id
         )
 
-        const { form, meta } = getUploadReq({
+        const csvContents = prepareCSVForImport(fileContent, ",")
+        const { id } = await fileModule.createFiles({
+          filename: "test.csv",
+          content: csvContents,
+          mimeType: "text/csv",
+        })
+
+        const { body, meta } = getUploadReq({
           name: "test.csv",
-          content: prepareCSVForImport(fileContent),
+          key: id,
+          size: csvContents.length,
         })
 
         const batchJobRes = await api
-          .post("/admin/products/import", form, meta)
+          .post("/admin/products/imports", body, meta)
           .catch((e) => e)
 
         expect(batchJobRes.response.data.message).toEqual(
@@ -549,13 +584,21 @@ medusaIntegrationTestRunner({
           shippingProfile.id
         )
 
-        const { form, meta } = getUploadReq({
+        const csvContents = prepareCSVForImport(fileContent, ",")
+        const { id } = await fileModule.createFiles({
+          filename: "test.csv",
+          content: csvContents,
+          mimeType: "text/csv",
+        })
+
+        const { body, meta } = getUploadReq({
           name: "test.csv",
-          content: prepareCSVForImport(fileContent),
+          key: id,
+          size: csvContents.length,
         })
 
         const batchJobRes = await api
-          .post("/admin/products/import", form, meta)
+          .post("/admin/products/imports", body, meta)
           .catch((e) => e)
 
         expect(batchJobRes.response.data.message).toEqual(
