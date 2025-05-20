@@ -63,6 +63,7 @@ export type IndexQueryConfig<TEntry extends string> = {
   filters?: IndexFilters<TEntry>
   joinFilters?: IndexFilters<TEntry>
   pagination?: Partial<IndexQueryInput<TEntry>["pagination"]>
+  idsOnly?: boolean
 }
 
 export type QueryFunctionReturnPagination = {
