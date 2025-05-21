@@ -1,6 +1,6 @@
-import { FeatureFlagTypes } from "@medusajs/types"
+import { FlagsLoaderTypes } from "@medusajs/types"
 
-export const OrderEditingFeatureFlag: FeatureFlagTypes.FlagSettings = {
+export const OrderEditingFeatureFlag: FlagsLoaderTypes.FlagSettings = {
   key: "order_editing",
   default_val: true,
   env_key: "MEDUSA_FF_ORDER_EDITING",

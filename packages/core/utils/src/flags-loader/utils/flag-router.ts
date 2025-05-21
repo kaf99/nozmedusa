@@ -1,7 +1,7 @@
-import { FeatureFlagTypes } from "@medusajs/types"
+import { FlagsLoaderTypes } from "@medusajs/types"
 import { isObject, isString } from "../../common"
 
-export class FlagRouter implements FeatureFlagTypes.IFlagRouter {
+export class FlagRouter implements FlagsLoaderTypes.IFlagRouter {
   private readonly flags: Record<string, boolean | Record<string, boolean>> = {}
 
   constructor(flags: Record<string, boolean | Record<string, boolean>>) {
@@ -68,7 +68,7 @@ export class FlagRouter implements FeatureFlagTypes.IFlagRouter {
     this.flags[key] = value
   }
 
-  public listFlags(): FeatureFlagTypes.FeatureFlagsResponse {
+  public listFlags(): FlagsLoaderTypes.FeatureFlagsResponse {
     return Object.entries(this.flags || {}).map(([key, value]) => ({
       key,
       value,

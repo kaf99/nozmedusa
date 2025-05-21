@@ -1,6 +1,6 @@
-import { FeatureFlagTypes } from "@medusajs/types"
+import { FlagsLoaderTypes } from "@medusajs/types"
 
-export const ProductCategoryFeatureFlag: FeatureFlagTypes.FlagSettings = {
+export const ProductCategoryFeatureFlag: FlagsLoaderTypes.FlagSettings = {
   key: "product_categories",
   default_val: false,
   env_key: "MEDUSA_FF_PRODUCT_CATEGORIES",

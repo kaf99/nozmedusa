@@ -1,6 +1,6 @@
-import { FeatureFlagTypes } from "@medusajs/types"
+import { FlagsLoaderTypes } from "@medusajs/types"
 
-export const MedusaV2Flag: FeatureFlagTypes.FlagSettings = {
+export const MedusaV2Flag: FlagsLoaderTypes.FlagSettings = {
   key: "medusa_v2",
   default_val: false,
   env_key: "MEDUSA_FF_MEDUSA_V2",
