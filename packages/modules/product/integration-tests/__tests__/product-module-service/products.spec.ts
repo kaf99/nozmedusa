@@ -33,7 +33,6 @@ import {
 jest.setTimeout(300000)
 
 moduleIntegrationTestRunner<IProductModuleService>({
-  debug: true,
   moduleName: Modules.PRODUCT,
   injectedDependencies: {
     [Modules.EVENT_BUS]: new MockEventBusService(),

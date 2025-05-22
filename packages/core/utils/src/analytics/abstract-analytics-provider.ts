@@ -72,11 +72,12 @@ export class AbstractAnalyticsProviderService implements IAnalyticsProvider {
   }
 
   /**
-   * This method tracks an event using your provider's semantics
+   * This method tracks an event with the third-party analytics provider. The Analytics Module
+   * will use this method in its `track` method if your provider is configured in `medusa-config.ts`.
+   * 
+   * You can send the event to the third-party provider based on its semantics.
    *
-   * This method will be used when tracking events to third-party providers.
-   *
-   * @param {ProviderTrackAnalyticsEventDTO} data - The data for the event.
+   * @param {ProviderTrackAnalyticsEventDTO} data - The event's details.
    * @returns {Promise<void>} Resolves when the event is tracked successfully.
    *
    * @example
@@ -97,9 +98,10 @@ export class AbstractAnalyticsProviderService implements IAnalyticsProvider {
   }
 
   /**
-   * This method identifies an actor or group in the analytics provider
+   * This method identifies an actor or group in the third-party analytics provider. The Analytics Module
+   * will use this method in its `identify` method if your provider is configured in `medusa-config.ts`.
    *
-   * @param {ProviderIdentifyAnalyticsEventDTO} data - The data for the actor or group.
+   * @param {ProviderIdentifyAnalyticsEventDTO} data - The details of the actor or group.
    * @returns {Promise<void>} Resolves when the actor or group is identified successfully.
    *
    * @example

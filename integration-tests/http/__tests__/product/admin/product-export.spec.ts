@@ -1,5 +1,6 @@
 import { IEventBusModuleService } from "@medusajs/types"
 import { CommonEvents, Modules } from "@medusajs/utils"
+import os from "os"
 import fs from "fs/promises"
 import {
   TestEventUtils,
@@ -16,7 +17,7 @@ import { csv2json } from "json-2-csv"
 jest.setTimeout(50000)
 
 const getCSVContents = async (filePath: string) => {
-  const asLocalPath = filePath.replace("http://localhost:9000", process.cwd())
+  const asLocalPath = filePath.replace("http://localhost:9000", os.tmpdir())
   const fileContent = await fs.readFile(asLocalPath, { encoding: "utf-8" })
   await fs.rm(path.dirname(asLocalPath), { recursive: true, force: true })
   const csvRows = csv2json(fileContent)

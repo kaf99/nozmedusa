@@ -55,7 +55,6 @@ function prepareCSVForImport(fileContents: string, delimiter: string = ",") {
 }
 
 medusaIntegrationTestRunner({
-  dbName: "bulk-uploads-local",
   testSuite: ({ dbConnection, getContainer, api }) => {
     let baseCollection
     let baseType

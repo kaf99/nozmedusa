@@ -44,6 +44,10 @@ export const order = [
     "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/loyalty-points"
   },
   {
+    "title": "Implement Re-Order",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/re-order"
+  },
+  {
     "title": "Checkout Step 5: Complete Cart",
     "path": "https://docs.medusajs.com/resources/storefront-development/checkout/complete-cart"
   },

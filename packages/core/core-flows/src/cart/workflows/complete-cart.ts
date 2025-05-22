@@ -84,6 +84,8 @@ export const completeCartWorkflowId = "complete-cart"
  * Complete a cart and place an order.
  *
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
+ * @property hooks.beforePaymentAuthorization - This hook is executed before the payment authorization. You can consume this hook to perform any custom logic before the payment is authorized, such as validation with custom payment providers.
+ * @property hooks.orderCreated - This hook is executed after the order is created. You can consume this hook to perform any custom logic after the order is created, such as creating custom models linked to the order.
  */
 export const completeCartWorkflow = createWorkflow(
   {

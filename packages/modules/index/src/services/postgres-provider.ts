@@ -237,7 +237,7 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
   ): Promise<IndexTypes.QueryResultSet<TEntry>> {
     await this.#isReady_
 
-    const { fields = [], filters = {}, joinFilters = {} } = config
+    const { fields = [], filters = {}, joinFilters = {}, idsOnly } = config
     const { take, skip, order: inputOrderBy = {} } = config.pagination ?? {}
 
     const select = normalizeFieldsSelection(fields)
@@ -280,6 +280,7 @@ export class PostgresProvider implements IndexTypes.StorageProvider {
       },
       rawConfig: config,
       requestedFields,
+      idsOnly,
     })
 
     const { sql, sqlCount } = qb.buildQuery({

@@ -154,6 +154,14 @@ const generatedgeneratedHowToTutorialsSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
+              "title": "Use Analytics Module",
+              "path": "https://docs.medusajs.com/resources/references/analytics/service",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
               "title": "Use Cache Module",
               "path": "https://docs.medusajs.com/resources/references/cache-service",
               "children": []
@@ -462,6 +470,15 @@ const generatedgeneratedHowToTutorialsSidebarSidebar = {
           "title": "Quote Management",
           "path": "/examples/guides/quote-management",
           "description": "Learn how to implement quote management, useful for B2B use cases.",
+          "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "link",
+          "title": "Re-Order",
+          "path": "/how-to-tutorials/tutorials/re-order",
+          "description": "Learn how to allow customers to re-order previous orders.",
           "children": []
         },
         {
