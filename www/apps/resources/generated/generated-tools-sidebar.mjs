@@ -690,6 +690,15 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
+                  "path": "/references/js-sdk/admin/taxProvider",
+                  "title": "taxProvider",
+                  "description": "",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
                   "path": "/references/js-sdk/admin/taxRate",
                   "title": "taxRate",
                   "description": "",
@@ -781,6 +790,25 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "type": "link",
                   "path": "/nextjs-starter/guides/revalidate-cache",
                   "title": "Revalidate Cache",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "category",
+              "title": "Tutorials",
+              "autogenerate_tags": "nextjs+tutorial",
+              "autogenerate_as_ref": true,
+              "sort_sidebar": "alphabetize",
+              "children": [
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "ref",
+                  "title": "Saved Payment Methods",
+                  "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/saved-payment-methods",
                   "children": []
                 }
               ]

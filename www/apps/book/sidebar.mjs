@@ -339,6 +339,11 @@ export const sidebars = [
                 path: "/learn/fundamentals/api-routes/retrieve-custom-links",
                 title: "Retrieve Custom Links",
               },
+              {
+                type: "link",
+                path: "/learn/fundamentals/api-routes/override",
+                title: "Override API Routes",
+              },
             ],
           },
           {

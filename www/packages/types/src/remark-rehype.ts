@@ -37,6 +37,17 @@ export type LiteralExpression = {
   raw: string
 }
 
+export type JSXElementExpression = {
+  type: "JSXElement" | "JSXFragment"
+  children: Expression[]
+}
+
+export type JSXTextExpression = {
+  type: "JSXText"
+  value: string
+  raw: string
+}
+
 export type Expression =
   | {
       type: string
@@ -44,6 +55,8 @@ export type Expression =
   | ArrayExpression
   | ObjectExpression
   | LiteralExpression
+  | JSXElementExpression
+  | JSXTextExpression
 
 export interface Estree {
   body?: {

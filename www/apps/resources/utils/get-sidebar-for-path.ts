@@ -76,6 +76,7 @@ const sidebarMappings: {
       "/references/event-service",
       "/references/cache-service",
       "/references/file-service",
+      "/references/analytics",
     ],
   },
   {
@@ -116,7 +117,7 @@ const sidebarMappings: {
       "/medusa-workflows-reference",
       "/references/core-flows",
       "/references/data-model",
-      "/events-reference",
+      "/references/events",
       "/references/helper-steps",
       "/service-factory-reference",
       "/test-tools-reference",

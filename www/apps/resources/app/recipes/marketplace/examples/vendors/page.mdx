@@ -67,7 +67,7 @@ Start by installing the Medusa application on your machine with the following co
 npx create-medusa-app@latest
 ```
 
-You'll first be asked for the project's name. You can also optionally choose to install the [Next.js starter storefront](../../../../nextjs-starter/page.mdx).
+You'll first be asked for the project's name. You can also optionally choose to install the [Next.js Starter Storefront](../../../../nextjs-starter/page.mdx).
 
 Afterwards, the installation process will start, which will install the Medusa application in a directory with your project's name. If you chose to install the Next.js starter, it'll be installed in a separate directory with the `{project-name}-storefront` name.
 
@@ -319,7 +319,7 @@ import ProductModule from "@medusajs/medusa/product"
 export default defineLink(
   MarketplaceModule.linkable.vendor,
   {
-    linkable: ProductModule.linkable.product,
+    linkable: ProductModule.linkable.product.id,
     isList: true,
   }
 )
@@ -340,7 +340,7 @@ import OrderModule from "@medusajs/medusa/order"
 export default defineLink(
   MarketplaceModule.linkable.vendor,
   {
-    linkable: OrderModule.linkable.order,
+    linkable: OrderModule.linkable.order.id,
     isList: true,
   }
 )
@@ -588,6 +588,7 @@ export const vendorWorkflowHighlights = [
 import { 
   createWorkflow,
   WorkflowResponse,
+  transform,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   setAuthAppMetadataStep,
@@ -636,7 +637,7 @@ const createVendorWorkflow = createWorkflow(
       actorType: "vendor",
       value: vendorAdmin.id,
     })
-
+    // @ts-ignore
     const { data: vendorWithAdmin } = useQueryGraphStep({
       entity: "vendor",
       fields: ["id", "name", "handle", "logo", "admins.*"],
@@ -651,7 +652,7 @@ const createVendorWorkflow = createWorkflow(
   }
 )
 
-export default createVendorAdminWorkflow
+export default createVendorWorkflow
 ```
 
 You create a workflow with `createWorkflow` from the Workflows SDK. It accepts two parameters:
@@ -885,7 +886,7 @@ You can now retrieve an authenticated token of the vendor admin. To do that, sen
 curl -X POST 'http://localhost:9000/auth/vendor/emailpass' \
 -H 'Content-Type: application/json' \
 --data-raw '{
-    "email": "vendor@example.com,
+    "email": "vendor@example.com",
     "password": "supersecret"
 }'
 ```

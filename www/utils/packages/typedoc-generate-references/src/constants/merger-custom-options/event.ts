@@ -10,6 +10,7 @@ const eventOptions: FormattingOptionsType = {
       slug: "/references/event-service",
       tags: ["event", "server", "how to"],
       sidebar_label: "Use Event Module",
+      keywords: ["event", "provider", "integration"],
     },
     reflectionTitle: {
       fullReplacement: "How to Use Event Module",

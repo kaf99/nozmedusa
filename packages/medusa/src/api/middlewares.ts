@@ -38,6 +38,7 @@ import { adminStockLocationRoutesMiddlewares } from "./admin/stock-locations/mid
 import { adminStoreRoutesMiddlewares } from "./admin/stores/middlewares"
 import { adminTaxRateRoutesMiddlewares } from "./admin/tax-rates/middlewares"
 import { adminTaxRegionRoutesMiddlewares } from "./admin/tax-regions/middlewares"
+import { adminTaxProviderRoutesMiddlewares } from "./admin/tax-providers/middlewares"
 import { adminUploadRoutesMiddlewares } from "./admin/uploads/middlewares"
 import { adminUserRoutesMiddlewares } from "./admin/users/middlewares"
 import { adminWorkflowsExecutionsMiddlewares } from "./admin/workflows-executions/middlewares"
@@ -120,6 +121,7 @@ export default defineMiddlewares([
   ...adminRefundReasonsRoutesMiddlewares,
   ...adminExchangeRoutesMiddlewares,
   ...adminProductVariantRoutesMiddlewares,
+  ...adminTaxProviderRoutesMiddlewares,
   ...adminOrderEditRoutesMiddlewares,
   ...adminPaymentCollectionsMiddlewares,
 ])

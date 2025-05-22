@@ -9,7 +9,7 @@ export const sdk = new Medusa({
 })
 
 sdk.admin.product.createOption(
-  "prod_123", 
+  "prod_123",
   {
     title: "Color",
     values: ["Green", "Blue"]

@@ -55,7 +55,7 @@ moduleIntegrationTestRunner<Service>({
         service: ProductModuleService,
       }).linkable
 
-      expect(Object.keys(linkable)).toHaveLength(8)
+      expect(Object.keys(linkable)).toHaveLength(9)
       expect(Object.keys(linkable)).toEqual(
         expect.arrayContaining([
           "product",
@@ -66,6 +66,7 @@ moduleIntegrationTestRunner<Service>({
           "productTag",
           "productCollection",
           "productCategory",
+          "productImage",
         ])
       )
 
@@ -151,6 +152,15 @@ moduleIntegrationTestRunner<Service>({
             primaryKey: "id",
             serviceName: "product",
             field: "productCategory",
+          },
+        },
+        productImage: {
+          id: {
+            entity: "ProductImage",
+            field: "productImage",
+            linkable: "product_image_id",
+            primaryKey: "id",
+            serviceName: "product",
           },
         },
       })

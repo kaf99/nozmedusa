@@ -8,7 +8,7 @@ import {
   OrderWorkflow,
   ProductVariantDTO,
 } from "@medusajs/framework/types"
-import { FulfillmentEvents, MathBN, Modules } from "@medusajs/framework/utils"
+import { FulfillmentWorkflowEvents, MathBN, Modules } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -243,7 +243,7 @@ export const createOrderShipmentWorkflow = createWorkflow(
     )
 
     emitEventStep({
-      eventName: FulfillmentEvents.SHIPMENT_CREATED,
+      eventName: FulfillmentWorkflowEvents.SHIPMENT_CREATED,
       data: { id: shipment.id, no_notification: input.no_notification },
     })
 

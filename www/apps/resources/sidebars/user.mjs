@@ -117,7 +117,7 @@ export const userSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/user/events",
+            path: "/references/user/events",
             title: "Events Reference",
           },
           {

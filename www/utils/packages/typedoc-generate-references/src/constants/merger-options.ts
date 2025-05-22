@@ -30,6 +30,9 @@ const allowedProjectDocuments: AllowedProjectDocumentsOption = {
     [ReflectionKind.Method]: true,
     [ReflectionKind.Property]: true,
   },
+  "module-events": {
+    [ReflectionKind.Namespace]: true,
+  },
 }
 
 modules.forEach((module) => {

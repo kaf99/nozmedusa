@@ -78,4 +78,9 @@ export type Context<TManager = unknown> = {
    * preventReleaseEvents
    */
   preventReleaseEvents?: boolean
+
+  /**
+   * A boolean value indicating whether the current workflow execution is being cancelled.
+   */
+  isCancelling?: boolean
 }

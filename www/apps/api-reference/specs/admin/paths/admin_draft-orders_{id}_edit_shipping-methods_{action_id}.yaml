@@ -62,6 +62,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateDraftOrderActionShippingMethodWorkflow
+  x-events: []
 delete:
   operationId: DeleteDraftOrdersIdEditShippingMethodsAction_id
   summary: Remove New Shipping Method from Draft Order
@@ -121,3 +122,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeDraftOrderActionShippingMethodWorkflow
+  x-events: []

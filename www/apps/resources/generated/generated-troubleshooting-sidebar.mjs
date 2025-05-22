@@ -187,7 +187,7 @@ const generatedgeneratedTroubleshootingSidebarSidebar = {
           "isPathHref": true,
           "type": "link",
           "title": "ValidationError",
-          "link": "/troubleshooting/validation-error",
+          "path": "/troubleshooting/validation-error",
           "children": []
         }
       ]
@@ -247,6 +247,14 @@ const generatedgeneratedTroubleshootingSidebarSidebar = {
           "type": "link",
           "path": "/troubleshooting/medusa-admin/blocked-request",
           "title": "Blocked Request",
+          "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "link",
+          "path": "/troubleshooting/medusa-admin/build-error",
+          "title": "index.html Error",
           "children": []
         }
       ]

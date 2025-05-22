@@ -138,7 +138,7 @@ export const cartSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/cart/events",
+            path: "/references/cart/events",
             title: "Events Reference",
           },
           {

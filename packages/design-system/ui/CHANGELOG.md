@@ -1,5 +1,35 @@
 # @medusajs/ui
 
+## 4.0.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/icons@2.8.3
+
+## 4.0.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/icons@2.8.2
+
+## 4.0.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/icons@2.8.1
+
+## 4.0.10
+
+### Patch Changes
+
+- [#12309](https://github.com/medusajs/medusa/pull/12309) [`4f6362b1cb1b84f01cc4cd277981aae7ae5797c9`](https://github.com/medusajs/medusa/commit/4f6362b1cb1b84f01cc4cd277981aae7ae5797c9) Thanks [@fPolic](https://github.com/fPolic)! - fix(design-system): filter/sorting menu tooltip error
+
+- Updated dependencies []:
+  - @medusajs/icons@2.8.0
+
 ## 4.0.9
 
 ### Patch Changes

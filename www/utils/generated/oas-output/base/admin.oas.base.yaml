@@ -253,7 +253,8 @@ tags:
       $ref: "#/components/schemas/AdminPayment"
   - name: Plugins
     description: >
-      A plugin is a package of reusable Medusa customizations that you can install in any Medusa application.
+      A plugin is a package of reusable Medusa customizations that you can
+      install in any Medusa application.
 
       Plugins can be used to add new functionality, such as wishlists, or integrate third-party services, such as payment providers.
 
@@ -516,6 +517,17 @@ tags:
       url: https://docs.medusajs.com/resources/commerce-modules/store
     x-associatedSchema:
       $ref: "#/components/schemas/AdminStore"
+  - name: Tax Providers
+    description: >
+      A tax provider is a third-party integration or custom logic used to
+      calculate taxes for a cart or an order.
+
+      These API routes allow admin users to manage tax providers installed in their Medusa application.
+    externalDocs:
+      description: Learn more about the Tax Module Providers
+      url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-provider
+    x-associatedSchema:
+      $ref: "#/components/schemas/AdminTaxProvider"
   - name: Tax Rates
     description: >
       A tax rate is a percentage amount used to calculate the tax amount of each

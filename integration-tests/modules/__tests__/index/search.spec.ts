@@ -59,7 +59,7 @@ async function populateData(
 }
 
 medusaIntegrationTestRunner({
-  testSuite: ({ getContainer, dbConnection, api, dbConfig }) => {
+  testSuite: ({ getContainer, dbConnection, api }) => {
     let indexEngine: IndexTypes.IIndexService
     let appContainer
 

@@ -67,6 +67,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateRequestItemReturnWorkflow
+  x-events: []
 delete:
   operationId: DeleteClaimsIdInboundItemsAction_id
   summary: Remove an Inbound Item from Claim
@@ -130,3 +131,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeItemReturnActionWorkflow
+  x-events: []

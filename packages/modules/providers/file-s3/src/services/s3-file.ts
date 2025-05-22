@@ -17,6 +17,7 @@ import {
   MedusaError,
 } from "@medusajs/framework/utils"
 import path from "path"
+import { Readable } from "stream"
 import { ulid } from "ulid"
 
 type InjectedDependencies = {
@@ -214,5 +215,45 @@ export class S3FileService extends AbstractFileProviderService {
       url: signedUrl,
       key: fileKey,
     }
+  }
+
+  async getDownloadStream(
+    file: FileTypes.ProviderGetFileDTO
+  ): Promise<Readable> {
+    if (!file?.fileKey) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `No fileKey provided`
+      )
+    }
+
+    const fileKey = `${this.config_.prefix}${file.fileKey}`
+    const response = await this.client_.send(
+      new GetObjectCommand({
+        Key: fileKey,
+        Bucket: this.config_.bucket,
+      })
+    )
+
+    return response.Body! as Readable
+  }
+
+  async getAsBuffer(file: FileTypes.ProviderGetFileDTO): Promise<Buffer> {
+    if (!file?.fileKey) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `No fileKey provided`
+      )
+    }
+
+    const fileKey = `${this.config_.prefix}${file.fileKey}`
+    const response = await this.client_.send(
+      new GetObjectCommand({
+        Key: fileKey,
+        Bucket: this.config_.bucket,
+      })
+    )
+
+    return Buffer.from(await response.Body!.transformToByteArray())
   }
 }

@@ -107,7 +107,7 @@ Start by installing the Medusa application on your machine with the following co
 npx create-medusa-app@latest
 ```
 
-You'll first be asked for the project's name. You can also optionally choose to install the [Next.js starter storefront](../../../nextjs-starter/page.mdx).
+You'll first be asked for the project's name. You can also optionally choose to install the [Next.js Starter Storefront](../../../nextjs-starter/page.mdx).
 
 Afterwards, the installation process will start, which will install the Medusa application in a directory with your project's name. If you chose to install the Next.js starter, it'll be installed in a separate directory with the `{project-name}-storefront` name.
 
@@ -371,7 +371,7 @@ import CartModule from "@medusajs/medusa/cart"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "cart_id",
   },
   CartModule.linkable.cart,
@@ -402,7 +402,7 @@ import CustomerModule from "@medusajs/medusa/customer"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "customer_id",
   },
   CustomerModule.linkable.customer,
@@ -427,7 +427,7 @@ import OrderModule from "@medusajs/medusa/order"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "order_change_id",
   },
   OrderModule.linkable.orderChange,
@@ -452,11 +452,11 @@ import OrderModule from "@medusajs/medusa/order"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "draft_order_id",
   },
   {
-    ...OrderModule.linkable.order.id,
+    linkable: OrderModule.linkable.order.id,
     alias: "draft_order",
   },
   {

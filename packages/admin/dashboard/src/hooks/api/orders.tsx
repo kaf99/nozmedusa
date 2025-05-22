@@ -220,6 +220,14 @@ export const useCancelOrderFulfillment = (
         queryKey: ordersQueryKeys.preview(orderId),
       })
 
+      queryClient.invalidateQueries({
+        queryKey: reservationItemsQueryKeys.lists(),
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: inventoryItemsQueryKeys.details(),
+      })
+
       options?.onSuccess?.(data, variables, context)
     },
     ...options,

@@ -56,6 +56,14 @@ export const server = [
     "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/product-reviews"
   },
   {
+    "title": "Re-Order",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/re-order"
+  },
+  {
+    "title": "Saved Payment Methods",
+    "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/saved-payment-methods"
+  },
+  {
     "title": "Create Cache Module",
     "path": "https://docs.medusajs.com/resources/infrastructure-modules/cache/create"
   },
@@ -72,8 +80,16 @@ export const server = [
     "path": "https://docs.medusajs.com/resources/infrastructure-modules/workflow-engine/how-to-use"
   },
   {
+    "title": "Integrate Contentful",
+    "path": "https://docs.medusajs.com/resources/integrations/guides/contentful"
+  },
+  {
     "title": "Build Wishlist Plugin",
     "path": "https://docs.medusajs.com/resources/plugins/guides/wishlist"
+  },
+  {
+    "title": "Bundled Products",
+    "path": "https://docs.medusajs.com/resources/recipes/bundled-products/examples/standard"
   },
   {
     "title": "Create Auth Provider",

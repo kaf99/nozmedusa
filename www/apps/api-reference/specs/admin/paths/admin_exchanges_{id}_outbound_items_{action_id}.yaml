@@ -84,6 +84,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateExchangeAddItemWorkflow
+  x-events: []
 delete:
   operationId: DeleteExchangesIdOutboundItemsAction_id
   summary: Remove Outbound Item from Exchange
@@ -165,3 +166,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeItemExchangeActionWorkflow
+  x-events: []

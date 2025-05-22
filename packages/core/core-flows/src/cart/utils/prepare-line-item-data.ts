@@ -127,8 +127,8 @@ export function prepareLineItemData(data: PrepareLineItemDataInput) {
 
   let lineItem: any = {
     quantity: item?.quantity,
-    title: variant?.title ?? item?.title,
-    subtitle: variant?.product?.title ?? item?.subtitle,
+    title: variant?.product?.title ?? item?.title,
+    subtitle: variant?.title ?? item?.subtitle,
     thumbnail: variant?.product?.thumbnail ?? item?.thumbnail,
 
     product_id: variant?.product?.id ?? item?.product_id,

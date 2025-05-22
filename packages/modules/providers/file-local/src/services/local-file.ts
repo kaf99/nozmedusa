@@ -3,8 +3,10 @@ import {
   AbstractFileProviderService,
   MedusaError,
 } from "@medusajs/framework/utils"
+import { createReadStream } from "fs"
 import fs from "fs/promises"
 import path from "path"
+import type { Readable } from "stream"
 
 export class LocalFileService extends AbstractFileProviderService {
   static identifier = "localfs"
@@ -83,6 +85,26 @@ export class LocalFileService extends AbstractFileProviderService {
     return
   }
 
+  async getDownloadStream(
+    file: FileTypes.ProviderGetFileDTO
+  ): Promise<Readable> {
+    const baseDir = file.fileKey.startsWith("private-")
+      ? this.privateUploadDir_
+      : this.uploadDir_
+
+    const filePath = this.getUploadFilePath(baseDir, file.fileKey)
+    return createReadStream(filePath)
+  }
+
+  async getAsBuffer(file: FileTypes.ProviderGetFileDTO): Promise<Buffer> {
+    const baseDir = file.fileKey.startsWith("private-")
+      ? this.privateUploadDir_
+      : this.uploadDir_
+
+    const filePath = this.getUploadFilePath(baseDir, file.fileKey)
+    return fs.readFile(filePath)
+  }
+
   // The local file provider doesn't support presigned URLs for private files (i.e files not placed in /static).
   async getPresignedDownloadUrl(
     file: FileTypes.ProviderGetFileDTO
@@ -102,6 +124,47 @@ export class LocalFileService extends AbstractFileProviderService {
     }
 
     return this.getUploadFileUrl(file.fileKey)
+  }
+
+  /**
+   * Returns the pre-signed URL that the client (frontend) can use to trigger
+   * a file upload. In this case, the Medusa backend will implement the
+   * "/upload" endpoint to perform the file upload.
+   *
+   * Since, we do not want the client to perform link detection on the frontend
+   * and then prepare a different kind of request for cloud providers and different
+   * request for the local server, we will have to make these URLs self sufficient.
+   *
+   * What is a self sufficient URL
+   *
+   * - There should be no need to specify the MIME type or filename separately in request body (cloud providers don't allow it).
+   * - There should be no need to pass auth headers like cookies. Again cloud providers
+   *   won't allow it and will likely result in a CORS error.
+   */
+  async getPresignedUploadUrl(
+    fileData: FileTypes.ProviderGetPresignedUploadUrlDTO
+  ): Promise<FileTypes.ProviderFileResultDTO> {
+    if (!fileData?.filename) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `No filename provided`
+      )
+    }
+
+    const uploadUrl = new URL(
+      "upload",
+      `${this.backendUrl_.replace(/\/$/, "")}/`
+    )
+
+    uploadUrl.searchParams.set("filename", fileData.filename)
+    if (fileData.mimeType) {
+      uploadUrl.searchParams.set("type", fileData.mimeType)
+    }
+
+    return {
+      url: uploadUrl.toString(),
+      key: fileData.filename,
+    }
   }
 
   private getUploadFilePath = (baseDir: string, fileKey: string) => {

@@ -1,3 +1,4 @@
+import type { Readable } from "stream"
 import { Constructor, FileTypes } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import { FileProviderRegistrationPrefix } from "@types"
@@ -67,5 +68,13 @@ export default class FileProviderService {
     }
 
     return this.fileProvider_.getPresignedUploadUrl(fileData)
+  }
+
+  getDownloadStream(fileData: FileTypes.ProviderGetFileDTO): Promise<Readable> {
+    return this.fileProvider_.getDownloadStream(fileData)
+  }
+
+  getAsBuffer(fileData: FileTypes.ProviderGetFileDTO): Promise<Buffer> {
+    return this.fileProvider_.getAsBuffer(fileData)
   }
 }

@@ -19,12 +19,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: [
-      "**/references/**/*",
-      "**/events-reference/**/*",
-      "**/events/_content/**/*",
-      "**/events/_content.mdx",
-    ],
+    ignores: ["**/references/**/*"],
   },
   {
     plugins: {

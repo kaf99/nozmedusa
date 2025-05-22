@@ -252,6 +252,10 @@ export const step = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/validateDraftOrderStep"
   },
   {
+    "title": "convertDraftOrderStep",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/convertDraftOrderStep"
+  },
+  {
     "title": "updateDraftOrderStep",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/updateDraftOrderStep"
   },
@@ -1028,12 +1032,8 @@ export const step = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/getProductsStep"
   },
   {
-    "title": "groupProductsForBatchStep",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/groupProductsForBatchStep"
-  },
-  {
-    "title": "parseProductCsvStep",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/parseProductCsvStep"
+    "title": "normalizeCsvStep",
+    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/normalizeCsvStep"
   },
   {
     "title": "updateCollectionsStep",

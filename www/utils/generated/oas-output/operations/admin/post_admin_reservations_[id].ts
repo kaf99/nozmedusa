@@ -101,6 +101,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: updateReservationsWorkflow
+ * x-events: []
  * 
 */
 

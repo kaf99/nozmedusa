@@ -67,6 +67,7 @@ export const howToTutorialsSidebar = [
   {
     type: "category",
     title: "Tutorials",
+    sort_sidebar: "alphabetize",
     description: `Tutorials are step-by-step guides that take you through implementing a specific use case in Medusa. You can follow these guides whether you're a beginner or an experienced Medusa developer.
 
 While tutorials show you a specific use case, they also help you understand how to implement similar use cases in your own projects. Also, you can implement the use case in a tutorial differently to fit your business requirements.`,
@@ -77,6 +78,13 @@ While tutorials show you a specific use case, they also help you understand how 
         path: "/how-to-tutorials/tutorials/abandoned-cart",
         description:
           "Learn how to send abandoned cart notifications to customers.",
+      },
+      {
+        type: "ref",
+        title: "Bundled Products",
+        path: "/recipes/bundled-products/examples/standard",
+        description:
+          "Learn how to implement bundled products in your Medusa store.",
       },
       {
         type: "link",
@@ -91,6 +99,13 @@ While tutorials show you a specific use case, they also help you understand how 
         path: "/how-to-tutorials/tutorials/loyalty-points",
         description:
           "Learn how to implement a loyalty points system in your Medusa store.",
+      },
+      {
+        type: "ref",
+        title: "Localization with Contentful",
+        path: "/integrations/guides/contentful",
+        description:
+          "Learn how to implement localization in Medusa by integrating Contentful.",
       },
       {
         type: "ref",
@@ -111,6 +126,20 @@ While tutorials show you a specific use case, they also help you understand how 
         path: "/examples/guides/quote-management",
         description:
           "Learn how to implement quote management, useful for B2B use cases.",
+      },
+      {
+        type: "link",
+        title: "Re-Order",
+        path: "/how-to-tutorials/tutorials/re-order",
+        description:
+          "Learn how to allow customers to re-order previous orders.",
+      },
+      {
+        type: "link",
+        title: "Saved Payment Methods",
+        path: "/how-to-tutorials/tutorials/saved-payment-methods",
+        description:
+          "Learn how to implement saved payment methods in your Medusa store.",
       },
       {
         type: "link",

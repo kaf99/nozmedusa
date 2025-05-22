@@ -8,6 +8,7 @@ import {
   ChangeActionType,
   MathBN,
   OrderChangeStatus,
+  OrderEditWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -17,7 +18,7 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import { prepareConfirmInventoryInput } from "../../../cart/utils/prepare-confirm-inventory-input"
-import { useRemoteQueryStep } from "../../../common"
+import { emitEventStep, useRemoteQueryStep } from "../../../common"
 import { deleteReservationsByLineItemsStep } from "../../../reservation"
 import { previewOrderChangeStep } from "../../steps"
 import { confirmOrderChanges } from "../../steps/confirm-order-changes"
@@ -285,6 +286,21 @@ export const confirmOrderEditRequestWorkflow = createWorkflow(
       input: {
         order_id: order.id,
       },
+    })
+
+    const eventData = transform(
+      { order, orderChange },
+      ({ order, orderChange }) => {
+        return {
+          order_id: order.id,
+          actions: orderChange.actions,
+        }
+      }
+    )
+
+    emitEventStep({
+      eventName: OrderEditWorkflowEvents.CONFIRMED,
+      data: eventData,
     })
 
     return new WorkflowResponse(orderPreview)

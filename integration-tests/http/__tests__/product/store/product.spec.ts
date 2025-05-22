@@ -2380,6 +2380,7 @@ medusaIntegrationTestRunner({
           `/admin/tax-regions`,
           {
             country_code: "us",
+            provider_id: "tp_system",
             default_tax_rate: {
               code: "default",
               rate: 5,
@@ -2393,6 +2394,7 @@ medusaIntegrationTestRunner({
           `/admin/tax-regions`,
           {
             country_code: "it",
+            provider_id: "tp_system",
             default_tax_rate: {
               code: "default",
               rate: 10,
@@ -2406,6 +2408,7 @@ medusaIntegrationTestRunner({
           `/admin/tax-regions`,
           {
             country_code: "dk",
+            provider_id: "tp_system",
             default_tax_rate: {
               code: "default",
               rate: 20,

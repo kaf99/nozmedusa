@@ -143,7 +143,7 @@ medusaIntegrationTestRunner({
         )
 
         expect(resultset.metadata).toEqual({
-          count: 2,
+          estimate_count: expect.any(Number),
           skip: 0,
           take: 10,
         })
@@ -175,7 +175,18 @@ medusaIntegrationTestRunner({
                     },
                   },
                 ],
-                prices: expect.arrayContaining([]),
+                prices: expect.arrayContaining([
+                  {
+                    currency_code: "CAD",
+                    amount: 20,
+                    id: expect.any(String),
+                  },
+                  {
+                    currency_code: "USD",
+                    amount: 80,
+                    id: expect.any(String),
+                  },
+                ]),
               },
               {
                 sku: "extra-variant-1",
@@ -372,6 +383,39 @@ medusaIntegrationTestRunner({
             ],
           },
         ])
+      })
+
+      it("should use query.index to get products by an array of handles", async () => {
+        await populateData(api)
+
+        const query = appContainer.resolve(
+          ContainerRegistrationKeys.QUERY
+        ) as RemoteQueryFunction
+
+        const resultset = await fetchAndRetry(
+          async () =>
+            await query.index({
+              entity: "product",
+              fields: ["id"],
+              filters: {
+                handle: ["extra-product", "test-product"],
+              },
+              pagination: {
+                take: 10,
+                skip: 0,
+                order: {
+                  "variants.prices.amount": "DESC",
+                },
+              },
+            }),
+          ({ data }) => data.length > 0,
+          {
+            retries: 3,
+            waitSeconds: 3,
+          }
+        )
+
+        expect(resultset.data.length).toEqual(2)
       })
     })
   },

@@ -2,10 +2,10 @@ import { TypeList } from "docs-ui"
 
 # batchVariantInventoryItems
 
-This method manages a product's variant's inventories to associate them with inventory items, 
+This method manages a product's variant's inventories to associate them with inventory items,
 update their inventory items, or delete their association with inventory items.
 
-It sends a request to the 
+It sends a request to the
 [Manage Variant Inventory](https://docs.medusajs.com/api/admin#products\_postproductsidvariantsinventoryitemsbatch)
 API route.
 
@@ -13,7 +13,7 @@ API route.
 
 ```ts
 sdk.admin.product.batchVariantInventoryItems(
-  "prod_123", 
+  "prod_123",
   {
     create: [
       {

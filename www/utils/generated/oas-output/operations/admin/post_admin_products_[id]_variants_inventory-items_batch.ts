@@ -104,7 +104,7 @@
  *       })
  * 
  *       sdk.admin.product.batchVariantInventoryItems(
- *         "prod_123", 
+ *         "prod_123",
  *         {
  *           create: [
  *             {
@@ -158,6 +158,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: batchLinksWorkflow
+ * x-events: []
  * 
 */
 

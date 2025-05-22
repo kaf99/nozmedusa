@@ -3,13 +3,20 @@ import {
   IDistributedSchedulerStorage,
   IDistributedTransactionStorage,
   SchedulerOptions,
+  SkipCancelledExecutionError,
   SkipExecutionError,
   TransactionCheckpoint,
+  TransactionContext,
   TransactionFlow,
   TransactionOptions,
   TransactionStep,
+  TransactionStepError,
 } from "@medusajs/framework/orchestration"
-import { Logger, ModulesSdkTypes } from "@medusajs/framework/types"
+import {
+  InferEntityType,
+  Logger,
+  ModulesSdkTypes,
+} from "@medusajs/framework/types"
 import {
   MedusaError,
   TransactionState,
@@ -19,6 +26,7 @@ import {
 } from "@medusajs/framework/utils"
 import { WorkflowOrchestratorService } from "@services"
 import { type CronExpression, parseExpression } from "cron-parser"
+import { WorkflowExecution } from "../models/workflow-execution"
 
 function parseNextExecution(
   optionsOrExpression: SchedulerOptions | CronExpression | string | number
@@ -86,6 +94,7 @@ export class InMemoryDistributedTransactionStorage
       {
         workflow_id: data.flow.modelId,
         transaction_id: data.flow.transactionId,
+        run_id: data.flow.runId,
         execution: data.flow,
         context: {
           data: data.context,
@@ -102,13 +111,16 @@ export class InMemoryDistributedTransactionStorage
       {
         workflow_id: data.flow.modelId,
         transaction_id: data.flow.transactionId,
+        run_id: data.flow.runId,
       },
     ])
   }
 
   async get(
     key: string,
-    options?: TransactionOptions
+    options?: TransactionOptions & {
+      isCancelling?: boolean
+    }
   ): Promise<TransactionCheckpoint | undefined> {
     const data = this.storage.get(key)
 
@@ -122,23 +134,53 @@ export class InMemoryDistributedTransactionStorage
     }
 
     const [_, workflowId, transactionId] = key.split(":")
-    const trx = await this.workflowExecutionService_
-      .retrieve(
-        {
-          workflow_id: workflowId,
-          transaction_id: transactionId,
-        },
-        {
-          select: ["execution", "context"],
-        }
-      )
-      .catch(() => undefined)
+    const trx: InferEntityType<typeof WorkflowExecution> | undefined =
+      await this.workflowExecutionService_
+        .list(
+          {
+            workflow_id: workflowId,
+            transaction_id: transactionId,
+          },
+          {
+            select: ["execution", "context"],
+            order: {
+              id: "desc",
+            },
+            take: 1,
+          }
+        )
+        .then((trx) => trx[0])
+        .catch(() => undefined)
 
     if (trx) {
+      const execution = trx.execution as TransactionFlow
+
+      if (!idempotent) {
+        const isFailedOrReverted = [
+          TransactionState.REVERTED,
+          TransactionState.FAILED,
+        ].includes(execution.state)
+
+        const isDone = execution.state === TransactionState.DONE
+
+        const isCancellingAndFailedOrReverted =
+          options?.isCancelling && isFailedOrReverted
+
+        const isNotCancellingAndDoneOrFailedOrReverted =
+          !options?.isCancelling && (isDone || isFailedOrReverted)
+
+        if (
+          isCancellingAndFailedOrReverted ||
+          isNotCancellingAndDoneOrFailedOrReverted
+        ) {
+          return
+        }
+      }
+
       return {
-        flow: trx.execution,
-        context: trx.context.data,
-        errors: trx.context.errors,
+        flow: trx.execution as TransactionFlow,
+        context: trx.context?.data as TransactionContext,
+        errors: trx.context?.errors as TransactionStepError[],
       }
     }
 
@@ -181,6 +223,20 @@ export class InMemoryDistributedTransactionStorage
     }
 
     // Store in memory
+    const isNotStarted = data.flow.state === TransactionState.NOT_STARTED
+    const isManualTransactionId = !data.flow.transactionId.startsWith("auto-")
+
+    if (isNotStarted && isManualTransactionId) {
+      const storedData = this.storage.get(key)
+      if (storedData) {
+        throw new MedusaError(
+          MedusaError.Types.INVALID_ARGUMENT,
+          "Transaction already started for transactionId: " +
+            data.flow.transactionId
+        )
+      }
+    }
+
     this.storage.set(key, data)
 
     // Optimize DB operations - only perform when necessary
@@ -206,15 +262,23 @@ export class InMemoryDistributedTransactionStorage
     key: string
     options?: TransactionOptions
   }) {
-    const isInitialCheckpoint = data.flow.state === TransactionState.NOT_STARTED
+    const isInitialCheckpoint = [TransactionState.NOT_STARTED].includes(
+      data.flow.state
+    )
 
     /**
      * In case many execution can succeed simultaneously, we need to ensure that the latest
      * execution does continue if a previous execution is considered finished
      */
     const currentFlow = data.flow
+
+    const getOptions = {
+      ...options,
+      isCancelling: !!data.flow.cancelledAt,
+    } as Parameters<typeof this.get>[1]
+
     const { flow: latestUpdatedFlow } =
-      (await this.get(key, options)) ??
+      (await this.get(key, getOptions)) ??
       ({ flow: {} } as { flow: TransactionFlow })
 
     if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
@@ -225,6 +289,19 @@ export class InMemoryDistributedTransactionStorage
        * The already finished execution would have deleted the checkpoint already.
        */
       throw new SkipExecutionError("Already finished by another execution")
+    }
+
+    // First ensure that the latest execution was not cancelled, otherwise we skip the execution
+    const latestTransactionCancelledAt = latestUpdatedFlow.cancelledAt
+    const currentTransactionCancelledAt = currentFlow.cancelledAt
+
+    if (
+      !!latestTransactionCancelledAt &&
+      currentTransactionCancelledAt == null
+    ) {
+      throw new SkipCancelledExecutionError(
+        "Workflow execution has been cancelled during the execution"
+      )
     }
 
     const currentFlowSteps = Object.values(currentFlow.steps || {})

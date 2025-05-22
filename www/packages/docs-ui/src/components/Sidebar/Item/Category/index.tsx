@@ -64,7 +64,13 @@ export const SidebarItemCategory = ({
   }, [persistCategoryState])
 
   const handleOpen = () => {
-    item.onOpen?.()
+    if (!open) {
+      item.onOpen?.()
+    }
+    if (persistCategoryState) {
+      updatePersistedCategoryState(item.title, !open)
+    }
+    setOpen((prev) => !prev)
   }
 
   const isTitleOneWord = useMemo(
@@ -87,15 +93,7 @@ export const SidebarItemCategory = ({
             !isTitleOneWord && "break-words"
           )}
           tabIndex={-1}
-          onClick={() => {
-            if (!open) {
-              handleOpen()
-            }
-            if (persistCategoryState) {
-              updatePersistedCategoryState(item.title, !open)
-            }
-            setOpen((prev) => !prev)
-          }}
+          onClick={handleOpen}
         >
           <span
             className={clsx(

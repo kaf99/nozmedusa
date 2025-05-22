@@ -10,6 +10,7 @@ const EXCLUDED_TAGS = [
   "@version",
   "@tags",
   "@summary",
+  "@workflowEvent",
 ]
 
 export default function () {

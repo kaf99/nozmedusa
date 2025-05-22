@@ -642,6 +642,16 @@ export const generatedSidebars = [
                 "children": [],
                 "chapterTitle": "3.6.11. Retrieve Custom Links",
                 "number": "3.6.11."
+              },
+              {
+                "loaded": true,
+                "isPathHref": true,
+                "type": "link",
+                "path": "/learn/fundamentals/api-routes/override",
+                "title": "Override API Routes",
+                "children": [],
+                "chapterTitle": "3.6.12. Override API Routes",
+                "number": "3.6.12."
               }
             ],
             "chapterTitle": "3.6. API Routes",

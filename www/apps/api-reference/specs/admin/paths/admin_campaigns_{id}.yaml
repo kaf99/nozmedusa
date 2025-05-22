@@ -196,6 +196,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateCampaignsWorkflow
+  x-events: []
 delete:
   operationId: DeleteCampaignsId
   summary: Delete a Campaign
@@ -264,3 +265,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deleteCampaignsWorkflow
+  x-events: []

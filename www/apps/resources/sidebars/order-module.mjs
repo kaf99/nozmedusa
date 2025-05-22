@@ -166,7 +166,7 @@ export const orderSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/order/events",
+            path: "/references/order/events",
             title: "Events Reference",
           },
           {

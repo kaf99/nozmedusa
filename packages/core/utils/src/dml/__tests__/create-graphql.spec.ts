@@ -69,7 +69,7 @@ describe("GraphQL builder", () => {
         id: ID!
         username: String!
         email: Email!
-        spend_limit: String!
+        spend_limit: Float!
         phones: [String]!
         group_id:String!
         group: Group!

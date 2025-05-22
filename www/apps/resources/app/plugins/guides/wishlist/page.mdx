@@ -95,7 +95,7 @@ Start by installing the Medusa application on your machine with the following co
 npx create-medusa-app@latest
 ```
 
-You'll be asked for the project's name. You can also optionally choose to install the [Next.js starter storefront](../../../nextjs-starter/page.mdx).
+You'll be asked for the project's name. You can also optionally choose to install the [Next.js Starter Storefront](../../../nextjs-starter/page.mdx).
 
 Afterward, the installation process will start, which will install the Medusa application in a directory with your project's name. If you chose to install the Next.js starter, it'll be installed in a separate directory with the `{project-name}-storefront` name.
 
@@ -419,7 +419,7 @@ import CustomerModule from "@medusajs/medusa/customer"
 
 export default defineLink(
   {
-    ...WishlistModule.linkable.wishlist.id,
+    linkable: WishlistModule.linkable.wishlist.id,
     field: "customer_id",
   },
   CustomerModule.linkable.customer.id,
@@ -446,7 +446,7 @@ import SalesChannelModule from "@medusajs/medusa/sales-channel"
 
 export default defineLink(
   {
-    ...WishlistModule.linkable.wishlist.id,
+    linkable: WishlistModule.linkable.wishlist.id,
     field: "sales_channel_id",
   },
   SalesChannelModule.linkable.salesChannel,
@@ -469,7 +469,7 @@ import ProductModule from "@medusajs/medusa/product"
 
 export default defineLink(
   {
-    ...WishlistModule.linkable.wishlistItem.id,
+    linkable: WishlistModule.linkable.wishlistItem.id,
     field: "product_variant_id",
   },
   ProductModule.linkable.productVariant,

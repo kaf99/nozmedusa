@@ -525,18 +525,22 @@
     "fields": {
       "title": {
         "label": "Titel",
-        "hint": "Geben Sie Ihrem Produkt einen kurzen und klaren Titel.<0/>50-60 Zeichen ist die empfohlene Länge für Suchmaschinen."
+        "hint": "Geben Sie Ihrem Produkt einen kurzen und klaren Titel.<0/>50-60 Zeichen ist die empfohlene Länge für Suchmaschinen.",
+        "placeholder": "Winterjacke"
       },
       "subtitle": {
-        "label": "Untertitel"
+        "label": "Untertitel",
+        "placeholder": "Warm und gemütlich"
       },
       "handle": {
         "label": "Handle",
-        "tooltip": "Der Handle wird verwendet, um auf das Produkt in Ihrer Storefront zu verweisen. Wenn nicht angegeben, wird das Handle aus dem Produkttitel generiert."
+        "tooltip": "Der Handle wird verwendet, um auf das Produkt in Ihrer Storefront zu verweisen. Wenn nicht angegeben, wird das Handle aus dem Produkttitel generiert.",
+        "placeholder": "winterjacke"
       },
       "description": {
         "label": "Beschreibung",
-        "hint": "Geben Sie Ihrem Produkt eine kurze und klare Beschreibung.<0/>120-160 Zeichen ist die empfohlene Länge für Suchmaschinen."
+        "hint": "Geben Sie Ihrem Produkt eine kurze und klare Beschreibung.<0/>120-160 Zeichen ist die empfohlene Länge für Suchmaschinen.",
+        "placeholder": "Eine warme und gemütliche Jacke"
       },
       "discountable": {
         "label": "Rabattierbar",

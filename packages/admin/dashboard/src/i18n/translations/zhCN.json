@@ -537,18 +537,22 @@
     "fields": {
       "title": {
         "label": "标题",
-        "hint": "为您的产品提供一个简短明确的标题。<0/>搜索引擎推荐的长度是 50-60 个字符。"
+        "hint": "为您的产品提供一个简短明确的标题。<0/>搜索引擎推荐的长度是 50-60 个字符。",
+        "placeholder": "冬季夹克"
       },
       "subtitle": {
-        "label": "副标题"
+        "label": "副标题",
+        "placeholder": "温暖舒适"
       },
       "handle": {
         "label": "标识",
-        "tooltip": "标识用于在您的店面引用产品。如果未指定,将根据产品标题生成标识。"
+        "tooltip": "标识用于在您的店面引用产品。如果未指定,将根据产品标题生成标识。",
+        "placeholder": "冬衣"
       },
       "description": {
         "label": "描述",
-        "hint": "为您的产品提供一个简短明确的描述。<0/>搜索引擎推荐的长度是 120-160 个字符。"
+        "hint": "为您的产品提供一个简短明确的描述。<0/>搜索引擎推荐的长度是 120-160 个字符。",
+        "placeholder": "一件温暖舒适的外套"
       },
       "discountable": {
         "label": "可打折",
@@ -599,7 +603,7 @@
       },
       "variants": {
         "label": "产品变体",
-        "hint": "未选中的变体将不会被创建,���排序将影响变体在前端的排序方式。"
+        "hint": "未选中的变体将不会被创建,此排序将影响变体在前端的排序方式。"
       },
       "mid_code": {
         "label": "MID 代码"
@@ -632,7 +636,7 @@
           "inventoryKit": "显示库存项目"
         },
         "inventoryKit": "库存套件",
-        "inventoryKitHint": "此变体是否由���个库存项目组成？",
+        "inventoryKitHint": "此变体是否由多个库存项目组成？",
         "validation": {
           "itemId": "请选择库存项目。",
           "quantity": "数量为必填项。请输入一个正数。"
@@ -704,7 +708,7 @@
     "deleteWarning": "您即将删除系列 {{title}}。此操作无法撤销。",
     "removeSingleProductWarning": "您即将从系列中移除产品 {{title}}。此操作无法撤销。",
     "removeProductsWarning_one": "您即将从系列中移除 {{count}} 个产品。此操作无法撤销。",
-    "removeProductsWarning_other": "您即将从系列中移除 {{count}} 个产品。此��作无法撤销。",
+    "removeProductsWarning_other": "您即将从系列中移除 {{count}} 个产品。此操作无法撤销。",
     "products": {
       "list": {
         "noRecordsMessage": "系列中没有产品。"
@@ -1576,7 +1580,7 @@
           "options": {
             "fixed": {
               "label": "固定",
-              "hint": "配��选项的价格是固定的,不会根据订单内容变化。"
+              "hint": "配送选项的价格是固定的,不会根据订单内容变化。"
             },
             "calculated": {
               "label": "计算",

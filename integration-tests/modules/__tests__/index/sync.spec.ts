@@ -93,6 +93,7 @@ medusaIntegrationTestRunner({
         ;(indexEngine as any).storageProvider_.onApplicationStart = jest.fn()
 
         // Trigger a sync
+        ;(indexEngine as any).schemaObjectRepresentation_ = null
         await (indexEngine as any).onApplicationStart_()
 
         // 28 ms - 6511 records
@@ -138,6 +139,7 @@ medusaIntegrationTestRunner({
       ;(indexEngine as any).storageProvider_.onApplicationStart = jest.fn()
 
       // Trigger a sync
+      ;(indexEngine as any).schemaObjectRepresentation_ = null
       await (indexEngine as any).onApplicationStart_()
 
       const { data: results } = await indexEngine.query<"product">({
@@ -172,8 +174,8 @@ medusaIntegrationTestRunner({
   }
         `,
       }
-
       // Trigger a sync
+      ;(indexEngine as any).schemaObjectRepresentation_ = null
       await (indexEngine as any).onApplicationStart_()
       await setTimeout(3000)
 

@@ -75,6 +75,18 @@ export const recipesSidebar = [
   },
   {
     type: "link",
+    path: "/recipes/bundled-products",
+    title: "Bundled Products",
+    children: [
+      {
+        type: "link",
+        path: "/recipes/bundled-products/examples/standard",
+        title: "Example",
+      },
+    ],
+  },
+  {
+    type: "link",
     path: "/recipes/commerce-automation",
     title: "Commerce Automation",
     children: [

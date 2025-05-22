@@ -24,6 +24,7 @@ import {
   useQueryGraphStep,
   useRemoteQueryStep,
 } from "../../common"
+import { addOrderTransactionStep } from "../../order/steps/add-order-transaction"
 import { createOrdersStep } from "../../order/steps/create-orders"
 import { authorizePaymentSessionStep } from "../../payment/steps/authorize-payment-session"
 import { registerUsageStep } from "../../promotion/steps/register-usage"
@@ -32,6 +33,7 @@ import {
   validateCartPaymentsStep,
   validateShippingStep,
 } from "../steps"
+import { compensatePaymentIfNeededStep } from "../steps/compensate-payment-if-needed"
 import { reserveInventoryStep } from "../steps/reserve-inventory"
 import { completeCartFields } from "../utils/fields"
 import { prepareConfirmInventoryInput } from "../utils/prepare-confirm-inventory-input"
@@ -41,7 +43,6 @@ import {
   PrepareLineItemDataInput,
   prepareTaxLinesData,
 } from "../utils/prepare-line-item-data"
-import { compensatePaymentIfNeededStep } from "../steps/compensate-payment-if-needed"
 /**
  * The data to complete a cart and place an order.
  */
@@ -83,12 +84,14 @@ export const completeCartWorkflowId = "complete-cart"
  * Complete a cart and place an order.
  *
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
+ * @property hooks.beforePaymentAuthorization - This hook is executed before the payment authorization. You can consume this hook to perform any custom logic before the payment is authorized, such as validation with custom payment providers.
+ * @property hooks.orderCreated - This hook is executed after the order is created. You can consume this hook to perform any custom logic after the order is created, such as creating custom models linked to the order.
  */
 export const completeCartWorkflow = createWorkflow(
   {
     name: completeCartWorkflowId,
     store: true,
-    idempotent: true,
+    idempotent: false,
     retentionTime: THREE_DAYS,
   },
   (input: WorkflowData<CompleteCartWorkflowInput>) => {
@@ -111,21 +114,12 @@ export const completeCartWorkflow = createWorkflow(
       name: "cart-query",
     })
 
-    // this is only run when the cart is completed for the first time (same condition as below)
-    // but needs to be before the validation step
-    const paymentSessions = when(
-      "create-order-payment-compensation",
-      { orderId },
-      ({ orderId }) => !orderId
-    ).then(() => {
-      const paymentSessions = validateCartPaymentsStep({ cart })
-      // purpose of this step is to run compensation if cart completion fails
-      // and tries to cancel or refund the payment depending on the status.
-      compensatePaymentIfNeededStep({
-        payment_session_id: paymentSessions[0].id,
-      })
-
-      return paymentSessions
+    // this needs to be before the validation step
+    const paymentSessions = validateCartPaymentsStep({ cart })
+    // purpose of this step is to run compensation if cart completion fails
+    // and tries to refund the payment if captured
+    compensatePaymentIfNeededStep({
+      payment_session_id: paymentSessions[0].id,
     })
 
     const validate = createHook("validate", {
@@ -152,16 +146,6 @@ export const completeCartWorkflow = createWorkflow(
 
       validateShippingStep({ cart, shippingOptions })
 
-      createHook("beforePaymentAuthorization", {
-        input,
-      })
-
-      const payment = authorizePaymentSessionStep({
-        // We choose the first payment session, as there will only be one active payment session
-        // This might change in the future.
-        id: paymentSessions![0].id,
-      })
-
       const { variants, sales_channel_id } = transform({ cart }, (data) => {
         const variantsMap: Record<string, any> = {}
         const allItems = data.cart?.items?.map((item) => {
@@ -181,19 +165,7 @@ export const completeCartWorkflow = createWorkflow(
         }
       })
 
-      const cartToOrder = transform({ cart, payment }, ({ cart, payment }) => {
-        const transactions =
-          (payment &&
-            payment?.captures?.map((capture) => {
-              return {
-                amount: capture.raw_amount ?? capture.amount,
-                currency_code: payment.currency_code,
-                reference: "capture",
-                reference_id: capture.id,
-              }
-            })) ??
-          []
-
+      const cartToOrder = transform({ cart }, ({ cart }) => {
         const allItems = (cart.items ?? []).map((item) => {
           const input: PrepareLineItemDataInput = {
             item,
@@ -259,7 +231,6 @@ export const completeCartWorkflow = createWorkflow(
           shipping_methods: shippingMethods,
           metadata: cart.metadata,
           promo_codes: promoCodes,
-          transactions,
           credit_lines: creditLines,
         }
       })
@@ -298,39 +269,6 @@ export const completeCartWorkflow = createWorkflow(
         }
       })
 
-      const linksToCreate = transform(
-        { cart, createdOrder },
-        ({ cart, createdOrder }) => {
-          const links: Record<string, any>[] = [
-            {
-              [Modules.ORDER]: { order_id: createdOrder.id },
-              [Modules.CART]: { cart_id: cart.id },
-            },
-          ]
-
-          if (isDefined(cart.payment_collection?.id)) {
-            links.push({
-              [Modules.ORDER]: { order_id: createdOrder.id },
-              [Modules.PAYMENT]: {
-                payment_collection_id: cart.payment_collection.id,
-              },
-            })
-          }
-
-          return links
-        }
-      )
-
-      parallelize(
-        createRemoteLinkStep(linksToCreate),
-        updateCartsStep([updateCompletedAt]),
-        reserveInventoryStep(formatedInventoryItems),
-        emitEventStep({
-          eventName: OrderWorkflowEvents.PLACED,
-          data: { id: createdOrder.id },
-        })
-      )
-
       const promotionUsage = transform(
         { cart },
         ({ cart }: { cart: CartWorkflowDTO }) => {
@@ -362,7 +300,74 @@ export const completeCartWorkflow = createWorkflow(
         }
       )
 
-      registerUsageStep(promotionUsage)
+      const linksToCreate = transform(
+        { cart, createdOrder },
+        ({ cart, createdOrder }) => {
+          const links: Record<string, any>[] = [
+            {
+              [Modules.ORDER]: { order_id: createdOrder.id },
+              [Modules.CART]: { cart_id: cart.id },
+            },
+          ]
+
+          if (isDefined(cart.payment_collection?.id)) {
+            links.push({
+              [Modules.ORDER]: { order_id: createdOrder.id },
+              [Modules.PAYMENT]: {
+                payment_collection_id: cart.payment_collection.id,
+              },
+            })
+          }
+
+          return links
+        }
+      )
+
+      parallelize(
+        createRemoteLinkStep(linksToCreate),
+        updateCartsStep([updateCompletedAt]),
+        reserveInventoryStep(formatedInventoryItems),
+        registerUsageStep(promotionUsage),
+        emitEventStep({
+          eventName: OrderWorkflowEvents.PLACED,
+          data: { id: createdOrder.id },
+        })
+      )
+
+      createHook("beforePaymentAuthorization", {
+        input,
+      })
+
+      // We authorize payment sessions at the very end of the workflow to minimize the risk of
+      // canceling the payment in the compensation flow. The only operations that can trigger it
+      // is creating the transactions, the workflow hook, and the linking.
+      const payment = authorizePaymentSessionStep({
+        // We choose the first payment session, as there will only be one active payment session
+        // This might change in the future.
+        id: paymentSessions![0].id,
+      })
+
+      const orderTransactions = transform(
+        { payment, createdOrder },
+        ({ payment, createdOrder }) => {
+          const transactions =
+            (payment &&
+              payment?.captures?.map((capture) => {
+                return {
+                  order_id: createdOrder.id,
+                  amount: capture.raw_amount ?? capture.amount,
+                  currency_code: payment.currency_code,
+                  reference: "capture",
+                  reference_id: capture.id,
+                }
+              })) ??
+            []
+
+          return transactions
+        }
+      )
+
+      addOrderTransactionStep(orderTransactions)
 
       createHook("orderCreated", {
         order_id: createdOrder.id,

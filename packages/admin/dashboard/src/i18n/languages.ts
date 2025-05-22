@@ -25,10 +25,17 @@ import {
   ko,
   nl,
   hu,
+  bs,
 } from "date-fns/locale"
 import { Language } from "./types"
 
 export const languages: Language[] = [
+  {
+    code: "bs",
+    display_name: "Bosanski",
+    ltr: true,
+    date_locale: bs,
+  },
   {
     code: "bg",
     display_name: "Български",

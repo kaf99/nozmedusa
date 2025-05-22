@@ -101,6 +101,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: linkCustomerGroupsToCustomerWorkflow
+ * x-events: []
  * 
 */
 

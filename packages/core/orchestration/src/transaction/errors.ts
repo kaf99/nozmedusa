@@ -98,3 +98,19 @@ export class SkipExecutionError extends Error {
     this.name = "SkipExecutionError"
   }
 }
+
+export class SkipCancelledExecutionError extends Error {
+  static isSkipCancelledExecutionError(
+    error: Error
+  ): error is SkipCancelledExecutionError {
+    return (
+      error instanceof SkipCancelledExecutionError ||
+      error?.name === "SkipCancelledExecutionError"
+    )
+  }
+
+  constructor(message?: string) {
+    super(message)
+    this.name = "SkipCancelledExecutionError"
+  }
+}

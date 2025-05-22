@@ -114,7 +114,7 @@ export const OrderSummarySection = ({ order }: OrderSummarySectionProps) => {
     }
 
     return false
-  }, [reservations])
+  }, [order.items, reservations])
 
   const unpaidPaymentCollection = order.payment_collections.find(
     (pc) => pc.status === "not_paid"

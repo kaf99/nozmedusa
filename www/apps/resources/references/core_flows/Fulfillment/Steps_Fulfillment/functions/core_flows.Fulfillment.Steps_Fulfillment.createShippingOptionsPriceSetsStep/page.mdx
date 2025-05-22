@@ -19,7 +19,7 @@ This step creates price sets for one or more shipping options.
 Learn more about adding rules to the shipping option's prices in the Pricing Module's 
 [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
 
-:::note
+:::
 
 ```ts title="src/workflows/my-workflow.ts"
 import { createWorkflow } from "@medusajs/framework/workflows-sdk"
@@ -29,10 +29,10 @@ const myWorkflow = createWorkflow(
   "my-workflow",
   () => {
     const data = createShippingOptionsPriceSetsStep({
-      "id": "id_6Y3b5AJbKpi",
+      "id": "id_NSxkOaX51y",
       "prices": [{
-        "currency_code": "sle",
-        "amount": 3
+        "currency_code": "mnt",
+        "amount": 23
       }]
     })
   }

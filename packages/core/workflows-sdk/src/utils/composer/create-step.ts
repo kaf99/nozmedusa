@@ -182,7 +182,7 @@ export function applyStep<
         compensateFn,
       })
 
-      wrapAsyncHandler(stepConfig, handler)
+      wrapAsyncHandler(newConfig, handler)
 
       this.handlers.set(newStepName, handler)
 

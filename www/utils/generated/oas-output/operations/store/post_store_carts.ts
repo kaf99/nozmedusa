@@ -66,7 +66,11 @@
  *     label: cURL
  *     source: |-
  *       curl -X POST '{backend_url}/store/carts' \
- *       -H 'x-publishable-api-key: {your_publishable_api_key}'
+ *       -H 'Content-Type: application/json' \
+ *       -H 'x-publishable-api-key: {your_publishable_api_key}' \
+ *       --data-raw '{
+ *         "region_id": "reg_123"
+ *       }'
  * tags:
  *   - Carts
  * responses:
@@ -89,6 +93,16 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: createCartWorkflow
+ * x-events:
+ *   - name: cart.created
+ *     payload: |-
+ *       ```ts
+ *       {
+ *         id, // The ID of the cart
+ *       }
+ *       ```
+ *     description: Emitted when a cart is created.
+ *     deprecated: false
  * 
 */
 

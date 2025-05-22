@@ -85,6 +85,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateRequestItemReturnWorkflow
+  x-events: []
 delete:
   operationId: DeleteReturnsIdRequestItemsAction_id
   summary: Remove Item from Return
@@ -166,3 +167,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeItemReturnActionWorkflow
+  x-events: []

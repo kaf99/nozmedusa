@@ -1,0 +1,517 @@
+import {
+  isPresent,
+  tryConvertToNumber,
+  tryConvertToBoolean,
+  MedusaError,
+} from "../common"
+import { AdminCreateProduct, AdminCreateProductVariant } from "@medusajs/types"
+
+/**
+ * Column processor is a function that process the CSV column
+ * and writes its value to the output
+ */
+type ColumnProcessor<Output> = (
+  csvRow: Record<string, string | boolean | number>,
+  rowColumns: string[],
+  rowNumber: number,
+  output: Output
+) => void
+
+/**
+ * Creates an error with the CSV row number
+ */
+function createError(rowNumber: number, message: string) {
+  return new MedusaError(
+    MedusaError.Types.INVALID_DATA,
+    `Row ${rowNumber}: ${message}`
+  )
+}
+
+/**
+ * Normalizes a CSV value by removing the leading "\r" from the
+ * value.
+ */
+function normalizeValue<T>(value: T): T {
+  if (typeof value === "string") {
+    return value.replace(/\\r$/, "").trim() as T
+  }
+  return value
+}
+
+/**
+ * Parses different patterns to extract variant price iso
+ * and the region name. The iso is converted to lowercase
+ */
+function parseVariantPriceColumn(columnName: string, rowNumber: number) {
+  const normalizedValue = normalizeValue(columnName)
+  const potentialRegion = /\[(.*)\]/g.exec(normalizedValue)?.[1]
+  const iso = normalizedValue.split(" ").pop()
+
+  if (!iso) {
+    throw createError(
+      rowNumber,
+      `Invalid price format used by "${columnName}". Expect column name to contain the ISO code as the last segment. For example: "Variant Price [Europe] EUR" or "Variant Price EUR"`
+    )
+  }
+
+  return {
+    iso: iso.toLowerCase(),
+    region: potentialRegion,
+  }
+}
+
+/**
+ * Processes a column value as a string
+ */
+function processAsString<Output>(
+  inputKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, _, __, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      output[outputKey as any] = value
+    }
+  }
+}
+
+/**
+ * Processes the column value as a boolean
+ */
+function processAsBoolean<Output>(
+  inputKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, _, __, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      output[outputKey as any] = tryConvertToBoolean(value, value)
+    }
+  }
+}
+
+/**
+ * Processes the column value as a number
+ */
+function processAsNumber<Output>(
+  inputKey: string,
+  outputKey: keyof Output,
+  options?: { asNumericString: boolean }
+): ColumnProcessor<Output> {
+  return (csvRow, _, rowNumber, output) => {
+    const value = normalizeValue(csvRow[inputKey])
+    if (isPresent(value)) {
+      const numericValue = tryConvertToNumber(value)
+      if (numericValue === undefined) {
+        throw createError(
+          rowNumber,
+          `Invalid value provided for "${inputKey}". Expected value to be a number, received "${value}"`
+        )
+      } else {
+        if (options?.asNumericString) {
+          output[outputKey as any] = String(numericValue)
+        } else {
+          output[outputKey as any] = numericValue
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Processes the CSV column as a counter value. The counter values
+ * are defined as "<Column Name> <1>". Duplicate values are not
+ * added twice.
+ */
+function processAsCounterValue<Output extends Record<string, any[]>>(
+  inputMatcher: RegExp,
+  arrayItemKey: string,
+  outputKey: keyof Output
+): ColumnProcessor<Output> {
+  return (csvRow, rowColumns, _, output) => {
+    output[outputKey] = output[outputKey] ?? []
+    const existingIds = output[outputKey].map((item) => item[arrayItemKey])
+
+    rowColumns
+      .filter((rowKey) => inputMatcher.test(rowKey))
+      .forEach((rowKey) => {
+        const value = normalizeValue(csvRow[rowKey])
+        if (!existingIds.includes(value) && isPresent(value)) {
+          output[outputKey].push({ [arrayItemKey]: value })
+        }
+      })
+  }
+}
+
+/**
+ * Collection of static product columns whose values must be copied
+ * as it is without any further processing.
+ */
+const productStaticColumns: {
+  [columnName: string]: ColumnProcessor<{
+    [K in keyof AdminCreateProduct | "id"]?: any
+  }>
+} = {
+  "product id": processAsString("product id", "id"),
+  "product handle": processAsString("product handle", "handle"),
+  "product title": processAsString("product title", "title"),
+  "product status": processAsString("product status", "status"),
+  "product description": processAsString("product description", "description"),
+  "product subtitle": processAsString("product subtitle", "subtitle"),
+  "product external id": processAsString("product external id", "external_id"),
+  "product thumbnail": processAsString("product thumbnail", "thumbnail"),
+  "product collection id": processAsString(
+    "product collection id",
+    "collection_id"
+  ),
+  "product type id": processAsString("product type id", "type_id"),
+  "product discountable": processAsBoolean(
+    "product discountable",
+    "discountable"
+  ),
+  "product height": processAsNumber("product height", "height"),
+  "product hs code": processAsString("product hs code", "hs_code"),
+  "product length": processAsNumber("product length", "length"),
+  "product material": processAsString("product material", "material"),
+  "product mid code": processAsString("product mid code", "mid_code"),
+  "product origin country": processAsString(
+    "product origin country",
+    "origin_country"
+  ),
+  "product weight": processAsNumber("product weight", "weight"),
+  "product width": processAsNumber("product width", "width"),
+  "product metadata": processAsString("product metadata", "metadata"),
+  "shipping profile id": processAsString(
+    "shipping profile id",
+    "shipping_profile_id"
+  ),
+}
+
+/**
+ * Collection of wildcard product columns whose values will be computed by
+ * one or more columns from the CSV row.
+ */
+const productWildcardColumns: {
+  [columnName: string]: ColumnProcessor<{
+    [K in keyof AdminCreateProduct]?: any
+  }>
+} = {
+  "product category": processAsCounterValue(
+    /product category \d/,
+    "id",
+    "categories"
+  ),
+  "product image": processAsCounterValue(/product image \d/, "url", "images"),
+  "product tag": processAsCounterValue(/product tag \d/, "id", "tags"),
+  "product sales channel": processAsCounterValue(
+    /product sales channel \d/,
+    "id",
+    "sales_channels"
+  ),
+}
+
+/**
+ * Collection of static variant columns whose values must be copied
+ * as it is without any further processing.
+ */
+const variantStaticColumns: {
+  [columnName: string]: ColumnProcessor<{
+    [K in keyof AdminCreateProductVariant | "id"]?: any
+  }>
+} = {
+  "variant id": processAsString("variant id", "id"),
+  "variant title": processAsString("variant title", "title"),
+  "variant sku": processAsString("variant sku", "sku"),
+  "variant upc": processAsString("variant upc", "upc"),
+  "variant ean": processAsString("variant ean", "ean"),
+  "variant hs code": processAsString("variant hs code", "hs_code"),
+  "variant mid code": processAsString("variant mid code", "mid_code"),
+  "variant manage inventory": processAsBoolean(
+    "variant manage inventory",
+    "manage_inventory"
+  ),
+  "variant allow backorder": processAsBoolean(
+    "variant allow backorder",
+    "allow_backorder"
+  ),
+  "variant barcode": processAsString("variant barcode", "barcode"),
+  "variant height": processAsNumber("variant height", "height"),
+  "variant length": processAsNumber("variant length", "length"),
+  "variant material": processAsString("variant material", "material"),
+  "variant metadata": processAsString("variant metadata", "metadata"),
+  "variant origin country": processAsString(
+    "variant origin country",
+    "origin_country"
+  ),
+  "variant variant rank": processAsString(
+    "variant variant rank",
+    "variant_rank"
+  ),
+  "variant width": processAsNumber("variant width", "width"),
+  "variant weight": processAsNumber("variant weight", "weight"),
+}
+
+/**
+ * Collection of wildcard variant columns whose values will be computed by
+ * one or more columns from the CSV row.
+ */
+const variantWildcardColumns: {
+  [columnName: string]: ColumnProcessor<{
+    [K in keyof AdminCreateProductVariant]?: any
+  }>
+} = {
+  "variant price": (csvRow, rowColumns, rowNumber, output) => {
+    const pricesColumns = rowColumns.filter((rowKey) => {
+      return rowKey.startsWith("variant price ") && isPresent(csvRow[rowKey])
+    })
+    output["prices"] = output["prices"] ?? []
+
+    pricesColumns.forEach((columnName) => {
+      const { iso } = parseVariantPriceColumn(columnName, rowNumber)
+      const value = normalizeValue(csvRow[columnName])
+
+      const numericValue = tryConvertToNumber(value)
+      if (numericValue === undefined) {
+        throw createError(
+          rowNumber,
+          `Invalid value provided for "${columnName}". Expected value to be a number, received "${value}"`
+        )
+      } else {
+        output["prices"].push({
+          currency_code: iso,
+          amount: numericValue,
+        })
+      }
+    })
+  },
+}
+
+/**
+ * Options are processed separately and then defined on both the products and
+ * the variants.
+ */
+const optionColumns: {
+  [columnName: string]: ColumnProcessor<{
+    options: { key: any; value: any }[]
+  }>
+} = {
+  "variant option": (csvRow, rowColumns, rowNumber, output) => {
+    const matcher = /variant option \d+ name/
+    const optionNameColumns = rowColumns.filter((rowKey) => {
+      return matcher.test(rowKey) && isPresent(normalizeValue(csvRow[rowKey]))
+    })
+
+    output["options"] = optionNameColumns.map((columnName) => {
+      const [, , counter] = columnName.split(" ")
+      const key = normalizeValue(csvRow[columnName])
+      const value = normalizeValue(csvRow[`variant option ${counter} value`])
+
+      if (!isPresent(value)) {
+        throw createError(rowNumber, `Missing option value for "${columnName}"`)
+      }
+
+      return {
+        key,
+        value,
+      }
+    })
+  },
+}
+
+/**
+ * An array of known columns
+ */
+const knownStaticColumns = Object.keys(productStaticColumns).concat(
+  Object.keys(variantStaticColumns)
+)
+const knownWildcardColumns = Object.keys(productWildcardColumns)
+  .concat(Object.keys(variantWildcardColumns))
+  .concat(Object.keys(optionColumns))
+
+/**
+ * CSV normalizer processes all the allowed columns from a CSV file and remaps
+ * them into a new object with properties matching the "AdminCreateProduct".
+ *
+ * However, further validations must be performed to validate the format and
+ * the required fields in the normalized output.
+ */
+export class CSVNormalizer {
+  #rows: Record<string, string | boolean | number>[]
+
+  #products: {
+    toCreate: {
+      [handle: string]: {
+        [K in keyof AdminCreateProduct]?: any
+      }
+    }
+    toUpdate: {
+      [id: string]: {
+        [K in keyof AdminCreateProduct]?: any
+      }
+    }
+  } = {
+    toCreate: {},
+    toUpdate: {},
+  }
+
+  constructor(rows: Record<string, string | boolean | number>[]) {
+    this.#rows = rows
+  }
+
+  /**
+   * Ensures atleast one of the product id or the handle is provided. Otherwise
+   * we cannot process the row
+   */
+  #ensureRowHasProductIdentifier(
+    row: Record<string, string | boolean | number>,
+    rowNumber: number
+  ) {
+    const productId = row["product id"]
+    const productHandle = row["product handle"]
+    if (!isPresent(productId) && !isPresent(productHandle)) {
+      throw createError(
+        rowNumber,
+        "Missing product id and handle. One of them are required to process the row"
+      )
+    }
+
+    return { productId, productHandle }
+  }
+
+  /**
+   * Initializes a product object or returns an existing one
+   * by its id. The products with ids are treated as updates
+   */
+  #getOrInitializeProductById(id: string) {
+    if (!this.#products.toUpdate[id]) {
+      this.#products.toUpdate[id] = {}
+    }
+    return this.#products.toUpdate[id]!
+  }
+
+  /**
+   * Initializes a product object or returns an existing one
+   * by its handle. The products with handle are treated as creates
+   */
+  #getOrInitializeProductByHandle(handle: string) {
+    if (!this.#products.toCreate[handle]) {
+      this.#products.toCreate[handle] = {}
+    }
+    return this.#products.toCreate[handle]!
+  }
+
+  /**
+   * Normalizes a row by converting all keys to lowercase and creating a
+   * new object
+   */
+  #normalizeRow(row: Record<string, any>) {
+    const unknownColumns: string[] = []
+
+    const normalized = Object.keys(row).reduce((result, key) => {
+      const lowerCaseKey = key.toLowerCase()
+      result[lowerCaseKey] = row[key]
+
+      if (
+        !knownStaticColumns.includes(lowerCaseKey) &&
+        !knownWildcardColumns.some((column) => lowerCaseKey.startsWith(column))
+      ) {
+        unknownColumns.push(key)
+      }
+
+      return result
+    }, {})
+
+    if (unknownColumns.length) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `Invalid column name(s) "${unknownColumns.join('","')}"`
+      )
+    }
+
+    return normalized
+  }
+
+  /**
+   * Processes a given CSV row
+   */
+  #processRow(
+    row: Record<string, string | boolean | number>,
+    rowNumber: number
+  ) {
+    const rowColumns = Object.keys(row)
+    const { productHandle, productId } = this.#ensureRowHasProductIdentifier(
+      row,
+      rowNumber
+    )
+
+    /**
+     * Create representation of a product by its id or handle and process
+     * its static + wildcard columns
+     */
+    const product = productId
+      ? this.#getOrInitializeProductById(String(productId))
+      : this.#getOrInitializeProductByHandle(String(productHandle))
+    Object.keys(productStaticColumns).forEach((column) => {
+      productStaticColumns[column](row, rowColumns, rowNumber, product)
+    })
+    Object.keys(productWildcardColumns).forEach((column) => {
+      productWildcardColumns[column](row, rowColumns, rowNumber, product)
+    })
+
+    /**
+     * Create representation of a variant and process
+     * its static + wildcard columns
+     */
+    const variant: {
+      [K in keyof AdminCreateProductVariant]?: any
+    } = {}
+    Object.keys(variantStaticColumns).forEach((column) => {
+      variantStaticColumns[column](row, rowColumns, rowNumber, variant)
+    })
+    Object.keys(variantWildcardColumns).forEach((column) => {
+      variantWildcardColumns[column](row, rowColumns, rowNumber, variant)
+    })
+
+    /**
+     * Process variant options as a standalone array
+     */
+    const options: { options: { key: any; value: any }[] } = { options: [] }
+    Object.keys(optionColumns).forEach((column) => {
+      optionColumns[column](row, rowColumns, rowNumber, options)
+    })
+
+    /**
+     * Specify options on both the variant and the product
+     */
+    options.options.forEach(({ key, value }) => {
+      variant.options = variant.options ?? {}
+      variant.options[key] = value
+
+      product.options = product.options ?? []
+      const matchingKey = product.options.find(
+        (option: any) => option.title === key
+      )
+      if (!matchingKey) {
+        product.options.push({ title: key, values: [value] })
+      } else if (!matchingKey.values.includes(value)) {
+        matchingKey.values.push(value)
+      }
+    })
+
+    /**
+     * Assign variant to the product
+     */
+    product.variants = product.variants ?? []
+    product.variants.push(variant)
+  }
+
+  /**
+   * Process CSV rows. The return value is a tree of products
+   */
+  proccess() {
+    this.#rows.forEach((row, index) =>
+      this.#processRow(this.#normalizeRow(row), index + 1)
+    )
+    return this.#products
+  }
+}

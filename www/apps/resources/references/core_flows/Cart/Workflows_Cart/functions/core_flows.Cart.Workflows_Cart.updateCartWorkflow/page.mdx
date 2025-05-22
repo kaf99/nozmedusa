@@ -39,7 +39,7 @@ then update any associated details related to the cart in the workflow's hook.
 
 You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around updating a cart.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/876a14eb98aed54360312b9b215599aa46faccd8/packages/core/core-flows/src/cart/workflows/update-cart.ts#L83" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/4936315b2dc777fbaaf2869b16bf48602fc7e69b/packages/core/core-flows/src/cart/workflows/update-cart.ts#L83" />
 
 ## Examples
 
@@ -204,7 +204,7 @@ const myWorkflow = createWorkflow(
 
 ## Input
 
-<TypeList types={[{"name":"UpdateCartWorkflowInput","type":"[UpdateCartWorkflowInput](../../../../types/core_flows.UpdateCartWorkflowInput/page.mdx)","optional":false,"defaultValue":"","description":"The data to update the cart, along with custom data that's passed to the workflow's hooks.","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to update.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"promo_codes","type":"`string`[]","description":"An array of promotional codes applied on the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"region_id","type":"`string`","description":"The ID of the cart's region.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`null` \\| `string`","description":"The ID of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"sales_channel_id","type":"`null` \\| `string`","description":"The ID of the cart's sales channel.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"email","type":"`null` \\| `string`","description":"The email address of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"currency_code","type":"`string`","description":"The currency code for the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`null` \\| `Record<string, unknown>`","description":"Custom key-value pairs of data related to the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"shipping_address","type":"`null` \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx) \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx)","description":"The cart's shipping address. You can either update the cart's existing shipping address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the address.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`string`","description":"The associated customer's ID.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"company","type":"`string`","description":"The company of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"first_name","type":"`string`","description":"The first name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"last_name","type":"`string`","description":"The last name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_1","type":"`string`","description":"The first line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_2","type":"`string`","description":"The second line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"city","type":"`string`","description":"The city of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"country_code","type":"`string`","description":"The ISO two country code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"province","type":"`string`","description":"The province of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"postal_code","type":"`string`","description":"The postal code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"phone","type":"`string`","description":"The phone of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`Record<string, unknown>`","description":"Holds custom data in key-value pairs.","optional":true,"defaultValue":"","expandable":false,"children":[]}]},{"name":"billing_address","type":"`null` \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx) \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx)","description":"The cart's billing address. You can either update the cart's existing billing address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the address.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`string`","description":"The associated customer's ID.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"company","type":"`string`","description":"The company of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"first_name","type":"`string`","description":"The first name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"last_name","type":"`string`","description":"The last name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_1","type":"`string`","description":"The first line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_2","type":"`string`","description":"The second line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"city","type":"`string`","description":"The city of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"country_code","type":"`string`","description":"The ISO two country code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"province","type":"`string`","description":"The province of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"postal_code","type":"`string`","description":"The postal code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"phone","type":"`string`","description":"The phone of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`Record<string, unknown>`","description":"Holds custom data in key-value pairs.","optional":true,"defaultValue":"","expandable":false,"children":[]}]},{"name":"additional_data","type":"`Record<string, unknown>`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\n\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":true,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="updateCartWorkflow"/>
+<TypeList types={[{"name":"UpdateCartWorkflowInput","type":"[UpdateCartWorkflowInput](../../../../types/core_flows.UpdateCartWorkflowInput/page.mdx)","optional":false,"defaultValue":"","description":"The data to update the cart, along with custom data that's passed to the workflow's hooks.","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to update.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"promo_codes","type":"`string`[]","description":"An array of promotional codes applied on the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"region_id","type":"`string`","description":"The ID of the cart's region.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`null` \\| `string`","description":"The ID of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"sales_channel_id","type":"`null` \\| `string`","description":"The ID of the cart's sales channel.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"email","type":"`null` \\| `string`","description":"The email address of the cart's customer.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"currency_code","type":"`string`","description":"The currency code for the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`null` \\| `Record<string, unknown>`","description":"Custom key-value pairs of data related to the cart.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"shipping_address","type":"`null` \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx) \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx)","description":"The cart's shipping address. You can either update the cart's existing shipping address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the address.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`string`","description":"The associated customer's ID.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"company","type":"`string`","description":"The company of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"first_name","type":"`string`","description":"The first name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"last_name","type":"`string`","description":"The last name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_1","type":"`string`","description":"The first line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_2","type":"`string`","description":"The second line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"city","type":"`string`","description":"The city of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"country_code","type":"`string`","description":"The ISO two country code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"province","type":"`string`","description":"The lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO\\_3166-2) province/state of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"postal_code","type":"`string`","description":"The postal code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"phone","type":"`string`","description":"The phone of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`Record<string, unknown>`","description":"Holds custom data in key-value pairs.","optional":true,"defaultValue":"","expandable":false,"children":[]}]},{"name":"billing_address","type":"`null` \\| [UpdateAddressDTO](../../../../../cart/interfaces/cart.UpdateAddressDTO/page.mdx) \\| [CreateAddressDTO](../../../../../cart/interfaces/cart.CreateAddressDTO/page.mdx)","description":"The cart's billing address. You can either update the cart's existing billing address, or create a new one.","optional":true,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the address.","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"customer_id","type":"`string`","description":"The associated customer's ID.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"company","type":"`string`","description":"The company of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"first_name","type":"`string`","description":"The first name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"last_name","type":"`string`","description":"The last name of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_1","type":"`string`","description":"The first line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"address_2","type":"`string`","description":"The second line of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"city","type":"`string`","description":"The city of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"country_code","type":"`string`","description":"The ISO two country code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"province","type":"`string`","description":"The lower-case [ISO 3166-2](https://en.wikipedia.org/wiki/ISO\\_3166-2) province/state of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"postal_code","type":"`string`","description":"The postal code of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"phone","type":"`string`","description":"The phone of the address.","optional":true,"defaultValue":"","expandable":false,"children":[]},{"name":"metadata","type":"`Record<string, unknown>`","description":"Holds custom data in key-value pairs.","optional":true,"defaultValue":"","expandable":false,"children":[]}]},{"name":"additional_data","type":"`Record<string, unknown>`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\n\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":true,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="updateCartWorkflow"/>
 
 ## Hooks
 
@@ -255,3 +255,81 @@ updateCartWorkflow.hooks.cartUpdated(
 Handlers consuming this hook accept the following input.
 
 <TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-17)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]},{"name":"additional_data","type":"`Record<string, unknown> | undefined`","description":"Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="cartUpdated"/>
+
+## Emitted Events
+
+This section lists the events that are either triggered by the `emitEventStep` in the workflow, or by another workflow executed within this workflow.
+
+You can listen to these events in a subscriber, as explained in the [Subscribers](https://docs.medusajs.com/learn/fundamentals/events-and-subscribers) documentation.
+
+<Table>
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCell>
+Event
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Description
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Payload
+</Table.HeaderCell>
+      <Table.HeaderCell>
+Action
+</Table.HeaderCell>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>
+`cart.updated`
+</Table.Cell>
+      <Table.Cell>
+Emitted when a cart's details are updated.
+</Table.Cell>
+      <Table.Cell>
+```ts blockStyle="inline"
+{
+  id, // The ID of the cart
+}
+```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "cart.updated",
+        payload: `\`\`\`ts
+{
+  id, // The ID of the cart
+}
+\`\`\``
+        }}/>
+</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell>
+`cart.region_updated`
+</Table.Cell>
+      <Table.Cell>
+Emitted when the cart's region is updated. This
+event is emitted alongside the `cart.updated` event.
+</Table.Cell>
+      <Table.Cell>
+```ts blockStyle="inline"
+{
+  id, // The ID of the cart
+}
+```
+</Table.Cell>
+      <Table.Cell>
+<CopyGeneratedSnippetButton tooltipText="Copy subscriber for event" type="subscriber" options={{
+        event: "cart.region_updated",
+        payload: `\`\`\`ts
+{
+  id, // The ID of the cart
+}
+\`\`\``
+        }}/>
+</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table>

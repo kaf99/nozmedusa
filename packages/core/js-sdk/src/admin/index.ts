@@ -37,6 +37,7 @@ import { ShippingOption } from "./shipping-option"
 import { ShippingProfile } from "./shipping-profile"
 import { StockLocation } from "./stock-location"
 import { Store } from "./store"
+import { TaxProvider } from "./tax-provider"
 import { TaxRate } from "./tax-rate"
 import { TaxRegion } from "./tax-region"
 import { Upload } from "./upload"
@@ -209,6 +210,10 @@ export class Admin {
    */
   public promotion: Promotion
   /**
+   * @tags tax
+   */
+  public taxProvider: TaxProvider
+  /**
    * @tags promotion
    */
   public campaign: Campaign
@@ -261,5 +266,6 @@ export class Admin {
     this.promotion = new Promotion(client)
     this.campaign = new Campaign(client)
     this.plugin = new Plugin(client)
+    this.taxProvider = new TaxProvider(client)
   }
 }

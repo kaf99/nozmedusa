@@ -2033,9 +2033,12 @@
                 },
                 "hint": {
                   "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
                 }
               },
-              "required": ["label", "hint"],
+              "required": ["label", "hint", "placeholder"],
               "additionalProperties": false
             },
             "subtitle": {
@@ -2043,9 +2046,12 @@
               "properties": {
                 "label": {
                   "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
                 }
               },
-              "required": ["label"],
+              "required": ["label", "placeholder"],
               "additionalProperties": false
             },
             "handle": {
@@ -2056,9 +2062,12 @@
                 },
                 "tooltip": {
                   "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
                 }
               },
-              "required": ["label", "tooltip"],
+              "required": ["label", "tooltip", "placeholder"],
               "additionalProperties": false
             },
             "description": {
@@ -2069,9 +2078,12 @@
                 },
                 "hint": {
                   "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
                 }
               },
-              "required": ["label", "hint"],
+              "required": ["label", "hint", "placeholder"],
               "additionalProperties": false
             },
             "discountable": {
@@ -6450,14 +6462,14 @@
             "errors": {
               "type": "object",
               "properties": {
-                "rateIsRequired": {
+                "missingProvider": {
                   "type": "string"
                 },
-                "nameIsRequired": {
+                "missingCountry": {
                   "type": "string"
                 }
               },
-              "required": ["rateIsRequired", "nameIsRequired"],
+              "required": ["missingProvider", "missingCountry"],
               "additionalProperties": false
             },
             "successToast": {
@@ -6465,6 +6477,22 @@
             }
           },
           "required": ["header", "hint", "errors", "successToast"],
+          "additionalProperties": false
+        },
+        "edit": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "string"
+            },
+            "hint": {
+              "type": "string"
+            },
+            "successToast": {
+              "type": "string"
+            }
+          },
+          "required": ["header", "hint", "successToast"],
           "additionalProperties": false
         },
         "province": {
@@ -6488,6 +6516,16 @@
             }
           },
           "required": ["header", "create"],
+          "additionalProperties": false
+        },
+        "provider": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "string"
+            }
+          },
+          "required": ["header"],
           "additionalProperties": false
         },
         "state": {
@@ -6898,6 +6936,9 @@
             "taxCode": {
               "type": "string"
             },
+            "taxProvider": {
+              "type": "string"
+            },
             "targets": {
               "type": "object",
               "properties": {
@@ -7228,6 +7269,7 @@
             "defaultTaxRate",
             "taxRate",
             "taxCode",
+            "taxProvider",
             "targets",
             "sublevels",
             "noDefaultRate"
@@ -7240,7 +7282,9 @@
         "list",
         "delete",
         "create",
+        "edit",
         "province",
+        "provider",
         "state",
         "stateOrTerritory",
         "county",
@@ -9180,9 +9224,6 @@
             "deleteRateDescription": {
               "type": "string"
             },
-            "editTaxRate": {
-              "type": "string"
-            },
             "editRateAction": {
               "type": "string"
             },
@@ -9240,7 +9281,6 @@
             "createTaxRate",
             "createTaxRateHint",
             "deleteRateDescription",
-            "editTaxRate",
             "editRateAction",
             "editOverridesAction",
             "editOverridesTitle",

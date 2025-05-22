@@ -76,8 +76,16 @@ export const product = [
     "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/product-reviews"
   },
   {
+    "title": "Localization with Contentful",
+    "path": "https://docs.medusajs.com/resources/integrations/guides/contentful"
+  },
+  {
     "title": "Build Wishlist Plugin",
     "path": "https://docs.medusajs.com/resources/plugins/guides/wishlist"
+  },
+  {
+    "title": "Implement Bundled Products",
+    "path": "https://docs.medusajs.com/resources/recipes/bundled-products/examples/standard"
   },
   {
     "title": "Implement Express Checkout with Medusa",
@@ -204,14 +212,6 @@ export const product = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/getProductsStep"
   },
   {
-    "title": "groupProductsForBatchStep",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/groupProductsForBatchStep"
-  },
-  {
-    "title": "parseProductCsvStep",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/parseProductCsvStep"
-  },
-  {
     "title": "updateCollectionsStep",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/updateCollectionsStep"
   },
@@ -294,10 +294,6 @@ export const product = [
   {
     "title": "deleteProductsWorkflow",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/deleteProductsWorkflow"
-  },
-  {
-    "title": "importProductsWorkflow",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/importProductsWorkflow"
   },
   {
     "title": "updateCollectionsWorkflow",

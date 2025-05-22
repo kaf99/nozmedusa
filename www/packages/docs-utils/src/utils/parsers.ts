@@ -951,6 +951,54 @@ export const parseSplitList: ComponentParser = (
   return [SKIP, index]
 }
 
+export const parseEventHeader: ComponentParser = (
+  node: UnistNodeWithData,
+  index: number,
+  parent: UnistTree
+): VisitorResult => {
+  const headerContent = node.attributes?.find(
+    (attr) => attr.name === "headerProps"
+  )
+  const headerLvl = node.attributes?.find((attr) => attr.name === "headerLvl")
+
+  if (
+    !headerContent ||
+    typeof headerContent.value === "string" ||
+    !headerContent.value.data?.estree ||
+    !headerLvl ||
+    typeof headerLvl.value !== "string" ||
+    !headerLvl.value
+  ) {
+    return
+  }
+
+  const headerPropsJsVar = estreeToJs(headerContent.value.data.estree)
+
+  if (
+    !isExpressionJsVarObj(headerPropsJsVar) ||
+    !("children" in headerPropsJsVar) ||
+    !isExpressionJsVarLiteral(headerPropsJsVar.children)
+  ) {
+    return
+  }
+
+  const headerLevel = parseInt(headerLvl.value, 10)
+  const headerChildren = headerPropsJsVar.children.data as string
+
+  const headerChildrenNode = {
+    type: "text",
+    value: headerChildren,
+  }
+  const headerNode = {
+    type: "heading",
+    depth: headerLevel,
+    children: [headerChildrenNode],
+  }
+
+  parent?.children.splice(index, 1, headerNode)
+  return [SKIP, index]
+}
+
 /**
  * Helpers
  */
@@ -964,11 +1012,13 @@ const getTextNode = (node: UnistNode): UnistNode | undefined => {
       textNode = child
     } else if (child.type === "paragraph") {
       textNode = getTextNode(child)
+    } else if (child.type === "link") {
+      textNode = getTextNode(child)
     } else if (child.value) {
       textNode = child
     }
 
-    return false
+    return textNode !== undefined
   })
 
   return textNode

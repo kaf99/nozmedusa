@@ -3,8 +3,8 @@ import {
   validateAndTransformBody,
   validateAndTransformQuery,
 } from "@medusajs/framework"
-import { maybeApplyLinkFilter, MiddlewareRoute } from "@medusajs/framework/http"
 import multer from "multer"
+import { maybeApplyLinkFilter, MiddlewareRoute } from "@medusajs/framework/http"
 import { DEFAULT_BATCH_ENDPOINTS_SIZE_LIMIT } from "../../../utils/middlewares"
 import { createBatchBody } from "../../utils/validators"
 import * as QueryConfig from "./query-config"
@@ -25,6 +25,7 @@ import {
   AdminGetProductsParams,
   AdminGetProductVariantParams,
   AdminGetProductVariantsParams,
+  AdminImportProducts,
   AdminUpdateProduct,
   AdminUpdateProductOption,
   AdminUpdateProductVariant,
@@ -34,9 +35,6 @@ import {
 } from "./validators"
 import IndexEngineFeatureFlag from "../../../loaders/feature-flags/index-engine"
 
-// TODO: For now we keep the files in memory, as that's how they get passed to the workflows
-// This will need revisiting once we are closer to prod-ready v2, since with workflows and potentially
-// services on other machines using streams is not as simple as it used to be.
 const upload = multer({ storage: multer.memoryStorage() })
 
 export const adminProductRoutesMiddlewares: MiddlewareRoute[] = [
@@ -103,6 +101,11 @@ export const adminProductRoutesMiddlewares: MiddlewareRoute[] = [
     method: ["POST"],
     matcher: "/admin/products/import",
     middlewares: [upload.single("file")],
+  },
+  {
+    method: ["POST"],
+    matcher: "/admin/products/imports",
+    middlewares: [validateAndTransformBody(AdminImportProducts)],
   },
   {
     method: ["POST"],

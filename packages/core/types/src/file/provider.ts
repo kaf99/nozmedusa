@@ -1,3 +1,4 @@
+import { Readable } from "stream"
 import { FileAccessPermission } from "./common"
 
 /**
@@ -29,7 +30,12 @@ export type ProviderFileResultDTO = {
  */
 export type ProviderGetFileDTO = {
   /**
-   * The file's key as returned during upload.
+   * The file's key allowing you to later
+   * identify the file in the third-party
+   * system. For example, the S3 Module Provider
+   * returns the file's key in S3, whereas the
+   * Local File Module Provider returns the file's
+   * path.
    */
   fileKey: string
   [x: string]: unknown
@@ -134,14 +140,39 @@ export interface IFileProvider {
   getPresignedDownloadUrl(fileData: ProviderGetFileDTO): Promise<string>
 
   /**
-   * This method is used to get a presigned upload URL for a file.
-   * If the file provider does not support direct upload, an exception will be thrown when calling this method.
+   * This method is used to get a presigned upload URL for a file. For some providers,
+   * such as S3, a presigned URL indicates a temporary URL to get upload a file.
+   * 
+   * If your provider doesn’t perform or offer a similar functionality, you don't have to
+   * implement this method. Instead, an error is thrown when the method is called.
    *
    * @param {ProviderGetPresignedUploadUrlDTO} fileData - The details of the file to get a presigned upload URL for.
    * @returns {Promise<ProviderFileResultDTO>} The presigned URL and file key to upload the file to
+   *
+   * @example
+   * class MyFileProviderService extends AbstractFileProviderService {
+   *   // ...
+   *   async getPresignedUploadUrl(
+   *     fileData: ProviderGetPresignedUploadUrlDTO
+   *   ): Promise<ProviderFileResultDTO> {
+   *     // TODO logic to get the presigned upload URL
+   *     // for example:
+   *     return this.client.getPresignedUploadUrl(fileData.filename, fileData.mimeType)
+   *   }
+   * }
    *
    */
   getPresignedUploadUrl?(
     fileData: ProviderGetPresignedUploadUrlDTO
   ): Promise<ProviderFileResultDTO>
+
+  /**
+   * Get the file contents as a readable stream.
+   */
+  getDownloadStream(fileData: ProviderGetFileDTO): Promise<Readable>
+
+  /**
+   * Get the file contents as a Node.js Buffer
+   */
+  getAsBuffer(fileData: ProviderGetFileDTO): Promise<Buffer>
 }

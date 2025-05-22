@@ -278,11 +278,11 @@ const generatedgeneratedStoreSidebarSidebar = {
     },
     {
       "type": "category",
-      "title": "Return",
+      "title": "Returns",
       "children": [
         {
           "type": "link",
-          "path": "return_return_schema",
+          "path": "returns_return_schema",
           "title": "Return Object",
           "loaded": true,
           "badge": {
