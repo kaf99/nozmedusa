@@ -122,15 +122,19 @@ export const completeCartWorkflow = createWorkflow(
       payment_session_id: paymentSessions[0].id,
     })
 
-    const validate = createHook("validate", {
+    const validateHook = createHook("validate", {
       input,
       cart,
     })
 
     // If order ID does not exist, we are completing the cart for the first time
-    const order = when("create-order", { orderId }, ({ orderId }) => {
-      return !orderId
-    }).then(() => {
+    const { hooks, result } = when(
+      "create-order",
+      { orderId },
+      ({ orderId }) => {
+        return !orderId
+      }
+    ).then(() => {
       const cartOptionIds = transform({ cart }, ({ cart }) => {
         return cart.shipping_methods?.map((sm) => sm.shipping_option_id)
       })
@@ -334,9 +338,12 @@ export const completeCartWorkflow = createWorkflow(
         })
       )
 
-      createHook("beforePaymentAuthorization", {
-        input,
-      })
+      const beforePaymentAuthorizationHook = createHook(
+        "beforePaymentAuthorization",
+        {
+          input,
+        }
+      )
 
       // We authorize payment sessions at the very end of the workflow to minimize the risk of
       // canceling the payment in the compensation flow. The only operations that can trigger it
@@ -369,20 +376,26 @@ export const completeCartWorkflow = createWorkflow(
 
       addOrderTransactionStep(orderTransactions)
 
-      createHook("orderCreated", {
+      const orderCreatedHook = createHook("orderCreated", {
         order_id: createdOrder.id,
         cart_id: cart.id,
       })
 
-      return createdOrder
+      return {
+        hooks: [validateHook, orderCreatedHook, beforePaymentAuthorizationHook],
+        result: createdOrder,
+      }
     })
 
-    const result = transform({ order, orderId }, ({ order, orderId }) => {
-      return { id: order?.id ?? orderId } as CompleteCartWorkflowOutput
-    })
+    const finalResult = transform(
+      { order: result, orderId },
+      ({ order, orderId }) => {
+        return { id: order?.id ?? orderId } as CompleteCartWorkflowOutput
+      }
+    )
 
-    return new WorkflowResponse(result, {
-      hooks: [validate],
+    return new WorkflowResponse(finalResult, {
+      hooks,
     })
   }
 )

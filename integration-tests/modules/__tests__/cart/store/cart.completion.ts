@@ -226,6 +226,13 @@ medusaIntegrationTestRunner({
             },
           })
 
+          completeCartWorkflow.hooks.beforePaymentAuthorization((input) => {
+            expect(input.input.id).toBeDefined()
+          })
+          completeCartWorkflow.hooks.orderCreated((input) => {
+            expect(input.order_id).toBeDefined()
+          })
+
           await completeCartWorkflow(appContainer).run({
             input: {
               id: cart.id,
