@@ -73,6 +73,7 @@ export class QueryBuilder {
   private readonly requestedFields: {
     [key: string]: any
   }
+  private readonly idsOnly?: boolean
 
   constructor(args: {
     schema: IndexTypes.SchemaObjectRepresentation
@@ -84,6 +85,7 @@ export class QueryBuilder {
     requestedFields: {
       [key: string]: any
     }
+    idsOnly?: boolean
   }) {
     this.schema = args.schema
     this.entityMap = args.entityMap
@@ -96,6 +98,7 @@ export class QueryBuilder {
     )
     this.rawConfig = args.rawConfig
     this.requestedFields = args.requestedFields
+    this.idsOnly = args.idsOnly ?? false
   }
 
   private getStructureKeys(structure) {
@@ -643,7 +646,7 @@ export class QueryBuilder {
 
       if (parentProperty === "id") {
         selectParts[currentAliasPath] = `${alias}.id`
-      } else {
+      } else if (!this.idsOnly) {
         selectParts[currentAliasPath] = this.knex.raw(
           `${alias}.data->'${parentProperty}'`
         )
@@ -657,7 +660,10 @@ export class QueryBuilder {
       return selectParts
     }
 
-    selectParts[currentAliasPath] = `${alias}.data`
+    if (!this.idsOnly) {
+      selectParts[currentAliasPath] = `${alias}.data`
+    }
+
     selectParts[currentAliasPath + ".id"] = `${alias}.id`
 
     const children = this.getStructureKeys(structure)

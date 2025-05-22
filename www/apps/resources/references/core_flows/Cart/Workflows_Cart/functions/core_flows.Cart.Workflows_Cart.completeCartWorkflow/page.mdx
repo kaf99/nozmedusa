@@ -29,7 +29,7 @@ You can use this workflow within your own customizations or custom workflows, al
 For example, in the [Subscriptions recipe](https://docs.medusajs.com/resources/recipes/subscriptions/examples/standard#create-workflow),
 this workflow is used within another workflow that creates a subscription order.
 
-<SourceCodeLink link="https://github.com/medusajs/medusa/blob/d73d8e99030415e76359c6406fe0d33fe809bbdc/packages/core/core-flows/src/cart/workflows/complete-cart.ts#L88" />
+<SourceCodeLink link="https://github.com/medusajs/medusa/blob/4936315b2dc777fbaaf2869b16bf48602fc7e69b/packages/core/core-flows/src/cart/workflows/complete-cart.ts#L90" />
 
 ## Examples
 
@@ -175,6 +175,62 @@ completeCartWorkflow.hooks.validate(
 Handlers consuming this hook accept the following input.
 
 <TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-3)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="validate"/>
+
+### beforePaymentAuthorization
+
+This step is a hook that you can inject custom functionality into.
+
+:::note
+
+This hook is nested within a [when](https://docs.medusajs.com/learn/fundamentals/workflows/conditions) condition, so it may not be executed if the when condition isn't satisfied.
+
+:::
+
+#### Example
+
+```ts
+import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
+
+completeCartWorkflow.hooks.beforePaymentAuthorization(
+  (async ({}, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
+Handlers consuming this hook accept the following input.
+
+<TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-3)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="beforePaymentAuthorization"/>
+
+### orderCreated
+
+This step is a hook that you can inject custom functionality into.
+
+:::note
+
+This hook is nested within a [when](https://docs.medusajs.com/learn/fundamentals/workflows/conditions) condition, so it may not be executed if the when condition isn't satisfied.
+
+:::
+
+#### Example
+
+```ts
+import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
+
+completeCartWorkflow.hooks.orderCreated(
+  (async ({}, { container }) => {
+    //TODO
+  })
+)
+```
+
+#### Input
+
+Handlers consuming this hook accept the following input.
+
+<TypeList types={[{"name":"input","type":"[input](../../../core_flows.Cart.Workflows_Cart/page.mdx#__type-3)","description":"The input data for the hook.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"input","type":"[CompleteCartWorkflowInput](../../../../types/core_flows.CompleteCartWorkflowInput/page.mdx)","description":"The data to complete a cart and place an order.","optional":false,"defaultValue":"","expandable":false,"children":[{"name":"id","type":"`string`","description":"The ID of the cart to complete.","optional":false,"defaultValue":"","expandable":false,"children":[]}]},{"name":"cart","type":"`any`","description":"","optional":false,"defaultValue":"","expandable":false,"children":[]}]}]} expandUrl="https://docs.medusajs.com/learn/fundamentals/data-models/manage-relationships#retrieve-records-of-relation" openedLevel={1} sectionTitle="orderCreated"/>
 
 ## Emitted Events
 

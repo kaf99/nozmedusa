@@ -139,7 +139,11 @@ export class Configuration {
     }
 
     const changes = await this.#indexMetadataService.list({
-      status: [IndexMetadataStatus.PENDING, IndexMetadataStatus.PROCESSING],
+      status: [
+        IndexMetadataStatus.PENDING,
+        IndexMetadataStatus.PROCESSING,
+        IndexMetadataStatus.ERROR,
+      ],
     })
 
     this.#logger.info(

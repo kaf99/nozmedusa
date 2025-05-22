@@ -536,6 +536,42 @@ describe("IndexModuleService query", function () {
     ])
   })
 
+  it("should query all products ordered by price returning only ids", async () => {
+    const { data } = await module.query({
+      fields: ["product.*", "product.variants.*"],
+      idsOnly: true,
+      pagination: {
+        order: {
+          product: {
+            variants: {
+              prices: {
+                amount: "DESC",
+              },
+            },
+          },
+        },
+      },
+    })
+
+    expect(data).toEqual([
+      {
+        id: "prod_2",
+        variants: [],
+      },
+      {
+        id: "prod_1",
+        variants: [
+          {
+            id: "var_1",
+          },
+          {
+            id: "var_2",
+          },
+        ],
+      },
+    ])
+  })
+
   it("should query products filtering by variant sku", async () => {
     const { data, metadata } = await module.query({
       fields: ["product.*", "product.variants.*", "product.variants.prices.*"],

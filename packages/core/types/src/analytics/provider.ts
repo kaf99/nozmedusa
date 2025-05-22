@@ -25,9 +25,21 @@ export interface IAnalyticsProvider {
 
   /**
    * This method is used to shutdown the analytics provider, and flush all data before shutting down.
+   * 
+   * This method is called by the Analytics Module when the Medusa application is shutting down.
    *
    * @returns {Promise<void>} Resolves when the provider is shutdown successfully.
    *
+   * @example
+   * class MyAnalyticsProviderService extends AbstractAnalyticsProviderService {
+   *   // ...
+   *   async shutdown(): Promise<void> {
+   *     // perform any cleanup or shutdown logic
+   *     // in the analytics provider or using custom logic
+   *     // for example:
+   *     await this.client.shutdown()
+   *   }
+   * }
    */
   shutdown?(): Promise<void>
 }

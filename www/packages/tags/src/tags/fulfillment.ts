@@ -272,14 +272,6 @@ export const fulfillment = [
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/maybeRefreshShippingMethodsWorkflow"
   },
   {
-    "title": "parseProductCsvStep",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/parseProductCsvStep"
-  },
-  {
-    "title": "importProductsWorkflow",
-    "path": "https://docs.medusajs.com/resources/references/medusa-workflows/importProductsWorkflow"
-  },
-  {
     "title": "deleteShippingProfilesStep",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/deleteShippingProfilesStep"
   },

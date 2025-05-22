@@ -1912,7 +1912,7 @@ medusaIntegrationTestRunner({
 
           const payload = {
             metadata: {
-              "test-key": "",
+              "test-key": "", // item is deleted by setting to empty string
               "test-key-2": null,
             },
           }
@@ -1924,13 +1924,11 @@ medusaIntegrationTestRunner({
           )
 
           expect(response.status).toEqual(200)
-          expect(response.data.product.metadata).toEqual(
-            // BREAKING: Metadata updates are all-or-nothing in v2
-            {
-              "test-key": "",
-              "test-key-2": null,
-            }
-          )
+          expect(response.data.product.metadata).toEqual({
+            // "test-key" is deleted
+            "test-key-2": null, // updated
+            "test-key-3": "test-value-3", // preserved
+          })
         })
 
         it("updates products sales channels", async () => {
