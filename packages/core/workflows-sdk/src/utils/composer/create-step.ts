@@ -189,6 +189,10 @@ export function applyStep<
       this.flow.replaceAction(stepConfig.uuid!, newStepName, newConfig)
       this.isAsync ||= !!(newConfig.async || newConfig.compensateAsync)
 
+      const stepCondition = this.stepConditions_[stepName]
+      delete this.stepConditions_[stepName]
+      this.stepConditions_[newStepName] = stepCondition
+
       ret.__step__ = newStepName
       WorkflowManager.update(this.workflowId, this.flow, this.handlers)
 
@@ -209,10 +213,13 @@ export function applyStep<
       input: any,
       condition: (...args: any) => boolean | WorkflowData
     ): WorkflowData<TInvokeResultOutput> => {
-      ;(refRet as any).condition = condition
-
       if (typeof condition !== "function") {
         throw new Error("Condition must be a function")
+      }
+
+      this.stepConditions_[ret.__step__] = {
+        condition,
+        input,
       }
 
       wrapConditionalStep(input, condition, handler)
@@ -306,6 +313,7 @@ export function wrapConditionalStep(
   const originalInvoke = handle.invoke
   handle.invoke = async (stepArguments: WorkflowStepHandlerArguments) => {
     const args = await resolveValue(input, stepArguments)
+
     const canContinue = await condition(args, stepArguments)
 
     if (stepArguments.step.definition?.async) {

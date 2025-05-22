@@ -1,14 +1,14 @@
-import { type ZodSchema } from "zod"
 import { OrchestrationUtils } from "@medusajs/utils"
-import type { CreateWorkflowComposerContext } from "./type"
+import { type ZodSchema } from "zod"
 import {
   CompensateFn,
   createStep,
   InvokeFn,
   wrapConditionalStep,
 } from "./create-step"
-import { createStepHandler } from "./helpers/create-step-handler"
 import { StepResponse } from "./helpers"
+import { createStepHandler } from "./helpers/create-step-handler"
+import type { CreateWorkflowComposerContext } from "./type"
 
 const NOOP_RESULT = Symbol.for("NOOP")
 
@@ -42,7 +42,7 @@ export type Hook<Name extends string, Input, Output> = {
  * Learn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/workflows/workflow-hooks).
  *
  * @param name - The hook's name. This is used when the hook handler is registered to consume the workflow.
- * @param input - The input to pass to the hook handler.
+ * @param hookInput - The input to pass to the hook handler.
  * @returns A workflow hook.
  *
  * @example
@@ -71,7 +71,7 @@ export type Hook<Name extends string, Input, Output> = {
  */
 export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
   name: Name,
-  input: TInvokeInput,
+  hookInput: TInvokeInput,
   options: {
     resultValidator?: ZodSchema<TInvokeOutput>
   } = {}
@@ -103,18 +103,18 @@ export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
      * We start by registering a new step within the workflow. This will be a noop
      * step that can be replaced (optionally) by the workflow consumer.
      */
-    const step = createStep(
+    createStep(
       name,
       (_: TInvokeInput) => new StepResponse(NOOP_RESULT),
       () => void 0
-    )(input)
+    )(hookInput)
 
     function hook<
       TInvokeResultCompensateInput
     >(this: CreateWorkflowComposerContext, invokeFn: InvokeFn<TInvokeInput, unknown, TInvokeResultCompensateInput>, compensateFn?: CompensateFn<TInvokeResultCompensateInput>) {
       const handlers = createStepHandler.bind(this)({
         stepName: name,
-        input,
+        input: hookInput,
         invokeFn,
         compensateFn,
       })
@@ -125,9 +125,9 @@ export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
         )
       }
 
-      const composeCondition = step as any
-      if (composeCondition.condition) {
-        wrapConditionalStep(input, composeCondition.condition, handlers)
+      const conditional = this.stepConditions_[name]
+      if (conditional) {
+        wrapConditionalStep(conditional.input, conditional.condition, handlers)
       }
 
       this.hooks_.registered.push(name)
