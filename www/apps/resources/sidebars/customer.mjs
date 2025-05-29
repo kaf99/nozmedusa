@@ -128,7 +128,7 @@ export const customerSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/customer/events",
+            path: "/references/customer/events",
             title: "Events Reference",
           },
           {

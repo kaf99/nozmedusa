@@ -7,7 +7,7 @@ import {
   ProductVariantDTO,
   RegisterOrderDeliveryDTO,
 } from "@medusajs/framework/types"
-import { FulfillmentEvents, MathBN, Modules } from "@medusajs/framework/utils"
+import { FulfillmentWorkflowEvents, MathBN, Modules } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -261,7 +261,7 @@ export const markOrderFulfillmentAsDeliveredWorkflow = createWorkflow(
     )
 
     emitEventStep({
-      eventName: FulfillmentEvents.DELIVERY_CREATED,
+      eventName: FulfillmentWorkflowEvents.DELIVERY_CREATED,
       data: { id: deliveredFulfillment.id },
     })
 

@@ -776,7 +776,7 @@ medusaIntegrationTestRunner({
                 expect.objectContaining({
                   unit_price: 1500,
                   quantity: 2,
-                  title: "S / Black",
+                  title: product.title,
                 }),
               ],
               subtotal: 3000,
@@ -805,12 +805,12 @@ medusaIntegrationTestRunner({
                 expect.objectContaining({
                   unit_price: 1500,
                   quantity: 2,
-                  title: "S / Black",
+                  title: product.title,
                 }),
                 expect.objectContaining({
                   unit_price: 1500,
                   quantity: 1,
-                  title: "S / Black",
+                  title: product.title,
                 }),
               ]),
               subtotal: 4500,

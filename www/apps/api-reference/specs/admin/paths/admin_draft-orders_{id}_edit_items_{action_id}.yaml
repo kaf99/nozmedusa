@@ -62,6 +62,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateDraftOrderActionItemWorkflow
+  x-events: []
 delete:
   operationId: DeleteDraftOrdersIdEditItemsAction_id
   summary: Remove Item from Draft Order Edit
@@ -121,3 +122,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeDraftOrderActionItemWorkflow
+  x-events: []

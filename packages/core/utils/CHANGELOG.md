@@ -1,5 +1,55 @@
 # @medusajs/utils
 
+## 2.8.3
+
+### Patch Changes
+
+- [#12501](https://github.com/medusajs/medusa/pull/12501) [`59bbff62d81861282d55a32d6c0c45285203c4e0`](https://github.com/medusajs/medusa/commit/59bbff62d81861282d55a32d6c0c45285203c4e0) Thanks [@carlos-r-l-rodrigues](https://github.com/carlos-r-l-rodrigues)! - fix(index): limit partition table name and index enum fields
+
+- [#12518](https://github.com/medusajs/medusa/pull/12518) [`85d2b3c992cf361a9a18a14659484c57f4923197`](https://github.com/medusajs/medusa/commit/85d2b3c992cf361a9a18a14659484c57f4923197) Thanks [@adrien2p](https://github.com/adrien2p)! - fix(utils): Missing zod deps
+
+- [#12478](https://github.com/medusajs/medusa/pull/12478) [`c5a6573e26b403b86f53b88c307ea311a1bd9230`](https://github.com/medusajs/medusa/commit/c5a6573e26b403b86f53b88c307ea311a1bd9230) Thanks [@fPolic](https://github.com/fPolic)! - fix(product, utils): handle metadata key deletion on product update
+
+- Updated dependencies [[`4e49cebcf0f053cb89012276e935a7ec62a12046`](https://github.com/medusajs/medusa/commit/4e49cebcf0f053cb89012276e935a7ec62a12046), [`59bbff62d81861282d55a32d6c0c45285203c4e0`](https://github.com/medusajs/medusa/commit/59bbff62d81861282d55a32d6c0c45285203c4e0), [`52bd9f9a53f6e63e5fbe0beb1fb2c650d88f7c88`](https://github.com/medusajs/medusa/commit/52bd9f9a53f6e63e5fbe0beb1fb2c650d88f7c88), [`ebe5cc7acddb7c61dc82fd8ec7f2fe3779104a99`](https://github.com/medusajs/medusa/commit/ebe5cc7acddb7c61dc82fd8ec7f2fe3779104a99)]:
+  - @medusajs/types@2.8.3
+
+## 2.8.2
+
+### Patch Changes
+
+- [#12473](https://github.com/medusajs/medusa/pull/12473) [`e149a998862272fff80573a623c4d9010cb0b104`](https://github.com/medusajs/medusa/commit/e149a998862272fff80573a623c4d9010cb0b104) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: define validators and use normalize-products step
+
+- Updated dependencies [[`b2984f48f5fcf535177c98e921baa58fcf45bbe5`](https://github.com/medusajs/medusa/commit/b2984f48f5fcf535177c98e921baa58fcf45bbe5)]:
+  - @medusajs/types@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- [#12396](https://github.com/medusajs/medusa/pull/12396) [`4602163b568962f8115b83971d67a6c55c2b8a98`](https://github.com/medusajs/medusa/commit/4602163b568962f8115b83971d67a6c55c2b8a98) Thanks [@thetutlage](https://github.com/thetutlage)! - feat: create CSV normalizer to normalize a CSV file
+
+- [#12486](https://github.com/medusajs/medusa/pull/12486) [`142a1f0a5be60d2cc013ecb174bca7b1381c6551`](https://github.com/medusajs/medusa/commit/142a1f0a5be60d2cc013ecb174bca7b1381c6551) Thanks [@peterlgh7](https://github.com/peterlgh7)! - fix returned updates order in upsertWithReplace
+
+- Updated dependencies []:
+  - @medusajs/types@2.8.1
+
+## 2.8.0
+
+### Patch Changes
+
+- [#12338](https://github.com/medusajs/medusa/pull/12338) [`a53d645f8aab30135baebac29f9645dd35d47632`](https://github.com/medusajs/medusa/commit/a53d645f8aab30135baebac29f9645dd35d47632) Thanks [@shahednasser](https://github.com/shahednasser)! - fix(core-flows,utils): move fulfillment workflow events
+
+- [#12320](https://github.com/medusajs/medusa/pull/12320) [`89859987565b1fc872c7cd1c6d23144b97f454bc`](https://github.com/medusajs/medusa/commit/89859987565b1fc872c7cd1c6d23144b97f454bc) Thanks [@fPolic](https://github.com/fPolic)! - feat(core-flows,utils): add Order Edit events
+
+- [#12425](https://github.com/medusajs/medusa/pull/12425) [`fff285f8d2f3020a24b83066fa4250130fdcf229`](https://github.com/medusajs/medusa/commit/fff285f8d2f3020a24b83066fa4250130fdcf229) Thanks [@adrien2p](https://github.com/adrien2p)! - feat(core-flows): Emit cart trasnferred customer
+
+- [#11898](https://github.com/medusajs/medusa/pull/11898) [`b868a4ef4deb7df09d6156a907f4c883cd55a3fd`](https://github.com/medusajs/medusa/commit/b868a4ef4deb7df09d6156a907f4c883cd55a3fd) Thanks [@carlos-r-l-rodrigues](https://github.com/carlos-r-l-rodrigues)! - feat(index): add filterable fields to link definition
+
+- [#12418](https://github.com/medusajs/medusa/pull/12418) [`9d4bc81d0f1ac1614ab1ffb95d708f622c836ceb`](https://github.com/medusajs/medusa/commit/9d4bc81d0f1ac1614ab1ffb95d708f622c836ceb) Thanks [@Betanoir](https://github.com/Betanoir)! - fix(plugins): plugin admin folder loading with backslash on Windows
+
+- Updated dependencies [[`9cedeb182dc19d6127b602fc06e4b8850490e2a9`](https://github.com/medusajs/medusa/commit/9cedeb182dc19d6127b602fc06e4b8850490e2a9), [`b868a4ef4deb7df09d6156a907f4c883cd55a3fd`](https://github.com/medusajs/medusa/commit/b868a4ef4deb7df09d6156a907f4c883cd55a3fd)]:
+  - @medusajs/types@2.8.0
+
 ## 2.7.1
 
 ### Patch Changes

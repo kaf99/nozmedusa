@@ -729,6 +729,24 @@ const generatedgeneratedAdminSidebarSidebar = {
     },
     {
       "type": "category",
+      "title": "Tax Providers",
+      "children": [
+        {
+          "type": "link",
+          "path": "tax-providers_taxprovider_schema",
+          "title": "TaxProvider Object",
+          "loaded": true,
+          "badge": {
+            "variant": "neutral",
+            "text": "Schema"
+          }
+        }
+      ],
+      "loaded": false,
+      "showLoadingIfEmpty": true
+    },
+    {
+      "type": "category",
       "title": "Tax Rates",
       "children": [
         {

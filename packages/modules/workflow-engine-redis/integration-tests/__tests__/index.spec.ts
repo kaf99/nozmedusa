@@ -16,6 +16,7 @@ import {
   ContainerRegistrationKeys,
   Module,
   Modules,
+  promiseAll,
   TransactionHandlerType,
   TransactionStepState,
 } from "@medusajs/framework/utils"
@@ -29,18 +30,23 @@ import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { asValue } from "awilix"
 import { setTimeout as setTimeoutSync } from "timers"
 import { setTimeout } from "timers/promises"
+import { ulid } from "ulid"
 import { WorkflowsModuleService } from "../../src/services"
 import "../__fixtures__"
+import {
+  workflowNotIdempotentWithRetentionStep2Invoke,
+  workflowNotIdempotentWithRetentionStep3Invoke,
+} from "../__fixtures__"
 import { createScheduled } from "../__fixtures__/workflow_scheduled"
 import { TestDatabase } from "../utils"
 
 jest.setTimeout(300000)
 
-const failTrap = (done) => {
+const failTrap = (done, name) => {
   setTimeoutSync(() => {
     // REF:https://stackoverflow.com/questions/78028715/jest-async-test-with-event-emitter-isnt-ending
     console.warn(
-      "Jest is breaking the event emit with its debouncer. This allows to continue the test by managing the timeout of the test manually."
+      `Jest is breaking the event emit with its debouncer. This allows to continue the test by managing the timeout of the test manually. ${name}`
     )
     done()
   }, 5000)
@@ -132,11 +138,269 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
               primaryKey: "workflow_id",
               serviceName: "workflows",
             },
+            run_id: {
+              entity: "WorkflowExecution",
+              field: "workflowExecution",
+              linkable: "workflow_execution_run_id",
+              primaryKey: "run_id",
+              serviceName: "workflows",
+            },
           },
         })
       })
 
       describe("Testing basic workflow", function () {
+        describe("Cancel transaction", function () {
+          it("should cancel an ongoing execution with async unfinished yet step", async () => {
+            const transactionId = "transaction-to-cancel-id"
+            const step1 = createStep("step1", async () => {
+              return new StepResponse("step1")
+            })
+
+            const step2 = createStep("step2", async () => {
+              await setTimeout(500)
+              return new StepResponse("step2")
+            })
+
+            const step3 = createStep("step3", async () => {
+              return new StepResponse("step3")
+            })
+
+            const workflowId = "workflow-to-cancel-id" + ulid()
+
+            createWorkflow(
+              { name: workflowId, retentionTime: 60 },
+              function () {
+                step1()
+                step2().config({ async: true })
+                step3()
+
+                return new WorkflowResponse("finished")
+              }
+            )
+
+            await workflowOrcModule.run(workflowId, {
+              input: {},
+              transactionId,
+            })
+
+            await setTimeout(100)
+
+            await workflowOrcModule.cancel(workflowId, {
+              transactionId,
+            })
+
+            await setTimeout(1000)
+
+            const execution = await workflowOrcModule.listWorkflowExecutions({
+              transaction_id: transactionId,
+            })
+
+            expect(execution.length).toEqual(1)
+            expect(execution[0].state).toEqual(TransactionState.REVERTED)
+          })
+
+          it("should cancel a complete execution with a sync workflow running as async", async () => {
+            const workflowId = "workflow-to-cancel-id" + ulid()
+            const transactionId = "transaction-to-cancel-id"
+            const step1 = createStep("step1", async () => {
+              return new StepResponse("step1")
+            })
+
+            const step2 = createStep("step2", async () => {
+              return new StepResponse("step2")
+            })
+
+            const step3 = createStep("step3", async () => {
+              return new StepResponse("step3")
+            })
+
+            const subWorkflowId = "sub-workflow-id" + ulid()
+            const subWorkflow = createWorkflow(
+              { name: subWorkflowId, retentionTime: 60 },
+              function () {
+                return new WorkflowResponse(step2())
+              }
+            )
+
+            createWorkflow(
+              { name: workflowId, retentionTime: 60 },
+              function () {
+                step1()
+                subWorkflow.runAsStep({ input: {} }).config({ async: true })
+                step3()
+
+                return new WorkflowResponse("finished")
+              }
+            )
+
+            await workflowOrcModule.run(workflowId, {
+              input: {},
+              transactionId,
+            })
+
+            await setTimeout(100)
+
+            await workflowOrcModule.cancel(workflowId, {
+              transactionId,
+            })
+
+            await setTimeout(500)
+
+            const execution = await workflowOrcModule.listWorkflowExecutions({
+              transaction_id: transactionId,
+            })
+
+            expect(execution.length).toEqual(1)
+            expect(execution[0].state).toEqual(TransactionState.REVERTED)
+          })
+
+          it("should cancel an ongoing execution with a sync workflow running as async", async () => {
+            const workflowId = "workflow-to-cancel-id" + ulid()
+            const transactionId = "transaction-to-cancel-id"
+            const step1 = createStep("step1", async () => {
+              return new StepResponse("step1")
+            })
+
+            const step2 = createStep("step2", async () => {
+              await setTimeout(500)
+              return new StepResponse("step2")
+            })
+
+            const step3 = createStep("step3", async () => {
+              return new StepResponse("step3")
+            })
+
+            const subWorkflowId = "sub-workflow-id" + ulid()
+            const subWorkflow = createWorkflow(
+              { name: subWorkflowId, retentionTime: 60 },
+              function () {
+                return new WorkflowResponse(step2())
+              }
+            )
+
+            createWorkflow(
+              { name: workflowId, retentionTime: 60 },
+              function () {
+                step1()
+                subWorkflow.runAsStep({ input: {} }).config({ async: true })
+                step3()
+
+                return new WorkflowResponse("finished")
+              }
+            )
+
+            await workflowOrcModule.run(workflowId, {
+              input: {},
+              transactionId,
+            })
+
+            await setTimeout(100)
+
+            await workflowOrcModule.cancel(workflowId, {
+              transactionId,
+            })
+
+            await setTimeout(1000)
+
+            const execution = await workflowOrcModule.listWorkflowExecutions({
+              transaction_id: transactionId,
+            })
+
+            expect(execution.length).toEqual(1)
+            expect(execution[0].state).toEqual(TransactionState.REVERTED)
+          })
+
+          it("should cancel an ongoing execution with sync steps only", async () => {
+            const transactionId = "transaction-to-cancel-id"
+            const step1 = createStep("step1", async () => {
+              return new StepResponse("step1")
+            })
+
+            const step2 = createStep("step2", async () => {
+              await setTimeout(500)
+              return new StepResponse("step2")
+            })
+
+            const step3 = createStep("step3", async () => {
+              return new StepResponse("step3")
+            })
+
+            const workflowId = "workflow-to-cancel-id" + ulid()
+
+            createWorkflow(
+              { name: workflowId, retentionTime: 60 },
+              function () {
+                step1()
+                step2()
+                step3()
+
+                return new WorkflowResponse("finished")
+              }
+            )
+
+            await workflowOrcModule.run(workflowId, {
+              input: {},
+              transactionId,
+            })
+
+            await setTimeout(100)
+
+            await workflowOrcModule.cancel(workflowId, {
+              transactionId,
+            })
+
+            await setTimeout(1000)
+
+            const execution = await workflowOrcModule.listWorkflowExecutions({
+              transaction_id: transactionId,
+            })
+
+            expect(execution.length).toEqual(1)
+            expect(execution[0].state).toEqual(TransactionState.REVERTED)
+          })
+        })
+
+        it("should prevent executing twice the same workflow in perfect concurrency with the same transactionId and non idempotent and not async but retention time is set", async () => {
+          const transactionId = "concurrency_transaction_id"
+          const workflowId = "concurrency_workflow_id" + ulid()
+
+          const step1 = createStep("step1", async () => {
+            await setTimeout(100)
+            return new StepResponse("step1")
+          })
+
+          createWorkflow(
+            {
+              name: workflowId,
+              retentionTime: 1000,
+            },
+            function () {
+              return new WorkflowResponse(step1())
+            }
+          )
+
+          const [result1, result2] = await promiseAll([
+            workflowOrcModule
+              .run(workflowId, {
+                input: {},
+                transactionId,
+              })
+              .catch((e) => e),
+            workflowOrcModule
+              .run(workflowId, {
+                input: {},
+                transactionId,
+              })
+              .catch((e) => e),
+          ])
+
+          expect(result1.result || result2.result).toEqual("step1")
+          expect(result2.message || result1.message).toEqual(
+            "Transaction already started for transactionId: " + transactionId
+          )
+        })
+
         it("should return a list of workflow executions and remove after completed when there is no retentionTime set", async () => {
           await workflowOrcModule.run("workflow_1", {
             input: {
@@ -294,6 +558,72 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           expect(done).toBe(true)
         })
 
+        it("should return a list of workflow executions and keep it saved when there is a retentionTime set but allow for executing the same workflow multiple times with different run_id if the workflow is considered done", async () => {
+          const transactionId = "transaction_1"
+          await workflowOrcModule.run(
+            "workflow_not_idempotent_with_retention",
+            {
+              input: {
+                value: "123",
+              },
+              transactionId,
+            }
+          )
+
+          let { data: executionsList } = await query.graph({
+            entity: "workflow_executions",
+            fields: ["id", "run_id", "transaction_id"],
+          })
+
+          expect(executionsList).toHaveLength(1)
+
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke
+          ).toHaveBeenCalledTimes(2)
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke.mock.calls[0][0]
+          ).toEqual({ hey: "oh" })
+          expect(
+            workflowNotIdempotentWithRetentionStep2Invoke.mock.calls[1][0]
+          ).toEqual({
+            hey: "hello",
+          })
+          expect(
+            workflowNotIdempotentWithRetentionStep3Invoke
+          ).toHaveBeenCalledTimes(1)
+          expect(
+            workflowNotIdempotentWithRetentionStep3Invoke.mock.calls[0][0]
+          ).toEqual({
+            notAsyncResponse: "hello",
+          })
+
+          await workflowOrcModule.run(
+            "workflow_not_idempotent_with_retention",
+            {
+              input: {
+                value: "123",
+              },
+              transactionId,
+            }
+          )
+
+          const { data: executionsList2 } = await query.graph({
+            entity: "workflow_executions",
+            filters: {
+              id: { $nin: executionsList.map((e) => e.id) },
+            },
+            fields: ["id", "run_id", "transaction_id"],
+          })
+
+          expect(executionsList2).toHaveLength(1)
+          expect(executionsList2[0].run_id).not.toEqual(
+            executionsList[0].run_id
+          )
+          expect(executionsList2[0].transaction_id).toEqual(
+            executionsList[0].transaction_id
+          )
+        })
+
         it("should revert the entire transaction when a step timeout expires", async () => {
           const { transaction, result, errors } = (await workflowOrcModule.run(
             "workflow_step_timeout",
@@ -324,7 +654,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             "workflow_transaction_timeout",
             {
               input: {},
-              transactionId: "trx",
+              transactionId: "trx" + ulid(),
               throwOnError: false,
             }
           )) as Awaited<{
@@ -332,6 +662,8 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             result: any
             errors: any
           }>
+
+          await setTimeout(500)
 
           expect(transaction.getFlow().state).toEqual("reverted")
           expect(result).toEqual({ executed: true })
@@ -380,19 +712,20 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
         })
 
         it("should revert the entire transaction when the transaction timeout expires in a transaction containing an async step", async () => {
+          const transactionId = "transaction_1" + ulid()
           await workflowOrcModule.run("workflow_transaction_timeout_async", {
             input: {},
-            transactionId: "transaction_1",
+            transactionId,
             throwOnError: false,
           })
 
-          await setTimeout(200)
+          await setTimeout(500)
 
           const { transaction, result, errors } = (await workflowOrcModule.run(
             "workflow_transaction_timeout_async",
             {
               input: {},
-              transactionId: "transaction_1",
+              transactionId,
               throwOnError: false,
             }
           )) as Awaited<{
@@ -404,7 +737,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           expect(transaction.getFlow().state).toEqual("reverted")
           expect(result).toEqual(undefined)
           expect(errors).toHaveLength(1)
-          expect(errors[0].action).toEqual("step_1")
+          expect(errors[0].action).toEqual("step_1_async")
           expect(
             TransactionTimeoutError.isTransactionTimeoutError(errors[0].error)
           ).toBe(true)
@@ -437,7 +770,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             },
           })
 
-          failTrap(done)
+          failTrap(done, "workflow_async_background")
         })
 
         it("should subscribe to a async workflow and receive the response when it finishes", (done) => {
@@ -466,7 +799,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
 
           expect(onFinish).toHaveBeenCalledTimes(0)
 
-          failTrap(done)
+          failTrap(done, "workflow_async_background")
         })
 
         it("should not skip step if condition is true", function (done) {
@@ -488,7 +821,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             },
           })
 
-          failTrap(done)
+          failTrap(done, "wf-when")
         })
 
         it("should cancel an async sub workflow when compensating", (done) => {
@@ -526,7 +859,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             },
           })
 
-          failTrap(done)
+          failTrap(done, "workflow_async_background_fail")
         })
 
         it("should cancel and revert a completed workflow", async () => {

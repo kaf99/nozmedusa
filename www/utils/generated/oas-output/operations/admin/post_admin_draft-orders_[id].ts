@@ -2,7 +2,8 @@
  * @oas [post] /admin/draft-orders/{id}
  * operationId: PostDraftOrdersId
  * summary: Update a Draft Order
- * description: Update a draft order's details. This doesn't include updating the draft order's items, shipping methods, or promotions. To update those, you need to create an edit that you can later request or confirm.
+ * description: Update a draft order's details. This doesn't include updating the draft order's items, shipping methods, or promotions. To update those, you need to create an edit that you can later
+ *   request or confirm.
  * x-authenticated: true
  * parameters:
  *   - name: id
@@ -81,6 +82,18 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: updateDraftOrderWorkflow
+ * x-events:
+ *   - name: order.updated
+ *     payload: |-
+ *       ```ts
+ *       {
+ *         id, // The ID of the order
+ *       }
+ *       ```
+ *     description: |-
+ *       Emitted when the details of an order or draft order is updated. This
+ *       doesn't include updates made by an edit.
+ *     deprecated: false
  * 
 */
 

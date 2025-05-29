@@ -1,3 +1,4 @@
+import type { Readable } from "stream"
 import { Constructor, FileTypes } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import { FileProviderRegistrationPrefix } from "@types"
@@ -39,7 +40,11 @@ export default class FileProviderService {
     return this.fileProvider_.upload(file)
   }
 
-  delete(fileData: FileTypes.ProviderDeleteFileDTO): Promise<void> {
+  delete(
+    fileData:
+      | FileTypes.ProviderDeleteFileDTO
+      | FileTypes.ProviderDeleteFileDTO[]
+  ): Promise<void> {
     return this.fileProvider_.delete(fileData)
   }
 
@@ -67,5 +72,13 @@ export default class FileProviderService {
     }
 
     return this.fileProvider_.getPresignedUploadUrl(fileData)
+  }
+
+  getDownloadStream(fileData: FileTypes.ProviderGetFileDTO): Promise<Readable> {
+    return this.fileProvider_.getDownloadStream(fileData)
+  }
+
+  getAsBuffer(fileData: FileTypes.ProviderGetFileDTO): Promise<Buffer> {
+    return this.fileProvider_.getAsBuffer(fileData)
   }
 }

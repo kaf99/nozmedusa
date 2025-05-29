@@ -3,14 +3,17 @@ import {
   OrderDTO,
   OrderPreviewDTO,
 } from "@medusajs/framework/types"
-import { OrderChangeStatus } from "@medusajs/framework/utils"
+import {
+  OrderChangeStatus,
+  OrderEditWorkflowEvents,
+} from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { useRemoteQueryStep } from "../../../common"
+import { emitEventStep, useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
 import { updateOrderChangesStep } from "../../steps/update-order-changes"
 import {
@@ -134,7 +137,7 @@ export const requestOrderEditRequestWorkflow = createWorkflow(
 
     const orderChange: OrderChangeDTO = useRemoteQueryStep({
       entry_point: "order_change",
-      fields: ["id", "canceled_at"],
+      fields: ["id", "canceled_at", "actions.*"],
       variables: {
         filters: {
           order_id: input.order_id,
@@ -151,6 +154,21 @@ export const requestOrderEditRequestWorkflow = createWorkflow(
 
     const updateOrderChangesData = getOrderChangesData({ input, orderChange })
     updateOrderChangesStep(updateOrderChangesData)
+
+    const eventData = transform(
+      { order, orderChange },
+      ({ order, orderChange }) => {
+        return {
+          order_id: order.id,
+          actions: orderChange.actions,
+        }
+      }
+    )
+
+    emitEventStep({
+      eventName: OrderEditWorkflowEvents.REQUESTED,
+      data: eventData,
+    })
 
     return new WorkflowResponse(previewOrderChangeStep(order.id))
   }

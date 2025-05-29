@@ -127,7 +127,7 @@ tags:
       url: https://docs.medusajs.com/resources/storefront-development/regions
     x-associatedSchema:
       $ref: '#/components/schemas/StoreRegion'
-  - name: Return
+  - name: Returns
     description: |
       Customers can request to return items in their order. The admin user then receives and handles the return.
 
@@ -525,6 +525,20 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: generateResetPasswordTokenWorkflow
+      x-events:
+        - name: auth.password_reset
+          payload: |-
+            ```ts
+            {
+              entity_id, // The identifier of the user or customer. For example, an email address.
+              actor_type, // The type of actor. For example, "customer", "user", or custom.
+              token, // The generated token.
+            }
+            ```
+          description: |-
+            Emitted when a reset password token is generated. You can listen to this event
+            to send a reset password email to the user or customer, for example.
+          deprecated: false
   /auth/customer/{auth_provider}/update:
     post:
       operationId: PostActor_typeAuth_providerUpdate
@@ -843,7 +857,11 @@ paths:
           label: cURL
           source: |-
             curl -X POST '{backend_url}/store/carts' \
-            -H 'x-publishable-api-key: {your_publishable_api_key}'
+            -H 'Content-Type: application/json' \
+            -H 'x-publishable-api-key: {your_publishable_api_key}' \
+            --data-raw '{
+              "region_id": "reg_123"
+            }'
       tags:
         - Carts
       responses:
@@ -866,6 +884,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCartWorkflow
+      x-events:
+        - name: cart.created
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart is created.
+          deprecated: false
   /store/carts/{id}:
     get:
       operationId: GetCartsId
@@ -1045,6 +1073,27 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
+        - name: cart.region_updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: |-
+            Emitted when the cart's region is updated. This
+            event is emitted alongside the `cart.updated` event.
+          deprecated: false
   /store/carts/{id}/complete:
     post:
       operationId: PostCartsIdComplete
@@ -1182,6 +1231,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: completeCartWorkflow
+      x-events:
+        - name: order.placed
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the order
+            }
+            ```
+          description: |-
+            Emitted when an order is placed, or when a draft order is converted to an
+            order.
+          deprecated: false
   /store/carts/{id}/customer:
     post:
       operationId: PostCartsIdCustomer
@@ -1269,6 +1330,18 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: transferCartCustomerWorkflow
+      x-events:
+        - name: cart.customer_transferred
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+              customer_id, // The ID of the customer
+            }
+            ```
+          description: Emitted when the customer in the cart is transferred.
+          deprecated: false
+          version: 2.8.0
   /store/carts/{id}/line-items:
     post:
       operationId: PostCartsIdLineItems
@@ -1367,6 +1440,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addToCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
   /store/carts/{id}/line-items/{line_id}:
     post:
       operationId: PostCartsIdLineItemsLine_id
@@ -1473,6 +1556,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateLineItemInCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
     delete:
       operationId: DeleteCartsIdLineItemsLine_id
       summary: Remove Line Item from Cart
@@ -1592,6 +1685,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteLineItemsWorkflow
+      x-events: []
   /store/carts/{id}/promotions:
     post:
       operationId: PostCartsIdPromotions
@@ -1663,6 +1757,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCartPromotionsWorkflow
+      x-events: []
     delete:
       operationId: DeleteCartsIdPromotions
       summary: Remove Promotions from Cart
@@ -1732,6 +1827,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/StoreCartRemovePromotion'
+      x-events: []
   /store/carts/{id}/shipping-methods:
     post:
       operationId: PostCartsIdShippingMethods
@@ -1844,6 +1940,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: addShippingMethodToCartWorkflow
+      x-events:
+        - name: cart.updated
+          payload: |-
+            ```ts
+            {
+              id, // The ID of the cart
+            }
+            ```
+          description: Emitted when a cart's details are updated.
+          deprecated: false
   /store/carts/{id}/taxes:
     post:
       operationId: PostCartsIdTaxes
@@ -1904,6 +2010,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateTaxLinesWorkflow
+      x-events: []
   /store/collections:
     get:
       operationId: GetCollections
@@ -2924,6 +3031,16 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events:
+        - name: customer.created
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is created.
+          deprecated: false
   /store/customers/me:
     get:
       operationId: GetCustomersMe
@@ -3099,6 +3216,16 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomersWorkflow
+      x-events:
+        - name: customer.updated
+          payload: |-
+            ```ts
+            [{
+              id, // The ID of the customer
+            }]
+            ```
+          description: Emitted when a customer is updated.
+          deprecated: false
   /store/customers/me/addresses:
     get:
       operationId: GetCustomersMeAddresses
@@ -3334,7 +3461,11 @@ paths:
                 province:
                   type: string
                   title: province
-                  description: The address's province.
+                  description: The address's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
                 postal_code:
                   type: string
                   title: postal_code
@@ -3395,7 +3526,7 @@ paths:
               "address_2": "{value}",
               "city": "{value}",
               "country_code": "{value}",
-              "province": "{value}",
+              "province": "us-ca",
               "postal_code": "{value}",
               "address_name": "{value}"
             }'
@@ -3421,6 +3552,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createCustomerAddressesWorkflow
+      x-events: []
   /store/customers/me/addresses/{address_id}:
     get:
       operationId: GetCustomersMeAddressesAddress_id
@@ -3586,7 +3718,11 @@ paths:
                 province:
                   type: string
                   title: province
-                  description: The address's province.
+                  description: The address's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
                 postal_code:
                   type: string
                   title: postal_code
@@ -3665,6 +3801,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: updateCustomerAddressesWorkflow
+      x-events: []
     delete:
       operationId: DeleteCustomersMeAddressesAddress_id
       summary: Remove Customer's Address
@@ -3779,6 +3916,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: deleteCustomerAddressesWorkflow
+      x-events: []
   /store/orders:
     get:
       operationId: GetOrders
@@ -3981,6 +4119,7 @@ paths:
         - cookie_auth: []
         - jwt_token: []
       x-workflow: getOrdersListWorkflow
+      x-events: []
   /store/orders/{id}:
     get:
       operationId: GetOrdersId
@@ -4061,6 +4200,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: getOrderDetailWorkflow
+      x-events: []
   /store/orders/{id}/transfer/accept:
     post:
       operationId: PostOrdersIdTransferAccept
@@ -4162,6 +4302,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: acceptOrderTransferWorkflow
+      x-events: []
   /store/orders/{id}/transfer/cancel:
     post:
       operationId: PostOrdersIdTransferCancel
@@ -4255,6 +4396,7 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events: []
   /store/orders/{id}/transfer/decline:
     post:
       operationId: PostOrdersIdTransferDecline
@@ -4356,6 +4498,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: declineOrderTransferRequestWorkflow
+      x-events: []
   /store/orders/{id}/transfer/request:
     post:
       operationId: PostOrdersIdTransferRequest
@@ -4457,6 +4600,7 @@ paths:
       security:
         - cookie_auth: []
         - jwt_token: []
+      x-events: []
   /store/payment-collections:
     post:
       operationId: PostPaymentCollections
@@ -4551,6 +4695,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPaymentCollectionForCartWorkflow
+      x-events: []
   /store/payment-collections/{id}/payment-sessions:
     post:
       operationId: PostPaymentCollectionsIdPaymentSessions
@@ -4623,6 +4768,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: createPaymentSessionsWorkflow
+      x-events: []
   /store/payment-providers:
     get:
       operationId: GetPaymentProviders
@@ -7524,12 +7670,16 @@ paths:
               description: 'Storefront guide: How to show product variants'' prices with taxes.'
         - name: province
           in: query
-          description: The province the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+          description: The lower-case ISO 3166-2 province code the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
           required: false
           schema:
             type: string
             title: province
-            description: The province the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            description: The lower-case ISO 3166-2 province code the products are being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            example: us-ca
+            externalDocs:
+              url: https://en.wikipedia.org/wiki/ISO_3166-2
+              description: Learn more about ISO 3166-2
         - name: sales_channel_id
           in: query
           required: false
@@ -7730,12 +7880,16 @@ paths:
             description: The country code the product is being viewed from. This is required if you're retrieving product variant prices with taxes.
         - name: province
           in: query
-          description: The province the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+          description: The lower-case ISO 3166-2 province code the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
           required: false
           schema:
             type: string
             title: province
-            description: The province the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            description: The lower-case ISO 3166-2 province code the product is being viewed from. This is useful to narrow down the tax context when calculating product variant prices with taxes.
+            example: us-ca
+            externalDocs:
+              url: https://en.wikipedia.org/wiki/ISO_3166-2
+              description: Learn more about ISO 3166-2
         - name: cart_id
           in: query
           description: The ID of the customer's cart. If set, the cart's region and shipping address's country code and province are used instead of the `region_id`, `country_code`, and `province` properties.
@@ -8108,72 +8262,6 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
-  /store/return:
-    post:
-      operationId: PostReturn
-      summary: Create Return
-      description: Create a return for an order's items. The admin receives the return and process it from their side.
-      x-authenticated: false
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StoreCreateReturn'
-      x-codeSamples:
-        - lang: Shell
-          label: cURL
-          source: |-
-            curl -X POST '{backend_url}/store/return' \
-            -H 'Content-Type: application/json' \
-            -H 'x-publishable-api-key: {your_publishable_api_key}' \
-            --data-raw '{
-              "order_id": "{value}",
-              "items": [
-                {
-                  "id": "id_XbfptxUVo2io9EI",
-                  "quantity": 7916429753974784,
-                  "reason_id": "{value}",
-                  "note": "{value}"
-                }
-              ],
-              "return_shipping": {
-                "option_id": "{value}",
-                "price": 1068364080349184
-              },
-              "note": "{value}",
-              "location_id": "{value}"
-            }'
-      tags:
-        - Return
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StoreReturnResponse'
-        '400':
-          $ref: '#/components/responses/400_error'
-        '401':
-          $ref: '#/components/responses/unauthorized'
-        '404':
-          $ref: '#/components/responses/not_found_error'
-        '409':
-          $ref: '#/components/responses/invalid_state_error'
-        '422':
-          $ref: '#/components/responses/invalid_request_error'
-        '500':
-          $ref: '#/components/responses/500_error'
-      x-workflow: createAndCompleteReturnOrderWorkflow
-      parameters:
-        - name: x-publishable-api-key
-          in: header
-          description: Publishable API Key created in the Medusa Admin.
-          required: true
-          schema:
-            type: string
-            externalDocs:
-              url: https://docs.medusajs.com/api/store#publishable-api-key
   /store/return-reasons:
     get:
       operationId: GetReturnReasons
@@ -8341,6 +8429,94 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+  /store/returns:
+    post:
+      operationId: PostReturns
+      summary: Create Return
+      description: Create a return for an order's items. The admin receives the return and process it from their side.
+      x-authenticated: false
+      parameters:
+        - name: x-publishable-api-key
+          in: header
+          description: Publishable API Key created in the Medusa Admin.
+          required: true
+          schema:
+            type: string
+            externalDocs:
+              url: https://docs.medusajs.com/api/store#publishable-api-key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCreateReturn'
+      x-codeSamples:
+        - lang: Shell
+          label: cURL
+          source: |-
+            curl -X POST '{backend_url}/store/returns' \
+            -H 'x-publishable-api-key: {your_publishable_api_key}' \
+            -H 'Content-Type: application/json' \
+            --data-raw '{
+              "order_id": "order_123",
+              "items": [
+                {
+                  "id": "id_XbfptxUVo2io9EI",
+                  "quantity": 7916429753974784,
+                  "reason_id": "{value}",
+                  "note": "{value}"
+                }
+              ],
+              "return_shipping": {
+                "option_id": "{value}",
+                "price": 1068364080349184
+              },
+              "note": "{value}",
+              "location_id": "{value}"
+            }'
+      tags:
+        - Returns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReturnResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createAndCompleteReturnOrderWorkflow
+      x-events:
+        - name: order.return_requested
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return request is confirmed.
+          deprecated: false
+        - name: order.return_received
+          payload: |-
+            ```ts
+            {
+              order_id, // The ID of the order
+              return_id, // The ID of the return
+            }
+            ```
+          description: Emitted when a return is marked as received.
+          deprecated: false
+      x-version: 2.8.0
   /store/shipping-options:
     get:
       operationId: GetShippingOptions
@@ -8487,6 +8663,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: listShippingOptionsForCartWorkflow
+      x-events: []
   /store/shipping-options/{id}/calculate:
     post:
       operationId: PostShippingOptionsIdCalculate
@@ -8594,6 +8771,7 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
       x-workflow: calculateShippingOptionsPricesWorkflow
+      x-events: []
 components:
   schemas:
     AdminAddDraftOrderItems:
@@ -9629,6 +9807,11 @@ components:
           description: The list of claims.
           items:
             $ref: '#/components/schemas/AdminClaim'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminClaimOrderResponse:
       type: object
       description: The created claim's details.
@@ -9786,6 +9969,11 @@ components:
           description: The list of product collections.
           items:
             $ref: '#/components/schemas/AdminCollection'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminCollectionResponse:
       type: object
       description: The collection's details.
@@ -9813,24 +10001,6 @@ components:
           enum:
             - publishable
             - secret
-    AdminCreateCollection:
-      type: object
-      description: the product collection's details.
-      x-schemaName: AdminCreateCollection
-      required:
-        - title
-      properties:
-        title:
-          type: string
-          title: title
-          description: The collection's title.
-        handle:
-          type: string
-          title: handle
-          description: The collection's handle.
-        metadata:
-          type: object
-          description: The collection's metadata, used to store custom key-value pairs.
     AdminCreateCustomerGroup:
       type: object
       description: The customer group's details.
@@ -9906,7 +10076,11 @@ components:
             province:
               type: string
               title: province
-              description: The delivery address's province.
+              description: The delivery address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -11050,7 +11224,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         parent_id:
           type: string
           title: parent_id
@@ -11087,6 +11265,10 @@ components:
         metadata:
           type: object
           description: The tax region's metadata, used to store custom key-value pairs.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider used to calculate the tax rate in this tax region.
     AdminCreateVariantInventoryItem:
       type: object
       description: The details of the variant-inventory item association.
@@ -11224,6 +11406,11 @@ components:
           description: The list of currencies.
           items:
             $ref: '#/components/schemas/AdminCurrency'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminCurrencyResponse:
       type: object
       description: The currency's details.
@@ -11393,7 +11580,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -12334,6 +12525,11 @@ components:
           description: The list of draft orders.
           items:
             $ref: '#/components/schemas/AdminDraftOrder'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminDraftOrderPreview:
       type: object
       description: The draft order preview's details.
@@ -13364,7 +13560,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -13547,6 +13747,11 @@ components:
           description: The list of fulfillment providers.
           items:
             $ref: '#/components/schemas/AdminFulfillmentProvider'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminFulfillmentProviderOption:
       type: object
       description: The fulfillment option's details.
@@ -13590,6 +13795,11 @@ components:
           description: The list of fulfillment options.
           items:
             $ref: '#/components/schemas/AdminFulfillmentProviderOption'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminFulfillmentResponse:
       type: object
       description: A fulfillment's details.
@@ -13712,7 +13922,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The geo zone's province code.
+          description: The geo zone's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         city:
           type: string
           title: city
@@ -14085,6 +14299,11 @@ components:
           description: The list of notifications.
           items:
             $ref: '#/components/schemas/AdminNotification'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminNotificationResponse:
       type: object
       description: The notification's details.
@@ -14400,7 +14619,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -17044,6 +17267,11 @@ components:
           description: The list of price lists.
           items:
             $ref: '#/components/schemas/AdminPriceList'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminPriceListPrice:
       type: object
       description: The details of a price list's price.
@@ -17221,6 +17449,11 @@ components:
           description: The list of price preferences.
           items:
             $ref: '#/components/schemas/AdminPricePreference'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminPricePreferenceResponse:
       type: object
       description: The price preference's details.
@@ -17531,6 +17764,11 @@ components:
           description: The list of product categories.
           items:
             $ref: '#/components/schemas/AdminProductCategory'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductCategoryResponse:
       type: object
       description: The product category's details.
@@ -17813,6 +18051,11 @@ components:
           description: The list of product tags.
           items:
             $ref: '#/components/schemas/AdminProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductTagResponse:
       type: object
       description: The product tag's details.
@@ -17907,6 +18150,11 @@ components:
           description: The list of product types.
           items:
             $ref: '#/components/schemas/AdminProductType'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminProductTypeResponse:
       type: object
       description: The product type's details.
@@ -18865,6 +19113,11 @@ components:
           description: The list of return reasons.
           items:
             $ref: '#/components/schemas/AdminReturnReason'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminReturnReasonResponse:
       type: object
       description: The return reason's details.
@@ -19633,7 +19886,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
       required:
         - id
         - address_1
@@ -19693,6 +19950,11 @@ components:
           description: The list of stock locations.
           items:
             $ref: '#/components/schemas/AdminStockLocation'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminStockLocationResponse:
       type: object
       description: The stock location's details.
@@ -19830,6 +20092,11 @@ components:
           description: The list of stores.
           items:
             $ref: '#/components/schemas/AdminStore'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminStoreResponse:
       type: object
       description: The store's details.
@@ -19839,6 +20106,23 @@ components:
       properties:
         store:
           $ref: '#/components/schemas/AdminStore'
+    AdminTaxProvider:
+      type: object
+      description: The tax provider's details.
+      x-schemaName: AdminTaxProvider
+      required:
+        - id
+        - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tax provider's ID.
+          example: tp_taxjar_taxjar
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the tax provider is enabled in the Medusa application.
     AdminTaxRate:
       type: object
       description: The tax rate's details.
@@ -19998,7 +20282,11 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
@@ -20098,22 +20386,6 @@ components:
           type: string
           title: title
           description: The API key's title.
-    AdminUpdateCollection:
-      type: object
-      description: The details to update in a collection.
-      x-schemaName: AdminUpdateCollection
-      properties:
-        title:
-          type: string
-          title: title
-          description: The collection's title.
-        handle:
-          type: string
-          title: handle
-          description: The collection's handle.
-        metadata:
-          type: object
-          description: The collection's metadata, can hold custom key-value pairs.
     AdminUpdateCustomerGroup:
       type: object
       description: The details to update in a customer group.
@@ -20176,7 +20448,11 @@ components:
             province:
               type: string
               title: province
-              description: The shipping address's province.
+              description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20224,7 +20500,11 @@ components:
             province:
               type: string
               title: province
-              description: The billing address's province.
+              description: The billing address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20359,7 +20639,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20407,7 +20691,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
             postal_code:
               type: string
               title: postal_code
@@ -20904,7 +21192,11 @@ components:
             province:
               type: string
               title: province
-              description: The address's province.
+              description: The address's ISO 3166-2 province code. Must be lower-case.
+              example: us-ca
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/ISO_3166-2
+                description: Learn more about ISO 3166-2
         address_id:
           type: string
           title: address_id
@@ -21016,10 +21308,18 @@ components:
         province_code:
           type: string
           title: province_code
-          description: The tax region's province code.
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
           description: The tax region's metadata, can hold custom key-value pairs.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider to use when calculating taxes for this tax region.
     AdminUpdateUser:
       type: object
       description: The properties to update in a user.
@@ -21091,7 +21391,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
     AdminUser:
       type: object
       description: The user's details.
@@ -21195,6 +21499,11 @@ components:
           description: The list of users.
           items:
             $ref: '#/components/schemas/AdminUser'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminUserResponse:
       type: object
       description: The user's details.
@@ -22690,7 +22999,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -24763,7 +25076,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -25581,7 +25898,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -27428,7 +27749,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -28488,6 +28813,11 @@ components:
           description: The list of currencies.
           items:
             $ref: '#/components/schemas/StoreCurrency'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreCurrencyResponse:
       type: object
       description: The currency's details.
@@ -28643,7 +28973,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -28692,6 +29026,11 @@ components:
           description: The list of addresses.
           items:
             $ref: '#/components/schemas/StoreCustomerAddress'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreCustomerAddressResponse:
       type: object
       description: The address's details.
@@ -29031,7 +29370,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code
@@ -35349,6 +35692,11 @@ components:
           description: The list of product categories.
           items:
             $ref: '#/components/schemas/StoreProductCategory'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductCategoryResponse:
       type: object
       description: The product category's details.
@@ -35554,6 +35902,11 @@ components:
           description: The list of product tags.
           items:
             $ref: '#/components/schemas/StoreProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductTagResponse:
       type: object
       description: The product tag's details.
@@ -35626,6 +35979,11 @@ components:
           description: The list of product types.
           items:
             $ref: '#/components/schemas/StoreProductType'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreProductTypeResponse:
       type: object
       description: The product type's details.
@@ -35875,60 +36233,72 @@ components:
         - canceled_at
         - received_at
       properties:
-        id:
-          type: string
-          title: id
-          description: The return's ID.
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this return is created for.
-        status:
-          type: string
-          title: status
-          description: The return's status.
-        exchange_id:
-          type: string
-          title: exchange_id
-          description: The ID of the associated exchange.
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location the items are returned to.
-        claim_id:
-          type: string
-          title: claim_id
-          description: The ID of the associated claim.
-        display_id:
-          type: number
-          title: display_id
-          description: The return's display ID.
-        refund_amount:
-          type: number
-          title: refund_amount
-          description: The return's refunded amount.
         items:
           type: array
           description: The return's items.
           items:
             $ref: '#/components/schemas/StoreReturnItem'
-        received_at:
+        status:
           type: string
-          title: received_at
-          description: The date the return was received.
+          description: The return's status.
+          enum:
+            - received
+            - canceled
+            - requested
+            - open
+            - partially_received
+        id:
+          type: string
+          title: id
+          description: The return's ID.
+        display_id:
+          type: number
+          title: display_id
+          description: The return's display ID.
         created_at:
           type: string
           format: date-time
           title: created_at
           description: The date the return was created.
+        order_id:
+          type: string
+          title: order_id
+          description: The ID of the order this return belongs to.
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the location the return items are being returned to.
         canceled_at:
           type: string
           title: canceled_at
-          description: The date the return was updated.
+          description: The date the return was canceled.
+        exchange_id:
+          type: string
+          title: exchange_id
+          description: The ID of the associated exchange.
+        claim_id:
+          type: string
+          title: claim_id
+          description: The ID of the associated claim.
+        refund_amount:
+          type: number
+          title: refund_amount
+          description: The amount to be refunded.
+        received_at:
+          type: string
+          title: received_at
+          description: The date the return items were received.
     StoreReturnItem:
       type: object
       description: The return item's details.
       x-schemaName: StoreReturnItem
+      required:
+        - id
+        - quantity
+        - received_quantity
+        - damaged_quantity
+        - item_id
+        - return_id
       properties:
         id:
           type: string
@@ -35965,13 +36335,6 @@ components:
         metadata:
           type: object
           description: The item's metadata, can hold custom key-value pairs.
-      required:
-        - id
-        - quantity
-        - received_quantity
-        - damaged_quantity
-        - item_id
-        - return_id
     StoreReturnReason:
       type: object
       description: The return reason's details.
@@ -36254,7 +36617,11 @@ components:
         province:
           type: string
           title: province
-          description: The address's province.
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         postal_code:
           type: string
           title: postal_code

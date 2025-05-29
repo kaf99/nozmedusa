@@ -200,6 +200,9 @@
   "DELETE /admin/draft-orders/{id}/edit/shipping-methods/{actionid}": {
     "js-sdk": "sdk.admin.draftOrder.removeShippingMethod(\"order_123\", \"action_123\")\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
   },
+  "DELETE /admin/draft-orders/{id}/edit/shipping-methods/method/{shippingmethodid}": {
+    "js-sdk": "sdk.admin.draftOrder.removeShippingMethod(\n  \"order_123\", \n  \"shipping_method_123\"\n)\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
+  },
   "POST /admin/draft-orders/{id}/edit/shipping-methods/method/{methodid}": {
     "js-sdk": "sdk.admin.draftOrder.updateShippingMethod(\"order_123\", \"sm_123\", {\n shipping_option_id: \"so_123\",\n})\n.then(({ draft_order_preview }) => {\n  console.log(draft_order_preview)\n})"
   },
@@ -485,6 +488,9 @@
   "POST /admin/products/import": {
     "js-sdk": "sdk.admin.product.import({\n  file // uploaded File instance\n})\n.then(({ transaction_id }) => {\n  console.log(transaction_id)\n})"
   },
+  "POST /admin/products/imports": {
+    "js-sdk": "sdk.admin.product.createImport({\n  file // uploaded File instance\n})\n.then(({ transaction_id }) => {\n  console.log(transaction_id)\n})"
+  },
   "POST /admin/products/import/{transactionid}/confirm": {
     "js-sdk": "sdk.admin.product.confirmImport(\"transaction_123\")\n.then(() => {\n  console.log(\"Import confirmed\")\n})"
   },
@@ -516,7 +522,7 @@
     "js-sdk": "sdk.admin.product.createVariant(\"prod_123\", {\n  title: \"Blue Shirt\",\n  options: {\n    Color: \"Blue\"\n  },\n  prices: [\n    {\n      amount: 10,\n      currency_code: \"usd\"\n    }\n  ]\n})\n.then(({ product }) => {\n  console.log(product)\n})"
   },
   "POST /admin/products/{productid}/variants/{id}": {
-    "js-sdk": "sdk.admin.product.updateVariant(\n  \"prod_123\", \n  \"variant_123\",\n    {\n    title: \"Blue Shirt\",\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
+    "js-sdk": "sdk.admin.product.updateVariant(\n  \"prod_123\",\n  \"variant_123\",\n    {\n    title: \"Blue Shirt\",\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
   },
   "GET /admin/products/{productid}/variants": {
     "js-sdk": "sdk.admin.product.listVariants(\"prod_123\")\n.then(({ variants, count, limit, offset }) => {\n  console.log(variants)\n})"
@@ -528,13 +534,13 @@
     "js-sdk": "sdk.admin.product.deleteVariant(\"prod_123\", \"variant_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
   },
   "POST /admin/products/{productid}/variants/inventory-items/batch": {
-    "js-sdk": "sdk.admin.product.batchVariantInventoryItems(\n  \"prod_123\", \n  {\n    create: [\n      {\n        inventory_item_id: \"iitem_123\",\n        variant_id: \"variant_123\",\n        required_quantity: 10\n      }\n    ],\n    update: [\n      {\n        inventory_item_id: \"iitem_1234\",\n        variant_id: \"variant_1234\",\n        required_quantity: 20\n      }\n    ],\n    delete: [\n      {\n        inventory_item_id: \"iitem_321\",\n        variant_id: \"variant_321\"\n      }\n    ]\n  }\n)\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+    "js-sdk": "sdk.admin.product.batchVariantInventoryItems(\n  \"prod_123\",\n  {\n    create: [\n      {\n        inventory_item_id: \"iitem_123\",\n        variant_id: \"variant_123\",\n        required_quantity: 10\n      }\n    ],\n    update: [\n      {\n        inventory_item_id: \"iitem_1234\",\n        variant_id: \"variant_1234\",\n        required_quantity: 20\n      }\n    ],\n    delete: [\n      {\n        inventory_item_id: \"iitem_321\",\n        variant_id: \"variant_321\"\n      }\n    ]\n  }\n)\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
   },
   "POST /admin/products/{productid}/options": {
-    "js-sdk": "sdk.admin.product.createOption(\n  \"prod_123\", \n  {\n    title: \"Color\",\n    values: [\"Green\", \"Blue\"]\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
+    "js-sdk": "sdk.admin.product.createOption(\n  \"prod_123\",\n  {\n    title: \"Color\",\n    values: [\"Green\", \"Blue\"]\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
   },
   "POST /admin/products/{productid}/options/{id}": {
-    "js-sdk": "sdk.admin.product.updateOption(\n  \"prod_123\", \n  \"prodopt_123\",\n  {\n    title: \"Color\"\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
+    "js-sdk": "sdk.admin.product.updateOption(\n  \"prod_123\",\n  \"prodopt_123\",\n  {\n    title: \"Color\"\n  }\n)\n.then(({ product }) => {\n  console.log(product)\n})"
   },
   "GET /admin/products/{productid}/options": {
     "js-sdk": "sdk.admin.product.listOptions(\"prod_123\")\n.then(({ product_options, count, limit, offset }) => {\n  console.log(product_options)\n})"
@@ -839,6 +845,9 @@
   "POST /admin/stores/{id}": {
     "js-sdk": "sdk.admin.store.update(\"store_123\", {\n  name: \"My Store\",\n})\n.then(({ store }) => {\n  console.log(store)\n})"
   },
+  "GET /admin/tax-providers": {
+    "js-sdk": "sdk.admin.taxProvider.list()\n.then(({ tax_providers, count, limit, offset }) => {\n  console.log(tax_providers)\n})"
+  },
   "POST /admin/tax-rates": {
     "js-sdk": "sdk.admin.taxRate.create({\n  name: \"VAT\",\n  tax_region_id: \"txreg_123\",\n  code: \"VAT\",\n  rate: 2, // 2%\n})\n.then(({ tax_rate }) => {\n  console.log(tax_rate)\n})"
   },
@@ -857,6 +866,9 @@
   "POST /admin/tax-regions": {
     "js-sdk": "sdk.admin.taxRegion.create({\n  country_code: \"us\",\n  province_code: \"ca\",\n  default_tax_rate: {\n    code: \"VAT\",\n    name: \"VAT\",\n    rate: 20, // 20%\n    is_combinable: true,\n  },\n})\n.then(({ tax_region }) => {\n  console.log(tax_region)\n})"
   },
+  "POST /admin/tax-regions/{id}": {
+    "js-sdk": "sdk.admin.taxRegion.update(\"txreg_123\", {\n  province_code: \"ca\",\n})\n.then(({ tax_region }) => {\n  console.log(tax_region)\n})"
+  },
   "DELETE /admin/tax-regions/{id}": {
     "js-sdk": "sdk.admin.taxRegion.delete(\"txreg_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
   },
@@ -867,13 +879,16 @@
     "js-sdk": "sdk.admin.taxRegion.list()\n.then(({ tax_regions, count, limit, offset }) => {\n  console.log(tax_regions)\n})"
   },
   "POST /admin/uploads": {
-    "js-sdk": "sdk.admin.upload.create(\n  {\n    files: [\n       // file uploaded as a base64 string\n      {\n        name: \"test.txt\",\n        content: \"test\", // Should be the base64 content of the file\n      },\n      // file uploaded as a File object\n      new File([\"test\"], \"test.txt\", { type: \"text/plain\" })\n    ],\n  }\n)\n.then(({ files }) => {\n  console.log(files)\n})"
+    "js-sdk": "sdk.admin.upload.create(\n  {\n    files: [\n       // file uploaded as a binary string\n      {\n        name: \"test.txt\",\n        content: \"test\", // Should be the binary string of the file\n      },\n      // file uploaded as a File object\n      new File([\"test\"], \"test.txt\", { type: \"text/plain\" })\n    ],\n  }\n)\n.then(({ files }) => {\n  console.log(files)\n})"
   },
   "GET /admin/uploads/{id}": {
     "js-sdk": "sdk.admin.upload.retrieve(\"test.txt\")\n.then(({ file }) => {\n  console.log(file)\n})"
   },
   "DELETE /admin/uploads/{id}": {
     "js-sdk": "sdk.admin.upload.delete(\"test.txt\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+  },
+  "POST /admin/uploads/presigned-urls": {
+    "js-sdk": "sdk.admin.upload.presignedUrl({\n  name: \"test.txt\",\n  size: 1000,\n  type: \"text/plain\",\n}))"
   },
   "POST /admin/users/{id}": {
     "js-sdk": "sdk.admin.user.update(\"user_123\", {\n  first_name: \"John\",\n  last_name: \"Doe\",\n})\n.then(({ user }) => {\n  console.log(user)\n})"

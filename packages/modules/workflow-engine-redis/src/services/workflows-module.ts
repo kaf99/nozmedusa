@@ -1,12 +1,16 @@
 import {
   Context,
   DAL,
+  FilterableWorkflowExecutionProps,
+  FindConfig,
   InferEntityType,
   InternalModuleDeclaration,
   ModulesSdkTypes,
+  WorkflowExecutionDTO,
   WorkflowsSdkTypes,
 } from "@medusajs/framework/types"
 import {
+  InjectManager,
   InjectSharedContext,
   isDefined,
   MedusaContext,
@@ -66,14 +70,6 @@ export class WorkflowsModuleService<
   }
 
   __hooks = {
-    onApplicationShutdown: async () => {
-      await this.workflowOrchestratorService_.onApplicationShutdown()
-      await this.redisDisconnectHandler_()
-      clearInterval(this.clearTimeout_)
-    },
-    onApplicationPrepareShutdown: async () => {
-      await this.workflowOrchestratorService_.onApplicationPrepareShutdown()
-    },
     onApplicationStart: async () => {
       await this.workflowOrchestratorService_.onApplicationStart()
 
@@ -84,6 +80,76 @@ export class WorkflowsModuleService<
         } catch {}
       }, 1000 * 60 * 60)
     },
+    onApplicationPrepareShutdown: async () => {
+      await this.workflowOrchestratorService_.onApplicationPrepareShutdown()
+    },
+    onApplicationShutdown: async () => {
+      await this.workflowOrchestratorService_.onApplicationShutdown()
+      await this.redisDisconnectHandler_()
+      clearInterval(this.clearTimeout_)
+    },
+  }
+
+  static prepareFilters<T>(filters: T & { q?: string }) {
+    const filters_ = { ...filters } // shallow copy
+    if (filters_?.q) {
+      const q = filters_.q
+      delete filters_.q
+
+      const textSearch = { $ilike: `%${q}%` }
+      const textSearchFilters = {
+        $or: [
+          {
+            transaction_id: textSearch,
+          },
+          {
+            workflow_id: textSearch,
+          },
+          {
+            state: textSearch,
+          },
+          {
+            execution: {
+              runId: textSearch,
+            },
+          },
+        ],
+      }
+
+      if (!Object.keys(filters_).length) {
+        return textSearchFilters
+      } else {
+        return { $and: [filters, textSearchFilters] }
+      }
+    }
+
+    return filters
+  }
+
+  @InjectManager()
+  // @ts-expect-error
+  async listWorkflowExecutions(
+    filters: FilterableWorkflowExecutionProps = {},
+    config?: FindConfig<WorkflowExecutionDTO>,
+    @MedusaContext() sharedContext?: Context
+  ) {
+    const filters_ = WorkflowsModuleService.prepareFilters(filters)
+    return await super.listWorkflowExecutions(filters_, config, sharedContext)
+  }
+
+  @InjectManager()
+  // @ts-expect-error
+  async listAndCountWorkflowExecutions(
+    filters: FilterableWorkflowExecutionProps = {},
+    config?: FindConfig<WorkflowExecutionDTO>,
+    @MedusaContext() sharedContext?: Context
+  ) {
+    const filters_ = WorkflowsModuleService.prepareFilters(filters)
+    return await super.listAndCountWorkflowExecutions(
+      filters_,
+      config,
+      sharedContext
+    )
   }
 
   @InjectSharedContext()

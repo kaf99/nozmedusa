@@ -247,6 +247,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updatePromotionsWorkflow
+  x-events: []
 delete:
   operationId: DeletePromotionsId
   summary: Delete a Promotion
@@ -313,3 +314,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: deletePromotionsWorkflow
+  x-events: []

@@ -52,6 +52,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: addDraftOrderPromotionWorkflow
+  x-events: []
 delete:
   operationId: DeleteDraftOrdersIdEditPromotions
   summary: Remove Promotions from Draft Order Edit
@@ -107,3 +108,4 @@ delete:
       application/json:
         schema:
           $ref: ../components/schemas/AdminRemoveDraftOrderPromotions.yaml
+  x-events: []

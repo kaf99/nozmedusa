@@ -122,6 +122,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
       registered: [],
     },
     hooksCallback_: {},
+    stepConditions_: {},
     hookBinder: (name, fn) => {
       context.hooks_.declared.push(name)
       context.hooksCallback_[name] = fn.bind(context)()
@@ -184,11 +185,16 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   }: {
     input: TData
   }): ReturnType<StepFunction<TData, TResult>> => {
+    // Get current workflow composition context
+    const workflowCompositionContext =
+      global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext]
+
+    const runAsAsync = workflowCompositionContext.isAsync || context.isAsync
     const step = createStep(
       {
         name: `${name}-as-step`,
-        async: context.isAsync,
-        nested: context.isAsync, // if async we flag this is a nested transaction
+        async: runAsAsync,
+        nested: runAsAsync, // if async we flag this is a nested transaction
       },
       async (stepInput: TData, stepContext) => {
         const { container, ...sharedContext } = stepContext
@@ -206,7 +212,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
         }
 
         let transaction
-        if (workflowEngine && context.isAsync) {
+        if (workflowEngine && runAsAsync) {
           transaction = await workflowEngine.run(name, {
             input: stepInput as any,
             context: executionContext,
@@ -221,7 +227,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
 
         return new StepResponse(
           transaction.result,
-          context.isAsync ? stepContext.transactionId : transaction
+          runAsAsync ? stepContext.transactionId : transaction
         )
       },
       async (transaction, stepContext) => {
@@ -246,7 +252,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
 
         const transactionId = step.__step__ + "-" + stepContext.transactionId
 
-        if (workflowEngine && context.isAsync) {
+        if (workflowEngine && runAsAsync) {
           await workflowEngine.cancel(name, {
             transactionId: transactionId,
             context: executionContext,

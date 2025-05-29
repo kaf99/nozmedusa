@@ -65,6 +65,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateOrderEditAddItemWorkflow
+  x-events: []
 delete:
   operationId: DeleteOrderEditsIdItemsAction_id
   summary: Remove Item from Order Edit
@@ -128,3 +129,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeItemOrderEditActionWorkflow
+  x-events: []

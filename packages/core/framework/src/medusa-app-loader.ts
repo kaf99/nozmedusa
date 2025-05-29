@@ -26,6 +26,7 @@ import {
 } from "@medusajs/utils"
 import { pgConnectionLoader } from "./database"
 
+import type { Knex } from "@mikro-orm/knex"
 import { aliasTo, asValue } from "awilix"
 import { configManager } from "./config"
 import {
@@ -33,7 +34,6 @@ import {
   container as mainContainer,
   MedusaContainer,
 } from "./container"
-import type { Knex } from "@mikro-orm/knex"
 
 export class MedusaAppLoader {
   /**
@@ -88,6 +88,7 @@ export class MedusaAppLoader {
       const def = {} as ModuleDefinition
       def.key ??= key
       def.label ??= ModulesDefinition[key]?.label ?? upperCaseFirst(key)
+      def.dependencies ??= ModulesDefinition[key]?.dependencies
       def.isQueryable = ModulesDefinition[key]?.isQueryable ?? true
 
       const orignalDef = value?.definition ?? ModulesDefinition[key]

@@ -105,6 +105,8 @@ function createContextualWorkflowRunner<
       preventReleaseEvents,
     }
 
+    context.isCancelling = isCancel
+
     const args = [
       transactionOrIdOrIdempotencyKey,
       input,
@@ -188,7 +190,7 @@ function createContextualWorkflowRunner<
       __type: MedusaContextType as Context["__type"],
     }
 
-    context.transactionId ??= ulid()
+    context.transactionId ??= "auto-" + ulid()
     context.eventGroupId ??= ulid()
 
     return await originalExecution(

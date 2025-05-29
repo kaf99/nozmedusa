@@ -1,10 +1,10 @@
+import { QueryContextType } from "../common"
 import { IndexOrderBy } from "../index-data/query-config/query-input-config-order-by"
 import { ObjectToRemoteQueryFields } from "./object-to-remote-query-fields"
 import { RemoteQueryEntryPoints } from "./remote-query-entry-points"
 import { RemoteQueryFilters } from "./to-remote-query"
 
 export type RemoteQueryObjectConfig<TEntry extends string> = {
-  // service: string This property is still supported under the hood but part of the type due to types missmatch towards fields
   entryPoint: TEntry | keyof RemoteQueryEntryPoints
   variables?: any
   fields: ObjectToRemoteQueryFields<
@@ -26,7 +26,6 @@ export type RemoteQueryObjectFromStringResult<
 }
 
 export type RemoteQueryInput<TEntry extends string> = {
-  // service: string This property is still supported under the hood but part of the type due to types missmatch towards fields
   /**
    * The name of the entity to retrieve. For example, `product`.
    */
@@ -67,11 +66,15 @@ export type RemoteQueryInput<TEntry extends string> = {
   /**
    * Apply a query context on the retrieved data. For example, to retrieve product prices for a certain context.
    */
-  context?: any
+  context?: QueryContextType
   /**
    * Apply a `withDeleted` flag on the retrieved data to retrieve soft deleted items.
    */
   withDeleted?: boolean
+  /**
+   * Strategy will be send to the entry module called method
+   */
+  strategy?: "joined" | "select-in"
 }
 
 export type RemoteQueryGraph<TEntry extends string> = {

@@ -60,6 +60,16 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: deleteSalesChannelsWorkflow
+ * x-events:
+ *   - name: sales-channel.deleted
+ *     payload: |-
+ *       ```ts
+ *       [{
+ *         id, // The ID of the sales channel
+ *       }]
+ *       ```
+ *     description: Emitted when sales channels are deleted.
+ *     deprecated: false
  * 
 */
 

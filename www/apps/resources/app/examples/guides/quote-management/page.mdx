@@ -107,7 +107,7 @@ Start by installing the Medusa application on your machine with the following co
 npx create-medusa-app@latest
 ```
 
-You'll first be asked for the project's name. You can also optionally choose to install the [Next.js starter storefront](../../../nextjs-starter/page.mdx).
+You'll first be asked for the project's name. You can also optionally choose to install the [Next.js Starter Storefront](../../../nextjs-starter/page.mdx).
 
 Afterwards, the installation process will start, which will install the Medusa application in a directory with your project's name. If you chose to install the Next.js starter, it'll be installed in a separate directory with the `{project-name}-storefront` name.
 
@@ -213,7 +213,7 @@ You define the `Quote` data model using the `model.define` method of the DML. It
 
 <Note>
 
-Learn more about defining data model properties in the [Property Types documentation](/learn/fundamentals/data-models/property-types).
+Learn more about defining data model properties in the [Property Types documentation](!docs!/learn/fundamentals/data-models/properties).
 
 </Note>
 
@@ -371,7 +371,7 @@ import CartModule from "@medusajs/medusa/cart"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "cart_id",
   },
   CartModule.linkable.cart,
@@ -402,7 +402,7 @@ import CustomerModule from "@medusajs/medusa/customer"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "customer_id",
   },
   CustomerModule.linkable.customer,
@@ -427,7 +427,7 @@ import OrderModule from "@medusajs/medusa/order"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "order_change_id",
   },
   OrderModule.linkable.orderChange,
@@ -452,11 +452,11 @@ import OrderModule from "@medusajs/medusa/order"
 
 export default defineLink(
   {
-    ...QuoteModule.linkable.quote,
+    linkable: QuoteModule.linkable.quote.id,
     field: "draft_order_id",
   },
   {
-    ...OrderModule.linkable.order.id,
+    linkable: OrderModule.linkable.order.id,
     alias: "draft_order",
   },
   {
@@ -3450,14 +3450,14 @@ You'll implement the quote acceptance logic in a workflow. The workflow has the 
         type: "workflow",
         name: "confirmOrderEditRequestWorkflow",
         description: "Confirm the changes made on the draft order, such as changes to item quantities and prices.",
-        link: "!resources!/references/medusa-workflows/confirmOrderEditRequestWorkflow",
+        link: "/references/medusa-workflows/confirmOrderEditRequestWorkflow",
         depth: 1
       },
       {
         type: "workflow",
         name: "updateOrderWorkflow",
         description: "Update the draft order to change its status and convert it into an order.",
-        link: "!resources!/references/medusa-workflows/updateOrderWorkflow",
+        link: "/references/medusa-workflows/updateOrderWorkflow",
         depth: 1
       }
     ]

@@ -22,9 +22,13 @@ import {
   addTagsToReflection,
   getResolvedResourcesOfStep,
   getUniqueStrArray,
+  getWorkflowInputType,
 } from "utils"
 import { StepType } from "./types.js"
 import Examples from "./utils/examples.js"
+import { MedusaEvent } from "types"
+import path from "path"
+import { readFileSync } from "fs"
 
 type ParsedStep = {
   stepReflection: DeclarationReflection
@@ -47,6 +51,7 @@ class WorkflowsPlugin {
       workflowIds: string[]
     }
   }
+  protected events: MedusaEvent[] = []
 
   constructor(app: Application) {
     this.app = app
@@ -92,6 +97,7 @@ class WorkflowsPlugin {
     if (!isEnabled) {
       return
     }
+    this.readEventsJson()
     for (const reflection of context.project.getReflectionsByKind(
       ReflectionKind.All
     )) {
@@ -235,6 +241,7 @@ class WorkflowsPlugin {
     ])
 
     this.updateWorkflowsTagsMap(workflowId, uniqueResources)
+    this.attachEvents(parentReflection)
   }
 
   /**
@@ -296,20 +303,33 @@ class WorkflowsPlugin {
       if (stepType === "hook" && "symbol" in initializer.arguments[1]) {
         // get the hook's name from the first argument
         stepId = this.helper.normalizeName(initializer.arguments[0].getText())
-        const hookArgumetSymbol = this.getHookArgumentSymbol({
-          argument: initializer.arguments[1],
-          constructorFn,
-        })
+        const shouldIgnore = ts
+          .getJSDocCommentsAndTags(initializer.parent)
+          .some((comment) => {
+            if (!("tags" in comment)) {
+              return false
+            }
 
-        if (hookArgumetSymbol) {
-          stepReflection = this.assembleHookReflection({
-            stepId,
-            context,
-            inputSymbol: hookArgumetSymbol,
-            workflowName: workflowVarName,
-            workflowComments,
-            workflowReflection: workflowReflection.parent,
+            return comment.tags?.some(
+              (tag) => tag.tagName.getText() === "ignore"
+            )
           })
+        if (!shouldIgnore) {
+          const hookArgumetSymbol = this.getHookArgumentSymbol({
+            argument: initializer.arguments[1],
+            constructorFn,
+          })
+
+          if (hookArgumetSymbol) {
+            stepReflection = this.assembleHookReflection({
+              stepId,
+              context,
+              inputSymbol: hookArgumetSymbol,
+              workflowName: workflowVarName,
+              workflowComments,
+              workflowReflection: workflowReflection.parent,
+            })
+          }
         }
       } else {
         const initializerReflection = findReflectionInNamespaces(
@@ -559,38 +579,45 @@ class WorkflowsPlugin {
       ReflectionKind.Parameter,
       signatureReflection
     )
+    const isParameterWorkflowInput =
+      inputSymbol.valueDeclaration?.kind === ts.SyntaxKind.Parameter &&
+      workflowReflection.signatures?.length
+    parameter.type = isParameterWorkflowInput
+      ? getWorkflowInputType(workflowReflection.signatures![0]) ||
+        ReferenceType.createSymbolReference(inputSymbol, context)
+      : ReferenceType.createSymbolReference(inputSymbol, context)
 
-    parameter.type = ReferenceType.createSymbolReference(inputSymbol, context)
+    if (parameter.type.type === "reference") {
+      if (parameter.type.name === "__object") {
+        parameter.type.name = "object"
+        parameter.type.qualifiedName = "object"
 
-    if (parameter.type.name === "__object") {
-      parameter.type.name = "object"
-      parameter.type.qualifiedName = "object"
-
-      if (!parameter.comment?.summary) {
-        parameter.comment = new Comment()
-        parameter.comment.summary = [
-          {
-            kind: "text",
-            text: "The input data for the hook.",
-          },
-        ]
+        if (!parameter.comment?.summary) {
+          parameter.comment = new Comment()
+          parameter.comment.summary = [
+            {
+              kind: "text",
+              text: "The input data for the hook.",
+            },
+          ]
+        }
       }
-    }
 
-    if (parameter.type.reflection instanceof DeclarationReflection) {
-      const additionalDataChild = parameter.type.reflection.children?.find(
-        (child) => child.name === "additional_data"
-      )
+      if (parameter.type.reflection instanceof DeclarationReflection) {
+        const additionalDataChild = parameter.type.reflection.children?.find(
+          (child) => child.name === "additional_data"
+        )
 
-      if (additionalDataChild) {
-        additionalDataChild.comment =
-          additionalDataChild.comment || new Comment()
-        additionalDataChild.comment.summary = [
-          {
-            kind: "text",
-            text: "Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).",
-          },
-        ]
+        if (additionalDataChild) {
+          additionalDataChild.comment =
+            additionalDataChild.comment || new Comment()
+          additionalDataChild.comment.summary = [
+            {
+              kind: "text",
+              text: "Additional data that can be passed through the `additional_data` property in HTTP requests.\nLearn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/api-routes/additional-data).",
+            },
+          ]
+        }
       }
     }
 
@@ -853,6 +880,64 @@ class WorkflowsPlugin {
     // try to retrieve from the locals in the constructor function
     return (constructorFn.locals as Map<string, ts.Symbol>).get(
       argument.getText()
+    )
+  }
+
+  readEventsJson() {
+    if (this.events.length) {
+      return
+    }
+
+    const eventsPath = path.resolve(
+      "..",
+      "..",
+      "generated",
+      "events-output.json"
+    )
+
+    this.events = JSON.parse(readFileSync(eventsPath, "utf-8"))
+  }
+
+  attachEvents(workflowReflection: DeclarationReflection) {
+    if (!workflowReflection.comment) {
+      workflowReflection.comment = new Comment()
+    }
+
+    const eventsTag = workflowReflection.comment.blockTags.find(
+      (tag) => tag.tag === "@workflowEvent"
+    )
+
+    if (eventsTag) {
+      return
+    }
+
+    const workflowEvents = this.events.filter((event) =>
+      event.workflows.includes(workflowReflection.name)
+    )
+
+    if (!workflowEvents) {
+      return
+    }
+
+    workflowReflection.comment.blockTags.push(
+      ...workflowEvents.map((event) => {
+        let commentText = `${event.name} -- ${event.description} -- ${event.payload}`
+        if (event.deprecated) {
+          commentText += " -- deprecated"
+          if (event.deprecated_message) {
+            commentText += ` -- ${event.deprecated_message}`
+          }
+        }
+        if (event.version) {
+          commentText += ` -- version: ${event.version}`
+        }
+        return new CommentTag(`@workflowEvent`, [
+          {
+            kind: "text",
+            text: commentText,
+          },
+        ])
+      })
     )
   }
 }

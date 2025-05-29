@@ -349,7 +349,7 @@ export const updateProductsWorkflowId = "update-products"
  * Learn more about adding rules to the product variant's prices in the Pricing Module's 
  * [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
  * 
- * :::note
+ * :::
  *
  * @example
  * To update products by their IDs:

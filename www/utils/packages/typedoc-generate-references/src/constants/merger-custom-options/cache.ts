@@ -10,11 +10,13 @@ const cacheOptions: FormattingOptionsType = {
       slug: "/references/cache-service",
       tags: ["cache", "server", "how to"],
       sidebar_label: "Use Cache Module",
+      keywords: ["cache", "provider", "integration"],
     },
     reflectionTitle: {
       fullReplacement: "How to Use Cache Module",
     },
     expandMembers: true,
+    sortMembers: true,
     startSections: [
       `## Resolve Cache Module's Service
 

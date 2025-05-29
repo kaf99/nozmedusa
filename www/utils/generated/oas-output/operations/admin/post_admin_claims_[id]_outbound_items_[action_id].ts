@@ -93,6 +93,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: updateClaimAddItemWorkflow
+ * x-events: []
  * 
 */
 

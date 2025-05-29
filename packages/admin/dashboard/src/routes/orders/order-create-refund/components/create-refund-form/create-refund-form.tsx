@@ -20,6 +20,7 @@ import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useRefundPayment } from "../../../../../hooks/api"
 import { currencies } from "../../../../../lib/data/currencies"
 import { formatCurrency } from "../../../../../lib/format-currency"
+import { formatProvider } from "../../../../../lib/format-provider"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import { getPaymentsFromOrder } from "../../../../../lib/orders"
 
@@ -137,6 +138,7 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
                       disabled={
                         !!payment.canceled_at || totalRefunded >= payment.amount
                       }
+                      className="flex items-center justify-center"
                     >
                       <span>
                         {getLocaleAmount(
@@ -145,8 +147,8 @@ export const CreateRefundForm = ({ order }: CreateRefundFormProps) => {
                         )}
                         {" - "}
                       </span>
-                      <span>{payment.provider_id}</span>
-                      <span> - ({payment.id.replace("pay_", "")})</span>
+                      <span>{formatProvider(payment.provider_id)}</span>
+                      <span> - (#{payment.id.substring(23)})</span>
                     </Select.Item>
                   )
                 })}

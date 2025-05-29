@@ -30,7 +30,7 @@
  *     type: string
  *     title: province_code
  *     description: The tax region's lower-case ISO 3166-2 province code.
- *     example: "us-ca"
+ *     example: us-ca
  *     externalDocs:
  *       url: https://en.wikipedia.org/wiki/ISO_3166-2
  *       description: Learn more about ISO 3166-2

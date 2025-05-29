@@ -4,11 +4,14 @@ import {
   IDistributedSchedulerStorage,
   IDistributedTransactionStorage,
   SchedulerOptions,
+  SkipCancelledExecutionError,
   SkipExecutionError,
   TransactionCheckpoint,
+  TransactionContext,
   TransactionFlow,
   TransactionOptions,
   TransactionStep,
+  TransactionStepError,
 } from "@medusajs/framework/orchestration"
 import { Logger, ModulesSdkTypes } from "@medusajs/framework/types"
 import {
@@ -160,6 +163,7 @@ export class RedisDistributedTransactionStorage
       {
         workflow_id: data.flow.modelId,
         transaction_id: data.flow.transactionId,
+        run_id: data.flow.runId,
         execution: data.flow,
         context: {
           data: data.context,
@@ -176,6 +180,7 @@ export class RedisDistributedTransactionStorage
       {
         workflow_id: data.flow.modelId,
         transaction_id: data.flow.transactionId,
+        run_id: data.flow.runId,
       },
     ])
   }
@@ -223,7 +228,7 @@ export class RedisDistributedTransactionStorage
 
   async get(
     key: string,
-    options?: TransactionOptions
+    options?: TransactionOptions & { isCancelling?: boolean }
   ): Promise<TransactionCheckpoint | undefined> {
     const data = await this.redisClient.get(key)
 
@@ -240,26 +245,54 @@ export class RedisDistributedTransactionStorage
 
     const [_, workflowId, transactionId] = key.split(":")
     const trx = await this.workflowExecutionService_
-      .retrieve(
+      .list(
         {
           workflow_id: workflowId,
           transaction_id: transactionId,
         },
         {
           select: ["execution", "context"],
+          order: {
+            id: "desc",
+          },
+          take: 1,
         }
       )
+      .then((trx) => trx[0])
       .catch(() => undefined)
 
     if (trx) {
-      const checkpointData = {
-        flow: trx.execution,
-        context: trx.context.data,
-        errors: trx.context.errors,
+      const execution = trx.execution as TransactionFlow
+
+      if (!idempotent) {
+        const isFailedOrReverted = [
+          TransactionState.REVERTED,
+          TransactionState.FAILED,
+        ].includes(execution.state)
+
+        const isDone = execution.state === TransactionState.DONE
+
+        const isCancellingAndFailedOrReverted =
+          options?.isCancelling && isFailedOrReverted
+
+        const isNotCancellingAndDoneOrFailedOrReverted =
+          !options?.isCancelling && (isDone || isFailedOrReverted)
+
+        if (
+          isCancellingAndFailedOrReverted ||
+          isNotCancellingAndDoneOrFailedOrReverted
+        ) {
+          return
+        }
       }
 
-      return checkpointData
+      return {
+        flow: trx.execution as TransactionFlow,
+        context: trx.context?.data as TransactionContext,
+        errors: trx.context?.errors as TransactionStepError[],
+      }
     }
+
     return
   }
 
@@ -325,6 +358,11 @@ export class RedisDistributedTransactionStorage
       })
     }
 
+    const isNotStarted = data.flow.state === TransactionState.NOT_STARTED
+    const isManualTransactionId = !data.flow.transactionId.startsWith("auto-")
+    // Only set if not exists
+    const shouldSetNX = isNotStarted && isManualTransactionId
+
     // Prepare operations to be executed in batch or pipeline
     const stringifiedData = JSON.stringify(data)
     const pipeline = this.redisClient.pipeline()
@@ -332,19 +370,45 @@ export class RedisDistributedTransactionStorage
     // Execute Redis operations
     if (!hasFinished) {
       if (ttl) {
-        pipeline.set(key, stringifiedData, "EX", ttl)
+        if (shouldSetNX) {
+          pipeline.set(key, stringifiedData, "EX", ttl, "NX")
+        } else {
+          pipeline.set(key, stringifiedData, "EX", ttl)
+        }
       } else {
-        pipeline.set(key, stringifiedData)
+        if (shouldSetNX) {
+          pipeline.set(key, stringifiedData, "NX")
+        } else {
+          pipeline.set(key, stringifiedData)
+        }
       }
     } else {
       pipeline.unlink(key)
     }
 
+    const pipelinePromise = pipeline.exec().then((result) => {
+      if (!shouldSetNX) {
+        return result
+      }
+
+      const actionResult = result?.pop()
+      const isOk = !!actionResult?.pop()
+      if (!isOk) {
+        throw new MedusaError(
+          MedusaError.Types.INVALID_ARGUMENT,
+          "Transaction already started for transactionId: " +
+            data.flow.transactionId
+        )
+      }
+
+      return result
+    })
+
     // Database operations
     if (hasFinished && !retentionTime && !idempotent) {
-      await promiseAll([pipeline.exec(), this.deleteFromDb(data)])
+      await promiseAll([pipelinePromise, this.deleteFromDb(data)])
     } else {
-      await promiseAll([pipeline.exec(), this.saveToDb(data, retentionTime)])
+      await promiseAll([pipelinePromise, this.saveToDb(data, retentionTime)])
     }
   }
 
@@ -540,15 +604,23 @@ export class RedisDistributedTransactionStorage
     key: string
     options?: TransactionOptions
   }) {
-    const isInitialCheckpoint = data.flow.state === TransactionState.NOT_STARTED
+    const isInitialCheckpoint = [TransactionState.NOT_STARTED].includes(
+      data.flow.state
+    )
 
     /**
      * In case many execution can succeed simultaneously, we need to ensure that the latest
      * execution does continue if a previous execution is considered finished
      */
     const currentFlow = data.flow
+
+    const getOptions = {
+      ...options,
+      isCancelling: !!data.flow.cancelledAt,
+    } as Parameters<typeof this.get>[1]
+
     const { flow: latestUpdatedFlow } =
-      (await this.get(key, options)) ??
+      (await this.get(key, getOptions)) ??
       ({ flow: {} } as { flow: TransactionFlow })
 
     if (!isInitialCheckpoint && !isPresent(latestUpdatedFlow)) {
@@ -559,6 +631,19 @@ export class RedisDistributedTransactionStorage
        * The already finished execution would have deleted the checkpoint already.
        */
       throw new SkipExecutionError("Already finished by another execution")
+    }
+
+    // First ensure that the latest execution was not cancelled, otherwise we skip the execution
+    const latestTransactionCancelledAt = latestUpdatedFlow.cancelledAt
+    const currentTransactionCancelledAt = currentFlow.cancelledAt
+
+    if (
+      !!latestTransactionCancelledAt &&
+      currentTransactionCancelledAt == null
+    ) {
+      throw new SkipCancelledExecutionError(
+        "Workflow execution has been cancelled during the execution"
+      )
     }
 
     const currentFlowSteps = Object.values(currentFlow.steps || {})

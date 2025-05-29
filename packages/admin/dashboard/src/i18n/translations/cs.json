@@ -537,18 +537,22 @@
       "fields": {
         "title": {
           "label": "Název",
-          "hint": "Dejte svému produktu krátký a jasný název.<0/>50-60 znaků je doporučená délka pro vyhledávače."
+          "hint": "Dejte svému produktu krátký a jasný název.<0/>50-60 znaků je doporučená délka pro vyhledávače.",
+        "placeholder": "Zimní bunda"
         },
         "subtitle": {
-          "label": "Podtitul"
+          "label": "Podtitul",
+        "placeholder": "Teplé a útulné"
         },
         "handle": {
           "label": "Handle",
-          "tooltip": "Handle se používá k odkazování na produkt ve vašem obchodě. Pokud není specifikováno, handle bude vygenerováno z názvu produktu."
+          "tooltip": "Handle se používá k odkazování na produkt ve vašem obchodě. Pokud není specifikováno, handle bude vygenerováno z názvu produktu.",
+        "placeholder": "zimní-bunda"
         },
         "description": {
           "label": "Popis",
-          "hint": "Dejte svému produktu krátký a jasný popis.<0/>120-160 znaků je doporučená délka pro vyhledávače."
+          "hint": "Dejte svému produktu krátký a jasný popis.<0/>120-160 znaků je doporučená délka pro vyhledávače.",
+        "placeholder": "Teplá a útulná bunda"
         },
         "discountable": {
           "label": "Slevový",

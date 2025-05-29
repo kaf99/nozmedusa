@@ -1,5 +1,35 @@
 # Change Log
 
+## 2.8.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.8.3
+
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.8.2
+
+## 2.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.8.1
+
+## 2.8.0
+
+### Patch Changes
+
+- [#12360](https://github.com/medusajs/medusa/pull/12360) [`f74586e772f2800952e52b6eaceb25de93c1691c`](https://github.com/medusajs/medusa/commit/f74586e772f2800952e52b6eaceb25de93c1691c) Thanks [@shahednasser](https://github.com/shahednasser)! - fix(create-medusa-app): updates to text and prompts
+
+- Updated dependencies []:
+  - @medusajs/telemetry@2.8.0
+
 ## 2.7.1
 
 ### Patch Changes

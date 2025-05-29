@@ -71,6 +71,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: removeItemReturnActionWorkflow
+ * x-events: []
  * 
 */
 

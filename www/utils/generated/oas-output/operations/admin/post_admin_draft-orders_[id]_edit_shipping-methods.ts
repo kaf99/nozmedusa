@@ -68,6 +68,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: addDraftOrderShippingMethodsWorkflow
+ * x-events: []
  * 
 */
 

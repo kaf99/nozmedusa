@@ -386,7 +386,8 @@ export class LocalWorkflow {
 
     const transaction = await orchestrator.retrieveExistingTransaction(
       uniqueTransactionId,
-      handler(this.container_, context)
+      handler(this.container_, context),
+      { isCancelling: context?.isCancelling }
     )
 
     return transaction
@@ -401,9 +402,17 @@ export class LocalWorkflow {
     this.medusaContext = context
     const { orchestrator } = this.workflow
 
-    const transaction = isString(transactionOrTransactionId)
+    let transaction = isString(transactionOrTransactionId)
       ? await this.getRunningTransaction(transactionOrTransactionId, context)
       : transactionOrTransactionId
+
+    // not a distributed transaction instance
+    if (!transaction.getFlow) {
+      transaction = await this.getRunningTransaction(
+        (transaction as any).flow.transactionId,
+        context
+      )
+    }
 
     if (this.medusaContext) {
       this.medusaContext.eventGroupId =

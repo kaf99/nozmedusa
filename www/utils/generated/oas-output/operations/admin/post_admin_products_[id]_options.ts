@@ -56,7 +56,7 @@
  *       })
  * 
  *       sdk.admin.product.createOption(
- *         "prod_123", 
+ *         "prod_123",
  *         {
  *           title: "Color",
  *           values: ["Green", "Blue"]
@@ -99,6 +99,16 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: createProductOptionsWorkflow
+ * x-events:
+ *   - name: product-option.created
+ *     payload: |-
+ *       ```ts
+ *       [{
+ *         id, // The ID of the product option
+ *       }]
+ *       ```
+ *     description: Emitted when product options are created.
+ *     deprecated: false
  * 
 */
 

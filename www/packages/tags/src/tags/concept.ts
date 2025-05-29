@@ -4,7 +4,7 @@ export const concept = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/inventory/inventory-kit"
   },
   {
-    "title": "Price Rules",
+    "title": "Price Tiers and Rules",
     "path": "https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules"
   },
   {

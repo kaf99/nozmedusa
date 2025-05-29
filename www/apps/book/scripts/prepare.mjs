@@ -66,8 +66,17 @@ async function main() {
           "commerce-modules"
         ),
         allowedFilesPatterns: [
-          /^(?!.*\/(workflows|js-sdk|extend|events|admin-widget-zones)\/).*$/,
+          /^(?!.*\/(workflows|js-sdk|extend|admin-widget-zones)\/).*$/,
         ],
+      },
+      {
+        dir: path.join(
+          process.cwd(),
+          "..",
+          "resources",
+          "app",
+          "infrastructure-modules"
+        ),
       },
       {
         dir: path.join(
@@ -100,6 +109,16 @@ async function main() {
             baseUrl,
           },
         },
+      },
+      {
+        dir: path.join(
+          process.cwd(),
+          "..",
+          "resources",
+          "references",
+          "modules",
+          "events"
+        ),
       },
       {
         dir: path.join(process.cwd(), "..", "resources", "app", "medusa-cli"),
@@ -181,17 +200,6 @@ async function main() {
             type: "Store",
           },
         },
-      },
-      {
-        dir: path.join(
-          process.cwd(),
-          "..",
-          "resources",
-          "references",
-          "medusa_config",
-          "interfaces",
-          "medusa_config.ConfigModule"
-        ),
       },
       {
         dir: path.join(

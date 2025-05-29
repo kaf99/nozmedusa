@@ -1,3 +1,4 @@
+import { fromZodIssue } from "zod-validation-error"
 import { NextFunction, ErrorRequestHandler, Response } from "express"
 
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/utils"
@@ -73,6 +74,15 @@ export function errorHandler() {
         errObj.message = "An unknown error occurred."
         errObj.type = "unknown_error"
         break
+    }
+
+    if ("issues" in err && Array.isArray(err.issues)) {
+      const messages = err.issues.map((issue) => fromZodIssue(issue).toString())
+      res.status(statusCode).json({
+        type: MedusaError.Types.INVALID_DATA,
+        message: messages.join("\n"),
+      })
+      return
     }
 
     res.status(statusCode).json(errObj)

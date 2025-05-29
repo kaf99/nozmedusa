@@ -4,6 +4,7 @@ import {
   enUS,
   es,
   fr,
+  he,
   it,
   ja,
   pl,
@@ -25,10 +26,17 @@ import {
   ko,
   nl,
   hu,
+  bs,
 } from "date-fns/locale"
 import { Language } from "./types"
 
 export const languages: Language[] = [
+  {
+    code: "bs",
+    display_name: "Bosanski",
+    ltr: true,
+    date_locale: bs,
+  },
   {
     code: "bg",
     display_name: "Български",
@@ -64,6 +72,12 @@ export const languages: Language[] = [
     display_name: "Français",
     ltr: true,
     date_locale: fr,
+  },
+  {
+    code: "he",
+    display_name: "עברית",
+    ltr: false,
+    date_locale: he,
   },
   {
     code: "hu",

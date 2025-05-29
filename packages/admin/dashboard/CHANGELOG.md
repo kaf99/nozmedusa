@@ -1,5 +1,61 @@
 # @medusajs/dashboard
 
+## 2.8.3
+
+### Patch Changes
+
+- [#12476](https://github.com/medusajs/medusa/pull/12476) [`b8ab053252f7c8f854b4b549b74c2cf0521bd8d5`](https://github.com/medusajs/medusa/commit/b8ab053252f7c8f854b4b549b74c2cf0521bd8d5) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard): refund payment formatting
+
+- Updated dependencies [[`9f376ff1f122c0f70559cf4f57813b9f2b608f3e`](https://github.com/medusajs/medusa/commit/9f376ff1f122c0f70559cf4f57813b9f2b608f3e), [`fca5ad77b41856867ec68b1e46d04f1bb71cbc76`](https://github.com/medusajs/medusa/commit/fca5ad77b41856867ec68b1e46d04f1bb71cbc76)]:
+  - @medusajs/js-sdk@2.8.3
+  - @medusajs/admin-shared@2.8.3
+  - @medusajs/icons@2.8.3
+  - @medusajs/ui@4.0.13
+
+## 2.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/js-sdk@2.8.2
+  - @medusajs/admin-shared@2.8.2
+  - @medusajs/icons@2.8.2
+  - @medusajs/ui@4.0.12
+
+## 2.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/admin-shared@2.8.1
+  - @medusajs/js-sdk@2.8.1
+  - @medusajs/icons@2.8.1
+  - @medusajs/ui@4.0.11
+
+## 2.8.0
+
+### Patch Changes
+
+- [#12297](https://github.com/medusajs/medusa/pull/12297) [`9cedeb182dc19d6127b602fc06e4b8850490e2a9`](https://github.com/medusajs/medusa/commit/9cedeb182dc19d6127b602fc06e4b8850490e2a9) Thanks [@fPolic](https://github.com/fPolic)! - feat(dashboard, js-sdk, medusa, tax, types): custom tax providers
+
+- [#12371](https://github.com/medusajs/medusa/pull/12371) [`6aa1ebdee24fd3e2762317f31db4e4adcaba7566`](https://github.com/medusajs/medusa/commit/6aa1ebdee24fd3e2762317f31db4e4adcaba7566) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard): inventory kit combobox state
+
+- [#12383](https://github.com/medusajs/medusa/pull/12383) [`3fb4d5beb05510fc3727199f0387fae5c8642520`](https://github.com/medusajs/medusa/commit/3fb4d5beb05510fc3727199f0387fae5c8642520) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard): call route modal onClose only on route change
+
+- [#12450](https://github.com/medusajs/medusa/pull/12450) [`32e0194772cd44efa1930f2ee99f147fa2976f1f`](https://github.com/medusajs/medusa/commit/32e0194772cd44efa1930f2ee99f147fa2976f1f) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard, medusa): validate provider exists when creating a top level tax region
+
+- [#12346](https://github.com/medusajs/medusa/pull/12346) [`cdb135e491b44c7573e7c568565366517576b90a`](https://github.com/medusajs/medusa/commit/cdb135e491b44c7573e7c568565366517576b90a) Thanks [@pepijn-vanvlaanderen](https://github.com/pepijn-vanvlaanderen)! - Added missing dependencies
+
+- [#12447](https://github.com/medusajs/medusa/pull/12447) [`39e5eadefcf123c364240c665e8b455d1a8c38c0`](https://github.com/medusajs/medusa/commit/39e5eadefcf123c364240c665e8b455d1a8c38c0) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard, core-flows): allocation button condition and reservation recreation on fulfilment cancel
+
+- [#11877](https://github.com/medusajs/medusa/pull/11877) [`353906614625ce8cc15c7d60537db697a69e160d`](https://github.com/medusajs/medusa/commit/353906614625ce8cc15c7d60537db697a69e160d) Thanks [@AmbroziuBaban](https://github.com/AmbroziuBaban)! - fix(dashboard): Admin Global Search broken for variants
+
+- Updated dependencies [[`9cedeb182dc19d6127b602fc06e4b8850490e2a9`](https://github.com/medusajs/medusa/commit/9cedeb182dc19d6127b602fc06e4b8850490e2a9), [`4f6362b1cb1b84f01cc4cd277981aae7ae5797c9`](https://github.com/medusajs/medusa/commit/4f6362b1cb1b84f01cc4cd277981aae7ae5797c9)]:
+  - @medusajs/js-sdk@2.8.0
+  - @medusajs/ui@4.0.10
+  - @medusajs/admin-shared@2.8.0
+  - @medusajs/icons@2.8.0
+
 ## 2.7.1
 
 ### Patch Changes

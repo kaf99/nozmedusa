@@ -3,21 +3,21 @@ import {
   CustomerDTO,
   PaymentSessionDTO,
 } from "@medusajs/framework/types"
+import { isPresent, Modules } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
-  WorkflowResponse,
   createWorkflow,
   parallelize,
   transform,
   when,
+  WorkflowData,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { createRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import {
-  createPaymentSessionStep,
   createPaymentAccountHolderStep,
+  createPaymentSessionStep,
 } from "../steps"
 import { deletePaymentSessionsWorkflow } from "./delete-payment-sessions"
-import { isPresent, Modules } from "@medusajs/framework/utils"
 
 /**
  * The data to create payment sessions.
@@ -122,16 +122,22 @@ export const createPaymentSessionsWorkflow = createWorkflow(
         )
       })
 
-      const accountHolderInput = {
-        provider_id: input.provider_id,
-        context: {
-          // The module is idempotent, so if there already is a linked account holder, the module will simply return it back.
-          account_holder: existingAccountHolder,
-          customer: paymentCustomer,
-        },
-      }
+      const accountHolderInput = transform(
+        { existingAccountHolder, input, paymentCustomer },
+        (data) => {
+          return {
+            provider_id: data.input.provider_id,
+            context: {
+              // The module is idempotent, so if there already is a linked account holder, the module will simply return it back.
+              account_holder: data.existingAccountHolder,
+              customer: data.paymentCustomer,
+            },
+          }
+        }
+      )
 
       const accountHolder = createPaymentAccountHolderStep(accountHolderInput)
+
       return { paymentCustomer, accountHolder }
     })
 

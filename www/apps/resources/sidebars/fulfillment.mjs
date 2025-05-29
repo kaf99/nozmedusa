@@ -32,7 +32,7 @@ export const fulfillmentSidebar = [
           {
             type: "link",
             path: "/commerce-modules/fulfillment/fulfillment-provider",
-            title: "Fulfillment Provider",
+            title: "Fulfillment Module Provider",
           },
           {
             type: "link",
@@ -63,7 +63,7 @@ export const fulfillmentSidebar = [
           {
             type: "link",
             path: "/references/fulfillment/provider",
-            title: "Create Fulfillment Provider Module",
+            title: "Create Fulfillment Provider",
           },
           {
             type: "ref",
@@ -155,7 +155,7 @@ export const fulfillmentSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/fulfillment/events",
+            path: "/references/fulfillment/events",
             title: "Events Reference",
           },
           {

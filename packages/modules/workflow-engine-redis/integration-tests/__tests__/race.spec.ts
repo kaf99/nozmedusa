@@ -10,6 +10,7 @@ import {
 import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { setTimeout as setTimeoutSync } from "timers"
 import { setTimeout } from "timers/promises"
+import { ulid } from "ulid"
 import "../__fixtures__"
 
 jest.setTimeout(300000)
@@ -38,6 +39,8 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
     describe("Testing race condition of the workflow during retry", () => {
       it("should prevent race continuation of the workflow during retryIntervalAwaiting in background execution", (done) => {
         const transactionId = "transaction_id"
+        const workflowId = "workflow-1" + ulid()
+        const subWorkflowId = "sub-" + workflowId
 
         const step0InvokeMock = jest.fn()
         const step1InvokeMock = jest.fn()
@@ -60,12 +63,12 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           return new StepResponse({ result: input })
         })
 
-        const subWorkflow = createWorkflow("sub-workflow-1", function () {
+        const subWorkflow = createWorkflow(subWorkflowId, function () {
           const status = step1()
           return new WorkflowResponse(status)
         })
 
-        createWorkflow("workflow-1", function () {
+        createWorkflow(workflowId, function () {
           const build = step0()
 
           const status = subWorkflow.runAsStep({} as any).config({
@@ -87,21 +90,28 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
         })
 
         void workflowOrcModule.subscribe({
-          workflowId: "workflow-1",
+          workflowId,
           transactionId,
-          subscriber: (event) => {
+          subscriber: async (event) => {
             if (event.eventType === "onFinish") {
-              expect(step0InvokeMock).toHaveBeenCalledTimes(1)
-              expect(step1InvokeMock.mock.calls.length).toBeGreaterThan(1)
-              expect(step2InvokeMock).toHaveBeenCalledTimes(1)
-              expect(transformMock).toHaveBeenCalledTimes(1)
-              setTimeoutSync(done, 500)
+              try {
+                expect(step0InvokeMock).toHaveBeenCalledTimes(1)
+                expect(step1InvokeMock.mock.calls.length).toBeGreaterThan(1)
+                expect(step2InvokeMock).toHaveBeenCalledTimes(1)
+                expect(transformMock).toHaveBeenCalledTimes(1)
+
+                // Prevent killing the test to early
+                await setTimeout(500)
+                done()
+              } catch (e) {
+                return done(e)
+              }
             }
           },
         })
 
         workflowOrcModule
-          .run("workflow-1", { transactionId })
+          .run(workflowId, { transactionId })
           .then(({ result }) => {
             expect(result).toBe("result from step 0")
           })
@@ -179,14 +189,19 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           transactionId,
           subscriber: (event) => {
             if (event.eventType === "onFinish") {
-              expect(step0InvokeMock).toHaveBeenCalledTimes(1)
-              expect(step0CompensateMock).toHaveBeenCalledTimes(2) // TODO: review this.
-              expect(step1InvokeMock).toHaveBeenCalledTimes(1)
-              expect(step1CompensateMock).toHaveBeenCalledTimes(1)
-              expect(step2InvokeMock).toHaveBeenCalledTimes(0)
-              expect(transformMock).toHaveBeenCalledTimes(0)
-
-              done()
+              try {
+                expect(step0InvokeMock).toHaveBeenCalledTimes(1)
+                expect(step0CompensateMock).toHaveBeenCalledTimes(1)
+                expect(
+                  step1InvokeMock.mock.calls.length
+                ).toBeGreaterThanOrEqual(2) // Called every 0.1s at least (it can take more than 0.1sdepending on the event loop congestions)
+                expect(step1CompensateMock).toHaveBeenCalledTimes(1)
+                expect(step2InvokeMock).toHaveBeenCalledTimes(0)
+                expect(transformMock).toHaveBeenCalledTimes(0)
+                done()
+              } catch (e) {
+                return done(e)
+              }
             }
           },
         })

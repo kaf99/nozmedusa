@@ -142,7 +142,7 @@ tags:
       url: https://docs.medusajs.com/resources/storefront-development/regions
     x-associatedSchema:
       $ref: "#/components/schemas/StoreRegion"
-  - name: Return
+  - name: Returns
     description: >
       Customers can request to return items in their order. The admin user then
       receives and handles the return.

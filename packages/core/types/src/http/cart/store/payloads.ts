@@ -1,6 +1,8 @@
 export interface StoreCreateCart {
   /**
    * The ID of the region that the cart is created in.
+   * If not provided, the default region of the store is used.
+   * If the store doesn't have a default region, an error is thrown.
    */
   region_id?: string
   /**

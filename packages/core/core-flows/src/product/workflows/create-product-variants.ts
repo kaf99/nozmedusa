@@ -212,7 +212,7 @@ export const createProductVariantsWorkflowId = "create-product-variants"
  * Learn more about adding rules to the product variant's prices in the Pricing Module's 
  * [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
  * 
- * :::note
+ * :::
  * 
  * @example
  * const { result } = await createProductVariantsWorkflow(container)

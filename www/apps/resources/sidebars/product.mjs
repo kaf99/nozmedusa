@@ -150,7 +150,7 @@ export const productSidebar = [
           },
           {
             type: "link",
-            path: "/commerce-modules/product/events",
+            path: "/references/product/events",
             title: "Events Reference",
           },
           {

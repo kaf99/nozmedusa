@@ -553,18 +553,22 @@
     "fields": {
       "title": {
         "label": "Tytuł",
-        "hint": "Podaj krótki i jasny tytuł dla swojego produktu.<0/>Zalecana długość to 50-60 znaków dla wyszukiwarek."
+        "hint": "Podaj krótki i jasny tytuł dla swojego produktu.<0/>Zalecana długość to 50-60 znaków dla wyszukiwarek.",
+        "placeholder": "Kurtka zimowa"
       },
       "subtitle": {
-        "label": "Podtytuł"
+        "label": "Podtytuł",
+        "placeholder": "Ciepły i przytulny"
       },
       "handle": {
         "label": "Uchwyt",
-        "tooltip": "Uchwyt jest używany do odniesienia do produktu w Twoim sklepie. Jeśli nie zostanie określony, uchwyt zostanie wygenerowany z tytułu produktu."
+        "tooltip": "Uchwyt jest używany do odniesienia do produktu w Twoim sklepie. Jeśli nie zostanie określony, uchwyt zostanie wygenerowany z tytułu produktu.",
+        "placeholder": "kurtka-zimowa"
       },
       "description": {
         "label": "Opis",
-        "hint": "Podaj krótki i jasny opis dla swojego produktu.<0/>Zalecana długość to 120-160 znaków dla wyszukiwarek."
+        "hint": "Podaj krótki i jasny opis dla swojego produktu.<0/>Zalecana długość to 120-160 znaków dla wyszukiwarek.",
+        "placeholder": "Ciepła i przytulna kurtka"
       },
       "discountable": {
         "label": "Rabaty",

@@ -31,7 +31,7 @@ describe("waitSubscribersExecution", () => {
   describe("with no existing listeners", () => {
     it("should resolve when event is fired before timeout", async () => {
       const waitPromise = waitSubscribersExecution(TEST_EVENT, eventBus as any)
-      setTimeout(() => eventBus.emit(TEST_EVENT, "test-data"), 100)
+      setTimeout(() => eventBus.emit(TEST_EVENT, "test-data"), 100).unref()
 
       jest.advanceTimersByTime(100)
 
@@ -69,7 +69,7 @@ describe("waitSubscribersExecution", () => {
   describe("with existing listeners", () => {
     it("should resolve when all listeners complete successfully", async () => {
       const listener = jest.fn().mockImplementation(() => {
-        return new Promise((resolve) => setTimeout(resolve, 200))
+        return new Promise((resolve) => setTimeout(resolve, 200).unref())
       })
 
       eventBus.eventEmitter_.on(TEST_EVENT, listener)
@@ -131,15 +131,15 @@ describe("waitSubscribersExecution", () => {
   describe("with multiple listeners", () => {
     it("should resolve when all listeners complete", async () => {
       const listener1 = jest.fn().mockImplementation(() => {
-        return new Promise((resolve) => setTimeout(resolve, 100))
+        return new Promise((resolve) => setTimeout(resolve, 100).unref())
       })
 
       const listener2 = jest.fn().mockImplementation(() => {
-        return new Promise((resolve) => setTimeout(resolve, 200))
+        return new Promise((resolve) => setTimeout(resolve, 200).unref())
       })
 
       const listener3 = jest.fn().mockImplementation(() => {
-        return new Promise((resolve) => setTimeout(resolve, 300))
+        return new Promise((resolve) => setTimeout(resolve, 300).unref())
       })
 
       eventBus.eventEmitter_.on(TEST_EVENT, listener1)

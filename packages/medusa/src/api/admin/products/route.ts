@@ -79,7 +79,8 @@ async function getProductsWithIndexEngine(
 
   res.json({
     products: products.map(remapProductResponse),
-    count: metadata!.count,
+    count: metadata!.estimate_count,
+    estimate_count: metadata!.estimate_count,
     offset: metadata!.skip,
     limit: metadata!.take,
   })

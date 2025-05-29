@@ -110,6 +110,23 @@ const generatedgeneratedRecipesSidebarSidebar = {
       "loaded": true,
       "isPathHref": true,
       "type": "link",
+      "path": "/recipes/bundled-products",
+      "title": "Bundled Products",
+      "children": [
+        {
+          "loaded": true,
+          "isPathHref": true,
+          "type": "link",
+          "path": "/recipes/bundled-products/examples/standard",
+          "title": "Example",
+          "children": []
+        }
+      ]
+    },
+    {
+      "loaded": true,
+      "isPathHref": true,
+      "type": "link",
       "path": "/recipes/commerce-automation",
       "title": "Commerce Automation",
       "children": [

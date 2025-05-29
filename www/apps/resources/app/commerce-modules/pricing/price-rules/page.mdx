@@ -7,17 +7,161 @@ tags:
     - concept
 ---
 
+import { CodeTabs, CodeTab } from "docs-ui"
+
 export const metadata = {
-  title: `Price Rules`,
+  title: `Price Tiers and Rules`,
 }
 
 # {metadata.title}
 
-In this Pricing Module guide, you'll learn about price rules for price sets and price lists, and how to add rules to a price.
+In this Pricing Module guide, you'll learn about tired prices, price rules for price sets and price lists, and how to add rules to a price.
+
+## Tiered Pricing
+
+Each price, represented by the [Price data model](/references/pricing/models/Price), has two optional properties that can be used to create tiered prices:
+
+- `min_quantity`: The minimum quantity that must be in the cart for the price to be applied.
+- `max_quantity`: The maximum quantity that can be in the cart for the price to be applied.
+
+This is useful to set tiered pricing for resources like product variants and shipping options.
+
+For example, you can set a variant's price to:
+
+- `$10` by default.
+- `$8` when the customer adds `10` or more of the variant to the cart.
+- `$6` when the customer adds `20` or more of the variant to the cart.
+
+These price definitions would look like this:
+
+```json title="Example Prices"
+[
+  // default price
+  {
+    "amount": 10,
+    "currency_code": "usd",
+  },
+  {
+    "amount": 8,
+    "currency_code": "usd",
+    "min_quantity": 10,
+    "max_quantity": 19,
+  },
+  {
+    "amount": 6,
+    "currency_code": "usd",
+    "min_quantity": 20,
+  },
+],
+```
+
+### How to Create Tiered Prices?
+
+When you create prices, you can specify a `min_quantity` and `max_quantity` for each price. This allows you to create tiered pricing, where the price changes based on the quantity of items in the cart.
+
+For example:
+
+<Note>
+
+For most use cases where you're building customizations in the Medusa application, it's highly recommended to use [Medusa's workflows](../../../medusa-workflows-reference/page.mdx) rather than using the Pricing Module directly. Medusa's workflows already implement extensive functionalities that you can re-use in your custom flows, with reliable roll-back mechanism.
+
+</Note>
+
+<CodeTabs group="price-example">
+  <CodeTab label="Using Medusa Workflows" value="workflows">
+
+export const tieredPricingHighlights = [
+  ["16", "min_quantity", "The minimum quantity that must be in the cart for the price to be applied."],
+  ["17", "max_quantity", "The maximum quantity that can be in the cart for the price to be applied."],
+]
+
+```ts highlights={tieredPricingHighlights}
+const { result } = await createProductsWorkflow(container)
+  .run({
+    input: {
+      products: [{
+        variants: [{
+          id: "variant_1",
+          prices: [
+            // default price
+            {
+              amount: 10,
+              currency_code: "usd",
+            },
+            {
+              amount: 8,
+              currency_code: "usd",
+              min_quantity: 10,
+              max_quantity: 19,
+            },
+            {
+              amount: 6,
+              currency_code: "usd",
+              min_quantity: 20,
+            },
+          ],
+          // ...
+        }],
+      }],
+      // ...
+    },
+  })
+```
+
+  </CodeTab>
+  <CodeTab label="Using the Pricing Module" value="pricing-module">
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  priceSetId: "pset_1",
+  prices: [
+    // default price
+    {
+      amount: 10,
+      currency_code: "usd",
+    },
+    // tiered prices
+    {
+      amount: 8,
+      currency_code: "usd",
+      min_quantity: 10,
+      max_quantity: 19,
+    },
+    {
+      amount: 6,
+      currency_code: "usd",
+      min_quantity: 20,
+    },
+  ],
+})
+```
+
+  </CodeTab>
+</CodeTabs>
+
+In this example, you create a product with a variant whose default price is `$10`. You also add two tiered prices that set the price to `$8` when the quantity is between `10` and `19`, and to `$6` when the quantity is `20` or more.
+
+### How are Tiered Prices Applied?
+
+The [price calculation](../price-calculation/page.mdx) mechanism considers the cart's items as a context when choosing the best price to apply.
+
+For example, consider the customer added the `variant_1` product variant (created in the workflow snippet of the [above section](#how-to-create-tiered-prices)) to their cart with a quantity of `15`.
+
+The price calculation mechanism will choose the second price, which is `$8`, because the quantity of `15` is between `10` and `19`.
+
+<Note>
+
+If there are other rules applied to the price, they may affect the price calculation. Keep reading to learn about other price rules, and refer to the [Price Calculation](../price-calculation/page.mdx) guide for more details on the calculation mechanism.
+
+</Note>
+
+---
 
 ## Price Rule
 
-You can restrict prices by rules. Each rule of a price is represented by the [PriceRule data model](/references/pricing/models/PriceRule).
+You can also restrict prices by advanced rules, such as a customer's group, zip code, or a cart's total.
+
+Each rule of a price is represented by the [PriceRule data model](/references/pricing/models/PriceRule).
 
 The `Price` data model has a `rules_count` property, which indicates how many rules, represented by `PriceRule`, are applied to the price.
 
@@ -31,9 +175,7 @@ For example, a price can be restricted by a region and a zip code.
 
 ![A diagram showcasing the relation between the PriceRule and Price with multiple rules.](https://res.cloudinary.com/dza7lstvk/image/upload/v1709649296/Medusa%20Resources/price-rule-3_pwpocz.jpg)
 
----
-
-## Price List Rules
+### Price List Rules
 
 Rules applied to a price list are represented by the [PriceListRule data model](/references/pricing/models/PriceListRule).
 
@@ -41,17 +183,20 @@ The `rules_count` property of a `PriceList` indicates how many rules are applied
 
 ![A diagram showcasing the relation between the PriceSet, PriceList, Price, RuleType, and PriceListRuleValue](https://res.cloudinary.com/dza7lstvk/image/upload/v1709641999/Medusa%20Resources/price-list_zd10yd.jpg)
 
----
+### How to Create Prices with Rules?
 
-## How to Set Rules on a Price?
+When you create prices, you can specify rules for each price. This allows you to create complex pricing strategies based on different contexts.
 
-### Using Workflows
+For example:
 
-Medusa uses the Pricing Module to store prices of different resources, such as product variants and shipping options.
+<Note>
 
-When you manage one of these resources using [Medusa's workflows](../../../medusa-workflows-reference/page.mdx) or using the API routes that use them, you can set rules on a price using the `rules` property of the price object.
+For most use cases where you're building customizations in the Medusa application, it's highly recommended to use [Medusa's workflows](../../../medusa-workflows-reference/page.mdx) rather than using the Pricing Module directly. Medusa's workflows already implement extensive functionalities that you can re-use in your custom flows, with reliable roll-back mechanism.
 
-For example, when creating a shipping option using the [createShippingOptionsWorkflow](!resources!/references/medusa-workflows/createShippingOptionsWorkflow) to create a shipping option, you can make the shipping price free based on the cart total:
+</Note>
+
+<CodeTabs group="price-example">
+  <CodeTab label="Using Medusa Workflows" value="workflows">
 
 export const workflowHighlights = [
   ["19", "rules", "The default price doesn't have rules."],
@@ -95,19 +240,8 @@ const { result } = await createShippingOptionsWorkflow(container)
   })
 ```
 
-In this example, you create a shipping option whose default price is `$10`. When the total of the cart or order using this shipping option is greater than `$100`, the shipping option's price becomes free.
-
-### Using Pricing Module's Service
-
-<Note>
-
-For most use cases, it's recommended to use [workflows](#using-workflows) instead of directly using the module's service.
-
-</Note>
-
-When adding a price using the [addPrices](!resources!/references/pricing/addPrices) method of the Pricing Module's service, pass the `rules` property to a price object.
-
-For example:
+  </CodeTab>
+  <CodeTab label="Using the Pricing Module" value="pricing-module">
 
 ```ts
 const priceSet = await pricingModule.addPrices({
@@ -134,7 +268,10 @@ const priceSet = await pricingModule.addPrices({
 })
 ```
 
-In this example, you set the default price of a resource (for example, a shipping option), to `$10`. You also add a conditioned price that sets the price to `0` when the cart or order's total is greater than or equal to `$100`.
+  </CodeTab>
+</CodeTabs>
+
+In this example, you create a shipping option whose default price is `$10`. When the total of the cart or order using this shipping option is greater than `$100`, the shipping option's price becomes free.
 
 ### How is the Price Rule Applied?
 

@@ -11,6 +11,7 @@ import {
 import path from "path"
 import redirects from "./utils/redirects.mjs"
 import { generatedSidebars } from "./generated/sidebar.mjs"
+import { catchBadRedirects } from "build-scripts"
 
 const withMDX = mdx({
   extension: /\.mdx?$/,
@@ -30,6 +31,10 @@ const withMDX = mdx({
             },
             "user-guide": {
               projectPath: path.resolve("..", "user-guide"),
+            },
+            api: {
+              projectPath: path.resolve("..", "api-reference"),
+              skipSlugValidation: true,
             },
           },
         },
@@ -168,7 +173,11 @@ const nextConfig = {
       ],
     }
   },
-  redirects,
+  redirects: async () => {
+    const result = await redirects()
+
+    return catchBadRedirects(result)
+  },
   outputFileTracingIncludes: {
     "/md\\-content/\\[\\.\\.\\.slug\\]": ["./app/**/*.mdx"],
   },

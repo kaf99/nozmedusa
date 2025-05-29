@@ -539,18 +539,22 @@
     "fields": {
       "title": {
         "label": "Title",
-        "hint": "Give your product a short and clear title.<0/>50-60 characters is the recommended length for search engines."
+        "hint": "Give your product a short and clear title.<0/>50-60 characters is the recommended length for search engines.",
+        "placeholder": "Winter jacket"
       },
       "subtitle": {
-        "label": "Subtitle"
+        "label": "Subtitle",
+        "placeholder": "Warm and cosy"
       },
       "handle": {
         "label": "Handle",
-        "tooltip": "The handle is used to reference the product in your storefront. If not specified, the handle will be generated from the product title."
+        "tooltip": "The handle is used to reference the product in your storefront. If not specified, the handle will be generated from the product title.",
+        "placeholder": "winter-jacket"
       },
       "description": {
         "label": "Description",
-        "hint": "Give your product a short and clear description.<0/>120-160 characters is the recommended length for search engines."
+        "hint": "Give your product a short and clear description.<0/>120-160 characters is the recommended length for search engines.",
+        "placeholder": "A warm and cozy jacket"
       },
       "discountable": {
         "label": "Discountable",
@@ -1740,10 +1744,15 @@
       "header": "Create Tax Region",
       "hint": "Create a new tax region to define tax rates for a specific country.",
       "errors": {
-        "rateIsRequired": "Tax rate is required when creating a default tax rate.",
-        "nameIsRequired": "Name is required when creating a default tax rate."
+        "missingProvider": "Provider is required when creating a tax region.",
+        "missingCountry": "Country is required when creating a tax region."
       },
       "successToast": "The tax region was successfully created."
+    },
+    "edit": {
+      "header": "Edit Tax Region",
+      "hint": "Edit the tax region details.",
+      "successToast": "The tax region was successfully updated."
     },
     "province": {
       "header": "Provinces",
@@ -1751,6 +1760,9 @@
         "header": "Create Province Tax Region",
         "hint": "Create a new tax region to define tax rates for a specific province."
       }
+    },
+    "provider": {
+      "header": "Tax Provider"
     },
     "state": {
       "header": "States",
@@ -1877,6 +1889,7 @@
       },
       "taxRate": "Tax rate",
       "taxCode": "Tax code",
+      "taxProvider": "Tax provider",
       "targets": {
         "label": "Targets",
         "hint": "Select the targets that this tax rate will apply to.",
@@ -2493,7 +2506,6 @@
       "createTaxRate": "Create Tax Rate",
       "createTaxRateHint": "Create a new tax rate for the region.",
       "deleteRateDescription": "You are about to delete the tax rate {{name}}. This action cannot be undone.",
-      "editTaxRate": "Edit Tax Rate",
       "editRateAction": "Edit rate",
       "editOverridesAction": "Edit overrides",
       "editOverridesTitle": "Edit Tax Rate Overrides",

@@ -379,6 +379,7 @@
  *   "500":
  *     $ref: "#/components/responses/500_error"
  * x-workflow: createPromotionsWorkflow
+ * x-events: []
  * 
 */
 

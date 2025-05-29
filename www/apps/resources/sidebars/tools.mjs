@@ -120,6 +120,13 @@ export const toolsSidebar = [
               },
             ],
           },
+          {
+            type: "category",
+            title: "Tutorials",
+            autogenerate_tags: "nextjs+tutorial",
+            autogenerate_as_ref: true,
+            sort_sidebar: "alphabetize",
+          },
         ],
       },
     ],

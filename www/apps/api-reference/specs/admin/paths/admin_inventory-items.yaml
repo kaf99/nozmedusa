@@ -559,3 +559,4 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: createInventoryItemsWorkflow
+  x-events: []

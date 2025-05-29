@@ -123,7 +123,7 @@ export const OrderSummarySection = ({
     }
 
     return false
-  }, [reservations, order.items])
+  }, [order.items, reservations])
 
   const unpaidPaymentCollection = order.payment_collections.find(
     (pc) => pc.status === "not_paid"

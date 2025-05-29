@@ -84,6 +84,7 @@ post:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: updateReturnShippingMethodWorkflow
+  x-events: []
 delete:
   operationId: DeleteExchangesIdInboundShippingMethodAction_id
   summary: Remove Inbound Shipping Method from Exchange
@@ -147,3 +148,4 @@ delete:
     '500':
       $ref: ../components/responses/500_error.yaml
   x-workflow: removeReturnShippingMethodWorkflow
+  x-events: []

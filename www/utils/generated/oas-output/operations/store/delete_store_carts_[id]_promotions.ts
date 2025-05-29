@@ -70,6 +70,7 @@
  *     application/json:
  *       schema:
  *         $ref: "#/components/schemas/StoreCartRemovePromotion"
+ * x-events: []
  * 
 */
 
