@@ -24,6 +24,8 @@ import {
   useQueryGraphStep,
   useRemoteQueryStep,
 } from "../../common"
+import { acquireLockStep } from "../../locking/acquire-lock"
+import { releaseLockStep } from "../../locking/release-lock"
 import { addOrderTransactionStep } from "../../order/steps/add-order-transaction"
 import { createOrdersStep } from "../../order/steps/create-orders"
 import { authorizePaymentSessionStep } from "../../payment/steps/authorize-payment-session"
@@ -60,7 +62,9 @@ export type CompleteCartWorkflowOutput = {
   id: string
 }
 
-export const THREE_DAYS = 60 * 60 * 24 * 3
+const THREE_DAYS = 60 * 60 * 24 * 3
+const THIRTY_SECONDS = 30
+const TWO_MINUTES = 60 * 2
 
 export const completeCartWorkflowId = "complete-cart"
 /**
@@ -93,6 +97,12 @@ export const completeCartWorkflow = createWorkflow(
     retentionTime: THREE_DAYS,
   },
   (input: WorkflowData<CompleteCartWorkflowInput>) => {
+    acquireLockStep({
+      key: input.id,
+      timeout: THIRTY_SECONDS,
+      ttl: TWO_MINUTES,
+    })
+
     const orderCart = useQueryGraphStep({
       entity: "order_cart",
       fields: ["cart_id", "order_id"],
@@ -379,6 +389,10 @@ export const completeCartWorkflow = createWorkflow(
       })
 
       return createdOrder
+    })
+
+    releaseLockStep({
+      key: input.id,
     })
 
     const result = transform({ order, orderId }, ({ order, orderId }) => {
