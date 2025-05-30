@@ -22,10 +22,10 @@ export const completeCartAfterPaymentStep = createStep(
     const workflowEngine = container.resolve(Modules.WORKFLOW_ENGINE)
 
     await workflowEngine.run(completeCartWorkflowId, {
-      input: { id: input.cart_id },
-      context: {
-        transactionId: input.cart_id,
+      input: {
+        id: input.cart_id,
       },
+      transactionId: input.cart_id,
     })
   }
 )
