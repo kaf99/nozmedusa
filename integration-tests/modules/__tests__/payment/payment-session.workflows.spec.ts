@@ -56,7 +56,7 @@ medusaIntegrationTestRunner({
             amount: 1000,
           })
 
-          remoteLink.create({
+          await remoteLink.create({
             [Modules.CART]: {
               cart_id: cart.id,
             },
