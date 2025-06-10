@@ -112,6 +112,11 @@ export type PaymentCartItemDTO = {
      * The tax line's total.
      */
     total: BigNumberValue
+
+    /**
+     * The rate of the tax line.
+     */
+    rate: number
   }[]
 }
 
