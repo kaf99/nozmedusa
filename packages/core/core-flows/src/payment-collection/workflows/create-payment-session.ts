@@ -77,7 +77,7 @@ export const createPaymentSessionsWorkflow = createWorkflow(
   ): WorkflowResponse<PaymentSessionDTO> => {
     const paymentCollection = useRemoteQueryStep({
       entry_point: "payment_collection",
-      fields: ["id", "amount", "currency_code", "payment_sessions.*"],
+      fields: ["id", "amount", "currency_code", "payment_sessions.*", "cart.*"],
       variables: { id: input.payment_collection_id },
       list: false,
     }).config({ name: "get-payment-collection" })
@@ -177,6 +177,7 @@ export const createPaymentSessionsWorkflow = createWorkflow(
             ...data.input.context,
             customer: data.paymentCustomer,
             account_holder: data.accountHolder,
+            cart: data.paymentCollection.cart,
           },
           amount: data.paymentCollection.amount,
           currency_code: data.paymentCollection.currency_code,
