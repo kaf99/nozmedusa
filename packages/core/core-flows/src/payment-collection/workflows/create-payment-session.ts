@@ -96,6 +96,8 @@ export const createPaymentSessionsWorkflow = createWorkflow(
         "cart.shipping_total",
         "cart.shipping_subtotal",
         "cart.shipping_tax_total",
+        "cart.item_total",
+        "cart.item_subtotal",
       ],
       variables: { id: input.payment_collection_id },
       list: false,

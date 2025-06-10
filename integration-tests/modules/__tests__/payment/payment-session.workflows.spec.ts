@@ -2,7 +2,7 @@ import {
   createPaymentSessionsWorkflow,
   createPaymentSessionsWorkflowId,
 } from "@medusajs/core-flows"
-import { IPaymentModuleService, IRegionModuleService } from "@medusajs/types"
+import { ICartModuleService, IPaymentModuleService, IRegionModuleService } from "@medusajs/types"
 import { Modules } from "@medusajs/utils"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 
@@ -17,18 +17,21 @@ medusaIntegrationTestRunner({
       let appContainer
       let paymentModule: IPaymentModuleService
       let regionModule: IRegionModuleService
+      let cartModule: ICartModuleService
       let remoteLink
 
       beforeAll(async () => {
         appContainer = getContainer()
         paymentModule = appContainer.resolve(Modules.PAYMENT)
         regionModule = appContainer.resolve(Modules.REGION)
+        cartModule = appContainer.resolve(Modules.CART)
         remoteLink = appContainer.resolve("remoteLink")
       })
 
-      describe("createPaymentSessionWorkflow", () => {
+      describe("createPaymentSessionsWorkflow", () => {
         let region
         let paymentCollection
+        let cart
 
         beforeEach(async () => {
           region = await regionModule.createRegions({
@@ -36,9 +39,30 @@ medusaIntegrationTestRunner({
             name: "US",
           })
 
+          cart = await cartModule.createCarts({
+            region_id: region.id,
+            currency_code: "usd",
+            items: [
+              {
+                quantity: 1,
+                unit_price: 1000,
+                title: "Test Item",
+              }
+            ]
+          })
+
           paymentCollection = await paymentModule.createPaymentCollections({
             currency_code: "usd",
             amount: 1000,
+          })
+
+          remoteLink.create({
+            [Modules.CART]: {
+              cart_id: cart.id,
+            },
+            [Modules.PAYMENT]: {
+              payment_collection_id: paymentCollection.id,
+            },
           })
         })
 
@@ -69,6 +93,28 @@ medusaIntegrationTestRunner({
                   amount: 1000,
                   currency_code: "usd",
                   provider_id: "pp_system_default",
+                  context: expect.objectContaining({
+                    cart: expect.objectContaining({
+                      id: cart.id,
+                      currency_code: "usd",
+                      items: expect.arrayContaining([
+                        expect.objectContaining({
+                          id: expect.any(String),
+                          tax_lines: expect.arrayContaining([]),
+                        })
+                      ]),
+                      total: expect.any(Number),
+                      subtotal: expect.any(Number),
+                      tax_total: expect.any(Number),
+                      discount_total: expect.any(Number),
+                      discount_tax_total: expect.any(Number),
+                      shipping_total: expect.any(Number),
+                      shipping_subtotal: expect.any(Number),
+                      shipping_tax_total: expect.any(Number), 
+                      item_total: expect.any(Number),
+                      item_subtotal: expect.any(Number),
+                    }),
+                  }),
                 }),
               ]),
             })
