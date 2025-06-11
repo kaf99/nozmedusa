@@ -296,6 +296,11 @@
  *     type: boolean
  *     title: is_draft_order
  *     description: Whether the order is a draft order.
+ *   deleted_at:
+ *     type: string
+ *     format: date-time
+ *     title: deleted_at
+ *     description: The date the order was deleted.
  * 
 */
 

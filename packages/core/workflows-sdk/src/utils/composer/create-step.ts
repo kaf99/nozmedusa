@@ -4,7 +4,7 @@ import {
   WorkflowStepHandler,
   WorkflowStepHandlerArguments,
 } from "@medusajs/orchestration"
-import { isString, OrchestrationUtils } from "@medusajs/utils"
+import { isDefined, isString, OrchestrationUtils } from "@medusajs/utils"
 import { ulid } from "ulid"
 import { resolveValue, StepResponse } from "./helpers"
 import { createStepHandler } from "./helpers/create-step-handler"
@@ -171,6 +171,10 @@ export function applyStep<
         compensateAsync: false,
         ...stepConfig,
         ...localConfig,
+      }
+
+      if (isDefined(newConfig.nested)) {
+        newConfig.nested ||= newConfig.async
       }
 
       delete localConfig.name

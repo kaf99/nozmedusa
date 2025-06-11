@@ -317,7 +317,7 @@ module.exports = {
         "inner-content-xs": "100%",
         "inner-content-sm": "100%",
         "inner-content-md": "100%",
-        "inner-content-lg": "640px",
+        "inner-content-lg": "550px",
         "inner-content-xl": "640px",
         "inner-content-xxl": "640px",
         "inner-content-xxxl": "640px",
@@ -466,14 +466,14 @@ module.exports = {
         "medium-plus": [
           "14px",
           {
-            lineHeight: "150%",
+            lineHeight: "160%",
             fontWeight: "500",
           },
         ],
         medium: [
           "14px",
           {
-            lineHeight: "150%",
+            lineHeight: "160%",
             fontWeight: "400",
           },
         ],

@@ -71,14 +71,6 @@ export const MainNav = ({ className, itemsClassName }: MainNavProps) => {
         >
           <div className="lg:flex items-center gap-[6px] text-medusa-fg-subtle hidden">
             <MainNavVersion />
-            <span
-              className={clsx(
-                "text-compact-small",
-                config.version.hide && "hidden"
-              )}
-            >
-              &#183;
-            </span>
             <MainNavItemDropdown
               item={{
                 type: "dropdown",
@@ -113,9 +105,6 @@ export const MainNav = ({ className, itemsClassName }: MainNavProps) => {
               className="text-medusa-fg-subtle"
               wrapperClassName="z-10"
             />
-            {!showCollapsedNavbar && (
-              <span className={clsx("text-compact-small")}>&#183;</span>
-            )}
           </div>
           <div className="flex items-center">
             <AiAssistantTriggerButton />

@@ -7,11 +7,15 @@ import {
   cloudinaryImgRehypePlugin,
   pageNumberRehypePlugin,
   crossProjectLinksPlugin,
+  recmaInjectMdxDataPlugin,
+  remarkAttachFrontmatterDataPlugin,
 } from "remark-rehype-plugins"
 import path from "path"
 import redirects from "./utils/redirects.mjs"
 import { generatedSidebars } from "./generated/sidebar.mjs"
 import { catchBadRedirects } from "build-scripts"
+import remarkFrontmatter from "remark-frontmatter"
+import withExtractedTableOfContents from "@stefanprobst/rehype-extract-toc"
 
 const withMDX = mdx({
   extension: /\.mdx?$/,
@@ -90,7 +94,10 @@ const withMDX = mdx({
           sidebar: generatedSidebars[0].items,
         },
       ],
+      [withExtractedTableOfContents],
     ],
+    remarkPlugins: [[remarkFrontmatter], [remarkAttachFrontmatterDataPlugin]],
+    recmaPlugins: [[recmaInjectMdxDataPlugin]],
     jsx: true,
   },
 })

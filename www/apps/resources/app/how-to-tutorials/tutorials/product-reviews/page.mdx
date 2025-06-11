@@ -5,6 +5,9 @@ tags:
       label: "Implement Product Reviews"
     - server
     - tutorial
+products:
+  - product
+  - customer
 ---
 
 import { Github, PlaySolid } from "@medusajs/icons"
@@ -536,7 +539,7 @@ In the workflow's constructor function, you:
 
 <Note title="Tip">
 
-`useQueryGraphStep` uses [Query](!docs!/learn/fundamentals/module-links/query), which allows you to retrieve data across modules. For example, in the above snippet you're retrieving the cart's promotions, which are managed in the [Promotion Module](../../../commerce-modules/promotion/page.mdx), by passing `promotions.code` to the `fields` array.
+`useQueryGraphStep` uses [Query](!docs!/learn/fundamentals/module-links/query), which allows you to retrieve data across modules. For example, in the above snippet you're retrieving the product, which is managed in the [Product Module](../../../commerce-modules/product/page.mdx), by passing `id` to the `fields` array.
 
 </Note>
 

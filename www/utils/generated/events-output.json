@@ -102,8 +102,7 @@
     "description": "Emitted when an order is placed, or when a draft order is converted to an\norder.",
     "workflows": [
       "convertDraftOrderWorkflow",
-      "completeCartWorkflow",
-      "processPaymentWorkflow"
+      "completeCartWorkflow"
     ],
     "deprecated": false
   },

@@ -495,6 +495,9 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
               transactionId: "transaction_1",
             },
             stepResponse: { uhuuuu: "yeaah!" },
+            options: {
+              throwOnError: false,
+            },
           })
           ;({ data: executionsList } = await query.graph({
             entity: "workflow_executions",

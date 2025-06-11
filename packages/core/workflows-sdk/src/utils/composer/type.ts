@@ -198,6 +198,11 @@ export interface StepExecutionContext {
    * Adding a space hides the method from the autocomplete
    */
   " getStepResult"(stepId: string, action?: "invoke" | "compensate"): any
+
+  /**
+   * Get access to the definition of the step.
+   */
+  " stepDefinition": TransactionStepsDefinition
 }
 
 export type WorkflowTransactionContext = StepExecutionContext &

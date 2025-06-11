@@ -1288,6 +1288,15 @@ const generatedgeneratedReferencesSidebarSidebar = {
                   "loaded": true,
                   "isPathHref": true,
                   "type": "link",
+                  "path": "/references/medusa-workflows/deleteDraftOrdersWorkflow",
+                  "title": "deleteDraftOrdersWorkflow",
+                  "description": "Delete draft orders.",
+                  "children": []
+                },
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
                   "path": "/references/medusa-workflows/removeDraftOrderActionItemWorkflow",
                   "title": "removeDraftOrderActionItemWorkflow",
                   "description": "Remove an item from a draft order edit.",
@@ -1382,6 +1391,15 @@ const generatedgeneratedReferencesSidebarSidebar = {
               "type": "sub-category",
               "title": "Steps",
               "children": [
+                {
+                  "loaded": true,
+                  "isPathHref": true,
+                  "type": "link",
+                  "path": "/references/medusa-workflows/steps/deleteDraftOrdersStep",
+                  "title": "deleteDraftOrdersStep",
+                  "description": "",
+                  "children": []
+                },
                 {
                   "loaded": true,
                   "isPathHref": true,

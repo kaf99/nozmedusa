@@ -3,10 +3,15 @@
 import React from "react"
 import clsx from "clsx"
 import { CardProps } from "../.."
-import { BorderedIcon, ThemeImage, useIsExternalLink } from "../../../.."
+import {
+  BorderedIcon,
+  Button,
+  ThemeImage,
+  useIsExternalLink,
+} from "../../../.."
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowUpRightOnBox, TriangleRightMini } from "@medusajs/icons"
+import { ArrowUpRightOnBox, TriangleRightMini, XMark } from "@medusajs/icons"
 
 export const CardLayoutMini = ({
   icon,
@@ -15,6 +20,11 @@ export const CardLayoutMini = ({
   title,
   text,
   href,
+  hrefProps = {},
+  closeable = false,
+  onClose,
+  className,
+  imageDimensions = { width: 45, height: 36 },
 }: CardProps) => {
   const isExternal = useIsExternalLink({ href })
 
@@ -26,7 +36,8 @@ export const CardLayoutMini = ({
         "hover:shadow-elevation-card-hover dark:hover:shadow-elevation-card-hover-dark",
         "bg-medusa-tag-neutral-bg dark:bg-medusa-bg-component",
         "hover:bg-medusa-tag-neutral-bg-hover dark:hover:bg-medusa-bg-component-hover",
-        "w-fit transition-all"
+        "w-fit transition-[shadow,background]",
+        className
       )}
     >
       <div
@@ -48,12 +59,12 @@ export const CardLayoutMini = ({
               "shadow-elevation-card-rest dark:shadow-elevation-card-rest-dark",
               "rounded-docs_xs"
             )}
-            width={45}
-            height={36}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
             alt={title || text || ""}
             style={{
-              width: "45px",
-              height: "36px",
+              width: `${imageDimensions.width}px`,
+              height: `${imageDimensions.height}px`,
             }}
           />
         )}
@@ -64,12 +75,12 @@ export const CardLayoutMini = ({
               "shadow-elevation-card-rest dark:shadow-elevation-card-rest-dark",
               "rounded-docs_xs"
             )}
-            width={45}
-            height={36}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
             alt={title || text || ""}
             style={{
-              width: "45px",
-              height: "36px",
+              width: `${imageDimensions.width}px`,
+              height: `${imageDimensions.height}px`,
             }}
           />
         )}
@@ -85,15 +96,27 @@ export const CardLayoutMini = ({
             </span>
           )}
         </div>
-        <span className="text-medusa-fg-subtle">
-          {isExternal ? <ArrowUpRightOnBox /> : <TriangleRightMini />}
-        </span>
+        {!closeable && (
+          <span className="text-medusa-fg-subtle">
+            {isExternal ? <ArrowUpRightOnBox /> : <TriangleRightMini />}
+          </span>
+        )}
         {href && (
           <Link
             href={href}
-            className="absolute left-0 top-0 w-full h-full"
+            className="absolute left-0 top-0 w-full h-full z-[1]"
             prefetch={false}
+            {...hrefProps}
           />
+        )}
+        {closeable && (
+          <Button
+            variant="transparent-clear"
+            onClick={onClose}
+            className="!p-[2.5px] z-[2] hover:!bg-transparent focus:!shadow-none focus:!bg-transparent"
+          >
+            <XMark />
+          </Button>
         )}
       </div>
     </div>

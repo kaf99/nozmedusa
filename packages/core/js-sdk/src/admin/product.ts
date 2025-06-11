@@ -1,5 +1,5 @@
 import { HttpTypes, SelectParams } from "@medusajs/types"
-import { Client } from "../client"
+import { Client, FetchError } from "../client"
 import { ClientHeaders } from "../types"
 
 export class Product {
@@ -114,10 +114,40 @@ export class Product {
      * special headers in this request, since external services like S3 will
      * give a CORS error.
      */
-    await fetch(response.url, {
-      method: "PUT",
-      body: body.file,
-    })
+    if (
+      response.url.startsWith("http://") ||
+      response.url.startsWith("https://")
+    ) {
+      const uploadResponse = await fetch(response.url, {
+        method: "PUT",
+        body: body.file,
+      })
+      if (uploadResponse.status >= 400) {
+        throw new FetchError(
+          uploadResponse.statusText,
+          uploadResponse.statusText,
+          uploadResponse.status
+        )
+      }
+    } else {
+      const form = new FormData()
+      form.append("files", body.file)
+
+      const localUploadResponse = await this.client.fetch<{
+        files: HttpTypes.AdminUploadFile
+      }>("admin/uploads", {
+        method: "POST",
+        headers: {
+          ...headers,
+          // Let the browser determine the content type.
+          "content-type": null,
+        },
+        body: form,
+        query,
+      })
+
+      response.filename = localUploadResponse.files[0].id
+    }
 
     /**
      * Perform products import using the uploaded file name
@@ -164,7 +194,7 @@ export class Product {
     headers?: ClientHeaders
   ) {
     return await this.client.fetch<{}>(
-      `/admin/products/import/${transactionId}/confirm`,
+      `/admin/products/imports/${transactionId}/confirm`,
       {
         method: "POST",
         headers,

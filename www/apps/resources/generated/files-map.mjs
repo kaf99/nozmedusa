@@ -2924,10 +2924,6 @@ export const filesMap = [
     "pathname": "/references/core_flows/Cart/Workflows_Cart/functions/core_flows.Cart.Workflows_Cart.validateExistingPaymentCollectionStep"
   },
   {
-    "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.THREE_DAYS/page.mdx",
-    "pathname": "/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.THREE_DAYS"
-  },
-  {
     "filePath": "/www/apps/resources/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.addShippingMethodToCartWorkflowId/page.mdx",
     "pathname": "/references/core_flows/Cart/Workflows_Cart/variables/core_flows.Cart.Workflows_Cart.addShippingMethodToCartWorkflowId"
   },
@@ -3380,8 +3376,16 @@ export const filesMap = [
     "pathname": "/references/core_flows/Defaults/core_flows.Defaults.Workflows_Defaults"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Steps_Draft_Order/functions/core_flows.Draft_Order.Steps_Draft_Order.deleteDraftOrdersStep/page.mdx",
+    "pathname": "/references/core_flows/Draft_Order/Steps_Draft_Order/functions/core_flows.Draft_Order.Steps_Draft_Order.deleteDraftOrdersStep"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Steps_Draft_Order/functions/core_flows.Draft_Order.Steps_Draft_Order.validateDraftOrderStep/page.mdx",
     "pathname": "/references/core_flows/Draft_Order/Steps_Draft_Order/functions/core_flows.Draft_Order.Steps_Draft_Order.validateDraftOrderStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Steps_Draft_Order/variables/core_flows.Draft_Order.Steps_Draft_Order.deleteDraftOrdersStepId/page.mdx",
+    "pathname": "/references/core_flows/Draft_Order/Steps_Draft_Order/variables/core_flows.Draft_Order.Steps_Draft_Order.deleteDraftOrdersStepId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.addDraftOrderItemsWorkflow/page.mdx",
@@ -3414,6 +3418,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflow/page.mdx",
     "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflow"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.deleteDraftOrdersWorkflow/page.mdx",
+    "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.deleteDraftOrdersWorkflow"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/functions/core_flows.Draft_Order.Workflows_Draft_Order.removeDraftOrderActionItemWorkflow/page.mdx",
@@ -3486,6 +3494,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflowId/page.mdx",
     "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.convertDraftOrderWorkflowId"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.deleteDraftOrderWorkflowId/page.mdx",
+    "pathname": "/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.deleteDraftOrderWorkflowId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Draft_Order/Workflows_Draft_Order/variables/core_flows.Draft_Order.Workflows_Draft_Order.removeDraftOrderActionItemWorkflowId/page.mdx",
@@ -4174,6 +4186,22 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/Line_Item/core_flows.Line_Item.Workflows_Line_Item/page.mdx",
     "pathname": "/references/core_flows/Line_Item/core_flows.Line_Item.Workflows_Line_Item"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Locking/functions/core_flows.Locking.acquireLockStep/page.mdx",
+    "pathname": "/references/core_flows/Locking/functions/core_flows.Locking.acquireLockStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Locking/functions/core_flows.Locking.releaseLockStep/page.mdx",
+    "pathname": "/references/core_flows/Locking/functions/core_flows.Locking.releaseLockStep"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Locking/variables/core_flows.Locking.acquireLockStepId/page.mdx",
+    "pathname": "/references/core_flows/Locking/variables/core_flows.Locking.acquireLockStepId"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/Locking/variables/core_flows.Locking.releaseLockStepId/page.mdx",
+    "pathname": "/references/core_flows/Locking/variables/core_flows.Locking.releaseLockStepId"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/Notification/Steps_Notification/functions/core_flows.Notification.Steps_Notification.notifyOnFailureStep/page.mdx",
@@ -7388,6 +7416,10 @@ export const filesMap = [
     "pathname": "/references/core_flows/core_flows.Line_Item"
   },
   {
+    "filePath": "/www/apps/resources/references/core_flows/core_flows.Locking/page.mdx",
+    "pathname": "/references/core_flows/core_flows.Locking"
+  },
+  {
     "filePath": "/www/apps/resources/references/core_flows/core_flows.Notification/page.mdx",
     "pathname": "/references/core_flows/core_flows.Notification"
   },
@@ -7462,6 +7494,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/core_flows.User/page.mdx",
     "pathname": "/references/core_flows/core_flows.User"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.AcquireLockStepInput/page.mdx",
+    "pathname": "/references/core_flows/interfaces/core_flows.AcquireLockStepInput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.AddDraftOrderPromotionWorkflowInput/page.mdx",
@@ -7710,6 +7746,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.ProcessPaymentWorkflowInput/page.mdx",
     "pathname": "/references/core_flows/interfaces/core_flows.ProcessPaymentWorkflowInput"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.ReleaseLockStepInput/page.mdx",
+    "pathname": "/references/core_flows/interfaces/core_flows.ReleaseLockStepInput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/interfaces/core_flows.RemoteStepInput/page.mdx",
@@ -8422,6 +8462,14 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.DeleteCustomersWorkflowInput/page.mdx",
     "pathname": "/references/core_flows/types/core_flows.DeleteCustomersWorkflowInput"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/types/core_flows.DeleteDraftOrderStepInput/page.mdx",
+    "pathname": "/references/core_flows/types/core_flows.DeleteDraftOrderStepInput"
+  },
+  {
+    "filePath": "/www/apps/resources/references/core_flows/types/core_flows.DeleteDraftOrdersStepInput/page.mdx",
+    "pathname": "/references/core_flows/types/core_flows.DeleteDraftOrdersStepInput"
   },
   {
     "filePath": "/www/apps/resources/references/core_flows/types/core_flows.DeleteFilesStepInput/page.mdx",
@@ -12082,6 +12130,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.create/page.mdx",
     "pathname": "/references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.create"
+  },
+  {
+    "filePath": "/www/apps/resources/references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.delete/page.mdx",
+    "pathname": "/references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.delete"
   },
   {
     "filePath": "/www/apps/resources/references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.list/page.mdx",
@@ -24560,6 +24612,10 @@ export const filesMap = [
     "pathname": "/references/utils/OrderUtils/enums/utils.OrderUtils.ReturnStatus"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/Payment/variables/utils.Payment.PaymentEvents/page.mdx",
+    "pathname": "/references/utils/Payment/variables/utils.Payment.PaymentEvents"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/PricingUtils/enums/utils.PricingUtils.PriceListStatus/page.mdx",
     "pathname": "/references/utils/PricingUtils/enums/utils.PricingUtils.PriceListStatus"
   },
@@ -24712,6 +24768,10 @@ export const filesMap = [
     "pathname": "/references/utils/interfaces/utils.Entity"
   },
   {
+    "filePath": "/www/apps/resources/references/utils/types/utils.NormalizedRow/page.mdx",
+    "pathname": "/references/utils/types/utils.NormalizedRow"
+  },
+  {
     "filePath": "/www/apps/resources/references/utils/types/utils.TotalVariantAvailabilityData/page.mdx",
     "pathname": "/references/utils/types/utils.TotalVariantAvailabilityData"
   },
@@ -24762,6 +24822,10 @@ export const filesMap = [
   {
     "filePath": "/www/apps/resources/references/utils/utils.OrderUtils/page.mdx",
     "pathname": "/references/utils/utils.OrderUtils"
+  },
+  {
+    "filePath": "/www/apps/resources/references/utils/utils.Payment/page.mdx",
+    "pathname": "/references/utils/utils.Payment"
   },
   {
     "filePath": "/www/apps/resources/references/utils/utils.PricingUtils/page.mdx",

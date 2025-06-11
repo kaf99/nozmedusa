@@ -2,22 +2,26 @@
 
 import React, { useEffect } from "react"
 import clsx from "clsx"
-import { MainNav, useIsBrowser, useLayout, useSidebar } from ".."
+import { MainNav, useIsBrowser, useLayout, useSidebar, useSiteConfig } from ".."
+import { ContentMenu } from "../components/ContentMenu"
 
 export type MainContentLayoutProps = {
   mainWrapperClasses?: string
   contentClassName?: string
   children: React.ReactNode
+  showContentMenu?: boolean
 }
 
 export const MainContentLayout = ({
   children,
   mainWrapperClasses,
   contentClassName,
+  showContentMenu = true,
 }: MainContentLayoutProps) => {
   const { isBrowser } = useIsBrowser()
   const { desktopSidebarOpen } = useSidebar()
   const { mainContentRef } = useLayout()
+  const { frontmatter } = useSiteConfig()
 
   useEffect(() => {
     if (!isBrowser) {
@@ -36,7 +40,7 @@ export const MainContentLayout = ({
         "relative max-w-full",
         "h-full flex-1",
         "flex flex-col",
-        "gap-docs_0.5 lg:pt-docs_0.25 lg:mr-docs_0.25 scroll-m-docs_0.25",
+        "gap-docs_0.5 lg:py-docs_0.25 lg:mr-docs_0.25 scroll-m-docs_0.25",
         !desktopSidebarOpen && "lg:ml-docs_0.25",
         mainWrapperClasses
       )}
@@ -47,7 +51,7 @@ export const MainContentLayout = ({
           "flex-col items-center",
           "h-full w-full",
           "overflow-y-scroll overflow-x-hidden",
-          "md:rounded-t-docs_DEFAULT",
+          "md:rounded-docs_DEFAULT",
           "shadow-elevation-card-rest dark:shadow-elevation-card-rest-dark",
           mainWrapperClasses
         )}
@@ -57,14 +61,16 @@ export const MainContentLayout = ({
         <MainNav />
         <div
           className={clsx(
-            "flex justify-center",
             "pt-docs_4 lg:pt-docs_6 pb-docs_8 lg:pb-docs_4",
+            showContentMenu &&
+              "grid grid-cols-1 lg:mx-auto lg:grid-cols-[1fr_221px]",
             contentClassName
           )}
           id="content"
         >
-          {children}
+          <div className="flex justify-center">{children}</div>
         </div>
+        {showContentMenu && !frontmatter.hide_content_menu && <ContentMenu />}
       </div>
     </div>
   )

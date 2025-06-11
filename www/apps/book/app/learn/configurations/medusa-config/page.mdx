@@ -207,23 +207,6 @@ module.exports = defineConfig({
 })
 ```
 
-### databaseSchema
-
-The `projectConfig.databaseSchema` configuration specifies the PostgreSQL database schema to connect to, which is `public` by default. Use this configuration only if you want to connect to a different schema.
-
-#### Example
-
-```ts title="medusa-config.ts"
-module.exports = defineConfig({
-  projectConfig: {
-    databaseSchema: process.env.DATABASE_SCHEMA ||
-      "custom",
-    // ...
-  },
-  // ...
-})
-```
-
 ### databaseUrl
 
 The `projectConfig.databaseUrl` configuration specifies the PostgreSQL connection URL of the database to connect to. Its format is:
