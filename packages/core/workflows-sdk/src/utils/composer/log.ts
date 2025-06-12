@@ -1,6 +1,10 @@
 import { ulid } from "ulid"
 import type { Logger } from "@medusajs/types"
-import { ContainerRegistrationKeys } from "@medusajs/utils"
+import {
+  ContainerRegistrationKeys,
+  toCamelCase,
+  toPascalCase,
+} from "@medusajs/utils"
 
 import { StepResponse } from "./helpers"
 import { createStep } from "./create-step"
@@ -11,7 +15,7 @@ const createLoggerStep = (
 ) => {
   const step = createStep(
     {
-      name: `workflow-log-${method}-${ulid()}`,
+      name: `log${toPascalCase(method)}Step-${ulid()}`,
       noCompensation: true,
     },
     async (_: any, { container }) => {
