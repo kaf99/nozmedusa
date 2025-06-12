@@ -155,7 +155,21 @@ async function main() {
     path.join(__dirname, "..", "..", "..", "..", "apps", "user-guide", "app")
   )
   await scanDirectory(
-    path.join(__dirname, "..", "..", "..", "..", "apps", "ui", "src", "content", "docs")
+    path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "..",
+      "apps",
+      "ui",
+      "src",
+      "content",
+      "docs"
+    )
+  )
+  await scanDirectory(
+    path.join(__dirname, "..", "..", "..", "..", "apps", "cloud", "app")
   )
 }
 
