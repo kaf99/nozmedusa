@@ -181,6 +181,11 @@ export interface ComputeActionItemLine extends Record<string, unknown> {
   subtotal: BigNumberInput
 
   /**
+   * Whether the line item is discountable.
+   */
+  is_discountable: boolean
+
+  /**
    * The adjustments applied before on the line item.
    */
   adjustments?: ComputeActionAdjustmentLine[]
