@@ -129,7 +129,7 @@ export async function initializeContainer(
     [ContainerRegistrationKeys.REMOTE_QUERY]: asValue(null),
   })
 
-  pgConnectionLoader()
+  await pgConnectionLoader()
   return container
 }
 
