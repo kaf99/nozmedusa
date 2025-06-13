@@ -1228,6 +1228,11 @@ export interface OrderDTO {
   discount_tax_total: BigNumberValue
 
   /**
+   * The credit line total of the order.
+   */
+  credit_line_total: BigNumberValue
+
+  /**
    * The gift card total of the order.
    */
   gift_card_total: BigNumberValue
@@ -1364,6 +1369,13 @@ export interface OrderDTO {
    * @ignore
    */
   raw_discount_tax_total: BigNumberRawValue
+
+  /**
+   * The raw credit line total of the order.
+   *
+   * @ignore
+   */
+  raw_credit_line_total: BigNumberRawValue
 
   /**
    * The raw gift card total of the order.

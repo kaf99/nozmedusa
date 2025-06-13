@@ -123,6 +123,11 @@ export const integrationsSidebar = [
         title: "SendGrid",
       },
       {
+        type: "link",
+        path: "/integrations/guides/slack",
+        title: "Slack",
+      },
+      {
         type: "ref",
         path: "/how-to-tutorials/tutorials/phone-auth#step-3-integrate-twilio-sms",
         title: "Twilio SMS",

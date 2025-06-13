@@ -56,6 +56,10 @@ export const tutorial = [
     "path": "https://docs.medusajs.com/resources/integrations/guides/segment"
   },
   {
+    "title": "Integrate Slack",
+    "path": "https://docs.medusajs.com/resources/integrations/guides/slack"
+  },
+  {
     "title": "Build Wishlist Plugin",
     "path": "https://docs.medusajs.com/resources/plugins/guides/wishlist"
   },

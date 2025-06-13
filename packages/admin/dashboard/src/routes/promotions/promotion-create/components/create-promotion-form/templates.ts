@@ -74,7 +74,11 @@ export const templates = [
     type: "buy_get",
     title: "Buy X Get Y",
     description: "Buy X product(s), get Y product(s)",
-    hiddenFields: [...commonHiddenFields, "application_method.value"],
+    hiddenFields: [
+      ...commonHiddenFields,
+      "application_method.value",
+      "is_tax_inclusive",
+    ],
     defaults: {
       is_automatic: "false",
       type: "buyget",

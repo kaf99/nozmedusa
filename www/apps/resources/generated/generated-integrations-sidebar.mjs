@@ -182,6 +182,14 @@ const generatedgeneratedIntegrationsSidebarSidebar = {
         {
           "loaded": true,
           "isPathHref": true,
+          "type": "link",
+          "path": "/integrations/guides/slack",
+          "title": "Slack",
+          "children": []
+        },
+        {
+          "loaded": true,
+          "isPathHref": true,
           "type": "ref",
           "path": "/how-to-tutorials/tutorials/phone-auth#step-3-integrate-twilio-sms",
           "title": "Twilio SMS",

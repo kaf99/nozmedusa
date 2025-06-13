@@ -205,14 +205,14 @@ class SegmentAnalyticsProviderService extends AbstractAnalyticsProviderService {
         userId: data.actor_id,
         anonymousId,
         traits,
-        context: data.properties
+        context: data.properties,
       })
     } else {
       this.client.identify({
         userId: data.actor_id,
         anonymousId,
         traits,
-        context: data.properties
+        context: data.properties,
       })
     }
   }

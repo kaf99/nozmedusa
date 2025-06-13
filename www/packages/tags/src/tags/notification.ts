@@ -12,6 +12,10 @@ export const notification = [
     "path": "https://docs.medusajs.com/resources/infrastructure-modules/notification/send-notification"
   },
   {
+    "title": "Integrate Slack",
+    "path": "https://docs.medusajs.com/resources/integrations/guides/slack"
+  },
+  {
     "title": "notifyOnFailureStep",
     "path": "https://docs.medusajs.com/resources/references/medusa-workflows/steps/notifyOnFailureStep"
   },

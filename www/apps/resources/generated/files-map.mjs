@@ -892,6 +892,10 @@ export const filesMap = [
     "pathname": "/integrations/guides/shipstation"
   },
   {
+    "filePath": "/www/apps/resources/app/integrations/guides/slack/page.mdx",
+    "pathname": "/integrations/guides/slack"
+  },
+  {
     "filePath": "/www/apps/resources/app/integrations/page.mdx",
     "pathname": "/integrations"
   },

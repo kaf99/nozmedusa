@@ -9,6 +9,21 @@ export const sidebar = [
         path: "/",
         title: "Introduction",
       },
+      {
+        type: "separator",
+      },
+      {
+        type: "category",
+        title: "Basics",
+        initialOpen: true,
+        children: [
+          {
+            type: "link",
+            title: "Organizations",
+            path: "/organizations",
+          },
+        ],
+      },
     ],
   },
 ]

@@ -429,6 +429,14 @@ const generatedgeneratedInfrastructureModulesSidebarSidebar = {
             {
               "loaded": true,
               "isPathHref": true,
+              "type": "ref",
+              "title": "Integrate Slack",
+              "path": "https://docs.medusajs.com/resources/integrations/guides/slack",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
               "type": "link",
               "path": "/infrastructure-modules/notification/send-notification",
               "title": "Send Notification",

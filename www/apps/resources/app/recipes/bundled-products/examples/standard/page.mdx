@@ -1295,7 +1295,7 @@ Next, you need to retrieve the list of products in Medusa to show them in a sele
 export const createBundledProductComponentHighlights2 = [
   ["1", "products", "The products to show in the selector."],
   ["2", "productsLimit", "The maximum number of products to retrieve."],
-  ["3", "currnetProductPage", "The current page of products retrieved from the server."],
+  ["3", "currentProductPage", "The current page of products retrieved from the server."],
   ["4", "productsCount", "The total number of products."],
   ["5", "hasNextPage", "Whether there are more products to load."],
   ["9", "useQuery", "Retrieve the products from the API route."],
@@ -1305,7 +1305,7 @@ export const createBundledProductComponentHighlights2 = [
 ```tsx title="src/admin/components/create-bundled-product.tsx" highlights={createBundledProductComponentHighlights2}
 const [products, setProducts] = useState<HttpTypes.AdminProduct[]>([])
 const productsLimit = 15
-const [currnetProductPage, setCurrentProductPage] = useState(0)
+const [currentProductPage, setCurrentProductPage] = useState(0)
 const [productsCount, setProductsCount] = useState(0)
 const hasNextPage = useMemo(() => {
   return productsCount ? productsCount > productsLimit : true
@@ -1317,7 +1317,7 @@ useQuery({
   queryFn: async () => {
     const { products, count } = await sdk.admin.product.list({
       limit: productsLimit,
-      offset: currnetProductPage * productsLimit,
+      offset: currentProductPage * productsLimit,
     })
     setProductsCount(count)
     setProducts((prev) => [...prev, ...products])
@@ -1330,7 +1330,7 @@ const fetchMoreProducts = () => {
   if (!hasNextPage) {
     return
   }
-  setCurrentProductPage(currnetProductPage + 1)
+  setCurrentProductPage(currentProductPage + 1)
 }
 
 // TODO add creation logic

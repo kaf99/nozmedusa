@@ -6544,5 +6544,6 @@ export const generatedEditDates = {
   "references/js_sdk/admin/DraftOrder/methods/js_sdk.admin.DraftOrder.delete/page.mdx": "2025-06-05T19:05:54.961Z",
   "references/utils/Payment/variables/utils.Payment.PaymentEvents/page.mdx": "2025-06-05T19:05:53.491Z",
   "references/utils/types/utils.NormalizedRow/page.mdx": "2025-06-05T19:05:53.365Z",
-  "references/utils/utils.Payment/page.mdx": "2025-06-05T19:05:53.489Z"
+  "references/utils/utils.Payment/page.mdx": "2025-06-05T19:05:53.489Z",
+  "app/integrations/guides/slack/page.mdx": "2025-06-03T09:37:42.528Z"
 }

@@ -163,6 +163,7 @@ export const CreatePromotion = z
     code: z.string(),
     is_automatic: z.boolean().optional(),
     type: z.nativeEnum(PromotionType),
+    is_tax_inclusive: z.boolean().optional(),
     status: z.nativeEnum(PromotionStatus).default(PromotionStatus.DRAFT),
     campaign_id: z.string().nullish(),
     campaign: CreateCampaign.optional(),

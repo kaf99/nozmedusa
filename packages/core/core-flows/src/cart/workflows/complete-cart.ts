@@ -225,6 +225,21 @@ export const completeCartWorkflow = createWorkflow(
           .map((adjustment) => adjustment.code)
           .filter(Boolean)
 
+        const shippingAddress = cart.shipping_address
+          ? { ...cart.shipping_address }
+          : null
+        const billingAddress = cart.billing_address
+          ? { ...cart.billing_address }
+          : null
+
+        if (shippingAddress) {
+          delete shippingAddress.id
+        }
+
+        if (billingAddress) {
+          delete billingAddress.id
+        }
+
         return {
           region_id: cart.region?.id,
           customer_id: cart.customer?.id,
@@ -232,8 +247,8 @@ export const completeCartWorkflow = createWorkflow(
           status: OrderStatus.PENDING,
           email: cart.email,
           currency_code: cart.currency_code,
-          shipping_address: cart.shipping_address,
-          billing_address: cart.billing_address,
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
           no_notification: false,
           items: allItems,
           shipping_methods: shippingMethods,

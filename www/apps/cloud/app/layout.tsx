@@ -15,7 +15,8 @@ export const metadata: Metadata = {
     template: `%s - ${config.titleSuffix}`,
     default: config.titleSuffix || "",
   },
-  description: "Explore and learn how to use the Medusa Admin.",
+  description:
+    "Learn about Cloud, Medusa's PaaS offering for scalable deployments.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   ),

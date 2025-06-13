@@ -61,6 +61,12 @@ export interface AddItemAdjustmentAction {
   amount: BigNumberInput
 
   /**
+   * Whether the adjustment amount includes tax.
+   */
+  is_tax_inclusive?: boolean
+
+  /**
+  /**
    * The promotion's code.
    */
   code: string

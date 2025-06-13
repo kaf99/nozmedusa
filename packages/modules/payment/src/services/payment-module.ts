@@ -359,15 +359,13 @@ export default class PaymentModuleService
         }
       )
 
-      paymentSession = (
-        await this.paymentSessionService_.update(
-          {
-            id: paymentSession!.id,
-            data: { ...input.data, ...providerPaymentSession.data },
-          },
-          sharedContext
-        )
-      )[0]
+      paymentSession = await this.paymentSessionService_.update(
+        {
+          id: paymentSession!.id,
+          data: { ...input.data, ...providerPaymentSession.data },
+        },
+        sharedContext
+      )
     } catch (error) {
       if (providerPaymentSession) {
         await this.paymentProviderService_.deleteSession(input.provider_id, {
@@ -440,7 +438,7 @@ export default class PaymentModuleService
       sharedContext
     )
 
-    return await this.baseRepository_.serialize(updated[0], { populate: true })
+    return await this.baseRepository_.serialize(updated, { populate: true })
   }
 
   @InjectManager()
@@ -605,7 +603,7 @@ export default class PaymentModuleService
     // NOTE: currently there is no update with the provider but maybe data could be updated
     const result = await this.paymentService_.update(data, sharedContext)
 
-    return await this.baseRepository_.serialize<PaymentDTO>(result[0])
+    return await this.baseRepository_.serialize<PaymentDTO>(result)
   }
 
   // TODO: This method should return a capture, not a payment

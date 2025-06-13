@@ -72,6 +72,10 @@ export const product = [
     "path": "https://docs.medusajs.com/resources/commerce-modules/product/guides/variant-inventory"
   },
   {
+    "title": "Implement Custom Line Item Pricing in Medusa",
+    "path": "https://docs.medusajs.com/resources/examples/guides/custom-item-price"
+  },
+  {
     "title": "Implement Product Reviews",
     "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/product-reviews"
   },
