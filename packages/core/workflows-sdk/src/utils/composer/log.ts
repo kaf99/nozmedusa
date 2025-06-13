@@ -1,10 +1,6 @@
 import { ulid } from "ulid"
 import type { Logger } from "@medusajs/types"
-import {
-  ContainerRegistrationKeys,
-  toCamelCase,
-  toPascalCase,
-} from "@medusajs/utils"
+import { ContainerRegistrationKeys, toPascalCase } from "@medusajs/utils"
 
 import { StepResponse } from "./helpers"
 import { createStep } from "./create-step"
