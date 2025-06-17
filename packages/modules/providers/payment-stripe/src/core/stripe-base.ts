@@ -51,12 +51,12 @@ import {
 } from "../utils/get-smallest-unit"
 
 type StripeIndeterminateState = {
-  indeterminate_due_to: string,
+  indeterminate_due_to: string
 }
 type StripeErrorData = Stripe.PaymentIntent | StripeIndeterminateState
 type HandledErrorType =
-  | { retry: true; }
-  | { retry: false; data: StripeErrorData };
+  | { retry: true }
+  | { retry: false; data: StripeErrorData }
 
 abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
   protected readonly options_: StripeOptions
@@ -105,8 +105,15 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
       (extra?.setup_future_usage as "off_session" | "on_session" | undefined) ??
       this.paymentIntentOptions.setup_future_usage
 
-    res.payment_method_types = this.paymentIntentOptions
-      .payment_method_types as string[]
+    res.payment_method_types =
+      (extra?.payment_method_types as string[]) ??
+      (this.paymentIntentOptions.payment_method_types as string[])
+
+    res.payment_method_data =
+      extra?.payment_method_data as Stripe.PaymentIntentCreateParams.PaymentMethodData
+
+    res.payment_method_options =
+      extra?.payment_method_options as Stripe.PaymentIntentCreateParams.PaymentMethodOptions
 
     res.automatic_payment_methods =
       (extra?.automatic_payment_methods as { enabled: true } | undefined) ??
@@ -125,7 +132,7 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
 
   handleStripeError(error: any): HandledErrorType {
     switch (error.type) {
-      case 'StripeCardError':
+      case "StripeCardError":
         // Stripe has created a payment intent but it failed
         // Extract and return paymentIntent object to be stored in payment_session
         // Allows for reference to the failed intent and potential webhook reconciliation
@@ -133,7 +140,7 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
         if (stripeError.payment_intent) {
           return {
             retry: false,
-            data: stripeError.payment_intent 
+            data: stripeError.payment_intent,
           }
         } else {
           throw this.buildError(
@@ -142,21 +149,21 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
           )
         }
 
-      case 'StripeConnectionError':
-      case 'StripeRateLimitError':
+      case "StripeConnectionError":
+      case "StripeRateLimitError":
         // Connection or rate limit errors indicate an uncertain result
         // Retry the operation
         return {
           retry: true,
         }
-      case 'StripeAPIError': {
+      case "StripeAPIError": {
         // API errors should be treated as indeterminate per Stripe documentation
         // Rely on webhooks rather than assuming failure
         return {
           retry: false,
           data: {
-            indeterminate_due_to: "stripe_api_error"
-          }
+            indeterminate_due_to: "stripe_api_error",
+          },
         }
       }
       default:
@@ -177,32 +184,36 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
     currentAttempt: number = 1
   ): Promise<T | StripeErrorData> {
     try {
-      return await apiCall();
+      return await apiCall()
     } catch (error) {
       const handledError = this.handleStripeError(error)
 
       if (!handledError.retry) {
         // If retry is false, we know data exists per the type definition
-        return handledError.data;
+        return handledError.data
       }
 
-      if (
-        handledError.retry &&
-        currentAttempt <= maxRetries
-      ) {
+      if (handledError.retry && currentAttempt <= maxRetries) {
         // Logic for retrying
-        const delay = baseDelay * Math.pow(2, currentAttempt - 1) * (0.5 + Math.random() * 0.5);
-        await setTimeout(delay);
-        return this.executeWithRetry(apiCall, maxRetries, baseDelay, currentAttempt + 1);
+        const delay =
+          baseDelay *
+          Math.pow(2, currentAttempt - 1) *
+          (0.5 + Math.random() * 0.5)
+        await setTimeout(delay)
+        return this.executeWithRetry(
+          apiCall,
+          maxRetries,
+          baseDelay,
+          currentAttempt + 1
+        )
       }
-      // Retries are exhausted  
+      // Retries are exhausted
       throw this.buildError(
         "An error occurred in InitiatePayment during creation of stripe payment intent",
         error
-      ) 
+      )
     }
   }
-
 
   async getPaymentStatus({
     data,
@@ -262,12 +273,12 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
       | string
       | undefined
 
-    const sessionData = await this.executeWithRetry<Stripe.PaymentIntent>(
-      () => this.stripe_.paymentIntents.create(intentRequest, {
+    const sessionData = await this.executeWithRetry<Stripe.PaymentIntent>(() =>
+      this.stripe_.paymentIntents.create(intentRequest, {
         idempotencyKey: context?.idempotency_key,
       })
     )
-    const isPaymentIntent = 'id' in sessionData;
+    const isPaymentIntent = "id" in sessionData
     return {
       id: isPaymentIntent ? sessionData.id : (data?.session_id as string),
       data: sessionData as unknown as Record<string, unknown>,
