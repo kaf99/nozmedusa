@@ -658,6 +658,18 @@ abstract class StripeBase extends AbstractPaymentProvider<StripeOptions> {
             ),
           },
         }
+      case "payment_intent.partially_funded":
+        return {
+          action: PaymentActions.REQUIRES_MORE,
+          data: {
+            session_id: intent.metadata.session_id,
+            amount: getAmountFromSmallestUnit(
+              intent.next_action?.display_bank_transfer_instructions
+                ?.amount_remaining ?? intent.amount,
+              currency
+            ),
+          },
+        }
       case "payment_intent.succeeded":
         return {
           action: PaymentActions.SUCCESSFUL,
