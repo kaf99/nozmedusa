@@ -24,6 +24,7 @@ OrderChangeProcessing.registerActionType(ChangeActionType.CREDIT_LINE_ADD, {
       amount: MathBN.convert(action.amount!),
       reference: action.reference!,
       reference_id: action.reference_id!,
+      metadata: action.details?.metadata,
     }
 
     creditLines.push(newCreditLine)

@@ -2896,11 +2896,20 @@ medusaIntegrationTestRunner({
             amount: -106,
             reference: "order",
             reference_id: order.id,
+            metadata: { note: "Store credit refund" },
           },
           adminHeaders
         )
 
         expect(response2.data.order.summary.pending_difference).toEqual(0)
+        // SHOULD ADD METADATA TO THE CREDIT LINE
+        expect(response2.data.order.credit_lines).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              metadata: { note: "Store credit refund" },
+            }),
+          ])
+        )
 
         const response3 = await api
           .post(

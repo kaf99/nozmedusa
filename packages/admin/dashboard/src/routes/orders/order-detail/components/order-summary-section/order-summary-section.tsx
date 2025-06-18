@@ -797,9 +797,8 @@ const CreditLinesBreakdown = ({
                 .split("-")
                 .join(" ")
 
-              const prettyReferenceId = creditLine.reference_id ? (
-                <DisplayId id={creditLine.reference_id} />
-              ) : null
+              const hasNote = !!creditLine.metadata?.note
+              const isGiftCard = creditLine.reference_id?.startsWith("gcard_")
 
               return (
                 <div
@@ -813,7 +812,9 @@ const CreditLinesBreakdown = ({
                       weight="plus"
                       className="truncate"
                     >
-                      <DisplayId id={creditLine.id} />
+                      {hasNote
+                        ? (creditLine.metadata?.note as string)
+                        : "Credit line"}
                     </Text>
 
                     <Text size="small" leading="compact">
@@ -825,9 +826,20 @@ const CreditLinesBreakdown = ({
                   </div>
 
                   <div className="hidden items-center justify-end gap-x-2 sm:flex">
-                    <Text size="small" leading="compact" className="capitalize">
-                      {prettyReference} ({prettyReferenceId})
-                    </Text>
+                    {isGiftCard ? (
+                      <Link
+                        className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-fg"
+                        to={`/gift-cards/${creditLine.reference_id}`}
+                      >
+                        <Text
+                          size="small"
+                          leading="compact"
+                          className="capitalize"
+                        >
+                          {prettyReference}
+                        </Text>
+                      </Link>
+                    ) : null}
                   </div>
 
                   <div className="flex items-center justify-end">

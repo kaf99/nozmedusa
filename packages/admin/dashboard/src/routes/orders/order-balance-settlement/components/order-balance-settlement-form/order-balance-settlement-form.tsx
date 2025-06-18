@@ -86,6 +86,9 @@ export const OrderBalanceSettlementForm = ({
           amount: parseFloat(data.credit_line!.amount! as string) * -1,
           reference: data.credit_line!.reference ?? "order",
           reference_id: data.credit_line!.reference_id ?? order.id,
+          metadata: {
+            note: "Store credit refund",
+          },
         },
         {
           onSuccess: () => {

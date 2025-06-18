@@ -121,6 +121,7 @@ export const createOrderCreditLinesWorkflow = createWorkflow(
             reference: creditLine.reference!,
             reference_id: creditLine.reference_id!,
             amount: creditLine.amount,
+            details: { metadata: creditLine.metadata },
           }
         })
       }
