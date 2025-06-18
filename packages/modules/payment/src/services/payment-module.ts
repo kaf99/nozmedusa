@@ -363,6 +363,7 @@ export default class PaymentModuleService
         {
           id: paymentSession!.id,
           data: { ...input.data, ...providerPaymentSession.data },
+          status: providerPaymentSession.status ?? PaymentSessionStatus.PENDING,
         },
         sharedContext
       )
