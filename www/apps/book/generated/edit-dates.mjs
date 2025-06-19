@@ -22,7 +22,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/admin/widgets/page.mdx": "2024-12-09T16:43:24.260Z",
   "app/learn/fundamentals/data-models/page.mdx": "2025-03-18T07:55:56.252Z",
   "app/learn/fundamentals/modules/remote-link/page.mdx": "2024-09-30T08:43:53.127Z",
-  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2025-05-09T07:57:32.929Z",
+  "app/learn/fundamentals/api-routes/protected-routes/page.mdx": "2025-06-19T16:04:36.064Z",
   "app/learn/fundamentals/workflows/add-workflow-hook/page.mdx": "2024-12-09T14:42:39.693Z",
   "app/learn/fundamentals/events-and-subscribers/data-payload/page.mdx": "2025-05-01T15:30:08.421Z",
   "app/learn/fundamentals/workflows/advanced-example/page.mdx": "2024-09-11T10:46:59.975Z",
@@ -59,7 +59,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/modules/service-constraints/page.mdx": "2025-03-18T15:12:46.006Z",
   "app/learn/fundamentals/api-routes/responses/page.mdx": "2024-10-21T13:30:21.367Z",
   "app/learn/fundamentals/api-routes/validation/page.mdx": "2025-03-24T06:52:47.896Z",
-  "app/learn/fundamentals/api-routes/errors/page.mdx": "2024-12-09T16:44:19.781Z",
+  "app/learn/fundamentals/api-routes/errors/page.mdx": "2025-06-19T16:02:05.665Z",
   "app/learn/fundamentals/admin/constraints/page.mdx": "2024-10-21T13:30:21.366Z",
   "app/learn/debugging-and-testing/testing-tools/modules-tests/module-example/page.mdx": "2025-03-18T15:07:22.640Z",
   "app/learn/debugging-and-testing/testing-tools/modules-tests/page.mdx": "2025-03-24T06:54:21.249Z",
@@ -122,5 +122,5 @@ export const generatedEditDates = {
   "app/learn/fundamentals/workflows/errors/page.mdx": "2025-04-25T14:26:25.000Z",
   "app/learn/fundamentals/api-routes/override/page.mdx": "2025-05-09T08:01:24.493Z",
   "app/learn/fundamentals/module-links/index/page.mdx": "2025-05-23T07:57:58.958Z",
-  "app/learn/fundamentals/module-links/index-module/page.mdx": "2025-05-23T08:36:13.009Z"
+  "app/learn/fundamentals/module-links/index-module/page.mdx": "2025-06-19T16:02:05.665Z"
 }

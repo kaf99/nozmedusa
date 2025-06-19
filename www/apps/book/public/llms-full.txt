@@ -6306,6 +6306,46 @@ The `errorHandler` property's value is a function that accepts four parameters:
 
 This example overrides Medusa's default error handler with a handler that always returns a `400` status code with the same message.
 
+### Re-Use Default Error Handler
+
+In some use cases, you don't want to override the default error handler but rather perform another action as part of the original error handler. For example, you want to capture the error in a third-party service like Sentry.
+
+In those cases, you can import the default error handler from the Medusa Framework and use it in your custom error handler, along with your custom logic.
+
+For example:
+
+```ts title="src/api/middlewares.ts" highlights={defaultErrorHandlerHighlights} 
+import { 
+  defineMiddlewares, 
+  errorHandler, 
+  MedusaNextFunction, 
+  MedusaRequest, 
+  MedusaResponse,
+} from "@medusajs/framework/http"
+import { MedusaError } from "@medusajs/framework/utils"
+// assuming you have Sentry set up in your project
+import * as Sentry from "@sentry/node"
+
+const originalErrorHandler = errorHandler()
+
+export default defineMiddlewares({
+  errorHandler: (
+    error: MedusaError | any, 
+    req: MedusaRequest, 
+    res: MedusaResponse, 
+    next: MedusaNextFunction
+  ) => {
+    // for example, capture the error in Sentry
+    Sentry.captureException(error)
+    return originalErrorHandler(error, req, res, next)
+  },
+})
+```
+
+In this example, you import the `errorHandler` function from the Medusa Framework. Then, you call it to get the original error handler function.
+
+Finally, you use it in your custom error handler after performing your custom logic, such as capturing the error in Sentry.
+
 
 # HTTP Methods
 
@@ -7246,7 +7286,7 @@ The `authenticate` middleware function accepts three parameters:
 2. An array of types of authentication methods allowed. Both `user` and `customer` scopes support `session` and `bearer`. The `admin` scope also supports the `api-key` authentication method.
 3. An optional object of configurations accepting the following properties:
    - `allowUnauthenticated`: (default: `false`) A boolean indicating whether authentication is required. For example, you may have an API route where you want to access the logged-in customer if available, but guest customers can still access it too.
-   - `allowUnregistered` (default: `false`): A boolean indicating if unregistered users should be allowed access. This is useful when you want to allow users who aren’t registered to access certain routes.
+   - `allowUnregistered` (default: `false`): A boolean indicating whether users can access this route with a registration token, instead of an authentication token. This is useful if you have a custom actor type, such as `manager`, and you're creating an API route that allows these users to register themselves. Learn more in the [Custom Actor-Type Guide](https://docs.medusajs.com/resources/commerce-modules/auth/create-actor-type/index.html.md).
 
 ### Example: Custom Actor Type
 
@@ -11102,9 +11142,9 @@ export const GET = async (
     fields: ["*", "sales_channels.*"],
     filters: {
       sales_channels: {
-        id: "sc_123"
-      }
-    }
+        id: "sc_123",
+      },
+    },
   })
 
   res.json({ products })
@@ -11142,7 +11182,7 @@ export default defineLink(
   {
     linkable: BrandModule.linkable.brand,
     filterable: ["id", "name"],
-  },
+  }
 )
 ```
 
@@ -11183,9 +11223,9 @@ export const GET = async (
     fields: ["*", "brand.*"],
     filters: {
       brand: {
-        name: "Acme"
-      }
-    }
+        name: "Acme",
+      },
+    },
   })
 
   res.json({ products })
@@ -11231,19 +11271,19 @@ export const GET = async (
   
   const { 
     data: products,
-    metadata
+    metadata,
   } = await query.index({
     entity: "product",
     fields: ["*", "brand.*"],
     filters: {
       brand: {
-        name: "Acme"
-      }
+        name: "Acme",
+      },
     },
     pagination: {
       take: 10,
       skip: 0,
-    }
+    },
   })
 
   res.json({ products, ...metadata })
@@ -11310,9 +11350,9 @@ const {
   filters: {
     brand: {
       id: {
-        $ne: null
-      }
-    }
+        $ne: null,
+      },
+    },
   },
 })
 ```
@@ -11330,9 +11370,9 @@ const {
   filters: {
     brand: {
       name: {
-        $like: "Acme%"
-      }
-    }
+        $like: "Acme%",
+      },
+    },
   },
 })
 ```
@@ -11359,14 +11399,14 @@ export const GET = async (
   
   const { 
     data: products,
-    metadata
+    metadata,
   } = await query.index({
     entity: "product",
     ...req.queryConfig,
     filters: {
       brand: {
-        name: "Acme"
-      }
+        name: "Acme",
+      },
     },
   })
 
@@ -11402,9 +11442,9 @@ const retrieveBrandsStep = createStep(
         products: {
           id: {
             $ne: null,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     return new StepResponse(brands)

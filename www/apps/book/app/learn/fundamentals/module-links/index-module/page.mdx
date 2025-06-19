@@ -149,9 +149,9 @@ export const GET = async (
     fields: ["*", "sales_channels.*"],
     filters: {
       sales_channels: {
-        id: "sc_123"
-      }
-    }
+        id: "sc_123",
+      },
+    },
   })
 
   res.json({ products })
@@ -197,7 +197,7 @@ export default defineLink(
   {
     linkable: BrandModule.linkable.brand,
     filterable: ["id", "name"],
-  },
+  }
 )
 ```
 
@@ -238,9 +238,9 @@ export const GET = async (
     fields: ["*", "brand.*"],
     filters: {
       brand: {
-        name: "Acme"
-      }
-    }
+        name: "Acme",
+      },
+    },
   })
 
   res.json({ products })
@@ -291,19 +291,19 @@ export const GET = async (
   
   const { 
     data: products,
-    metadata
+    metadata,
   } = await query.index({
     entity: "product",
     fields: ["*", "brand.*"],
     filters: {
       brand: {
-        name: "Acme"
-      }
+        name: "Acme",
+      },
     },
     pagination: {
       take: 10,
       skip: 0,
-    }
+    },
   })
 
   res.json({ products, ...metadata })
@@ -370,9 +370,9 @@ const {
   filters: {
     brand: {
       id: {
-        $ne: null
-      }
-    }
+        $ne: null,
+      },
+    },
   },
 })
 ```
@@ -390,9 +390,9 @@ const {
   filters: {
     brand: {
       name: {
-        $like: "Acme%"
-      }
-    }
+        $like: "Acme%",
+      },
+    },
   },
 })
 ```
@@ -419,14 +419,14 @@ export const GET = async (
   
   const { 
     data: products,
-    metadata
+    metadata,
   } = await query.index({
     entity: "product",
     ...req.queryConfig,
     filters: {
       brand: {
-        name: "Acme"
-      }
+        name: "Acme",
+      },
     },
   })
 
@@ -467,9 +467,9 @@ const retrieveBrandsStep = createStep(
         products: {
           id: {
             $ne: null,
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     return new StepResponse(brands)

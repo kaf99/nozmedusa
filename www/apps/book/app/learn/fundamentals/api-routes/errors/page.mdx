@@ -282,3 +282,49 @@ The `errorHandler` property's value is a function that accepts four parameters:
 4. A function of type MedusaNextFunction that executes the next middleware in the stack.
 
 This example overrides Medusa's default error handler with a handler that always returns a `400` status code with the same message.
+
+### Re-Use Default Error Handler
+
+In some use cases, you don't want to override the default error handler but rather perform another action as part of the original error handler. For example, you want to capture the error in a third-party service like Sentry.
+
+In those cases, you can import the default error handler from the Medusa Framework and use it in your custom error handler, along with your custom logic.
+
+For example:
+
+export const defaultErrorHandlerHighlights = [
+  ["3", "errorHandler", "Import the default error handler."],
+  ["12", "originalErrorHandler", "Get the original error handler function."],
+  ["23", "originalErrorHandler", "Re-use the original error handler after your custom logic."],
+]
+
+```ts title="src/api/middlewares.ts" highlights={defaultErrorHandlerHighlights} 
+import { 
+  defineMiddlewares, 
+  errorHandler, 
+  MedusaNextFunction, 
+  MedusaRequest, 
+  MedusaResponse,
+} from "@medusajs/framework/http"
+import { MedusaError } from "@medusajs/framework/utils"
+// assuming you have Sentry set up in your project
+import * as Sentry from "@sentry/node"
+
+const originalErrorHandler = errorHandler()
+
+export default defineMiddlewares({
+  errorHandler: (
+    error: MedusaError | any, 
+    req: MedusaRequest, 
+    res: MedusaResponse, 
+    next: MedusaNextFunction
+  ) => {
+    // for example, capture the error in Sentry
+    Sentry.captureException(error)
+    return originalErrorHandler(error, req, res, next)
+  },
+})
+```
+
+In this example, you import the `errorHandler` function from the Medusa Framework. Then, you call it to get the original error handler function.
+
+Finally, you use it in your custom error handler after performing your custom logic, such as capturing the error in Sentry.
