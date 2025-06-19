@@ -1,5 +1,6 @@
 import { FindConfig, QueryConfig, RequestQueryFields } from "@medusajs/types"
 import {
+  buildOrder,
   isDefined,
   isPresent,
   MedusaError,
@@ -212,7 +213,7 @@ export function prepareListQuery<T extends RequestQueryFields, TEntity>(
     }
   }
 
-  const finalOrder = isPresent(orderBy) ? orderBy : undefined
+  const finalOrder = isPresent(orderBy) ? buildOrder(orderBy) : undefined
   return {
     listConfig: {
       select: select.length ? select : undefined,
