@@ -1,11 +1,11 @@
   import * as React from "react"
   import { cleanup, render, screen } from "@testing-library/react"
 
-  import AiAssistent from "../ai-assistent"
+  import AiAssistentBadge from "../ai-assistent-badge"
 
-  describe("AiAssistent", () => {
+  describe("AiAssistentBadge", () => {
     it("should render the icon without errors", async () => {
-      render(<AiAssistent data-testid="icon" />)
+      render(<AiAssistentBadge data-testid="icon" />)
 
 
       const svgElement = screen.getByTestId("icon")

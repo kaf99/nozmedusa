@@ -1,11 +1,11 @@
   import * as React from "react"
   import { cleanup, render, screen } from "@testing-library/react"
 
-  import TagIllustration from "../tag-illustration"
+  import CodePullRequest from "../code-pull-request"
 
-  describe("TagIllustration", () => {
+  describe("CodePullRequest", () => {
     it("should render the icon without errors", async () => {
-      render(<TagIllustration data-testid="icon" />)
+      render(<CodePullRequest data-testid="icon" />)
 
 
       const svgElement = screen.getByTestId("icon")

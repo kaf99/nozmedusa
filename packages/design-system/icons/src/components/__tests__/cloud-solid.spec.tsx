@@ -1,11 +1,11 @@
   import * as React from "react"
   import { cleanup, render, screen } from "@testing-library/react"
 
-  import FolderIllustration from "../folder-illustration"
+  import CloudSolid from "../cloud-solid"
 
-  describe("FolderIllustration", () => {
+  describe("CloudSolid", () => {
     it("should render the icon without errors", async () => {
-      render(<FolderIllustration data-testid="icon" />)
+      render(<CloudSolid data-testid="icon" />)
 
 
       const svgElement = screen.getByTestId("icon")

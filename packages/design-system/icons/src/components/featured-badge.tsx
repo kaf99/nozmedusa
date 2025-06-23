@@ -16,10 +16,10 @@ const FeaturedBadge = React.forwardRef<SVGSVGElement, IconProps>(
         <circle
           cx={7.5}
           cy={7.5}
-          r={7.2}
+          r={7.25}
           stroke={color}
           strokeOpacity={0.24}
-          strokeWidth={0.6}
+          strokeWidth={0.5}
         />
         <g clipPath="url(#b)">
           <path

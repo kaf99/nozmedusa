@@ -1,11 +1,11 @@
   import * as React from "react"
   import { cleanup, render, screen } from "@testing-library/react"
 
-  import FolderOpenIllustration from "../folder-open-illustration"
+  import TagBadge from "../tag-badge"
 
-  describe("FolderOpenIllustration", () => {
+  describe("TagBadge", () => {
     it("should render the icon without errors", async () => {
-      render(<FolderOpenIllustration data-testid="icon" />)
+      render(<TagBadge data-testid="icon" />)
 
 
       const svgElement = screen.getByTestId("icon")

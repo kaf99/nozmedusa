@@ -16,9 +16,10 @@ const BellAlertDone = React.forwardRef<SVGSVGElement, IconProps>(
           <circle
             cx={12.5}
             cy={2.5}
-            r={2}
+            r={2.25}
             stroke={color}
-            strokeOpacity={0.12}
+            strokeOpacity={0.24}
+            strokeWidth={0.5}
           />
           <path
             fill={color}

@@ -1,6 +1,6 @@
 import * as React from "react"
 import type { IconProps } from "../types"
-const AiAssistent = React.forwardRef<SVGSVGElement, IconProps>(
+const AiAssistentBadge = React.forwardRef<SVGSVGElement, IconProps>(
   ({ color = "currentColor", ...props }, ref) => {
     return (
       <svg
@@ -369,5 +369,5 @@ const AiAssistent = React.forwardRef<SVGSVGElement, IconProps>(
     )
   }
 )
-AiAssistent.displayName = "AiAssistent"
-export default AiAssistent
+AiAssistentBadge.displayName = "AiAssistentBadge"
+export default AiAssistentBadge

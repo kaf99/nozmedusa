@@ -1,11 +1,11 @@
   import * as React from "react"
   import { cleanup, render, screen } from "@testing-library/react"
 
-  import AiAssistentLuminosity from "../ai-assistent-luminosity"
+  import Meilisearch from "../meilisearch"
 
-  describe("AiAssistentLuminosity", () => {
+  describe("Meilisearch", () => {
     it("should render the icon without errors", async () => {
-      render(<AiAssistentLuminosity data-testid="icon" />)
+      render(<Meilisearch data-testid="icon" />)
 
 
       const svgElement = screen.getByTestId("icon")
