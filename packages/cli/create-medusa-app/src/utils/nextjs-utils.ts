@@ -31,6 +31,7 @@ type InstallOptions = {
   factBoxOptions: FactBoxOptions
   verbose?: boolean
   processManager: ProcessManager
+  version?: string
 }
 
 export async function installNextjsStarter({
@@ -39,6 +40,7 @@ export async function installNextjsStarter({
   factBoxOptions,
   verbose = false,
   processManager,
+  version,
 }: InstallOptions): Promise<string> {
   factBoxOptions.interval = displayFactBox({
     ...factBoxOptions,
@@ -70,6 +72,29 @@ export async function installNextjsStarter({
       ],
       { verbose }
     )
+
+    if (version) {
+      const packageJsonPath = path.join(nextjsDirectory, "package.json")
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"))
+
+      if (packageJson.dependencies) {
+        for (const dependency of Object.keys(packageJson.dependencies)) {
+          if (dependency.startsWith("@medusajs/")) {
+            packageJson.dependencies[dependency] = version
+          }
+        }
+      }
+      if (packageJson.devDependencies) {
+        for (const dependency of Object.keys(packageJson.devDependencies)) {
+          if (dependency.startsWith("@medusajs/")) {
+            packageJson.devDependencies[dependency] = version
+          }
+        }
+      }
+
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
+    }
+
     const execOptions = {
       signal: abortController?.signal,
       cwd: nextjsDirectory,

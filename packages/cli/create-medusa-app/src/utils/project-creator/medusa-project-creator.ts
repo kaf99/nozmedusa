@@ -96,6 +96,7 @@ export class MedusaProjectCreator
           factBoxOptions: this.factBoxOptions,
           verbose: this.options.verbose,
           processManager: this.processManager,
+          version: this.options.version,
         })
       }
     } catch (e) {
@@ -154,6 +155,7 @@ export class MedusaProjectCreator
         client: this.client,
         verbose: this.options.verbose,
         packageManager: this.packageManager,
+        version: this.options.version,
       })
     } finally {
       await this.client?.end()

@@ -45,6 +45,7 @@ type PrepareProjectOptions = {
   client: Client | null
   verbose?: boolean
   packageManager: PackageManager
+  version?: string
 }
 
 type PrepareOptions = PreparePluginOptions | PrepareProjectOptions
@@ -128,6 +129,7 @@ async function prepareProject({
   client,
   verbose = false,
   packageManager,
+  version,
 }: PrepareProjectOptions) {
   // initialize execution options
   const execOptions = {
@@ -158,6 +160,24 @@ async function prepareProject({
 
   // Update name
   packageJson.name = projectName
+
+  // Update medusa dependencies versions
+  if (version) {
+    if (packageJson.dependencies) {
+      for (const dependency of Object.keys(packageJson.dependencies)) {
+        if (dependency.startsWith("@medusajs/")) {
+          packageJson.dependencies[dependency] = version
+        }
+      }
+    }
+    if (packageJson.devDependencies) {
+      for (const dependency of Object.keys(packageJson.devDependencies)) {
+        if (dependency.startsWith("@medusajs/")) {
+          packageJson.devDependencies[dependency] = version
+        }
+      }
+    }
+  }
 
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
 

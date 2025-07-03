@@ -16,6 +16,7 @@ export interface ProjectOptions {
   withNextjsStarter?: boolean
   verbose?: boolean
   plugin?: boolean
+  version?: string
 }
 
 export interface ProjectCreator {
