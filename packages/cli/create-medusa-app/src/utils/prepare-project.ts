@@ -7,7 +7,7 @@ import { displayFactBox, FactBoxOptions } from "./facts.js"
 import ProcessManager from "./process-manager.js"
 import type { Client } from "pg"
 import PackageManager from "./package-manager.js"
-import { updatePackageVersion } from "./update-package-version.js"
+import { updatePackageVersions } from "./update-package-versions.js"
 
 const ADMIN_EMAIL = "admin@medusa-test.com"
 let STORE_CORS = "http://localhost:8000"
@@ -164,7 +164,7 @@ async function prepareProject({
 
   // Update medusa dependencies versions
   if (version) {
-    updatePackageVersion(packageJson, version)
+    updatePackageVersions(packageJson, version)
   }
 
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))

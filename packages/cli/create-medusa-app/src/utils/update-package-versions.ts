@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs"
 
-export function updatePackageVersion(
+export function updatePackageVersions(
   packageJsonOrPath: string | Record<string, any>,
   version: string,
   { applyChanges = false }: { applyChanges?: boolean } = {}
