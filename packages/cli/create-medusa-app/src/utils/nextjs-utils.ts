@@ -8,6 +8,7 @@ import execute from "./execute.js"
 import { displayFactBox, FactBoxOptions } from "./facts.js"
 import logMessage from "./log-message.js"
 import ProcessManager from "./process-manager.js"
+import { updatePackageVersion } from "./update-package-version.js"
 
 const NEXTJS_REPO = "https://github.com/medusajs/nextjs-starter-medusa"
 const NEXTJS_BRANCH = "main"
@@ -75,24 +76,7 @@ export async function installNextjsStarter({
 
     if (version) {
       const packageJsonPath = path.join(nextjsDirectory, "package.json")
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"))
-
-      if (packageJson.dependencies) {
-        for (const dependency of Object.keys(packageJson.dependencies)) {
-          if (dependency.startsWith("@medusajs/")) {
-            packageJson.dependencies[dependency] = version
-          }
-        }
-      }
-      if (packageJson.devDependencies) {
-        for (const dependency of Object.keys(packageJson.devDependencies)) {
-          if (dependency.startsWith("@medusajs/")) {
-            packageJson.devDependencies[dependency] = version
-          }
-        }
-      }
-
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
+      updatePackageVersion(packageJsonPath, version, { applyChanges: true })
     }
 
     const execOptions = {
