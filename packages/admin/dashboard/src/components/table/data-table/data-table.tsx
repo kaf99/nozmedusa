@@ -12,6 +12,7 @@ interface DataTableProps<TData>
   pageSize: number
   queryObject?: Record<string, any>
   noRecords?: Pick<NoResultsProps, "title" | "message">
+  enableColumnVisibility?: boolean
 }
 
 // Maybe we should use the memoized version of DataTableRoot
@@ -38,6 +39,7 @@ export const _DataTable = <TData,>({
   noHeader = false,
   layout = "fit",
   noRecords: noRecordsProps = {},
+  enableColumnVisibility = false,
 }: DataTableProps<TData>) => {
   if (isLoading) {
     return (
@@ -79,6 +81,8 @@ export const _DataTable = <TData,>({
         orderBy={orderBy}
         filters={filters}
         prefix={prefix}
+        table={table}
+        enableColumnVisibility={enableColumnVisibility}
       />
       <DataTableRoot
         table={table}

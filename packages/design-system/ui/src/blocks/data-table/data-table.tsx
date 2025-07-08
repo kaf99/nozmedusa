@@ -5,6 +5,7 @@ import * as React from "react"
 import { clx } from "@/utils/clx"
 
 import { DataTableCommandBar } from "./components/data-table-command-bar"
+import { DataTableColumnVisibilityMenu } from "./components/data-table-column-visibility-menu"
 import { DataTableFilterMenu } from "./components/data-table-filter-menu"
 import { DataTablePagination } from "./components/data-table-pagination"
 import { DataTableSearch } from "./components/data-table-search"
@@ -58,6 +59,7 @@ const DataTable = Object.assign(Root, {
   Search: DataTableSearch,
   SortingMenu: DataTableSortingMenu,
   FilterMenu: DataTableFilterMenu,
+  ColumnVisibilityMenu: DataTableColumnVisibilityMenu,
   Pagination: DataTablePagination,
   CommandBar: DataTableCommandBar,
 })

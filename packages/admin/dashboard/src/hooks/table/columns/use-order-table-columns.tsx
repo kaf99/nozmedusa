@@ -54,6 +54,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <DisplayIdCell displayId={id!} />
         },
+        meta: {
+          name: "Order",
+        },
       }),
       columnHelper.accessor("created_at", {
         header: () => <DateHeader />,
@@ -61,6 +64,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
           const date = new Date(getValue())
 
           return <DateCell date={date} />
+        },
+        meta: {
+          name: "Date",
         },
       }),
       columnHelper.accessor("customer", {
@@ -70,6 +76,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <CustomerCell customer={customer} />
         },
+        meta: {
+          name: "Customer",
+        },
       }),
       columnHelper.accessor("sales_channel", {
         header: () => <SalesChannelHeader />,
@@ -77,6 +86,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
           const channel = getValue()
 
           return <SalesChannelCell channel={channel} />
+        },
+        meta: {
+          name: "Sales Channel",
         },
       }),
       columnHelper.accessor("payment_status", {
@@ -86,6 +98,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <PaymentStatusCell status={status} />
         },
+        meta: {
+          name: "Payment Status",
+        },
       }),
       columnHelper.accessor("fulfillment_status", {
         header: () => <FulfillmentStatusHeader />,
@@ -93,6 +108,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
           const status = getValue()
 
           return <FulfillmentStatusCell status={status} />
+        },
+        meta: {
+          name: "Fulfillment Status",
         },
       }),
       columnHelper.accessor("total", {
@@ -103,6 +121,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <TotalCell currencyCode={currencyCode} total={total} />
         },
+        meta: {
+          name: "Total",
+        },
       }),
       columnHelper.display({
         id: "actions",
@@ -110,6 +131,9 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
           const country = row.original.shipping_address?.country
 
           return <CountryCell country={country} />
+        },
+        meta: {
+          name: "Country",
         },
       }),
     ],

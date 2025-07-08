@@ -9,6 +9,7 @@ import {
   type TableOptions,
   type Updater,
   useReactTable,
+  type VisibilityState,
 } from "@tanstack/react-table"
 import * as React from "react"
 import {
@@ -106,6 +107,13 @@ interface DataTableOptions<TData>
    * @default true
    */
   autoResetPageIndex?: boolean
+  /**
+   * The state and callback for the column visibility.
+   */
+  columnVisibility?: {
+    state: VisibilityState
+    onColumnVisibilityChange: (state: VisibilityState) => void
+  }
 }
 
 interface UseDataTableReturn<TData>
@@ -119,6 +127,7 @@ interface UseDataTableReturn<TData>
     | "previousPage"
     | "getPageCount"
     | "getAllColumns"
+    | "setColumnVisibility"
   > {
   getSorting: () => DataTableSortingState | null
   setSorting: (
@@ -156,6 +165,7 @@ interface UseDataTableReturn<TData>
   enableFiltering: boolean
   enableSorting: boolean
   enableSearch: boolean
+  enableColumnVisibility: boolean
 }
 
 const useDataTable = <TData,>({
@@ -170,6 +180,7 @@ const useDataTable = <TData,>({
   onRowClick,
   autoResetPageIndex = true,
   isLoading = false,
+  columnVisibility,
   ...options
 }: DataTableOptions<TData>): UseDataTableReturn<TData> => {
   const { state: sortingState, onSortingChange } = sorting ?? {}
@@ -180,6 +191,7 @@ const useDataTable = <TData,>({
     onRowSelectionChange,
     enableRowSelection,
   } = rowSelection ?? {}
+  const { state: columnVisibilityState, onColumnVisibilityChange } = columnVisibility ?? {}
 
   const autoResetPageIndexHandler = React.useCallback(() => {
     return autoResetPageIndex
@@ -230,6 +242,19 @@ const useDataTable = <TData,>({
       : undefined
   }, [onPaginationChange, paginationState])
 
+  const columnVisibilityStateHandler = React.useCallback(() => {
+    return onColumnVisibilityChange
+      ? (updaterOrValue: Updater<VisibilityState>) => {
+          const value =
+            typeof updaterOrValue === "function"
+              ? updaterOrValue(columnVisibilityState ?? {})
+              : updaterOrValue
+
+          onColumnVisibilityChange(value)
+        }
+      : undefined
+  }, [onColumnVisibilityChange, columnVisibilityState])
+
   const instance = useReactTable({
     ...options,
     getCoreRowModel: getCoreRowModel(),
@@ -243,6 +268,7 @@ const useDataTable = <TData,>({
         })
       ),
       pagination: paginationState,
+      columnVisibility: columnVisibilityState ?? {},
     },
     enableRowSelection,
     rowCount,
@@ -250,6 +276,7 @@ const useDataTable = <TData,>({
     onRowSelectionChange: rowSelectionStateHandler(),
     onSortingChange: sortingStateHandler(),
     onPaginationChange: paginationStateHandler(),
+    onColumnVisibilityChange: columnVisibilityStateHandler(),
     manualSorting: true,
     manualPagination: true,
     manualFiltering: true,
@@ -424,12 +451,14 @@ const useDataTable = <TData,>({
   const enableFiltering: boolean = !!filtering
   const enableSorting: boolean = !!sorting
   const enableSearch: boolean = !!search
+  const enableColumnVisibility: boolean = !!columnVisibility
 
   return {
     // Table
     getHeaderGroups: instance.getHeaderGroups,
     getRowModel: instance.getRowModel,
     getAllColumns: instance.getAllColumns,
+    setColumnVisibility: instance.setColumnVisibility,
     // Pagination
     enablePagination,
     getCanNextPage: instance.getCanNextPage,
@@ -468,6 +497,8 @@ const useDataTable = <TData,>({
     // Loading
     isLoading,
     showSkeleton,
+    // Column Visibility
+    enableColumnVisibility,
   }
 }
 

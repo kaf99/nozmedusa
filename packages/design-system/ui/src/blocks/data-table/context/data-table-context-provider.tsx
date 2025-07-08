@@ -15,7 +15,12 @@ const DataTableContextProvider = <TData,>({
   children,
 }: DataTableContextProviderProps<TData>) => {
   return (
-    <DataTableContext.Provider value={{ instance }}>
+    <DataTableContext.Provider 
+      value={{ 
+        instance,
+        enableColumnVisibility: instance.enableColumnVisibility
+      }}
+    >
       {children}
     </DataTableContext.Provider>
   )

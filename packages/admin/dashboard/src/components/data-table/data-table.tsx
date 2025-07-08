@@ -14,8 +14,9 @@ import {
   DataTable as Primitive,
   Text,
   useDataTable,
+  type VisibilityState,
 } from "@medusajs/ui"
-import React, { ReactNode, useCallback, useMemo } from "react"
+import React, { ReactNode, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
@@ -80,6 +81,7 @@ interface DataTableProps<TData> {
     enableRowSelection?: boolean | ((row: DataTableRow<TData>) => boolean)
   }
   layout?: "fill" | "auto"
+  enableColumnVisibility?: boolean
 }
 
 export const DataTable = <TData,>({
@@ -103,12 +105,15 @@ export const DataTable = <TData,>({
   rowSelection,
   isLoading = false,
   layout = "auto",
+  enableColumnVisibility = false,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
 
   const enableFiltering = filters && filters.length > 0
   const enableCommands = commands && commands.length > 0
   const enableSorting = columns.some((column) => column.enableSorting)
+
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
   const filterIds = useMemo(() => filters?.map((f) => f.id) ?? [], [filters])
   const prefixedFilterIds = filterIds.map((id) => getQueryParamKey(id, prefix))
@@ -266,6 +271,12 @@ export const DataTable = <TData,>({
       : undefined,
     rowSelection,
     isLoading,
+    columnVisibility: enableColumnVisibility
+      ? {
+          state: columnVisibility,
+          onColumnVisibilityChange: setColumnVisibility,
+        }
+      : undefined,
   })
 
   const shouldRenderHeading = heading || subHeading
@@ -296,7 +307,10 @@ export const DataTable = <TData,>({
             {enableFiltering && (
               <Primitive.FilterMenu tooltip={t("filters.filterLabel")} />
             )}
-            <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+            {enableSorting && (
+              <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+            )}
+            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
@@ -314,7 +328,10 @@ export const DataTable = <TData,>({
             {enableFiltering && (
               <Primitive.FilterMenu tooltip={t("filters.filterLabel")} />
             )}
-            <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+            {enableSorting && (
+              <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+            )}
+            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>

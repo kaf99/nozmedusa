@@ -68,6 +68,7 @@ export const OrderListTable = () => {
         noRecords={{
           message: t("orders.list.noRecordsMessage"),
         }}
+        enableColumnVisibility
       />
     </Container>
   )
