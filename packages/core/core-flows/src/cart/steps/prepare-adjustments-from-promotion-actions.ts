@@ -135,6 +135,7 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
         is_tax_inclusive: (action as AddItemAdjustmentAction).is_tax_inclusive,
         item_id: (action as AddItemAdjustmentAction).item_id,
         promotion_id: promotionsMap.get(action.code)?.id,
+        promotion_type: (action as AddItemAdjustmentAction).promotion_type,
       }))
 
     const lineItemAdjustmentIdsToRemove = actions

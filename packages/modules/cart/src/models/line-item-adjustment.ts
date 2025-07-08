@@ -1,4 +1,4 @@
-import { model } from "@medusajs/framework/utils"
+import { model, PromotionUtils } from "@medusajs/framework/utils"
 import LineItem from "./line-item"
 
 const LineItemAdjustment = model
@@ -12,6 +12,9 @@ const LineItemAdjustment = model
       is_tax_inclusive: model.boolean().default(false),
       provider_id: model.text().nullable(),
       promotion_id: model.text().nullable(),
+      promotion_type: model
+        .enum(PromotionUtils.ApplicationMethodType)
+        .nullable(),
       metadata: model.json().nullable(),
       item: model.belongsTo(() => LineItem, {
         mappedBy: "adjustments",

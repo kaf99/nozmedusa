@@ -1687,6 +1687,174 @@ medusaIntegrationTestRunner({
             })
           )
         })
+
+        it("should add tax inclusive promotion to cart successfully with percentage discount", async () => {
+          const publishableKey = await generatePublishableKey(appContainer)
+          const storeHeaders = generateStoreHeaders({ publishableKey })
+
+          const salesChannel = (
+            await api.post(
+              "/admin/sales-channels",
+              { name: "Webshop", description: "channel" },
+              adminHeaders
+            )
+          ).data.sales_channel
+
+          await api.post(
+            "/admin/price-preferences",
+            {
+              attribute: "currency_code",
+              value: "dkk",
+              is_tax_inclusive: true,
+            },
+            adminHeaders
+          )
+
+          const region = (
+            await api.post(
+              "/admin/regions",
+              {
+                name: "DK",
+                currency_code: "dkk",
+                countries: ["dk"],
+              },
+              adminHeaders
+            )
+          ).data.region
+
+          const product = (
+            await api.post(
+              "/admin/products",
+              {
+                ...medusaTshirtProduct,
+                shipping_profile_id: shippingProfile.id,
+              },
+              adminHeaders
+            )
+          ).data.product
+
+          const response = await api.post(
+            `/admin/promotions`,
+            {
+              code: "PERCENTAGE_10",
+              type: PromotionType.STANDARD,
+              status: PromotionStatus.ACTIVE,
+              is_tax_inclusive: true,
+              is_automatic: true,
+              application_method: {
+                target_type: "items",
+                type: "percentage",
+                allocation: "across",
+                currency_code: "DKK",
+                value: 10,
+              },
+            },
+            adminHeaders
+          )
+
+          expect(response.status).toEqual(200)
+          expect(response.data.promotion).toEqual(
+            expect.objectContaining({
+              id: expect.any(String),
+              code: "PERCENTAGE_10",
+              type: "standard",
+              is_tax_inclusive: true,
+              is_automatic: true,
+              application_method: expect.objectContaining({
+                value: 10,
+                type: "percentage",
+                target_type: "items",
+                allocation: "across",
+              }),
+            })
+          )
+
+          const cart = (
+            await api.post(
+              `/store/carts?fields=*items,*items.adjustments`,
+              {
+                currency_code: "dkk",
+                sales_channel_id: salesChannel.id,
+                region_id: region.id,
+                items: [
+                  {
+                    variant_id: product.variants[0].id,
+                    quantity: 2,
+                  },
+                ],
+                promo_codes: [response.data.promotion.code],
+              },
+              storeHeaders
+            )
+          ).data.cart
+
+          console.log(JSON.stringify(cart, null, 2))
+
+          /**
+           * Orignal total -> 2600 DKK (tax incl.)
+           * Tax rate -> 25%
+           * Promotion -> PERCENTAGE 10 (tax incl.)
+           *
+           * We want total to be 2600 DKK - 260 DKK = 2340 DKK
+           */
+          expect(cart).toEqual(
+            expect.objectContaining({
+              currency_code: "dkk",
+
+              subtotal: 2080, // taxable_base = subtotal - discount_subtotal = 2080 - 208 = 1872
+              total: 2340, // total = taxable_base * (1 + tax rate) = 1872 * (1 + 0.25) = 2340
+              tax_total: 468,
+
+              original_total: 2600,
+              original_tax_total: 520,
+
+              discount_total: 260,
+              discount_subtotal: 208,
+              discount_tax_total: 52,
+
+              item_total: 2340,
+              item_subtotal: 2080,
+              item_tax_total: 468,
+
+              original_item_total: 2600,
+              original_item_subtotal: 2080,
+              original_item_tax_total: 520,
+
+              shipping_total: 0,
+              shipping_subtotal: 0,
+              shipping_tax_total: 0,
+
+              original_shipping_tax_total: 0,
+              original_shipping_subtotal: 0,
+              original_shipping_total: 0,
+
+              //   items: expect.arrayContaining([
+              //     expect.objectContaining({
+              //       quantity: 1,
+              //       unit_price: 1300,
+
+              //       subtotal: 1040,
+              //       tax_total: 240,
+              //       total: 1200,
+
+              //       original_total: 1300,
+              //       original_tax_total: 260,
+
+              //       discount_total: 100,
+              //       discount_subtotal: 80,
+              //       discount_tax_total: 20,
+
+              //       adjustments: expect.arrayContaining([
+              //         expect.objectContaining({
+              //           amount: 100,
+              //           is_tax_inclusive: true,
+              //         }),
+              //       ]),
+              //     }),
+              //   ]),
+            })
+          )
+        })
       })
 
       describe("DELETE /admin/promotions/:id", () => {

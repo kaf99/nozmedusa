@@ -1026,6 +1026,19 @@
           "nullable": true,
           "mappedType": "text"
         },
+        "promotion_type": {
+          "name": "promotion_type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "enumItems": [
+            "fixed",
+            "percentage"
+          ],
+          "mappedType": "enum"
+        },
         "metadata": {
           "name": "metadata",
           "type": "jsonb",

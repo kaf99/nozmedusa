@@ -66,6 +66,10 @@ export interface AddItemAdjustmentAction {
   is_tax_inclusive?: boolean
 
   /**
+   * The type of the promotion.
+   */
+  promotion_type: "percentage" | "fixed"
+
   /**
    * The promotion's code.
    */
@@ -185,6 +189,11 @@ export interface ComputeActionItemLine extends Record<string, unknown> {
    * The subtotal of the line item.
    */
   subtotal: BigNumberInput
+
+  /**
+   * The total of the line item.
+   */
+  total: BigNumberInput
 
   /**
    * Whether the line item is discountable.

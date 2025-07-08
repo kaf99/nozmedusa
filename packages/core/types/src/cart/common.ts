@@ -48,6 +48,11 @@ export interface AdjustmentLineDTO {
   promotion_id?: string
 
   /**
+   * The type of the promotion.
+   */
+  promotion_type?: "percentage" | "fixed"
+
+  /**
    * The ID of the associated provider.
    */
   provider_id?: string

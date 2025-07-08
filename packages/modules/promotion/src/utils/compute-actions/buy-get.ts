@@ -272,6 +272,7 @@ export function getComputedActionsForBuyGet(
       item_id: item.id,
       amount,
       code: promotion.code!,
+      promotion_type: promotion.application_method?.type!,
     })
   }
 

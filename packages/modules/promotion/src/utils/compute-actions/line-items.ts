@@ -165,6 +165,7 @@ function applyPromotionToItems(
         amount,
         code: promotion.code!,
         is_tax_inclusive: promotion.is_tax_inclusive,
+        promotion_type: promotion.application_method?.type!,
       })
     } else if (isTargetShippingMethod) {
       computedActions.push({

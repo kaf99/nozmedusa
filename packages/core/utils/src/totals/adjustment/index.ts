@@ -8,7 +8,10 @@ export function calculateAdjustmentTotal({
   includesTax,
   taxRate,
 }: {
-  adjustments: Pick<AdjustmentLineDTO, "amount" | "is_tax_inclusive">[]
+  adjustments: Pick<
+    AdjustmentLineDTO,
+    "amount" | "is_tax_inclusive" | "promotion_type"
+  >[]
   includesTax?: boolean
   taxRate?: BigNumberInput
 }) {
@@ -29,7 +32,9 @@ export function calculateAdjustmentTotal({
     if (adj.is_tax_inclusive && isDefined(taxRate)) {
       adjustmentsSubtotal = MathBN.add(
         adjustmentsSubtotal,
-        MathBN.div(adjustmentAmount, MathBN.add(1, taxRate))
+        adj.promotion_type === "percentage"
+          ? adjustmentAmount
+          : MathBN.div(adjustmentAmount, MathBN.add(1, taxRate))
       )
     } else {
       adjustmentsSubtotal = MathBN.add(adjustmentsSubtotal, adjustmentAmount)
@@ -37,7 +42,9 @@ export function calculateAdjustmentTotal({
 
     if (isDefined(taxRate)) {
       const adjustmentSubtotal = includesTax
-        ? MathBN.div(adjustmentAmount, MathBN.add(1, taxRate))
+        ? adj.is_tax_inclusive && adj.promotion_type === "percentage"
+          ? adjustmentAmount
+          : MathBN.div(adjustmentAmount, MathBN.add(1, taxRate))
         : adjustmentAmount
 
       const adjustmentTaxTotal = MathBN.mult(adjustmentSubtotal, taxRate)

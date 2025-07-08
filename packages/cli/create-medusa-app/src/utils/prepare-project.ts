@@ -249,6 +249,12 @@ async function prepareProject({
       message: "Ran Migrations",
     })
 
+    // create admin user
+    factBoxOptions.interval = displayFactBox({
+      ...factBoxOptions,
+      title: "Creating an admin user...",
+    })
+
     await processManager.runProcess({
       process: async () => {
         const proc = await execute(
@@ -262,6 +268,11 @@ async function prepareProject({
         )
         inviteToken = match?.groups?.token
       },
+    })
+
+    factBoxOptions.interval = displayFactBox({
+      ...factBoxOptions,
+      message: "Created admin user",
     })
 
     // TODO for now we just seed the default data
