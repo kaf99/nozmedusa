@@ -117,6 +117,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
     flow: WorkflowManager.getEmptyTransactionDefinition(),
     isAsync: false,
     handlers,
+    canOverrideHandlers: new Set(),
     hooks_: {
       declared: [],
       registered: [],

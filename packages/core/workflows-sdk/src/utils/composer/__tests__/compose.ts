@@ -1408,6 +1408,23 @@ describe("Workflow composer", function () {
       expect(logStepFn).toHaveBeenCalledTimes(0)
     })
 
+    it("should run same step multiple times", async () => {
+      const log = createStep("log", async (input: number) => {
+        return new StepResponse(input)
+      })
+
+      const fakeStepWorkflow = createWorkflow("fake-workflow", () => {
+        const a = log(1).config({ name: "aaaa" })
+        const b = log(2) // without config on purpose
+        const c = log(3).config({ name: "cccc" })
+        return new WorkflowResponse([a, b, c])
+      })
+
+      const { result } = await fakeStepWorkflow().run()
+
+      expect(result).toEqual([1, 2, 3])
+    })
+
     it("should skip steps until the named step in case of permanent failure", async () => {
       const logStepFn = jest.fn(async ({ input }: { input: object }) => {
         return new StepResponse("done and returned")

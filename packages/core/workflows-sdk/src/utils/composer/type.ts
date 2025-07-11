@@ -113,6 +113,7 @@ export type CreateWorkflowComposerContext = {
   flow: OrchestratorBuilder
   isAsync: boolean
   handlers: WorkflowHandler
+  canOverrideHandlers: Set<string>
   stepBinder: <TOutput = unknown>(
     fn: StepFunctionResult
   ) => WorkflowData<TOutput>

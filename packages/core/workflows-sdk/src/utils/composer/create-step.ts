@@ -143,7 +143,8 @@ export function applyStep<
 
     this.isAsync ||= !!(stepConfig.async || stepConfig.compensateAsync)
 
-    if (!this.handlers.has(stepName)) {
+    if (!this.canOverrideHandlers.has(stepName)) {
+      this.canOverrideHandlers.add(stepName)
       this.handlers.set(stepName, handler)
     }
 
@@ -177,7 +178,8 @@ export function applyStep<
         newConfig.nested ||= newConfig.async
       }
 
-      delete localConfig.name
+      delete newConfig.name
+      this.canOverrideHandlers.delete(stepName)
 
       const handler = createStepHandler.bind(this)({
         stepName: newStepName,
