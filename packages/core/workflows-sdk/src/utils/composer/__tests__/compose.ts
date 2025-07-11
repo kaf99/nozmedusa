@@ -1413,16 +1413,34 @@ describe("Workflow composer", function () {
         return new StepResponse(input)
       })
 
-      const fakeStepWorkflow = createWorkflow("fake-workflow", () => {
+      const sameStepWorkflow = createWorkflow("fake-workflow", () => {
         const a = log(1).config({ name: "aaaa" })
         const b = log(2) // without config on purpose
         const c = log(3).config({ name: "cccc" })
         return new WorkflowResponse([a, b, c])
       })
 
-      const { result } = await fakeStepWorkflow().run()
+      const sameStepWorkflow2 = createWorkflow("fake-workflow-2", () => {
+        const a = log(1)
+        const b = log(2).config({ name: "bbbb" })
+        const c = log(3).config({ name: "cccc" })
+        return new WorkflowResponse([a, b, c])
+      })
+
+      const sameStepWorkflow3 = createWorkflow("fake-workflow-3", () => {
+        const a = log(1).config({ name: "aaaa" })
+        const b = log(2).config({ name: "bbbb" })
+        const c = log(3)
+        return new WorkflowResponse([a, b, c])
+      })
+
+      const { result } = await sameStepWorkflow().run()
+      const { result: result2 } = await sameStepWorkflow2().run()
+      const { result: result3 } = await sameStepWorkflow3().run()
 
       expect(result).toEqual([1, 2, 3])
+      expect(result2).toEqual([1, 2, 3])
+      expect(result3).toEqual([1, 2, 3])
     })
 
     it("should skip steps until the named step in case of permanent failure", async () => {

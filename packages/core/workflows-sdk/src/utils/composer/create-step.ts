@@ -143,10 +143,9 @@ export function applyStep<
 
     this.isAsync ||= !!(stepConfig.async || stepConfig.compensateAsync)
 
-    if (!this.canOverrideHandlers.has(stepName)) {
-      this.canOverrideHandlers.add(stepName)
-      this.handlers.set(stepName, handler)
-    }
+    this.overriddenHandler.set(stepName, this.handlers.get(stepName)!)
+
+    this.handlers.set(stepName, handler)
 
     const ret = {
       __type: OrchestrationUtils.SymbolWorkflowStep,
@@ -179,7 +178,6 @@ export function applyStep<
       }
 
       delete newConfig.name
-      this.canOverrideHandlers.delete(stepName)
 
       const handler = createStepHandler.bind(this)({
         stepName: newStepName,
@@ -189,6 +187,9 @@ export function applyStep<
       })
 
       wrapAsyncHandler(newConfig, handler)
+
+      this.handlers.set(stepName, this.overriddenHandler.get(stepName)!)
+      this.overriddenHandler.delete(stepName)
 
       this.handlers.set(newStepName, handler)
 
