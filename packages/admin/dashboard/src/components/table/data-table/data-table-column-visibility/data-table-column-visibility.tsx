@@ -1,6 +1,7 @@
 import { Button, Checkbox, DropdownMenu } from "@medusajs/ui"
-import { Adjustments } from "@medusajs/icons"
+import { Adjustments, Spinner } from "@medusajs/icons"
 import { Table as ReactTable, Column } from "@tanstack/react-table"
+import { useOrderColumns } from "../../../../hooks/api"
 
 interface DataTableColumnVisibilityProps<TData> {
   table: ReactTable<TData>
@@ -9,6 +10,7 @@ interface DataTableColumnVisibilityProps<TData> {
 export const DataTableColumnVisibility = <TData,>({
   table,
 }: DataTableColumnVisibilityProps<TData>) => {
+  const { columns: apiColumns, isLoading } = useOrderColumns()
 
   const columns = table
     .getAllColumns()
@@ -52,32 +54,43 @@ export const DataTableColumnVisibility = <TData,>({
       <DropdownMenu.Content align="end" className="w-[200px]">
         <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item
-          onSelect={(e: Event) => {
-            e.preventDefault()
-            handleToggleAll(!allColumnsVisible)
-          }}
-        >
-          <Checkbox checked={allColumnsVisible} />
-          <span className="ml-2">Toggle all</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Separator />
-        {columns.map((column: Column<TData, any>) => {
-          return (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <Spinner className="animate-spin" />
+          </div>
+        ) : (
+          <>
             <DropdownMenu.Item
-              key={column.id}
               onSelect={(e: Event) => {
                 e.preventDefault()
-                handleToggleColumn(column)
+                handleToggleAll(!allColumnsVisible)
               }}
             >
-              <Checkbox checked={column.getIsVisible()} />
-              <span className="ml-2 truncate">
-                {(column.columnDef.meta as any)?.name || column.id}
-              </span>
+              <Checkbox checked={allColumnsVisible} />
+              <span className="ml-2">Toggle all</span>
             </DropdownMenu.Item>
-          )
-        })}
+            <DropdownMenu.Separator />
+            {columns.map((column: Column<TData, any>) => {
+              return (
+                <DropdownMenu.Item
+                  key={column.id}
+                  onSelect={(e: Event) => {
+                    e.preventDefault()
+                    handleToggleColumn(column)
+                  }}
+                >
+                  <Checkbox checked={column.getIsVisible()} />
+                  <span className="ml-2 truncate">
+                    {(() => {
+                      const apiColumn = apiColumns?.find(c => c.id === column.id)
+                      return apiColumn?.name || (column.columnDef.meta as any)?.name || column.id
+                    })()}
+                  </span>
+                </DropdownMenu.Item>
+              )
+            })}
+          </>
+        )}
       </DropdownMenu.Content>
     </DropdownMenu>
   )

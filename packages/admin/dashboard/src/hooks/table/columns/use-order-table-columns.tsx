@@ -57,6 +57,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Order",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("created_at", {
         header: () => <DateHeader />,
@@ -68,6 +69,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Date",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("customer", {
         header: () => <CustomerHeader />,
@@ -79,6 +81,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Customer",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("sales_channel", {
         header: () => <SalesChannelHeader />,
@@ -90,6 +93,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Sales Channel",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("payment_status", {
         header: () => <PaymentStatusHeader />,
@@ -101,6 +105,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Payment Status",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("fulfillment_status", {
         header: () => <FulfillmentStatusHeader />,
@@ -112,6 +117,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Fulfillment Status",
         },
+        enableHiding: true,
       }),
       columnHelper.accessor("total", {
         header: () => <TotalHeader />,
@@ -124,6 +130,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Total",
         },
+        enableHiding: true,
       }),
       columnHelper.display({
         id: "actions",
@@ -135,6 +142,7 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         meta: {
           name: "Country",
         },
+        enableHiding: true,
       }),
     ],
     []

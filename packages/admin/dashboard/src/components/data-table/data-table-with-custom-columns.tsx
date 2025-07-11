@@ -22,7 +22,9 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
 import { useQueryParams } from "../../hooks/use-query-params"
 import { ActionMenu } from "../common/action-menu"
+import { CustomColumnVisibility } from "./custom-column-visibility"
 
+// Import the same types from the original DataTable
 type DataTableActionProps = {
   label: string
   disabled?: boolean
@@ -56,7 +58,7 @@ type DataTableActionMenuProps = {
   groups: DataTableActionMenuGroupProps[]
 }
 
-interface DataTableProps<TData> {
+interface DataTableWithCustomColumnsProps<TData> {
   data?: TData[]
   columns: DataTableColumnDef<TData, any>[]
   filters?: DataTableFilter[]
@@ -82,10 +84,13 @@ interface DataTableProps<TData> {
   }
   layout?: "fill" | "auto"
   enableColumnVisibility?: boolean
-  initialColumnVisibility?: VisibilityState
+  // Custom column visibility props
+  apiColumns?: Array<{ id: string; name: string }>
+  apiColumnsLoading?: boolean
+  onSaveColumns?: (columns: string[]) => void
 }
 
-export const DataTable = <TData,>({
+export const DataTableWithCustomColumns = <TData,>({
   data = [],
   columns,
   filters,
@@ -107,20 +112,17 @@ export const DataTable = <TData,>({
   isLoading = false,
   layout = "auto",
   enableColumnVisibility = false,
-  initialColumnVisibility = {},
-}: DataTableProps<TData>) => {
+  apiColumns,
+  apiColumnsLoading,
+  onSaveColumns,
+}: DataTableWithCustomColumnsProps<TData>) => {
   const { t } = useTranslation()
 
   const enableFiltering = filters && filters.length > 0
   const enableCommands = commands && commands.length > 0
   const enableSorting = columns.some((column) => column.enableSorting)
 
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialColumnVisibility)
-
-  // Update column visibility when initial visibility changes
-  React.useEffect(() => {
-    setColumnVisibility(initialColumnVisibility)
-  }, [initialColumnVisibility])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
   const filterIds = useMemo(() => filters?.map((f) => f.id) ?? [], [filters])
   const prefixedFilterIds = filterIds.map((id) => getQueryParamKey(id, prefix))
@@ -317,7 +319,14 @@ export const DataTable = <TData,>({
             {enableSorting && (
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {enableColumnVisibility && (
+              <CustomColumnVisibility 
+                table={instance} 
+                apiColumns={apiColumns}
+                isLoading={apiColumnsLoading}
+                onSaveColumns={onSaveColumns}
+              />
+            )}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
@@ -338,7 +347,14 @@ export const DataTable = <TData,>({
             {enableSorting && (
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {enableColumnVisibility && (
+              <CustomColumnVisibility 
+                table={instance} 
+                apiColumns={apiColumns}
+                isLoading={apiColumnsLoading}
+                onSaveColumns={onSaveColumns}
+              />
+            )}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
@@ -355,6 +371,7 @@ export const DataTable = <TData,>({
   )
 }
 
+// Helper functions (same as in the original DataTable)
 function transformSortingState(value: DataTableSortingState) {
   return value.desc ? `-${value.id}` : value.id
 }

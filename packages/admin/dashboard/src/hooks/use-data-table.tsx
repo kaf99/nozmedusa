@@ -4,6 +4,7 @@ import {
   PaginationState,
   Row,
   RowSelectionState,
+  VisibilityState,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
@@ -28,6 +29,7 @@ type UseDataTableProps<TData> = {
   getSubRows?: (original: TData) => TData[]
   meta?: Record<string, unknown>
   prefix?: string
+  enableColumnVisibility?: boolean
 }
 
 export const useDataTable = <TData,>({
@@ -43,6 +45,7 @@ export const useDataTable = <TData,>({
   getRowId,
   meta,
   prefix,
+  enableColumnVisibility = false,
 }: UseDataTableProps<TData>) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const offsetKey = `${prefix ? `${prefix}_` : ""}offset`
@@ -62,6 +65,8 @@ export const useDataTable = <TData,>({
   const [localRowSelection, setLocalRowSelection] = useState({})
   const rowSelection = _rowSelection?.state ?? localRowSelection
   const setRowSelection = _rowSelection?.updater ?? setLocalRowSelection
+  
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   useEffect(() => {
     if (!enablePagination) {
@@ -108,6 +113,7 @@ export const useDataTable = <TData,>({
     state: {
       rowSelection: rowSelection, // We always pass a selection state to the table even if it's not enabled
       pagination: enablePagination ? pagination : undefined,
+      columnVisibility: enableColumnVisibility ? columnVisibility : undefined,
     },
     pageCount: Math.ceil((count ?? 0) / pageSize),
     enableRowSelection,
@@ -117,6 +123,7 @@ export const useDataTable = <TData,>({
     onPaginationChange: enablePagination
       ? (onPaginationChange as OnChangeFn<PaginationState>)
       : undefined,
+    onColumnVisibilityChange: enableColumnVisibility ? setColumnVisibility : undefined,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: enablePagination
       ? getPaginationRowModel()
