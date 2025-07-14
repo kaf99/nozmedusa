@@ -688,8 +688,12 @@ export class TransactionOrchestrator extends EventEmitter {
       error = serializeError(error)
     } else {
       try {
-        error = {
-          message: JSON.stringify(error),
+        if (error?.message) {
+          error = JSON.parse(JSON.stringify(error))
+        } else {
+          error = {
+            message: JSON.stringify(error),
+          }
         }
       } catch (e) {
         error = {

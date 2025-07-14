@@ -769,7 +769,7 @@ describe("Transaction Orchestrator", () => {
         action: "a3",
         handlerType: "invoke",
         error: {
-          message: '{"message":"Custom error object"}',
+          message: "Custom error object",
           stack: expect.stringContaining("transaction-name -> a3 (invoke)"),
         },
       },
