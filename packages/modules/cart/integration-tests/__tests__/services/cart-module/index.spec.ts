@@ -2916,6 +2916,7 @@ moduleIntegrationTestRunner<ICartModuleService>({
                 is_tax_inclusive: false,
                 promotion_id: null,
                 deleted_at: null,
+                promotion_type: null,
                 amount: 100,
                 subtotal: 100,
                 total: 100,
@@ -3025,6 +3026,7 @@ moduleIntegrationTestRunner<ICartModuleService>({
                 promotion_id: null,
                 deleted_at: null,
                 amount: 200,
+                promotion_type: null,
                 subtotal: 200,
                 total: 200,
                 raw_subtotal: {
