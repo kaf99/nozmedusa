@@ -722,7 +722,7 @@ export class TransactionOrchestrator extends EventEmitter {
           ? TransactionHandlerType.COMPENSATE
           : TransactionHandlerType.INVOKE
 
-        error.stack ??= {}
+        error.stack ??= ""
 
         const workflowId = transaction.modelId
         const stepAction = step.definition.action
