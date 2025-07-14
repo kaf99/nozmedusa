@@ -758,7 +758,7 @@ The value for this configuration can be one of the following:
 ```ts title="medusa-config.ts"
 module.exports = defineConfig({
   projectConfig: {
-    workerMode: process.env.WORKER_MODE || "shared",
+    workerMode: process.env.WORKER_MODE as "shared" | "worker" | "server" || "shared",
     // ...
   },
   // ...
