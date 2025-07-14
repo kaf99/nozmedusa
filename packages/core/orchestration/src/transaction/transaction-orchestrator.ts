@@ -686,6 +686,20 @@ export class TransactionOrchestrator extends EventEmitter {
 
     if (isErrorLike(error)) {
       error = serializeError(error)
+    } else {
+      try {
+        if (error?.message) {
+          error = JSON.parse(JSON.stringify(error))
+        } else {
+          error = {
+            message: JSON.stringify(error),
+          }
+        }
+      } catch (e) {
+        error = {
+          message: "Unknown non-serializable error",
+        }
+      }
     }
 
     if (
@@ -712,15 +726,15 @@ export class TransactionOrchestrator extends EventEmitter {
           ? TransactionHandlerType.COMPENSATE
           : TransactionHandlerType.INVOKE
 
-        if (error?.stack) {
-          const workflowId = transaction.modelId
-          const stepAction = step.definition.action
-          const sourcePath = transaction.getFlow().metadata?.sourcePath
-          const sourceStack = sourcePath
-            ? `\n⮑ \sat ${sourcePath}: [${workflowId} -> ${stepAction} (${TransactionHandlerType.INVOKE})]`
-            : `\n⮑ \sat [${workflowId} -> ${stepAction} (${TransactionHandlerType.INVOKE})]`
-          error.stack += sourceStack
-        }
+        error.stack ??= ""
+
+        const workflowId = transaction.modelId
+        const stepAction = step.definition.action
+        const sourcePath = transaction.getFlow().metadata?.sourcePath
+        const sourceStack = sourcePath
+          ? `\n⮑ \sat ${sourcePath}: [${workflowId} -> ${stepAction} (${TransactionHandlerType.INVOKE})]`
+          : `\n⮑ \sat [${workflowId} -> ${stepAction} (${TransactionHandlerType.INVOKE})]`
+        error.stack += sourceStack
 
         transaction.addError(step.definition.action!, handlerType, error)
       }

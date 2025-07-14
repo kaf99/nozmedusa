@@ -550,7 +550,14 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
               return e
             })
 
-          expect(setStepError).toEqual({ uhuuuu: "yeaah!" })
+          expect(setStepError).toEqual(
+            expect.objectContaining({
+              message: JSON.stringify({
+                uhuuuu: "yeaah!",
+              }),
+              stack: expect.any(String),
+            })
+          )
           ;({ data: executionsList } = await query.graph({
             entity: "workflow_executions",
             fields: ["id", "state", "context"],

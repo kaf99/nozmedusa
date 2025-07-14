@@ -140,6 +140,39 @@ module.exports = defineConfig({
 
 The `projectConfig` object contains essential configurations related to the Medusa application, such as database and CORS configurations.
 
+### cookieOptions
+
+This option is available since Medusa [v2.8.5](https://github.com/medusajs/medusa/releases/tag/v2.8.5).
+
+The `projectConfig.cookieOptions` configuration defines cookie options to be passed to `express-session` when creating the session cookie. This configuration is useful when simulating a production environment locally, where you may need to set options like `secure` or `sameSite`.
+
+#### Example
+
+```ts title="medusa-config.ts"
+module.exports = defineConfig({
+  projectConfig: {
+    cookieOptions: {
+      sameSite: "lax",
+    },
+    // ...
+  },
+  // ...
+})
+```
+
+#### Properties
+
+Aside from the following options, you can pass any property that the [express-session's cookie option accepts](https://www.npmjs.com/package/express-session).
+
+- secure: (\`boolean\`)
+- sameSite: (\`lax\` | \`strict\` | \`none\`)
+- maxAge: (\`number\`) The maximum age of the cookie in milliseconds set in the \`Set-Cookie\` header.
+- httpOnly: (\`boolean\`) Whether to set the \`HttpOnly Set-Cookie\` attribute.
+- priority: (\`low\` | \`medium\` | \`high\`) The value of the \[Priority Set-Cookie attribute]\(https://tools.ietf.org/html/draft-west-cookie-priority-00#section-4.1)
+- domain: (\`string\`) The value of the \`Domain Set-Cookie\` attribute. By default, no domain is set, and most clients will consider the cookie to apply to the current domain only.
+- path: (\`string\`) The value of the \`Path Set-Cookie\` attribute
+- signed: (\`boolean\`) Whether to sign the cookie.
+
 ### databaseDriverOptions
 
 The `projectConfig.databaseDriverOptions` configuration is an object of additional options used to configure the PostgreSQL connection. For example, you can support TLS/SSL connection using this configuration's `ssl` property.
@@ -677,7 +710,7 @@ The value for this configuration can be one of the following:
 ```ts title="medusa-config.ts"
 module.exports = defineConfig({
   projectConfig: {
-    workerMode: process.env.WORKER_MODE || "shared",
+    workerMode: process.env.WORKER_MODE as "shared" | "worker" | "server" || "shared",
     // ...
   },
   // ...
@@ -7619,7 +7652,7 @@ The API routes that restrict the fields and relations you can retrieve are:
 
 ### How to Override Allowed Fields and Relations
 
-For these routes, you need to override the allowed fields and relations to be retrieved. You can do this by adding a [middleware](https://docs.medusajs.com/learn/fundamentals/api-routes/middlewares/index.html.md) to those routes.
+For these routes, you need to override the allowed fields and relations to be retrieved. You can do this by applying a [global middleware](https://docs.medusajs.com/learn/fundamentals/api-routes/middlewares/index.html.md) to those routes.
 
 For example, to allow retrieving the `b2b_company` of a customer using the [Get Customer Admin API Route](https://docs.medusajs.com/api/admin#customers_getcustomersid), create the file `src/api/middlewares.ts` with the following content:
 
@@ -7632,10 +7665,9 @@ export default defineMiddlewares({
   routes: [
     {
       matcher: "/store/customers/me",
-      method: "GET",
       middlewares: [
         (req, res, next) => {
-          req.allowed?.push("b2b_company")
+          (req.allowed ??= []).push("b2b_company")
           next()
         },
       ],
@@ -7656,6 +7688,8 @@ curl 'http://localhost:9000/admin/customers/{id}?fields=*b2b_company' \
 ```
 
 In this example, you retrieve the `b2b_company` relation of the customer using the `fields` query parameter.
+
+This approach only works using a global middleware. It doesn't work in a route middleware.
 
 
 # Request Body and Query Parameter Validation
@@ -17308,9 +17342,6 @@ export const setStepSuccessStep = createStep(
         workflowId: "hello-world",
       },
       stepResponse: new StepResponse("Done!"),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -17330,9 +17361,6 @@ The `setStepSuccess` method of the workflow engine's main service accepts as a p
 
   - workflowId: (\`string\`) The ID of the workflow. This is the first parameter passed to \`createWorkflow\` when creating the workflow.
 - stepResponse: (\`StepResponse\`) Set the response of the step. This is similar to the response you return in a step's definition, but since the \`async\` step doesn't have a response, you set its response when changing its status.
-- options: (\`Record\<string, any>\`) Options to pass to the step.
-
-  - container: (\`MedusaContainer\`) An instance of the Medusa Container
 
 ### Change Step Status to Failed
 
@@ -17374,9 +17402,6 @@ export const setStepFailureStep = createStep(
         workflowId: "hello-world",
       },
       stepResponse: new StepResponse("Failed!"),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -18550,6 +18575,8 @@ npx create-medusa-app@latest my-medusa-store
 ```
 
 Where `my-medusa-store` is the name of the project's directory and PostgreSQL database created for the project. When you run the command, you'll be asked whether you want to install the Next.js Starter Storefront.
+
+To customize the default installation behavior, such as specify a database URL, refer to the [create-medusa-app reference](https://docs.medusajs.com/resources/create-medusa-app/index.html.md).
 
 After answering the prompts, the command installs the Medusa application in a directory with your project name, and sets up a PostgreSQL database that the application connects to.
 
@@ -83992,6 +84019,7 @@ export const createRestockSubscriptionWorkflow = createWorkflow(
         return !customer.email
       }
     ).then(() => {
+      // @ts-ignore
       const { data } = useQueryGraphStep({
         entity: "customer",
         fields: ["email"],
@@ -89892,14 +89920,14 @@ To implement the step, create the file `src/workflows/restaurant/steps/create-re
 ```ts title="src/workflows/restaurant/steps/create-restaurant.ts" highlights={createRestaurantHighlight} collapsibleLines="1-7" expandMoreLabel="Show Imports"
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk"
 import { 
-  CreateRestaurantDTO,
+  CreateRestaurant,
 } from "../../../modules/restaurant/types/mutations"
 import { RESTAURANT_MODULE } from "../../../modules/restaurant"
 import RestaurantModuleService from "../../../modules/restaurant/service"
 
 export const createRestaurantStep = createStep(
   "create-restaurant-step",
-  async function (data: CreateRestaurantDTO, { container }) {
+  async function (data: CreateRestaurant, { container }) {
     const restaurantModuleService: RestaurantModuleService = container.resolve(
       RESTAURANT_MODULE
     )
@@ -89971,7 +89999,7 @@ Then, create the file `src/api/restaurants/route.ts` with the following content:
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
 import { 
-  CreateRestaurantDTO,
+  CreateRestaurant,
   } from "../../modules/restaurant/types/mutations"
 import { 
   createRestaurantWorkflow,
@@ -89979,7 +90007,7 @@ import {
 import { restaurantSchema } from "./validation-schemas"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const validatedBody = restaurantSchema.parse(req.body) as CreateRestaurantDTO
+  const validatedBody = restaurantSchema.parse(req.body) as CreateRestaurant
 
   if (!validatedBody) {
     return MedusaError.Types.INVALID_DATA
@@ -91663,9 +91691,6 @@ export const setStepSuccessStep = createStep(
         workflowId: handleDeliveryWorkflowId,
       },
       stepResponse: new StepResponse(updatedDelivery, updatedDelivery.id),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -91710,9 +91735,6 @@ export const setStepFailedStep = createStep(
         workflowId: handleDeliveryWorkflowId,
       },
       stepResponse: new StepResponse(updatedDelivery, updatedDelivery.id),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -94122,6 +94144,8 @@ const createVendorOrdersWorkflow = createWorkflow(
           "shipping_address.*",
           "billing_address.*",
           "shipping_methods.*",
+          "shipping_methods.tax_lines.*",
+          "shipping_methods.adjustments.*",
         ],
       },
     })
