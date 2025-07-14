@@ -83,6 +83,7 @@ interface DataTableProps<TData> {
   layout?: "fill" | "auto"
   enableColumnVisibility?: boolean
   initialColumnVisibility?: VisibilityState
+  onColumnVisibilityChange?: (visibility: VisibilityState) => void
 }
 
 export const DataTable = <TData,>({
@@ -108,6 +109,7 @@ export const DataTable = <TData,>({
   layout = "auto",
   enableColumnVisibility = false,
   initialColumnVisibility = {},
+  onColumnVisibilityChange,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
 
@@ -121,6 +123,12 @@ export const DataTable = <TData,>({
   React.useEffect(() => {
     setColumnVisibility(initialColumnVisibility)
   }, [initialColumnVisibility])
+
+  // Wrapper function to handle column visibility changes
+  const handleColumnVisibilityChange = React.useCallback((visibility: VisibilityState) => {
+    setColumnVisibility(visibility)
+    onColumnVisibilityChange?.(visibility)
+  }, [onColumnVisibilityChange])
 
   const filterIds = useMemo(() => filters?.map((f) => f.id) ?? [], [filters])
   const prefixedFilterIds = filterIds.map((id) => getQueryParamKey(id, prefix))
@@ -281,7 +289,7 @@ export const DataTable = <TData,>({
     columnVisibility: enableColumnVisibility
       ? {
           state: columnVisibility,
-          onColumnVisibilityChange: setColumnVisibility,
+          onColumnVisibilityChange: handleColumnVisibilityChange,
         }
       : undefined,
   })

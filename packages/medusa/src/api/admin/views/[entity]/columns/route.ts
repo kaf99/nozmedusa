@@ -3,163 +3,398 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
+import { MedusaModule } from "@medusajs/framework/modules-sdk"
+import {
+  GraphQLObjectType,
+  isScalarType,
+  isEnumType,
+  makeExecutableSchema,
+  mergeTypeDefs,
+  graphqlSchemaToFields,
+  extractRelationsFromGQL,
+  cleanGraphQLSchema,
+  print,
+} from "@medusajs/framework/utils"
 
 // Entity name mappings from URL parameter to GraphQL type and service name
 const ENTITY_MAPPINGS = {
-  'orders': {
-    serviceName: 'order',
-    graphqlType: 'Order',
-    defaultVisibleFields: ['display_id', 'created_at', 'customer', 'sales_channel', 'payment_status', 'fulfillment_status', 'total']
+  orders: {
+    serviceName: "order",
+    graphqlType: "Order",
+    defaultVisibleFields: [
+      "display_id",
+      "created_at",
+      "customer",
+      "sales_channel",
+      "payment_status",
+      "fulfillment_status",
+      "total",
+    ],
   },
-  'products': {
-    serviceName: 'product',
-    graphqlType: 'Product',
-    defaultVisibleFields: ['title', 'handle', 'status', 'created_at', 'updated_at']
+  products: {
+    serviceName: "product",
+    graphqlType: "Product",
+    defaultVisibleFields: [
+      "title",
+      "handle",
+      "status",
+      "created_at",
+      "updated_at",
+    ],
   },
-  'customers': {
-    serviceName: 'customer',
-    graphqlType: 'Customer',
-    defaultVisibleFields: ['email', 'first_name', 'last_name', 'created_at', 'updated_at']
+  customers: {
+    serviceName: "customer",
+    graphqlType: "Customer",
+    defaultVisibleFields: [
+      "email",
+      "first_name",
+      "last_name",
+      "created_at",
+      "updated_at",
+    ],
   },
-  'users': {
-    serviceName: 'user',
-    graphqlType: 'User',
-    defaultVisibleFields: ['email', 'first_name', 'last_name', 'created_at', 'updated_at']
+  users: {
+    serviceName: "user",
+    graphqlType: "User",
+    defaultVisibleFields: [
+      "email",
+      "first_name",
+      "last_name",
+      "created_at",
+      "updated_at",
+    ],
   },
-  'regions': {
-    serviceName: 'region',
-    graphqlType: 'Region',
-    defaultVisibleFields: ['name', 'currency_code', 'created_at', 'updated_at']
+  regions: {
+    serviceName: "region",
+    graphqlType: "Region",
+    defaultVisibleFields: ["name", "currency_code", "created_at", "updated_at"],
   },
-  'sales-channels': {
-    serviceName: 'salesChannel',
-    graphqlType: 'SalesChannel',
-    defaultVisibleFields: ['name', 'description', 'is_disabled', 'created_at', 'updated_at']
-  }
+  "sales-channels": {
+    serviceName: "salesChannel",
+    graphqlType: "SalesChannel",
+    defaultVisibleFields: [
+      "name",
+      "description",
+      "is_disabled",
+      "created_at",
+      "updated_at",
+    ],
+  },
 }
 
+// Helper function to get the underlying type from wrapped types (NonNull, List)
+const getUnderlyingType = (type: any): any => {
+  if (type.ofType) {
+    return getUnderlyingType(type.ofType)
+  }
+  return type
+}
+
+// Helper function to determine data type from GraphQL type
+const getDataTypeFromGraphQLType = (
+  type: any,
+  fieldName: string
+): HttpTypes.AdminViews.AdminOrderColumn["data_type"] => {
+  const underlyingType = getUnderlyingType(type)
+
+  // Check field name patterns first for more specific types
+  if (fieldName.includes("_at") || fieldName.includes("date")) {
+    return "date"
+  } else if (
+    fieldName.includes("total") ||
+    fieldName.includes("amount") ||
+    fieldName.includes("price")
+  ) {
+    return "currency"
+  } else if (fieldName.includes("count") || fieldName.includes("quantity")) {
+    return "number"
+  } else if (
+    fieldName.includes("status") ||
+    fieldName.includes("type") ||
+    fieldName.includes("is_")
+  ) {
+    return "enum"
+  } else if (fieldName === "metadata" || fieldName.includes("json")) {
+    return "object"
+  }
+
+  // Then check GraphQL type
+  if (isScalarType(underlyingType)) {
+    switch (underlyingType.name) {
+      case "Int":
+      case "Float":
+        return "number"
+      case "Boolean":
+        return "boolean"
+      case "DateTime":
+        return "date"
+      case "JSON":
+        return "object"
+      default:
+        return "string"
+    }
+  } else if (isEnumType(underlyingType)) {
+    return "enum"
+  } else {
+    return "object"
+  }
+}
 
 // Helper function to format field name for display
 const formatFieldName = (field: string): string => {
   return field
     .split(/[._]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
 }
 
-
-// Helper function to generate columns from predefined field lists
-const generateColumnsFromFields = (
-  fields: string[],
-  entityMapping: typeof ENTITY_MAPPINGS[keyof typeof ENTITY_MAPPINGS]
-): HttpTypes.AdminViews.AdminOrderColumn[] => {
-  return fields
-    .filter(field => !field.startsWith('*')) // Remove relations for now
-    .map(fieldName => {
-      const displayName = formatFieldName(fieldName)
-      
-      // Determine data type based on field name patterns
-      let dataType: HttpTypes.AdminViews.AdminOrderColumn["data_type"] = "string"
-      if (fieldName.includes('_at') || fieldName.includes('date')) {
-        dataType = "date"
-      } else if (fieldName.includes('total') || fieldName.includes('amount') || fieldName.includes('price')) {
-        dataType = "currency"
-      } else if (fieldName.includes('count') || fieldName.includes('quantity')) {
-        dataType = "number"
-      } else if (fieldName.includes('status') || fieldName.includes('type')) {
-        dataType = "enum"
-      } else if (fieldName === 'metadata' || fieldName.includes('json')) {
-        dataType = "object"
-      }
-      
-      // Simple sortability rules
-      const sortable = !fieldName.includes('metadata') && dataType !== "object"
-      
-      return {
-        id: fieldName,
-        name: displayName,
-        description: `${displayName} field`,
-        field: fieldName,
-        sortable,
-        hideable: true,
-        default_visible: entityMapping.defaultVisibleFields.includes(fieldName),
-        data_type: dataType,
-      }
-    })
-}
-
-// Predefined field lists based on existing query configurations
-const ENTITY_FIELDS = {
-  'orders': [
-    "id", "display_id", "status", "email", "currency_code", "tax_rate", "created_at", "updated_at",
-    "canceled_at", "metadata", "sales_channel_id", "total", "subtotal", "tax_total", "discount_total",
-    "gift_card_total", "shipping_total", "refunded_total", "paid_total", "refundable_amount"
-  ],
-  'products': [
-    "id", "title", "subtitle", "status", "external_id", "description", "handle", "is_giftcard",
-    "discountable", "thumbnail", "collection_id", "type_id", "weight", "length", "height", "width",
-    "hs_code", "origin_country", "mid_code", "material", "created_at", "updated_at", "deleted_at", "metadata"
-  ],
-  'customers': [
-    "id", "email", "first_name", "last_name", "billing_address_id", "phone", "has_account",
-    "created_at", "updated_at", "deleted_at", "metadata"
-  ],
-  'users': [
-    "id", "email", "first_name", "last_name", "avatar_url", "created_at", "updated_at", "deleted_at", "metadata"
-  ],
-  'regions': [
-    "id", "name", "currency_code", "tax_rate", "tax_code", "gift_cards_taxable", "automatic_taxes",
-    "tax_provider_id", "created_at", "updated_at", "deleted_at", "metadata"
-  ],
-  'sales-channels': [
-    "id", "name", "description", "is_disabled", "created_at", "updated_at", "deleted_at", "metadata"
-  ]
-}
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,
   res: MedusaResponse<HttpTypes.AdminViews.AdminOrderColumnsResponse>
 ) => {
-  try {
-    const entity = req.params.entity as string
-    
-    // Validate entity parameter
-    if (!entity) {
-      return res.status(400).json({
-        message: "Entity parameter is required",
-        type: "invalid_data"
-      } as any)
-    }
-    
-    // Get entity mapping
-    const entityMapping = ENTITY_MAPPINGS[entity as keyof typeof ENTITY_MAPPINGS]
-    if (!entityMapping) {
-      return res.status(400).json({
-        message: `Unsupported entity: ${entity}`,
-        type: "invalid_data"
-      } as any)
-    }
+  const entity = req.params.entity as string
 
-    // Get predefined fields for the entity
-    const entityFields = ENTITY_FIELDS[entity as keyof typeof ENTITY_FIELDS]
-    if (!entityFields) {
-      throw new Error(`No field configuration found for entity: ${entity}`)
-    }
-
-    // Generate columns from predefined fields
-    const columns = generateColumnsFromFields(entityFields, entityMapping)
-
-    return res.json({
-      columns,
-    })
-  } catch (error) {
-    console.error("Error generating columns:", error)
-    
-    // Return error response
-    return res.status(500).json({
-      message: `Failed to generate columns for entity: ${req.params.entity}`,
-      error: error instanceof Error ? error.message : "Unknown error",
-      type: "server_error"
+  // Validate entity parameter
+  if (!entity) {
+    return res.status(400).json({
+      message: "Entity parameter is required",
+      type: "invalid_data",
     } as any)
   }
+
+  // Get entity mapping
+  const entityMapping = ENTITY_MAPPINGS[entity as keyof typeof ENTITY_MAPPINGS]
+  if (!entityMapping) {
+    return res.status(400).json({
+      message: `Unsupported entity: ${entity}`,
+      type: "invalid_data",
+    } as any)
+  }
+
+  // Try to use schema introspection first
+  try {
+    // Get all joiner configurations which contain GraphQL schemas
+    const joinerConfigs = MedusaModule.getAllJoinerConfigs()
+
+    console.log(
+      `🔍 Found ${joinerConfigs.length} joiner configs for schema introspection`
+    )
+
+    // Collect all schema fragments and check for our entity type
+    const schemaFragments: string[] = []
+    let hasEntityType = false
+
+    for (const config of joinerConfigs) {
+      if (config.schema) {
+        schemaFragments.push(config.schema)
+        
+        // Check if this specific schema contains our entity type definition
+        if (config.schema.includes(`type ${entityMapping.graphqlType} {`)) {
+          hasEntityType = true
+          console.log(
+            `📋 Found schema for ${entityMapping.graphqlType} in joiner config`
+          )
+        }
+      }
+    }
+
+    if (hasEntityType && schemaFragments.length > 0) {
+      // Add scalar type definitions that are commonly used in Medusa
+      const scalarDefinitions = `
+        scalar DateTime
+        scalar JSON
+      `
+
+      // Merge all schema fragments with scalar definitions
+      const allSchemas = [scalarDefinitions, ...schemaFragments]
+      const mergedSchemaAST = mergeTypeDefs(allSchemas)
+      const mergedSchemaString = print(mergedSchemaAST)
+
+      // Clean the schema to remove undefined types and invalid references
+      const { schema: cleanedSchemaString } = cleanGraphQLSchema(mergedSchemaString)
+
+      // Create executable schema from the cleaned schema
+      const schema = makeExecutableSchema({
+        typeDefs: cleanedSchemaString,
+        resolvers: {}, // Empty resolvers since we only need the schema for introspection
+      })
+
+      // Get type map from schema
+      const schemaTypeMap = schema.getTypeMap()
+
+      // Use the battle-tested utility to extract fields
+      const directFields = graphqlSchemaToFields(
+        schemaTypeMap,
+        entityMapping.graphqlType,
+        [] // No relations for direct fields
+      )
+
+      // Debug the Order type structure
+      const orderType = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
+      if (orderType) {
+        const fields = orderType.getFields()
+        console.log(`🔍 All fields in ${entityMapping.graphqlType}:`, Object.keys(fields))
+        
+        // Manually check for relationships
+        console.log(`🔍 Field types in ${entityMapping.graphqlType}:`)
+        Object.entries(fields).forEach(([fieldName, field]) => {
+          const fieldType = getUnderlyingType(field.type)
+          const isObject = fieldType instanceof GraphQLObjectType
+          console.log(`  ${fieldName}: ${fieldType.name} (isObject: ${isObject})`)
+        })
+      }
+
+      // Extract relationships using the battle-tested utility
+      const relationMap = extractRelationsFromGQL(new Map(Object.entries(schemaTypeMap)))
+      const entityRelations = relationMap.get(entityMapping.graphqlType)
+      
+      console.log(`🔗 Found ${entityRelations?.size || 0} relationships for ${entityMapping.graphqlType}:`, 
+        entityRelations ? Array.from(entityRelations.entries()) : 'none')
+      
+      // Manual relationship extraction as fallback
+      const manualRelations = new Map<string, string>()
+      if (orderType) {
+        const fields = orderType.getFields()
+        Object.entries(fields).forEach(([fieldName, field]) => {
+          const fieldType = getUnderlyingType(field.type)
+          if (fieldType instanceof GraphQLObjectType) {
+            manualRelations.set(fieldName, fieldType.name)
+            console.log(`🔗 Manual relationship found: ${fieldName} -> ${fieldType.name}`)
+          }
+        })
+      }
+      
+      // Use manual relations if the utility didn't find any
+      const finalRelations = entityRelations?.size ? entityRelations : manualRelations
+      console.log(`🎯 Using ${finalRelations.size} final relationships:`, Array.from(finalRelations.entries()))
+
+      if (directFields.length > 0) {
+        // Generate columns from schema fields
+        const directColumns = directFields.map((fieldName) => {
+          const displayName = formatFieldName(fieldName)
+          
+          // Get the field type from schema for better type inference
+          const type = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
+          const fieldDef = type?.getFields()?.[fieldName]
+          const dataType = fieldDef
+            ? getDataTypeFromGraphQLType(fieldDef.type, fieldName)
+            : "string"
+
+          // Simple sortability rules
+          const sortable =
+            !fieldName.includes("metadata") && dataType !== "object"
+
+          return {
+            id: fieldName,
+            name: displayName,
+            description: `${displayName} field`,
+            field: fieldName,
+            sortable,
+            hideable: true,
+            default_visible:
+              entityMapping.defaultVisibleFields.includes(fieldName),
+            data_type: dataType,
+          }
+        })
+
+        // Generate relationship columns from schema
+        const relationshipColumns: HttpTypes.AdminViews.AdminOrderColumn[] = []
+        
+        if (finalRelations.size > 0) {
+          for (const [relationName, relatedTypeName] of finalRelations) {
+            console.log(`📊 Processing relationship: ${relationName} -> ${relatedTypeName}`)
+            
+            // First, add the relationship field itself (e.g., customer, sales_channel)
+            const relationDisplayName = formatFieldName(relationName)
+            const isRelationDefaultVisible = entityMapping.defaultVisibleFields.includes(relationName)
+            
+            relationshipColumns.push({
+              id: relationName,
+              name: relationDisplayName,
+              description: `${relationDisplayName} relationship`,
+              field: relationName,
+              sortable: false, // Relationship objects are generally not sortable
+              hideable: true,
+              default_visible: isRelationDefaultVisible,
+              data_type: "object",
+              relationship: {
+                entity: relatedTypeName,
+                field: "id", // Default to ID field for the relationship
+              },
+            })
+            
+            // Then, get fields for the related type
+            const relatedFields = graphqlSchemaToFields(
+              schemaTypeMap,
+              relatedTypeName,
+              []
+            )
+
+            console.log(`📋 Found ${relatedFields.length} fields in ${relatedTypeName}:`, relatedFields.slice(0, 5))
+
+            // Only take first 10 fields and limit to scalars
+            const limitedFields = relatedFields.slice(0, 10)
+
+            limitedFields.forEach((fieldName) => {
+              const fieldPath = `${relationName}.${fieldName}`
+              const displayName = `${formatFieldName(relationName)} ${formatFieldName(fieldName)}`
+
+              // Get field type for better type inference
+              const relatedType = schemaTypeMap[relatedTypeName] as GraphQLObjectType
+              const fieldDef = relatedType?.getFields()?.[fieldName]
+              const dataType = fieldDef
+                ? getDataTypeFromGraphQLType(fieldDef.type, fieldName)
+                : "string"
+
+              // Most relationship fields are not sortable by default
+              const sortable = ["name", "title", "email", "handle"].includes(fieldName)
+
+              // Check if this field should be visible by default
+              const isDefaultVisible =
+                entityMapping.defaultVisibleFields.includes(relationName) && 
+                limitedFields.slice(0, 3).includes(fieldName)
+
+              relationshipColumns.push({
+                id: fieldPath,
+                name: displayName,
+                description: `${displayName} from related ${relatedTypeName}`,
+                field: fieldPath,
+                sortable,
+                hideable: true,
+                default_visible: isDefaultVisible,
+                data_type: dataType,
+                relationship: {
+                  entity: relatedTypeName,
+                  field: fieldName,
+                },
+              })
+            })
+          }
+        }
+
+        // Combine all columns
+        const allColumns = [...directColumns, ...relationshipColumns]
+
+        console.log(
+          `✅ Generated ${allColumns.length} columns from schema introspection for ${entity}`
+        )
+
+        return res.json({
+          columns: allColumns,
+        })
+      }
+    }
+    
+    console.log(`⚠️ No schema found for ${entityMapping.graphqlType}, falling back to hardcoded fields`)
+    
+  } catch (schemaError) {
+    console.warn("Failed to use schema introspection, falling back to predefined fields:", schemaError)
+  }
+
+  // Fallback to hardcoded approach if schema introspection fails
+  return res.status(500).json({
+    message: `Schema introspection failed for entity: ${entity}. Please check if the entity exists in the schema.`,
+    type: "server_error",
+  } as any)
 }

@@ -1,7 +1,7 @@
 import { Container } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { useMemo } from "react"
+import { useMemo, useState, useEffect, useCallback } from "react"
 import { createColumnHelper } from "@tanstack/react-table"
 import { HttpTypes } from "@medusajs/types"
 
@@ -11,11 +11,16 @@ import { useOrderColumns } from "../../../../../hooks/api/views"
 import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 
-import { DEFAULT_FIELDS } from "../../const"
+import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../const"
 
 const PAGE_SIZE = 20
 
 const columnHelper = createColumnHelper<HttpTypes.AdminOrder>()
+
+// Helper function to get nested value from object using dot notation
+const getNestedValue = (obj: any, path: string) => {
+  return path.split('.').reduce((current, key) => current?.[key], obj)
+}
 
 export const OrderListTable = () => {
   const { t } = useTranslation()
@@ -23,18 +28,78 @@ export const OrderListTable = () => {
     pageSize: PAGE_SIZE,
   })
 
+  const filters = useOrderTableFilters()
+  const { columns: apiColumns, isLoading: isLoadingColumns } = useOrderColumns()
+  
+  // Track which relationship fields are currently visible/needed
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({})
+  
+  // Calculate required fields based on visible columns
+  const requiredFields = useMemo(() => {
+    if (!apiColumns?.length) return DEFAULT_FIELDS
+    
+    // Get all visible columns (both relationship and direct fields)
+    // If visibleColumns is empty, fall back to default_visible from API
+    const visibleFields = apiColumns
+      .filter(column => {
+        // If visibleColumns has data, use it; otherwise use default_visible
+        if (Object.keys(visibleColumns).length > 0) {
+          return visibleColumns[column.field] === true
+        }
+        return column.default_visible
+      })
+      .map(column => column.field)
+    
+    // Separate relationship fields from direct fields
+    const visibleRelationshipFields = visibleFields.filter(field => field.includes('.'))
+    const visibleDirectFields = visibleFields.filter(field => !field.includes('.'))
+    
+    // Check which relationship fields need to be added
+    const additionalRelationshipFields = visibleRelationshipFields.filter(field => {
+      const [relationName] = field.split('.')
+      const isAlreadyCovered = DEFAULT_RELATIONS.some(rel => 
+        rel === `*${relationName}` || rel === relationName
+      )
+      return !isAlreadyCovered
+    })
+    
+    // Check which direct fields need to be added
+    const additionalDirectFields = visibleDirectFields.filter(field => {
+      const isAlreadyIncluded = DEFAULT_PROPERTIES.includes(field)
+      return !isAlreadyIncluded
+    })
+    
+    // Combine all additional fields
+    const additionalFields = [...additionalRelationshipFields, ...additionalDirectFields]
+    
+    // Debug logging
+    console.log('🔍 Column Debug:', {
+      visibleFields,
+      additionalDirectFields,
+      additionalRelationshipFields,
+      additionalFields,
+      visibleColumnsState: visibleColumns
+    })
+    
+    // Combine default fields with additional needed fields
+    if (additionalFields.length > 0) {
+      const finalFields = `${DEFAULT_FIELDS},${additionalFields.join(',')}`
+      console.log('📊 Final Fields:', finalFields)
+      return finalFields
+    }
+    
+    return DEFAULT_FIELDS
+  }, [apiColumns, visibleColumns])
+
   const { orders, count, isError, error, isLoading } = useOrders(
     {
-      fields: DEFAULT_FIELDS,
+      fields: requiredFields,
       ...searchParams,
     },
     {
       placeholderData: keepPreviousData,
     }
   )
-
-  const filters = useOrderTableFilters()
-  const { columns: apiColumns, isLoading: isLoadingColumns } = useOrderColumns()
 
   // Create table columns dynamically from API data
   const columns = useMemo(() => {
@@ -43,7 +108,8 @@ export const OrderListTable = () => {
     }
 
     return apiColumns.map(apiColumn => {
-      return columnHelper.accessor(apiColumn.field as any, {
+      return columnHelper.accessor((row) => getNestedValue(row, apiColumn.field), {
+        id: apiColumn.field,
         header: () => apiColumn.name,
         cell: ({ getValue }) => {
           const value = getValue()
@@ -92,6 +158,22 @@ export const OrderListTable = () => {
     return visibility
   }, [apiColumns])
 
+  // Handle column visibility changes
+  const handleColumnVisibilityChange = useCallback((visibility: Record<string, boolean>) => {
+    setVisibleColumns(visibility)
+  }, [])
+
+  // Initialize visible columns when API columns are loaded
+  useEffect(() => {
+    if (apiColumns?.length && Object.keys(visibleColumns).length === 0) {
+      const initialVisibility: Record<string, boolean> = {}
+      apiColumns.forEach(column => {
+        initialVisibility[column.field] = column.default_visible
+      })
+      setVisibleColumns(initialVisibility)
+    }
+  }, [apiColumns, visibleColumns])
+
   if (isError) {
     throw error
   }
@@ -130,6 +212,7 @@ export const OrderListTable = () => {
         enablePagination
         enableColumnVisibility
         initialColumnVisibility={initialColumnVisibility}
+        onColumnVisibilityChange={handleColumnVisibilityChange}
         isLoading={isLoading}
         pageSize={PAGE_SIZE}
         emptyState={{

@@ -31,6 +31,19 @@ export interface AdminColumn {
    * The data type of the column value
    */
   data_type: "string" | "number" | "date" | "boolean" | "enum" | "object" | "currency"
+  /**
+   * Relationship metadata if this column represents a field from a related entity
+   */
+  relationship?: {
+    /**
+     * The name of the related entity
+     */
+    entity: string
+    /**
+     * The field name on the related entity
+     */
+    field: string
+  }
 }
 
 // Keep the existing type for backward compatibility
