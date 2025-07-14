@@ -1357,7 +1357,7 @@ export const generatedEditDates = {
   "references/payment/interfaces/payment.JoinerServiceConfig/page.mdx": "2025-05-20T07:51:40.998Z",
   "references/payment/interfaces/payment.JoinerServiceConfigAlias/page.mdx": "2025-05-20T07:51:40.998Z",
   "references/payment/types/payment.JoinerRelationship/page.mdx": "2024-12-09T13:22:02.304Z",
-  "references/payment_provider/classes/payment_provider.AbstractPaymentProvider/page.mdx": "2025-05-20T07:51:41.000Z",
+  "references/payment_provider/classes/payment_provider.AbstractPaymentProvider/page.mdx": "2025-07-14T10:43:25.548Z",
   "references/pricing/IPricingModuleService/methods/pricing.IPricingModuleService.addPriceListPrices/page.mdx": "2025-05-20T07:51:41.000Z",
   "references/pricing/IPricingModuleService/methods/pricing.IPricingModuleService.addPrices/page.mdx": "2025-05-20T07:51:41.000Z",
   "references/pricing/IPricingModuleService/methods/pricing.IPricingModuleService.calculatePrices/page.mdx": "2025-05-20T07:51:41.001Z",
