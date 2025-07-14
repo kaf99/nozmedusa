@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12886](https://github.com/medusajs/medusa/pull/12886) [`e9a33d0700c47c3d2357bb325791bc272a4d4569`](https://github.com/medusajs/medusa/commit/e9a33d0700c47c3d2357bb325791bc272a4d4569) Thanks [@adrien2p](https://github.com/adrien2p)! - fix(orchestration): Handle expected lifecycle errors
+
+- [#12888](https://github.com/medusajs/medusa/pull/12888) [`fa76f85bba253528964bacf86c061fef6d3d0742`](https://github.com/medusajs/medusa/commit/fa76f85bba253528964bacf86c061fef6d3d0742) Thanks [@carlos-r-l-rodrigues](https://github.com/carlos-r-l-rodrigues)! - fix(index): merge filterable fields with default fields
+
+- Updated dependencies [[`42be9a88d61a11db7aebde2d6f4d96d43f54ea79`](https://github.com/medusajs/medusa/commit/42be9a88d61a11db7aebde2d6f4d96d43f54ea79)]:
+  - @medusajs/medusa@2.8.7
+  - @medusajs/framework@2.8.7
+
 ## 2.8.6
 
 ### Patch Changes

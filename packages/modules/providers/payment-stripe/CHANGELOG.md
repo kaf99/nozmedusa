@@ -1,5 +1,12 @@
 # @medusajs/payment-stripe
 
+## 2.8.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.7
+
 ## 2.8.6
 
 ### Patch Changes

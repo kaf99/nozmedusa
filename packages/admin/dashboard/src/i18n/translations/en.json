@@ -2074,7 +2074,7 @@
       },
       "taxInclusive": {
         "title": "Does promotion include taxes?",
-        "description": "Enable this field to apply the promotion after taxes. If disabled, the promotion will be applied before taxes."
+        "description": "Enable this field to apply the promotion after taxes"
       },
       "status": {
         "label": "Status",
@@ -2697,7 +2697,10 @@
         "placeholder": "wrong_size",
         "tooltip": "The value should be a unique identifier for the return reason."
       },
-      "label": { "label": "Label", "placeholder": "Wrong size" },
+      "label": {
+        "label": "Label",
+        "placeholder": "Wrong size"
+      },
       "description": {
         "label": "Description",
         "placeholder": "Customer received the wrong size"

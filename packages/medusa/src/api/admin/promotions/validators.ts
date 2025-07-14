@@ -187,6 +187,7 @@ export const UpdatePromotion = z
   .object({
     code: z.string().optional(),
     is_automatic: z.boolean().optional(),
+    is_tax_inclusive: z.boolean().optional(),
     type: z.nativeEnum(PromotionType).optional(),
     status: z.nativeEnum(PromotionStatus).optional(),
     campaign_id: z.string().nullish(),

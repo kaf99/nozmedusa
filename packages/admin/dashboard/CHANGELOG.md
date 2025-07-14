@@ -1,5 +1,19 @@
 # @medusajs/dashboard
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12897](https://github.com/medusajs/medusa/pull/12897) [`1438b394aea8b570fa6703543faaea506ef816b0`](https://github.com/medusajs/medusa/commit/1438b394aea8b570fa6703543faaea506ef816b0) Thanks [@fPolic](https://github.com/fPolic)! - fix(dashboard): show TIP flag only for fixed promotions
+
+- [#12885](https://github.com/medusajs/medusa/pull/12885) [`42be9a88d61a11db7aebde2d6f4d96d43f54ea79`](https://github.com/medusajs/medusa/commit/42be9a88d61a11db7aebde2d6f4d96d43f54ea79) Thanks [@olivermrbl](https://github.com/olivermrbl)! - fix: Update TIP on promotions
+
+- Updated dependencies []:
+  - @medusajs/js-sdk@2.8.7
+  - @medusajs/admin-shared@2.8.7
+  - @medusajs/icons@2.8.7
+  - @medusajs/ui@4.0.17
+
 ## 2.8.6
 
 ### Patch Changes

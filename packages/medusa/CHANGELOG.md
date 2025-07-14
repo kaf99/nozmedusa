@@ -1,5 +1,60 @@
 # Change Log
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12885](https://github.com/medusajs/medusa/pull/12885) [`42be9a88d61a11db7aebde2d6f4d96d43f54ea79`](https://github.com/medusajs/medusa/commit/42be9a88d61a11db7aebde2d6f4d96d43f54ea79) Thanks [@olivermrbl](https://github.com/olivermrbl)! - fix: Update TIP on promotions
+
+- Updated dependencies [[`46bf7ae7aead3f33485ce8adebb602eda305088c`](https://github.com/medusajs/medusa/commit/46bf7ae7aead3f33485ce8adebb602eda305088c), [`2f70f133511857b499a992b65a0a4d6170e03ab9`](https://github.com/medusajs/medusa/commit/2f70f133511857b499a992b65a0a4d6170e03ab9), [`fa76f85bba253528964bacf86c061fef6d3d0742`](https://github.com/medusajs/medusa/commit/fa76f85bba253528964bacf86c061fef6d3d0742)]:
+  - @medusajs/core-flows@2.8.7
+  - @medusajs/api-key@2.8.7
+  - @medusajs/auth@2.8.7
+  - @medusajs/cart@2.8.7
+  - @medusajs/currency@2.8.7
+  - @medusajs/file@2.8.7
+  - @medusajs/fulfillment@2.8.7
+  - @medusajs/index@2.8.7
+  - @medusajs/inventory@2.8.7
+  - @medusajs/locking@2.8.7
+  - @medusajs/notification@2.8.7
+  - @medusajs/order@2.8.7
+  - @medusajs/payment@2.8.7
+  - @medusajs/pricing@2.8.7
+  - @medusajs/product@2.8.7
+  - @medusajs/promotion@2.8.7
+  - @medusajs/region@2.8.7
+  - @medusajs/sales-channel@2.8.7
+  - @medusajs/stock-location@2.8.7
+  - @medusajs/store@2.8.7
+  - @medusajs/locking-postgres@2.8.7
+  - @medusajs/admin-bundler@2.8.7
+  - @medusajs/analytics@2.8.7
+  - @medusajs/customer@2.8.7
+  - @medusajs/link-modules@2.8.7
+  - @medusajs/tax@2.8.7
+  - @medusajs/user@2.8.7
+  - @medusajs/workflow-engine-inmemory@2.8.7
+  - @medusajs/workflow-engine-redis@2.8.7
+  - @medusajs/framework@2.8.7
+  - @medusajs/cache-inmemory@2.8.7
+  - @medusajs/cache-redis@2.8.7
+  - @medusajs/event-bus-local@2.8.7
+  - @medusajs/event-bus-redis@2.8.7
+  - @medusajs/analytics-local@2.8.7
+  - @medusajs/analytics-posthog@2.8.7
+  - @medusajs/auth-emailpass@2.8.7
+  - @medusajs/auth-github@2.8.7
+  - @medusajs/auth-google@2.8.7
+  - @medusajs/file-local@2.8.7
+  - @medusajs/file-s3@2.8.7
+  - @medusajs/fulfillment-manual@2.8.7
+  - @medusajs/locking-redis@2.8.7
+  - @medusajs/notification-local@2.8.7
+  - @medusajs/notification-sendgrid@2.8.7
+  - @medusajs/payment-stripe@2.8.7
+  - @medusajs/telemetry@2.8.7
+
 ## 2.8.6
 
 ### Patch Changes

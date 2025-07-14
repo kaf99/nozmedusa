@@ -32,7 +32,7 @@ export const OrderPromotion: ModuleJoinerConfig = {
       entity: "Promotion",
       primaryKey: "id",
       foreignKey: "promotion_id",
-      alias: "promotion",
+      alias: "promotions",
       args: {
         methodSuffix: "Promotions",
       },
@@ -44,8 +44,8 @@ export const OrderPromotion: ModuleJoinerConfig = {
       serviceName: Modules.ORDER,
       entity: "Order",
       fieldAlias: {
-        promotion: {
-          path: "promotion_link.promotion",
+        promotions: {
+          path: "promotion_link.promotions",
           isList: true,
         },
       },
@@ -54,16 +54,7 @@ export const OrderPromotion: ModuleJoinerConfig = {
         primaryKey: "order_id",
         foreignKey: "id",
         alias: "promotion_link",
-      },
-    },
-    {
-      serviceName: Modules.PROMOTION,
-      entity: "Promotion",
-      relationship: {
-        serviceName: LINKS.OrderPromotion,
-        primaryKey: "promotion_id",
-        foreignKey: "id",
-        alias: "order_link",
+        isList: true,
       },
     },
   ],
