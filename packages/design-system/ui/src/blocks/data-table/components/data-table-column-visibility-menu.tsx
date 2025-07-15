@@ -60,7 +60,7 @@ const DataTableColumnVisibilityMenu = ({
           Columns
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content align="end" className="w-[200px]">
+      <DropdownMenu.Content align="end" className="min-w-[200px] max-h-[400px] overflow-hidden">
         <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
         <DropdownMenu.Separator />
         <DropdownMenu.Item
@@ -69,26 +69,34 @@ const DataTableColumnVisibilityMenu = ({
             handleToggleAll(!allColumnsVisible)
           }}
         >
-          <Checkbox checked={allColumnsVisible} />
-          <span className="ml-2">Toggle all</span>
+          <div className="flex items-center gap-x-2">
+            <Checkbox 
+              checked={allColumnsVisible ? true : (someColumnsVisible && !allColumnsVisible) ? "indeterminate" : false}
+            />
+            <span>Toggle all</span>
+          </div>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        {columns.map((column: Column<any, any>) => {
-          return (
-            <DropdownMenu.Item
-              key={column.id}
-              onSelect={(e: Event) => {
-                e.preventDefault()
-                handleToggleColumn(column)
-              }}
-            >
-              <Checkbox checked={column.getIsVisible()} />
-              <span className="ml-2 truncate">
-                {(column.columnDef.meta as any)?.name || column.id}
-              </span>
-            </DropdownMenu.Item>
-          )
-        })}
+        <div className="max-h-[250px] overflow-y-auto">
+          {columns.map((column: Column<any, any>) => {
+            return (
+              <DropdownMenu.Item
+                key={column.id}
+                onSelect={(e: Event) => {
+                  e.preventDefault()
+                  handleToggleColumn(column)
+                }}
+              >
+                <div className="flex items-center gap-x-2">
+                  <Checkbox checked={column.getIsVisible()} />
+                  <span className="truncate">
+                    {(column.columnDef.meta as any)?.name || column.id}
+                  </span>
+                </div>
+              </DropdownMenu.Item>
+            )
+          })}
+        </div>
       </DropdownMenu.Content>
     </DropdownMenu>
   )

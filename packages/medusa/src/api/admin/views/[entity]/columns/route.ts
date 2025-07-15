@@ -8,6 +8,8 @@ import {
   GraphQLObjectType,
   isScalarType,
   isEnumType,
+  isListType,
+  isNonNullType,
   makeExecutableSchema,
   mergeTypeDefs,
   graphqlSchemaToFields,
@@ -88,6 +90,31 @@ const getUnderlyingType = (type: any): any => {
     return getUnderlyingType(type.ofType)
   }
   return type
+}
+
+// Helper function to check if a field type is an array/list
+const isArrayField = (type: any): boolean => {
+  if (isListType(type)) {
+    return true
+  }
+  if (isNonNullType(type)) {
+    return isArrayField(type.ofType)
+  }
+  return false
+}
+
+// Helper function to check if a field is a single relationship (many-to-one, one-to-one)
+const isSingleRelationship = (type: any): boolean => {
+  // If it's a list, it's a one-to-many or many-to-many relationship
+  if (isArrayField(type)) {
+    return false
+  }
+  
+  // Get the underlying type (removing NonNull wrappers)
+  const underlyingType = getUnderlyingType(type)
+  
+  // Check if it's a GraphQL object type (relationship)
+  return underlyingType instanceof GraphQLObjectType
 }
 
 // Helper function to determine data type from GraphQL type
@@ -223,17 +250,32 @@ export const GET = async (
       // Get type map from schema
       const schemaTypeMap = schema.getTypeMap()
 
+      // Debug the entity type structure
+      const entityType = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
+
       // Use the battle-tested utility to extract fields
-      const directFields = graphqlSchemaToFields(
+      const allDirectFields = graphqlSchemaToFields(
         schemaTypeMap,
         entityMapping.graphqlType,
         [] // No relations for direct fields
       )
-
-      // Debug the Order type structure
-      const orderType = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
-      if (orderType) {
-        const fields = orderType.getFields()
+      
+      // Filter out any fields that might be arrays (double-check)
+      const directFields = allDirectFields.filter(fieldName => {
+        const field = entityType?.getFields()[fieldName]
+        if (!field) return true // Keep field if we can't determine its type
+        
+        const isArray = isArrayField(field.type)
+        if (isArray) {
+          console.log(`❌ Filtering out array field: ${fieldName}`)
+          return false
+        }
+        return true
+      })
+      
+      console.log(`📋 Filtered direct fields (${directFields.length}/${allDirectFields.length}):`, directFields)
+      if (entityType) {
+        const fields = entityType.getFields()
         console.log(`🔍 All fields in ${entityMapping.graphqlType}:`, Object.keys(fields))
         
         // Manually check for relationships
@@ -241,32 +283,53 @@ export const GET = async (
         Object.entries(fields).forEach(([fieldName, field]) => {
           const fieldType = getUnderlyingType(field.type)
           const isObject = fieldType instanceof GraphQLObjectType
-          console.log(`  ${fieldName}: ${fieldType.name} (isObject: ${isObject})`)
+          const isArray = isArrayField(field.type)
+          const isSingleRel = isSingleRelationship(field.type)
+          console.log(`  ${fieldName}: ${fieldType.name} (isObject: ${isObject}, isArray: ${isArray}, isSingleRel: ${isSingleRel})`)
         })
       }
 
       // Extract relationships using the battle-tested utility
       const relationMap = extractRelationsFromGQL(new Map(Object.entries(schemaTypeMap)))
-      const entityRelations = relationMap.get(entityMapping.graphqlType)
+      const allEntityRelations = relationMap.get(entityMapping.graphqlType)
       
-      console.log(`🔗 Found ${entityRelations?.size || 0} relationships for ${entityMapping.graphqlType}:`, 
-        entityRelations ? Array.from(entityRelations.entries()) : 'none')
+      console.log(`🔗 Found ${allEntityRelations?.size || 0} total relationships for ${entityMapping.graphqlType}:`, 
+        allEntityRelations ? Array.from(allEntityRelations.entries()) : 'none')
       
-      // Manual relationship extraction as fallback
+      // Filter out array relationships from the extracted relations
+      const filteredUtilityRelations = new Map<string, string>()
+      if (allEntityRelations && entityType) {
+        const fields = entityType.getFields()
+        for (const [fieldName, relatedTypeName] of allEntityRelations) {
+          const field = fields[fieldName]
+          if (field && isSingleRelationship(field.type)) {
+            filteredUtilityRelations.set(fieldName, relatedTypeName)
+            console.log(`✅ Utility single relationship: ${fieldName} -> ${relatedTypeName}`)
+          } else if (field && isArrayField(field.type)) {
+            console.log(`❌ Filtering out utility array relationship: ${fieldName} -> [${relatedTypeName}]`)
+          }
+        }
+      }
+      
+      // Manual relationship extraction as fallback (only single relationships)
       const manualRelations = new Map<string, string>()
-      if (orderType) {
-        const fields = orderType.getFields()
+      if (entityType) {
+        const fields = entityType.getFields()
         Object.entries(fields).forEach(([fieldName, field]) => {
-          const fieldType = getUnderlyingType(field.type)
-          if (fieldType instanceof GraphQLObjectType) {
+          // Only include single relationships (many-to-one, one-to-one)
+          if (isSingleRelationship(field.type)) {
+            const fieldType = getUnderlyingType(field.type)
             manualRelations.set(fieldName, fieldType.name)
-            console.log(`🔗 Manual relationship found: ${fieldName} -> ${fieldType.name}`)
+            console.log(`🔗 Manual single relationship found: ${fieldName} -> ${fieldType.name}`)
+          } else if (isArrayField(field.type)) {
+            const fieldType = getUnderlyingType(field.type)
+            console.log(`❌ Skipping array relationship: ${fieldName} -> [${fieldType.name}]`)
           }
         })
       }
       
-      // Use manual relations if the utility didn't find any
-      const finalRelations = entityRelations?.size ? entityRelations : manualRelations
+      // Use filtered utility relations if available, otherwise use manual relations
+      const finalRelations = filteredUtilityRelations.size > 0 ? filteredUtilityRelations : manualRelations
       console.log(`🎯 Using ${finalRelations.size} final relationships:`, Array.from(finalRelations.entries()))
 
       if (directFields.length > 0) {
@@ -325,13 +388,27 @@ export const GET = async (
             })
             
             // Then, get fields for the related type
-            const relatedFields = graphqlSchemaToFields(
+            const allRelatedFields = graphqlSchemaToFields(
               schemaTypeMap,
               relatedTypeName,
               []
             )
 
-            console.log(`📋 Found ${relatedFields.length} fields in ${relatedTypeName}:`, relatedFields.slice(0, 5))
+            // Filter out array fields from related type
+            const relatedType = schemaTypeMap[relatedTypeName] as GraphQLObjectType
+            const relatedFields = allRelatedFields.filter(fieldName => {
+              const field = relatedType?.getFields()[fieldName]
+              if (!field) return true // Keep field if we can't determine its type
+              
+              const isArray = isArrayField(field.type)
+              if (isArray) {
+                console.log(`❌ Filtering out array field in ${relatedTypeName}: ${fieldName}`)
+                return false
+              }
+              return true
+            })
+
+            console.log(`📋 Found ${relatedFields.length}/${allRelatedFields.length} non-array fields in ${relatedTypeName}:`, relatedFields.slice(0, 5))
 
             // Only take first 10 fields and limit to scalars
             const limitedFields = relatedFields.slice(0, 10)
