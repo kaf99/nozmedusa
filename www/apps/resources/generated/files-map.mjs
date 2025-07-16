@@ -1384,6 +1384,10 @@ export const filesMap = [
     "pathname": "/troubleshooting"
   },
   {
+    "filePath": "/www/apps/resources/app/troubleshooting/payment/page.mdx",
+    "pathname": "/troubleshooting/payment"
+  },
+  {
     "filePath": "/www/apps/resources/app/troubleshooting/query/expression-type-error/page.mdx",
     "pathname": "/troubleshooting/query/expression-type-error"
   },

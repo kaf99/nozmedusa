@@ -1,19 +1,19 @@
 {
-	"id": 59929,
+	"id": 59934,
 	"name": "notification-service",
 	"variant": "project",
 	"kind": 1,
 	"flags": {},
 	"children": [
 		{
-			"id": 59930,
+			"id": 59935,
 			"name": "INotificationModuleService",
 			"variant": "declaration",
 			"kind": 256,
 			"flags": {},
 			"children": [
 				{
-					"id": 59931,
+					"id": 59936,
 					"name": "createNotifications",
 					"variant": "declaration",
 					"kind": 2048,
@@ -23,18 +23,18 @@
 							"fileName": "notification/service.ts",
 							"line": 29,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L29"
+							"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L29"
 						},
 						{
 							"fileName": "notification/service.ts",
 							"line": 48,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L48"
+							"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L48"
 						}
 					],
 					"signatures": [
 						{
-							"id": 59932,
+							"id": 59937,
 							"name": "createNotifications",
 							"variant": "signature",
 							"kind": 4096,
@@ -72,12 +72,12 @@
 									"fileName": "notification/service.ts",
 									"line": 29,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L29"
+									"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L29"
 								}
 							],
 							"parameters": [
 								{
-									"id": 59933,
+									"id": 59938,
 									"name": "data",
 									"variant": "param",
 									"kind": 32768,
@@ -104,7 +104,7 @@
 									}
 								},
 								{
-									"id": 59934,
+									"id": 59939,
 									"name": "sharedContext",
 									"variant": "param",
 									"kind": 32768,
@@ -155,7 +155,7 @@
 							}
 						},
 						{
-							"id": 59935,
+							"id": 59940,
 							"name": "createNotifications",
 							"variant": "signature",
 							"kind": 4096,
@@ -193,12 +193,12 @@
 									"fileName": "notification/service.ts",
 									"line": 48,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L48"
+									"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L48"
 								}
 							],
 							"parameters": [
 								{
-									"id": 59936,
+									"id": 59941,
 									"name": "data",
 									"variant": "param",
 									"kind": 32768,
@@ -218,198 +218,6 @@
 											"qualifiedName": "CreateNotificationDTO"
 										},
 										"name": "CreateNotificationDTO",
-										"package": "@medusajs/types"
-									}
-								},
-								{
-									"id": 59937,
-									"name": "sharedContext",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {
-										"isOptional": true
-									},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "A context used to share resources, such as transaction manager, between the application and the module."
-											}
-										]
-									},
-									"type": {
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
-											"qualifiedName": "Context"
-										},
-										"name": "Context",
-										"package": "@medusajs/types"
-									}
-								}
-							],
-							"type": {
-								"type": "reference",
-								"target": {
-									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
-									"qualifiedName": "Promise"
-								},
-								"typeArguments": [
-									{
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
-											"qualifiedName": "NotificationDTO"
-										},
-										"name": "NotificationDTO",
-										"package": "@medusajs/types"
-									}
-								],
-								"name": "Promise",
-								"package": "typescript"
-							}
-						}
-					]
-				},
-				{
-					"id": 59938,
-					"name": "retrieveNotification",
-					"variant": "declaration",
-					"kind": 2048,
-					"flags": {},
-					"sources": [
-						{
-							"fileName": "notification/service.ts",
-							"line": 89,
-							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L89"
-						}
-					],
-					"signatures": [
-						{
-							"id": 59939,
-							"name": "retrieveNotification",
-							"variant": "signature",
-							"kind": 4096,
-							"flags": {},
-							"comment": {
-								"summary": [
-									{
-										"kind": "text",
-										"text": "This method is used to retrieve a notification by its ID"
-									}
-								],
-								"blockTags": [
-									{
-										"tag": "@returns",
-										"content": [
-											{
-												"kind": "text",
-												"text": "The retrieved notification."
-											}
-										]
-									},
-									{
-										"tag": "@example",
-										"content": [
-											{
-												"kind": "text",
-												"text": "A simple example that retrieves a notification by its ID:\n\n"
-											},
-											{
-												"kind": "code",
-												"text": "```ts\nconst notification =\n  await notificationModuleService.retrieveNotification(\"noti_123\")\n```"
-											},
-											{
-												"kind": "text",
-												"text": "\n\nTo specify relations that should be retrieved:\n\n:::note\n\nYou can only retrieve data models defined in the same module. To retrieve linked data models\nfrom other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.\n\n:::\n\n"
-											},
-											{
-												"kind": "code",
-												"text": "```ts\nconst notification = await notificationModuleService.retrieveNotification(\n  \"noti_123\",\n  {\n    relations: [\"provider\"],\n  }\n)\n```"
-											}
-										]
-									}
-								]
-							},
-							"sources": [
-								{
-									"fileName": "notification/service.ts",
-									"line": 89,
-									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L89"
-								}
-							],
-							"parameters": [
-								{
-									"id": 59940,
-									"name": "notificationId",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "The ID of the notification to retrieve."
-											}
-										]
-									},
-									"type": {
-										"type": "intrinsic",
-										"name": "string"
-									}
-								},
-								{
-									"id": 59941,
-									"name": "config",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {
-										"isOptional": true
-									},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "The configurations determining how the notification is retrieved. Its properties, such as "
-											},
-											{
-												"kind": "code",
-												"text": "`select`"
-											},
-											{
-												"kind": "text",
-												"text": " or "
-											},
-											{
-												"kind": "code",
-												"text": "`relations`"
-											},
-											{
-												"kind": "text",
-												"text": ", accept the\nattributes or relations associated with a notification."
-											}
-										]
-									},
-									"type": {
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
-											"qualifiedName": "FindConfig"
-										},
-										"typeArguments": [
-											{
-												"type": "reference",
-												"target": {
-													"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
-													"qualifiedName": "NotificationDTO"
-												},
-												"name": "NotificationDTO",
-												"package": "@medusajs/types"
-											}
-										],
-										"name": "FindConfig",
 										"package": "@medusajs/types"
 									}
 								},
@@ -465,6 +273,198 @@
 				},
 				{
 					"id": 59943,
+					"name": "retrieveNotification",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "notification/service.ts",
+							"line": 89,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L89"
+						}
+					],
+					"signatures": [
+						{
+							"id": 59944,
+							"name": "retrieveNotification",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method is used to retrieve a notification by its ID"
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The retrieved notification."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "text",
+												"text": "A simple example that retrieves a notification by its ID:\n\n"
+											},
+											{
+												"kind": "code",
+												"text": "```ts\nconst notification =\n  await notificationModuleService.retrieveNotification(\"noti_123\")\n```"
+											},
+											{
+												"kind": "text",
+												"text": "\n\nTo specify relations that should be retrieved:\n\n:::note\n\nYou can only retrieve data models defined in the same module. To retrieve linked data models\nfrom other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.\n\n:::\n\n"
+											},
+											{
+												"kind": "code",
+												"text": "```ts\nconst notification = await notificationModuleService.retrieveNotification(\n  \"noti_123\",\n  {\n    relations: [\"provider\"],\n  }\n)\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "notification/service.ts",
+									"line": 89,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L89"
+								}
+							],
+							"parameters": [
+								{
+									"id": 59945,
+									"name": "notificationId",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The ID of the notification to retrieve."
+											}
+										]
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 59946,
+									"name": "config",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The configurations determining how the notification is retrieved. Its properties, such as "
+											},
+											{
+												"kind": "code",
+												"text": "`select`"
+											},
+											{
+												"kind": "text",
+												"text": " or "
+											},
+											{
+												"kind": "code",
+												"text": "`relations`"
+											},
+											{
+												"kind": "text",
+												"text": ", accept the\nattributes or relations associated with a notification."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
+											"qualifiedName": "FindConfig"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
+													"qualifiedName": "NotificationDTO"
+												},
+												"name": "NotificationDTO",
+												"package": "@medusajs/types"
+											}
+										],
+										"name": "FindConfig",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 59947,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
+											"qualifiedName": "NotificationDTO"
+										},
+										"name": "NotificationDTO",
+										"package": "@medusajs/types"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 59948,
 					"name": "listNotifications",
 					"variant": "declaration",
 					"kind": 2048,
@@ -474,12 +474,12 @@
 							"fileName": "notification/service.ts",
 							"line": 149,
 							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L149"
+							"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L149"
 						}
 					],
 					"signatures": [
 						{
-							"id": 59944,
+							"id": 59949,
 							"name": "listNotifications",
 							"variant": "signature",
 							"kind": 4096,
@@ -569,249 +569,7 @@
 									"fileName": "notification/service.ts",
 									"line": 149,
 									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L149"
-								}
-							],
-							"parameters": [
-								{
-									"id": 59945,
-									"name": "filters",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {
-										"isOptional": true
-									},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "The filters to apply on the retrieved notifications."
-											}
-										]
-									},
-									"type": {
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
-											"qualifiedName": "FilterableNotificationProps"
-										},
-										"name": "FilterableNotificationProps",
-										"package": "@medusajs/types"
-									}
-								},
-								{
-									"id": 59946,
-									"name": "config",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {
-										"isOptional": true
-									},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "The configurations determining how the notifications are retrieved. Its properties, such as "
-											},
-											{
-												"kind": "code",
-												"text": "`select`"
-											},
-											{
-												"kind": "text",
-												"text": " or "
-											},
-											{
-												"kind": "code",
-												"text": "`relations`"
-											},
-											{
-												"kind": "text",
-												"text": ", accept the\nattributes or relations associated with a notification."
-											}
-										]
-									},
-									"type": {
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
-											"qualifiedName": "FindConfig"
-										},
-										"typeArguments": [
-											{
-												"type": "reference",
-												"target": {
-													"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
-													"qualifiedName": "NotificationDTO"
-												},
-												"name": "NotificationDTO",
-												"package": "@medusajs/types"
-											}
-										],
-										"name": "FindConfig",
-										"package": "@medusajs/types"
-									}
-								},
-								{
-									"id": 59947,
-									"name": "sharedContext",
-									"variant": "param",
-									"kind": 32768,
-									"flags": {
-										"isOptional": true
-									},
-									"comment": {
-										"summary": [
-											{
-												"kind": "text",
-												"text": "A context used to share resources, such as transaction manager, between the application and the module."
-											}
-										]
-									},
-									"type": {
-										"type": "reference",
-										"target": {
-											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
-											"qualifiedName": "Context"
-										},
-										"name": "Context",
-										"package": "@medusajs/types"
-									}
-								}
-							],
-							"type": {
-								"type": "reference",
-								"target": {
-									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
-									"qualifiedName": "Promise"
-								},
-								"typeArguments": [
-									{
-										"type": "array",
-										"elementType": {
-											"type": "reference",
-											"target": {
-												"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
-												"qualifiedName": "NotificationDTO"
-											},
-											"name": "NotificationDTO",
-											"package": "@medusajs/types"
-										}
-									}
-								],
-								"name": "Promise",
-								"package": "typescript"
-							}
-						}
-					]
-				},
-				{
-					"id": 59948,
-					"name": "listAndCountNotifications",
-					"variant": "declaration",
-					"kind": 2048,
-					"flags": {},
-					"sources": [
-						{
-							"fileName": "notification/service.ts",
-							"line": 212,
-							"character": 2,
-							"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L212"
-						}
-					],
-					"signatures": [
-						{
-							"id": 59949,
-							"name": "listAndCountNotifications",
-							"variant": "signature",
-							"kind": 4096,
-							"flags": {},
-							"comment": {
-								"summary": [
-									{
-										"kind": "text",
-										"text": "This method is used to retrieve a paginated list of notifications along with the total count of available notifications satisfying the provided filters."
-									}
-								],
-								"blockTags": [
-									{
-										"tag": "@returns",
-										"content": [
-											{
-												"kind": "text",
-												"text": "The list of notifications along with the total count."
-											}
-										]
-									},
-									{
-										"tag": "@example",
-										"content": [
-											{
-												"kind": "text",
-												"text": "To retrieve a list of notifications using their IDs:\n\n"
-											},
-											{
-												"kind": "code",
-												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications({\n    id: [\"noti_123\", \"noti_321\"],\n  })\n```"
-											},
-											{
-												"kind": "text",
-												"text": "\n\nTo specify relations that should be retrieved within the notifications:\n\n:::note\n\nYou can only retrieve data models defined in the same module. To retrieve linked data models\nfrom other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.\n\n:::\n\n"
-											},
-											{
-												"kind": "code",
-												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications(\n    {\n      id: [\"noti_123\", \"noti_321\"],\n    },\n    {\n      relations: [\"provider\"],\n    }\n  )\n```"
-											},
-											{
-												"kind": "text",
-												"text": "\n\nBy default, only the first "
-											},
-											{
-												"kind": "code",
-												"text": "`15`"
-											},
-											{
-												"kind": "text",
-												"text": " records are retrieved. You can control pagination by specifying the "
-											},
-											{
-												"kind": "code",
-												"text": "`skip`"
-											},
-											{
-												"kind": "text",
-												"text": " and "
-											},
-											{
-												"kind": "code",
-												"text": "`take`"
-											},
-											{
-												"kind": "text",
-												"text": " properties of the "
-											},
-											{
-												"kind": "code",
-												"text": "`config`"
-											},
-											{
-												"kind": "text",
-												"text": " parameter:\n\n"
-											},
-											{
-												"kind": "code",
-												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications(\n    {\n      id: [\"noti_123\", \"noti_321\"],\n    },\n    {\n      relations: [\"provider\"],\n      take: 20,\n      skip: 2,\n    }\n  )\n```"
-											}
-										]
-									}
-								]
-							},
-							"sources": [
-								{
-									"fileName": "notification/service.ts",
-									"line": 212,
-									"character": 2,
-									"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L212"
+									"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L149"
 								}
 							],
 							"parameters": [
@@ -929,6 +687,248 @@
 								},
 								"typeArguments": [
 									{
+										"type": "array",
+										"elementType": {
+											"type": "reference",
+											"target": {
+												"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
+												"qualifiedName": "NotificationDTO"
+											},
+											"name": "NotificationDTO",
+											"package": "@medusajs/types"
+										}
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				},
+				{
+					"id": 59953,
+					"name": "listAndCountNotifications",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "notification/service.ts",
+							"line": 212,
+							"character": 2,
+							"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L212"
+						}
+					],
+					"signatures": [
+						{
+							"id": 59954,
+							"name": "listAndCountNotifications",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "This method is used to retrieve a paginated list of notifications along with the total count of available notifications satisfying the provided filters."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@returns",
+										"content": [
+											{
+												"kind": "text",
+												"text": "The list of notifications along with the total count."
+											}
+										]
+									},
+									{
+										"tag": "@example",
+										"content": [
+											{
+												"kind": "text",
+												"text": "To retrieve a list of notifications using their IDs:\n\n"
+											},
+											{
+												"kind": "code",
+												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications({\n    id: [\"noti_123\", \"noti_321\"],\n  })\n```"
+											},
+											{
+												"kind": "text",
+												"text": "\n\nTo specify relations that should be retrieved within the notifications:\n\n:::note\n\nYou can only retrieve data models defined in the same module. To retrieve linked data models\nfrom other modules, use [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query) instead.\n\n:::\n\n"
+											},
+											{
+												"kind": "code",
+												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications(\n    {\n      id: [\"noti_123\", \"noti_321\"],\n    },\n    {\n      relations: [\"provider\"],\n    }\n  )\n```"
+											},
+											{
+												"kind": "text",
+												"text": "\n\nBy default, only the first "
+											},
+											{
+												"kind": "code",
+												"text": "`15`"
+											},
+											{
+												"kind": "text",
+												"text": " records are retrieved. You can control pagination by specifying the "
+											},
+											{
+												"kind": "code",
+												"text": "`skip`"
+											},
+											{
+												"kind": "text",
+												"text": " and "
+											},
+											{
+												"kind": "code",
+												"text": "`take`"
+											},
+											{
+												"kind": "text",
+												"text": " properties of the "
+											},
+											{
+												"kind": "code",
+												"text": "`config`"
+											},
+											{
+												"kind": "text",
+												"text": " parameter:\n\n"
+											},
+											{
+												"kind": "code",
+												"text": "```ts\nconst [notifications, count] =\n  await notificationModuleService.listAndCountNotifications(\n    {\n      id: [\"noti_123\", \"noti_321\"],\n    },\n    {\n      relations: [\"provider\"],\n      take: 20,\n      skip: 2,\n    }\n  )\n```"
+											}
+										]
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "notification/service.ts",
+									"line": 212,
+									"character": 2,
+									"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L212"
+								}
+							],
+							"parameters": [
+								{
+									"id": 59955,
+									"name": "filters",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The filters to apply on the retrieved notifications."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
+											"qualifiedName": "FilterableNotificationProps"
+										},
+										"name": "FilterableNotificationProps",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 59956,
+									"name": "config",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "The configurations determining how the notifications are retrieved. Its properties, such as "
+											},
+											{
+												"kind": "code",
+												"text": "`select`"
+											},
+											{
+												"kind": "text",
+												"text": " or "
+											},
+											{
+												"kind": "code",
+												"text": "`relations`"
+											},
+											{
+												"kind": "text",
+												"text": ", accept the\nattributes or relations associated with a notification."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/common/common.ts",
+											"qualifiedName": "FindConfig"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../../../../packages/core/types/src/notification/common.ts",
+													"qualifiedName": "NotificationDTO"
+												},
+												"name": "NotificationDTO",
+												"package": "@medusajs/types"
+											}
+										],
+										"name": "FindConfig",
+										"package": "@medusajs/types"
+									}
+								},
+								{
+									"id": 59957,
+									"name": "sharedContext",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"comment": {
+										"summary": [
+											{
+												"kind": "text",
+												"text": "A context used to share resources, such as transaction manager, between the application and the module."
+											}
+										]
+									},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../../../../packages/core/types/src/shared-context.ts",
+											"qualifiedName": "Context"
+										},
+										"name": "Context",
+										"package": "@medusajs/types"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../../node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
 										"type": "tuple",
 										"elements": [
 											{
@@ -961,10 +961,10 @@
 				{
 					"title": "Methods",
 					"children": [
-						59931,
-						59938,
+						59936,
 						59943,
-						59948
+						59948,
+						59953
 					]
 				}
 			],
@@ -973,7 +973,7 @@
 					"fileName": "notification/service.ts",
 					"line": 7,
 					"character": 17,
-					"url": "https://github.com/medusajs/medusa/blob/e0b5bb0b224458ebc8c93111e72f9a10aecf0275/packages/core/types/src/notification/service.ts#L7"
+					"url": "https://github.com/medusajs/medusa/blob/fc377a136006df0f1c3d5cb6e0be340a486a03f0/packages/core/types/src/notification/service.ts#L7"
 				}
 			],
 			"extendedTypes": [
@@ -993,63 +993,43 @@
 		{
 			"title": "Interfaces",
 			"children": [
-				59930
+				59935
 			]
 		}
 	],
 	"packageName": "@medusajs/types",
 	"symbolIdMap": {
-		"59929": {
+		"59934": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
 			"qualifiedName": ""
 		},
-		"59930": {
+		"59935": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
 			"qualifiedName": "INotificationModuleService"
 		},
-		"59931": {
-			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.createNotifications"
-		},
-		"59932": {
-			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.createNotifications"
-		},
-		"59933": {
-			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "data"
-		},
-		"59934": {
-			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "sharedContext"
-		},
-		"59935": {
-			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.createNotifications"
-		},
 		"59936": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "data"
+			"qualifiedName": "INotificationModuleService.createNotifications"
 		},
 		"59937": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "sharedContext"
+			"qualifiedName": "INotificationModuleService.createNotifications"
 		},
 		"59938": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.retrieveNotification"
+			"qualifiedName": "data"
 		},
 		"59939": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.retrieveNotification"
+			"qualifiedName": "sharedContext"
 		},
 		"59940": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "notificationId"
+			"qualifiedName": "INotificationModuleService.createNotifications"
 		},
 		"59941": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "config"
+			"qualifiedName": "data"
 		},
 		"59942": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
@@ -1057,15 +1037,15 @@
 		},
 		"59943": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.listNotifications"
+			"qualifiedName": "INotificationModuleService.retrieveNotification"
 		},
 		"59944": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.listNotifications"
+			"qualifiedName": "INotificationModuleService.retrieveNotification"
 		},
 		"59945": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "filters"
+			"qualifiedName": "notificationId"
 		},
 		"59946": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
@@ -1077,11 +1057,11 @@
 		},
 		"59948": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.listAndCountNotifications"
+			"qualifiedName": "INotificationModuleService.listNotifications"
 		},
 		"59949": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
-			"qualifiedName": "INotificationModuleService.listAndCountNotifications"
+			"qualifiedName": "INotificationModuleService.listNotifications"
 		},
 		"59950": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
@@ -1094,6 +1074,26 @@
 		"59952": {
 			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
 			"qualifiedName": "sharedContext"
+		},
+		"59953": {
+			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
+			"qualifiedName": "INotificationModuleService.listAndCountNotifications"
+		},
+		"59954": {
+			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
+			"qualifiedName": "INotificationModuleService.listAndCountNotifications"
+		},
+		"59955": {
+			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
+			"qualifiedName": "filters"
+		},
+		"59956": {
+			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
+			"qualifiedName": "config"
+		},
+		"59957": {
+			"sourceFileName": "../../../../packages/core/types/src/notification/service.ts",
+			"qualifiedName": "sharedContext"
 		}
 	},
 	"files": {
@@ -1101,7 +1101,7 @@
 			"1": "../../../../packages/core/types/src/notification/service.ts"
 		},
 		"reflections": {
-			"1": 59929
+			"1": 59934
 		}
 	}
 }

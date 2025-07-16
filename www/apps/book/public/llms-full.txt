@@ -140,6 +140,39 @@ module.exports = defineConfig({
 
 The `projectConfig` object contains essential configurations related to the Medusa application, such as database and CORS configurations.
 
+### cookieOptions
+
+This option is available since Medusa [v2.8.5](https://github.com/medusajs/medusa/releases/tag/v2.8.5).
+
+The `projectConfig.cookieOptions` configuration defines cookie options to be passed to `express-session` when creating the session cookie. This configuration is useful when simulating a production environment locally, where you may need to set options like `secure` or `sameSite`.
+
+#### Example
+
+```ts title="medusa-config.ts"
+module.exports = defineConfig({
+  projectConfig: {
+    cookieOptions: {
+      sameSite: "lax",
+    },
+    // ...
+  },
+  // ...
+})
+```
+
+#### Properties
+
+Aside from the following options, you can pass any property that the [express-session's cookie option accepts](https://www.npmjs.com/package/express-session).
+
+- secure: (\`boolean\`)
+- sameSite: (\`lax\` | \`strict\` | \`none\`)
+- maxAge: (\`number\`) The maximum age of the cookie in milliseconds set in the \`Set-Cookie\` header.
+- httpOnly: (\`boolean\`) Whether to set the \`HttpOnly Set-Cookie\` attribute.
+- priority: (\`low\` | \`medium\` | \`high\`) The value of the \[Priority Set-Cookie attribute]\(https://tools.ietf.org/html/draft-west-cookie-priority-00#section-4.1)
+- domain: (\`string\`) The value of the \`Domain Set-Cookie\` attribute. By default, no domain is set, and most clients will consider the cookie to apply to the current domain only.
+- path: (\`string\`) The value of the \`Path Set-Cookie\` attribute
+- signed: (\`boolean\`) Whether to sign the cookie.
+
 ### databaseDriverOptions
 
 The `projectConfig.databaseDriverOptions` configuration is an object of additional options used to configure the PostgreSQL connection. For example, you can support TLS/SSL connection using this configuration's `ssl` property.
@@ -677,7 +710,7 @@ The value for this configuration can be one of the following:
 ```ts title="medusa-config.ts"
 module.exports = defineConfig({
   projectConfig: {
-    workerMode: process.env.WORKER_MODE || "shared",
+    workerMode: process.env.WORKER_MODE as "shared" | "worker" | "server" || "shared",
     // ...
   },
   // ...
@@ -7619,7 +7652,7 @@ The API routes that restrict the fields and relations you can retrieve are:
 
 ### How to Override Allowed Fields and Relations
 
-For these routes, you need to override the allowed fields and relations to be retrieved. You can do this by adding a [middleware](https://docs.medusajs.com/learn/fundamentals/api-routes/middlewares/index.html.md) to those routes.
+For these routes, you need to override the allowed fields and relations to be retrieved. You can do this by applying a [global middleware](https://docs.medusajs.com/learn/fundamentals/api-routes/middlewares/index.html.md) to those routes.
 
 For example, to allow retrieving the `b2b_company` of a customer using the [Get Customer Admin API Route](https://docs.medusajs.com/api/admin#customers_getcustomersid), create the file `src/api/middlewares.ts` with the following content:
 
@@ -7632,10 +7665,9 @@ export default defineMiddlewares({
   routes: [
     {
       matcher: "/store/customers/me",
-      method: "GET",
       middlewares: [
         (req, res, next) => {
-          req.allowed?.push("b2b_company")
+          (req.allowed ??= []).push("b2b_company")
           next()
         },
       ],
@@ -7656,6 +7688,8 @@ curl 'http://localhost:9000/admin/customers/{id}?fields=*b2b_company' \
 ```
 
 In this example, you retrieve the `b2b_company` relation of the customer using the `fields` query parameter.
+
+This approach only works using a global middleware. It doesn't work in a route middleware.
 
 
 # Request Body and Query Parameter Validation
@@ -9097,7 +9131,9 @@ import { model } from "@medusajs/framework/utils"
 
 const User = model.define("user", {
   id: model.id().primaryKey(),
-  email: model.hasOne(() => Email),
+  email: model.hasOne(() => Email, {
+    mappedBy: "user",
+  }),
 })
 
 const Email = model.define("email", {
@@ -9112,15 +9148,61 @@ In the example above, a user has one email, and an email belongs to one user.
 
 The `hasOne` and `belongsTo` methods accept a function as the first parameter. The function returns the associated data model.
 
-The `belongsTo` method also requires passing as a second parameter an object with the property `mappedBy`. Its value is the name of the relationship property in the other data model.
+Both methods also accept a second parameter object with the property `mappedBy`. Its value is the name of the relationship property in the other data model.
 
 ### Optional Relationship
 
 To make the relationship optional on the `hasOne` or `belongsTo` side, use the `nullable` method on either property as explained in [this chapter](https://docs.medusajs.com/learn/fundamentals/data-models/properties#make-property-optional/index.html.md).
 
+### One-to-One Relationship in the Database
+
+When you generate the migrations of data models that have a one-to-one relationship, the migration adds to the table of the data model that has the `belongsTo` property:
+
+1. A column of the format `{relation_name}_id` to store the ID of the record of the related data model. For example, the `email` table will have a `user_id` column.
+2. A foreign key on the `{relation_name}_id` column to the table of the related data model.
+
+![Diagram illustrating the relation between user and email records in the database](https://res.cloudinary.com/dza7lstvk/image/upload/v1726733492/Medusa%20Book/one-to-one_cj5np3.jpg)
+
 ### One-sided One-to-One Relationship
 
-If the one-to-one relationship is only defined on one side, pass `undefined` to the `mappedBy` property in the `belongsTo` method.
+In some use cases, you may want to define a one-to-one relationship only on one side. This means that the other data model does not have a relationship property pointing to the first one.
+
+You can do this either from the `hasOne` or the `belongsTo` side.
+
+#### hasOne Side
+
+By default, the foreign key column is added to the table of the data model that has the `belongsTo` property. For example, if the `Email` data model belongs to the `User` data model, then the foreign key column is added to the `email` table.
+
+If you want to define a one-to-one relationship only on the `User` data model's side (`hasOne` side), you can do so by passing the following properties to the second parameter of the `hasOne` method:
+
+- `foreignKey`: A boolean indicating whether the foreign key column should be added to the table of the data model.
+- `mappedBy`: Set to `undefined`, since the relationship is only defined on one side.
+
+For example:
+
+```ts highlights={oneToOneForeignKeyHighlights}
+import { model } from "@medusajs/framework/utils"
+
+const User = model.define("user", {
+  id: model.id().primaryKey(),
+  email: model.hasOne(() => Email, {
+    foreignKey: true,
+    mappedBy: undefined,
+  }),
+})
+
+const Email = model.define("email", {
+  id: model.id().primaryKey(),
+})
+```
+
+In the example above, you add a one-to-one relationship from the `User` data model to the `Email` data model.
+
+The foreign key column is added to the `user` table, and the `Email` data model does not have a relationship property pointing to the `User` data model.
+
+#### belongsTo Side
+
+To define the one-to-one relationship on the `belongsTo` side, pass `undefined` to the `mappedBy` property in the `belongsTo` method's second parameter.
 
 For example:
 
@@ -9139,14 +9221,9 @@ const Email = model.define("email", {
 })
 ```
 
-### One-to-One Relationship in the Database
+In the example above, you add a one-to-one relationship from the `Email` data model to the `User` data model.
 
-When you generate the migrations of data models that have a one-to-one relationship, the migration adds to the table of the data model that has the `belongsTo` property:
-
-1. A column of the format `{relation_name}_id` to store the ID of the record of the related data model. For example, the `email` table will have a `user_id` column.
-2. A foreign key on the `{relation_name}_id` column to the table of the related data model.
-
-![Diagram illustrating the relation between user and email records in the database](https://res.cloudinary.com/dza7lstvk/image/upload/v1726733492/Medusa%20Book/one-to-one_cj5np3.jpg)
+The `User` data model does not have a relationship property pointing to the `Email` data model.
 
 ***
 
@@ -9166,7 +9243,9 @@ import { model } from "@medusajs/framework/utils"
 
 const Store = model.define("store", {
   id: model.id().primaryKey(),
-  products: model.hasMany(() => Product),
+  products: model.hasMany(() => Product, {
+    mappedBy: "store",
+  }),
 })
 
 const Product = model.define("product", {
@@ -9291,38 +9370,6 @@ The `OrderProduct` model defines, aside from the ID, the following properties:
 - `order`: A relation that indicates this model belongs to the `Order` data model. You set the `mappedBy` option to the many-to-many relation's name in the `Order` data model.
 - `product`: A relation that indicates this model belongs to the `Product` data model. You set the `mappedBy` option to the many-to-many relation's name in the `Product` data model.
 - `metadata`: An extra column to add to the pivot table of type `json`. You can add other columns as well to the model.
-
-***
-
-## Set Relationship Name in the Other Model
-
-The relationship property methods accept as a second parameter an object of options. The `mappedBy` property defines the name of the relationship in the other data model.
-
-This is useful if the relationship property’s name is different from that of the associated data model.
-
-As seen in previous examples, the `mappedBy` option is required for the `belongsTo` method.
-
-For example:
-
-```ts highlights={relationNameHighlights}
-import { model } from "@medusajs/framework/utils"
-
-const User = model.define("user", {
-  id: model.id().primaryKey(),
-  email: model.hasOne(() => Email, {
-    mappedBy: "owner",
-  }),
-})
-
-const Email = model.define("email", {
-  id: model.id().primaryKey(),
-  owner: model.belongsTo(() => User, {
-    mappedBy: "email",
-  }),
-})
-```
-
-In this example, you specify in the `User` data model’s relationship property that the name of the relationship in the `Email` data model is `owner`.
 
 ***
 
@@ -17308,9 +17355,6 @@ export const setStepSuccessStep = createStep(
         workflowId: "hello-world",
       },
       stepResponse: new StepResponse("Done!"),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -17330,9 +17374,6 @@ The `setStepSuccess` method of the workflow engine's main service accepts as a p
 
   - workflowId: (\`string\`) The ID of the workflow. This is the first parameter passed to \`createWorkflow\` when creating the workflow.
 - stepResponse: (\`StepResponse\`) Set the response of the step. This is similar to the response you return in a step's definition, but since the \`async\` step doesn't have a response, you set its response when changing its status.
-- options: (\`Record\<string, any>\`) Options to pass to the step.
-
-  - container: (\`MedusaContainer\`) An instance of the Medusa Container
 
 ### Change Step Status to Failed
 
@@ -17374,9 +17415,6 @@ export const setStepFailureStep = createStep(
         workflowId: "hello-world",
       },
       stepResponse: new StepResponse("Failed!"),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -18550,6 +18588,8 @@ npx create-medusa-app@latest my-medusa-store
 ```
 
 Where `my-medusa-store` is the name of the project's directory and PostgreSQL database created for the project. When you run the command, you'll be asked whether you want to install the Next.js Starter Storefront.
+
+To customize the default installation behavior, such as specify a database URL, refer to the [create-medusa-app reference](https://docs.medusajs.com/resources/create-medusa-app/index.html.md).
 
 After answering the prompts, the command installs the Medusa application in a directory with your project name, and sets up a PostgreSQL database that the application connects to.
 
@@ -27476,6 +27516,11 @@ const price = await pricingModuleService.calculatePrices(
 
 In this Pricing Module guide, you'll learn about tired prices, price rules for price sets and price lists, and how to add rules to a price.
 
+You can manage prices and tiers using the Medusa Admin:
+
+- [Edit shipping option prices with conditions](https://docs.medusajs.com/user-guide/settings/locations-and-shipping/locations#fixed-and-conditional-shipping-option-prices/index.html.md).
+- [Add price lists to set prices with conditions for product variants](https://docs.medusajs.com/user-guide/price-lists/index.html.md).
+
 ## Tiered Pricing
 
 Each price, represented by the [Price data model](https://docs.medusajs.com/references/pricing/models/Price/index.html.md), has two optional properties that can be used to create tiered prices:
@@ -27525,6 +27570,10 @@ For most use cases where you're building customizations in the Medusa applicatio
 ### Using Medusa Workflows
 
 ```ts highlights={tieredPricingHighlights}
+import { createProductsWorkflow } from "@medusajs/medusa/core-flows"
+
+// ...
+
 const { result } = await createProductsWorkflow(container)
   .run({
     input: {
@@ -27653,18 +27702,19 @@ const { result } = await createShippingOptionsWorkflow(container)
         {
           currency_code: "usd",
           amount: 10,
-          rules: {},
+          rules: [],
         },
         // price if cart total >= $100
         {
           currency_code: "usd",
           amount: 0,
-          rules: {
-            item_total: {
+          rules: [
+            {
+              attribute: "item_total",
               operator: "gte",
               value: 100,
             },
-          },
+          ],
         },
       ],
     }],
@@ -27739,6 +27789,575 @@ You can also apply the rule on nested relations and properties. For example, to 
 In this example, the price is only applied if a cart's customer belongs to the customer group of ID `cusgrp_123`.
 
 These same rules apply to product variant prices as well, or any other resource that has a price.
+
+***
+
+## Examples
+
+This section provides some examples of implementing price tiers and rules for products and shipping options.
+
+### Product Variant Price by Quantity
+
+### Using Medusa Workflows
+
+```ts
+import { createProductsWorkflow } from "@medusajs/medusa/core-flows"
+
+// ...
+
+const { result } = await createProductsWorkflow(container)
+  .run({
+    input: {
+      products: [{
+        title: "Premium T-Shirt",
+        variants: [{
+          title: "Small / Black",
+          prices: [
+            // default price
+            {
+              amount: 20,
+              currency_code: "usd",
+            },
+            // buy 5 or more, get a small discount
+            {
+              amount: 18,
+              currency_code: "usd",
+              min_quantity: 5,
+              max_quantity: 9,
+            },
+            // buy 10 or more, get a bigger discount
+            {
+              amount: 15,
+              currency_code: "usd",
+              min_quantity: 10,
+            },
+          ],
+        }],
+      }],
+    },
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  // this is the price set of the product variant
+  priceSetId: "pset_product_123",
+  prices: [
+    // default price: $20.00
+    {
+      amount: 20,
+      currency_code: "usd",
+    },
+    // buy 5-9 shirts: $18.00 each
+    {
+      amount: 18,
+      currency_code: "usd",
+      min_quantity: 5,
+      max_quantity: 9,
+    },
+    // buy 10+ shirts: $15.00 each
+    {
+      amount: 15,
+      currency_code: "usd",
+      min_quantity: 10,
+    },
+  ],
+})
+```
+
+### Product Variant Price by Customer Group
+
+### Using Medusa Workflows
+
+```ts
+import { createProductsWorkflow } from "@medusajs/medusa/core-flows"
+
+// ...
+
+const { result } = await createProductsWorkflow(container)
+  .run({
+    input: {
+      products: [{
+        title: "Premium T-Shirt",
+        variants: [{
+          title: "Small / Black",
+          prices: [
+            // default price
+            {
+              amount: 40,
+              currency_code: "usd",
+            },
+            // discounted price for VIP customers
+            {
+              amount: 30,
+              currency_code: "usd",
+              rules: {
+                "customer.groups.id": "cusgrp_vip123",
+              },
+            },
+            // special price for wholesale customers
+            {
+              amount: 20,
+              currency_code: "usd",
+              rules: {
+                "customer.groups.id": "cusgrp_wholesale456",
+              },
+            },
+          ],
+        }],
+      }],
+    },
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  // this is the price set of the product variant
+  priceSetId: "pset_product_123",
+  prices: [
+    // default price
+    {
+      amount: 40,
+      currency_code: "usd",
+    },
+    // discounted price for VIP customers
+    {
+      amount: 30,
+      currency_code: "usd",
+      rules: {
+        "customer.groups.id": "cusgrp_vip123",
+      },
+    },
+    // special price for wholesale customers
+    {
+      amount: 20,
+      currency_code: "usd",
+      rules: {
+        "customer.groups.id": "cusgrp_wholesale456",
+      },
+    },
+  ],
+})
+```
+
+### Free Shipping for Orders Above a Certain Amount
+
+### Using Medusa Workflows
+
+```ts
+const { result } = await createShippingOptionsWorkflow(container)
+  .run({
+    input: [{
+      name: "Standard Shipping",
+      service_zone_id: "serzo_123",
+      shipping_profile_id: "sp_123",
+      provider_id: "prov_123",
+      type: {
+        label: "Standard",
+        description: "Standard shipping (2-5 business days)",
+        code: "standard",
+      },
+      price_type: "flat",
+      prices: [
+        // regular shipping price
+        {
+          currency_code: "usd",
+          amount: 10,
+          rules: [],
+        },
+        // free shipping for carts over $100
+        {
+          currency_code: "usd",
+          amount: 0,
+          rules: [
+            {
+              attribute: "item_total",
+              operator: "gte",
+              value: 100,
+            },
+          ],
+        },
+      ],
+    }],
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  priceSetId: "pset_shipping_123",
+  prices: [
+    // regular shipping price
+    {
+      currency_code: "usd",
+      amount: 10,
+      rules: {},
+    },
+    // free shipping for orders over $100
+    {
+      currency_code: "usd",
+      amount: 0,
+      rules: {
+        item_total: [
+          {
+            operator: "gte",
+            value: 100,
+          },
+        ],
+      },
+    },
+  ],
+})
+```
+
+### Shipping Prices Based on Customer Groups
+
+### Using Medusa Workflows
+
+```ts
+const { result } = await createShippingOptionsWorkflow(container)
+  .run({
+    input: [{
+      name: "Express Shipping",
+      service_zone_id: "serzo_456",
+      shipping_profile_id: "sp_456",
+      provider_id: "prov_456",
+      type: {
+        label: "Express",
+        description: "Express shipping (1-2 business days)",
+        code: "express",
+      },
+      price_type: "flat",
+      prices: [
+        // regular express shipping price
+        {
+          currency_code: "usd",
+          amount: 20,
+          rules: [],
+        },
+        // discounted express shipping for VIP customers
+        {
+          currency_code: "usd",
+          amount: 15,
+          rules: [
+            {
+              attribute: "customer.groups.id",
+              operator: "in",
+              value: ["cusgrp_vip123"],
+            },
+          ],
+        },
+        // special rate for B2B customers
+        {
+          currency_code: "usd",
+          amount: 13,
+          rules: [
+            {
+              attribute: "customer.groups.id",
+              operator: "in",
+              value: ["cusgrp_b2b789"],
+            },
+          ],
+        },
+      ],
+    }],
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  priceSetId: "pset_shipping_456",
+  prices: [
+    // regular express shipping
+    {
+      currency_code: "usd",
+      amount: 20,
+      rules: {},
+    },
+    // VIP customer express shipping
+    {
+      currency_code: "usd",
+      amount: 15,
+      rules: {
+        "customer.groups.id": [
+          {
+            operator: "in",
+            value: ["cusgrp_vip123"],
+          },
+        ],
+      },
+    },
+    // B2B customer express shipping
+    {
+      currency_code: "usd",
+      amount: 13,
+      rules: {
+        "customer.groups.id": [
+          {
+            operator: "in",
+            value: ["cusgrp_b2b789"],
+          },
+        ],
+      },
+    },
+  ],
+})
+```
+
+### Combined Tiered and Rule-Based Shipping Pricing
+
+### Using Medusa Workflows
+
+```ts
+const { result } = await createShippingOptionsWorkflow(container)
+  .run({
+    input: [{
+      name: "Bulk Shipping",
+      service_zone_id: "serzo_789",
+      shipping_profile_id: "sp_789",
+      provider_id: "prov_789",
+      type: {
+        label: "Bulk",
+        description: "Shipping for bulk orders",
+        code: "bulk",
+      },
+      price_type: "flat",
+      prices: [
+        // base shipping price
+        {
+          currency_code: "usd",
+          amount: 20,
+          rules: [],
+        },
+        // discounted shipping for 5-10 items
+        {
+          currency_code: "usd",
+          amount: 18,
+          min_quantity: 5,
+          max_quantity: 10,
+          rules: [],
+        },
+        // heavily discounted shipping for 10+ items
+        {
+          currency_code: "usd",
+          amount: 15,
+          min_quantity: 11,
+          rules: [],
+        },
+        // free shipping for VIP customers with carts over $200
+        {
+          currency_code: "usd",
+          amount: 0,
+          rules: {
+            "customer.groups.id": [
+              {
+                operator: "in",
+                value: ["cusgrp_vip123"],
+              },
+            ],
+            item_total: [
+              {
+                operator: "gte",
+                value: 200,
+              },
+            ],
+          },
+        },
+      ],
+    }],
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  priceSetId: "pset_shipping_789",
+  prices: [
+    // base shipping price: $20.00
+    {
+      currency_code: "usd",
+      amount: 20,
+      rules: {},
+    },
+    // 5-10 items: $18.00
+    {
+      currency_code: "usd",
+      amount: 18,
+      min_quantity: 5,
+      max_quantity: 10,
+      rules: {},
+    },
+    // 11+ items: $15.00
+    {
+      currency_code: "usd",
+      amount: 15,
+      min_quantity: 11,
+      rules: {},
+    },
+    // VIP customers with orders over $200: FREE
+    {
+      currency_code: "usd",
+      amount: 0,
+      rules: [
+        {
+          attribute: "customer.groups.id",
+          operator: "in",
+          value: ["cusgrp_vip123"],
+        },
+        {
+          attribute: "item_total",
+          operator: "gte",
+          value: 200,
+        },
+      ],
+    },
+  ],
+})
+```
+
+### Shipping Prices Based on Geographical Rules
+
+### Using Medusa Workflows
+
+```ts
+const { result } = await createShippingOptionsWorkflow(container)
+  .run({
+    input: [{
+      name: "Regional Shipping",
+      service_zone_id: "serzo_geo123",
+      shipping_profile_id: "sp_standard",
+      provider_id: "prov_standard",
+      type: {
+        label: "Standard",
+        description: "Standard shipping with regional pricing",
+        code: "standard_regional",
+      },
+      price_type: "flat",
+      prices: [
+        // default shipping price
+        {
+          currency_code: "usd",
+          amount: 15,
+          rules: [],
+        },
+        // special price for specific zip codes (metropolitan areas)
+        {
+          currency_code: "usd",
+          amount: 10,
+          rules: [
+            {
+              attribute: "shipping_address.postal_code",
+              operator: "in",
+              value: ["10001", "10002", "10003", "90001", "90002", "90003"],
+            },
+          ],
+        },
+        // higher price for remote areas
+        {
+          currency_code: "usd",
+          amount: 25,
+          rules: [
+            {
+              attribute: "shipping_address.postal_code",
+              operator: "in",
+              value: ["99501", "99502", "99503", "00601", "00602", "00603"],
+            },
+          ],
+        },
+        // different price for a specific region
+        {
+          currency_code: "usd",
+          amount: 12,
+          rules: [
+            {
+              attribute: "region.id",
+              operator: "eq",
+              value: "reg_123",
+            },
+          ],
+        },
+        // different price for a specific country
+        {
+          currency_code: "usd",
+          amount: 20,
+          rules: [
+            {
+              attribute: "shipping_address.country_code",
+              operator: "eq",
+              value: "ca",
+            },
+          ],
+        },
+      ],
+    }],
+  })
+```
+
+### Using the Pricing Module
+
+```ts
+const priceSet = await pricingModule.addPrices({
+  priceSetId: "pset_shipping_geo",
+  prices: [
+    // default shipping price: $15.00
+    {
+      currency_code: "usd",
+      amount: 15,
+      rules: {},
+    },
+    // metropolitan areas: $10.00
+    {
+      currency_code: "usd",
+      amount: 10,
+      rules: {
+        "shipping_address.postal_code": [
+          {
+            operator: "in",
+            value: ["10001", "10002", "10003", "90001", "90002", "90003"],
+          },
+        ],
+      },
+    },
+    // remote areas: $25.00
+    {
+      currency_code: "usd",
+      amount: 25,
+      rules: {
+        "shipping_address.postal_code": [
+          {
+            operator: "in",
+            value: ["99501", "99502", "99503", "00601", "00602", "00603"],
+          },
+        ],
+      },
+    },
+    // Northeast region: $12.00
+    {
+      currency_code: "usd",
+      amount: 12,
+      rules: {
+        "region.id": "reg_123",
+      },
+    },
+    // Canada: $20.00
+    {
+      currency_code: "usd",
+      amount: 20,
+      rules: {
+        "shipping_address.country_code": "ca",
+      },
+    },
+  ],
+})
+```
 
 
 # Tax-Inclusive Pricing
@@ -29687,7 +30306,7 @@ export async function POST(
           // ...
           is_tax_inclusive: true,
         }],
-      }
+      },
     })
 
   res.send(result)
@@ -44036,12 +44655,14 @@ Learn more in [this documentation](https://docs.medusajs.com/docs/learn/fundamen
 
 The following creates a one-to-one relationship between the `User` and `Email` data models:
 
-```ts highlights={[["5", "hasOne"], ["10", "belongsTo"]]}
+```ts highlights={[["5", "hasOne"], ["12", "belongsTo"]]}
 import { model } from "@medusajs/framework/utils"
 
 const User = model.define("user", {
   id: model.id().primaryKey(),
-  email: model.hasOne(() => Email),
+  email: model.hasOne(() => Email, {
+    mappedBy: "user",
+  }),
 })
 
 const Email = model.define("email", {
@@ -44058,12 +44679,14 @@ Learn more in [this documentation](https://docs.medusajs.com/docs/learn/fundamen
 
 The following creates a one-to-many relationship between the `Store` and `Product` data models:
 
-```ts highlights={[["5", "hasMany"], ["10", "belongsTo"]]}
+```ts highlights={[["5", "hasMany"], ["12", "belongsTo"]]}
 import { model } from "@medusajs/framework/utils"
 
 const Store = model.define("store", {
   id: model.id().primaryKey(),
-  products: model.hasMany(() => Product),
+  products: model.hasMany(() => Product, {
+    mappedBy: "store",
+  }),
 })
 
 const Product = model.define("product", {
@@ -44104,13 +44727,15 @@ Learn more in [this documentation](https://docs.medusajs.com/docs/learn/fundamen
 
 To configure cascade on a data model:
 
-```ts highlights={[["7", "cascades"]]}
+```ts highlights={[["10", "cascades"]]}
 import { model } from "@medusajs/framework/utils"
-// Product import
+import Product from "./product"
 
 const Store = model.define("store", {
   id: model.id().primaryKey(),
-  products: model.hasMany(() => Product),
+  products: model.hasMany(() => Product, {
+    mappedBy: "store",
+  }),
 })
 .cascades({
   delete: ["products"],
@@ -47458,8 +48083,8 @@ export const applyFirstPurchasePromoWorkflow = createWorkflow(
       entity: "promotion",
       fields: ["code"],
       filters: {
-        code: FIRST_PURCHASE_PROMOTION_CODE
-      }
+        code: FIRST_PURCHASE_PROMOTION_CODE,
+      },
     }).config({ name: "retrieve-promotions" })
 
     when({ 
@@ -68135,7 +68760,9 @@ export const Wishlist = model.define("wishlist", {
   id: model.id().primaryKey(),
   customer_id: model.text(),
   sales_channel_id: model.text(),
-  items: model.hasMany(() => WishlistItem),
+  items: model.hasMany(() => WishlistItem, {
+    mappedBy: "wishlist",
+  }),
 })
 .indexes([
   {
@@ -83992,6 +84619,7 @@ export const createRestockSubscriptionWorkflow = createWorkflow(
         return !customer.email
       }
     ).then(() => {
+      // @ts-ignore
       const { data } = useQueryGraphStep({
         entity: "customer",
         fields: ["email"],
@@ -89504,7 +90132,9 @@ export const Restaurant = model.define("restaurant", {
   email: model.text(),
   address: model.text(),
   image_url: model.text().nullable(),
-  admins: model.hasMany(() => RestaurantAdmin),
+  admins: model.hasMany(() => RestaurantAdmin, {
+    mappedBy: "restaurant",
+  }),
 })
 ```
 
@@ -89892,14 +90522,14 @@ To implement the step, create the file `src/workflows/restaurant/steps/create-re
 ```ts title="src/workflows/restaurant/steps/create-restaurant.ts" highlights={createRestaurantHighlight} collapsibleLines="1-7" expandMoreLabel="Show Imports"
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk"
 import { 
-  CreateRestaurantDTO,
+  CreateRestaurant,
 } from "../../../modules/restaurant/types/mutations"
 import { RESTAURANT_MODULE } from "../../../modules/restaurant"
 import RestaurantModuleService from "../../../modules/restaurant/service"
 
 export const createRestaurantStep = createStep(
   "create-restaurant-step",
-  async function (data: CreateRestaurantDTO, { container }) {
+  async function (data: CreateRestaurant, { container }) {
     const restaurantModuleService: RestaurantModuleService = container.resolve(
       RESTAURANT_MODULE
     )
@@ -89971,7 +90601,7 @@ Then, create the file `src/api/restaurants/route.ts` with the following content:
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
 import { 
-  CreateRestaurantDTO,
+  CreateRestaurant,
   } from "../../modules/restaurant/types/mutations"
 import { 
   createRestaurantWorkflow,
@@ -89979,7 +90609,7 @@ import {
 import { restaurantSchema } from "./validation-schemas"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const validatedBody = restaurantSchema.parse(req.body) as CreateRestaurantDTO
+  const validatedBody = restaurantSchema.parse(req.body) as CreateRestaurant
 
   if (!validatedBody) {
     return MedusaError.Types.INVALID_DATA
@@ -91663,9 +92293,6 @@ export const setStepSuccessStep = createStep(
         workflowId: handleDeliveryWorkflowId,
       },
       stepResponse: new StepResponse(updatedDelivery, updatedDelivery.id),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -91710,9 +92337,6 @@ export const setStepFailedStep = createStep(
         workflowId: handleDeliveryWorkflowId,
       },
       stepResponse: new StepResponse(updatedDelivery, updatedDelivery.id),
-      options: {
-        container,
-      },
     })
   }
 )
@@ -92777,7 +93401,9 @@ const Vendor = model.define("vendor", {
   handle: model.text().unique(),
   name: model.text(),
   logo: model.text().nullable(),
-  admins: model.hasMany(() => VendorAdmin),
+  admins: model.hasMany(() => VendorAdmin, {
+    mappedBy: "vendor",
+  }),
 })
 
 export default Vendor
@@ -94122,6 +94748,8 @@ const createVendorOrdersWorkflow = createWorkflow(
           "shipping_address.*",
           "billing_address.*",
           "shipping_methods.*",
+          "shipping_methods.tax_lines.*",
+          "shipping_methods.adjustments.*",
         ],
       },
     })

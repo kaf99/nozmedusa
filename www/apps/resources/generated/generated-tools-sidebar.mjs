@@ -781,7 +781,7 @@ const generatedgeneratedToolsSidebarSidebar = {
                   "isPathHref": true,
                   "type": "link",
                   "path": "/nextjs-starter/guides/customize-stripe",
-                  "title": "Customize Stripe Integration",
+                  "title": "Use Stripe's Payment Element",
                   "children": []
                 },
                 {

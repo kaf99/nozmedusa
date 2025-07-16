@@ -9221,14 +9221,6 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
-              "title": "Customize the Stripe Integration in the Next.js Starter",
-              "path": "https://docs.medusajs.com/resources/nextjs-starter/guides/customize-stripe",
-              "children": []
-            },
-            {
-              "loaded": true,
-              "isPathHref": true,
-              "type": "ref",
               "title": "Implement Express Checkout with Medusa",
               "path": "https://docs.medusajs.com/resources/storefront-development/guides/express-checkout",
               "children": []
@@ -9239,6 +9231,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "type": "ref",
               "title": "Payment with Stripe in React Storefront",
               "path": "https://docs.medusajs.com/resources/storefront-development/checkout/payment/stripe",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Use Stripe's Payment Element in the Next.js Starter Storefront",
+              "path": "https://docs.medusajs.com/resources/nextjs-starter/guides/customize-stripe",
               "children": []
             }
           ]

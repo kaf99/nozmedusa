@@ -5783,7 +5783,7 @@ __metadata:
     "@types/react": ^18.3.2
     tsup: ^8.0.1
     typescript: ^5.3.3
-    zod: 3.22.4
+    zod: 3.25.76
   languageName: unknown
   linkType: soft
 
@@ -6204,7 +6204,7 @@ __metadata:
     vite: ^5.4.14
     vite-plugin-inspect: ^0.8.7
     vitest: ^3.0.5
-    zod: 3.22.4
+    zod: 3.25.76
   languageName: unknown
   linkType: soft
 
@@ -6343,8 +6343,8 @@ __metadata:
     tsconfig-paths: ^4.2.0
     typescript: ^5.6.2
     vite: ^5.4.14
-    zod: 3.22.4
-    zod-validation-error: ^3.4.1
+    zod: 3.25.76
+    zod-validation-error: 3.5.1
   peerDependencies:
     "@aws-sdk/client-dynamodb": ^3.218.0
     "@medusajs/cli": 2.8.7
@@ -6712,7 +6712,7 @@ __metadata:
     typescript: ^5.6.2
     uuid: ^9.0.0
     yalc: 1.0.0-pre.53
-    zod: 3.22.4
+    zod: 3.25.76
   peerDependencies:
     "@medusajs/framework": 2.8.7
     "@mikro-orm/core": 6.4.3
@@ -7377,7 +7377,7 @@ __metadata:
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
-    zod: 3.22.4
+    zod: 3.25.76
   peerDependencies:
     "@mikro-orm/core": 6.4.3
     "@mikro-orm/knex": 6.4.3
@@ -7465,7 +7465,7 @@ __metadata:
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
-    zod: 3.22.4
+    zod: 3.25.76
   peerDependencies:
     "@mikro-orm/core": 6.4.3
     "@mikro-orm/knex": 6.4.3
@@ -7474,7 +7474,7 @@ __metadata:
     awilix: ^8.0.1
     express: ^4.21.0
     pg: ^8.13.0
-    zod: 3.22.4
+    zod: 3.25.76
   languageName: unknown
   linkType: soft
 
@@ -35647,18 +35647,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-validation-error@npm:^3.4.1":
-  version: 3.4.1
-  resolution: "zod-validation-error@npm:3.4.1"
+"zod-validation-error@npm:3.5.1":
+  version: 3.5.1
+  resolution: "zod-validation-error@npm:3.5.1"
   peerDependencies:
-    zod: ^3.24.4
-  checksum: cf16f12fccb3e515d18c876c8a75ae4a87219b28e8e7f6334b8d423bebfa2c08b3382d7c53842ba05af8c5caabf66ee8df1ce2862b3b41c2e96eba26e70a995f
+    zod: ^3.25.0
+  checksum: 37e83266755f798cf7f0437441ad72657882afae36e451177e9ae6ba555d211aa80b4f5d9dfbb08839ddb5538b94325499f0445aae923e09c0f7d9f472868c85
   languageName: node
   linkType: hard
 
-"zod@npm:3.22.4":
-  version: 3.22.4
-  resolution: "zod@npm:3.22.4"
-  checksum: 7578ab283dac0eee66a0ad0fc4a7f28c43e6745aadb3a529f59a4b851aa10872b3890398b3160f257f4b6817b4ce643debdda4fb21a2c040adda7862cab0a587
+"zod@npm:3.25.76":
+  version: 3.25.76
+  resolution: "zod@npm:3.25.76"
+  checksum: 5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
   languageName: node
   linkType: hard
