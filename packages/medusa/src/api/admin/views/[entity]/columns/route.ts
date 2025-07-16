@@ -26,12 +26,51 @@ const ENTITY_MAPPINGS = {
     defaultVisibleFields: [
       "display_id",
       "created_at",
-      "customer",
-      "sales_channel",
       "payment_status",
       "fulfillment_status",
       "total",
+      "customer_display",
+      "country",
+      "sales_channel.name",
     ],
+    fieldFilters: {
+      // Fields that end with these suffixes will be excluded
+      excludeSuffixes: ["_link"],
+      // Fields that start with these prefixes will be excluded
+      excludePrefixes: ["raw_"],
+      // Specific field names to exclude
+      excludeFields: ["order_change"],
+    },
+    computedColumns: {
+      customer_display: {
+        name: "Customer",
+        computation_type: "customer_name",
+        required_fields: ["customer.first_name", "customer.last_name", "customer.email"],
+        optional_fields: ["customer.phone"],
+        default_visible: true,
+      },
+      shipping_address_display: {
+        name: "Shipping Address",
+        computation_type: "address_summary",
+        required_fields: ["shipping_address.city", "shipping_address.country_code"],
+        optional_fields: ["shipping_address.address_1", "shipping_address.province", "shipping_address.postal_code"],
+        default_visible: false,
+      },
+      billing_address_display: {
+        name: "Billing Address",
+        computation_type: "address_summary",
+        required_fields: ["billing_address.city", "billing_address.country_code"],
+        optional_fields: ["billing_address.address_1", "billing_address.province", "billing_address.postal_code"],
+        default_visible: false,
+      },
+      country: {
+        name: "Country",
+        computation_type: "country_code",
+        required_fields: ["shipping_address.country_code"],
+        optional_fields: [],
+        default_visible: true,
+      },
+    },
   },
   products: {
     serviceName: "product",
@@ -43,6 +82,12 @@ const ENTITY_MAPPINGS = {
       "created_at",
       "updated_at",
     ],
+    fieldFilters: {
+      excludeSuffixes: ["_link"],
+      excludePrefixes: ["raw_"],
+      excludeFields: [],
+    },
+    computedColumns: {},
   },
   customers: {
     serviceName: "customer",
@@ -54,6 +99,12 @@ const ENTITY_MAPPINGS = {
       "created_at",
       "updated_at",
     ],
+    fieldFilters: {
+      excludeSuffixes: ["_link"],
+      excludePrefixes: ["raw_"],
+      excludeFields: [],
+    },
+    computedColumns: {},
   },
   users: {
     serviceName: "user",
@@ -65,11 +116,23 @@ const ENTITY_MAPPINGS = {
       "created_at",
       "updated_at",
     ],
+    fieldFilters: {
+      excludeSuffixes: ["_link"],
+      excludePrefixes: ["raw_"],
+      excludeFields: [],
+    },
+    computedColumns: {},
   },
   regions: {
     serviceName: "region",
     graphqlType: "Region",
     defaultVisibleFields: ["name", "currency_code", "created_at", "updated_at"],
+    fieldFilters: {
+      excludeSuffixes: ["_link"],
+      excludePrefixes: ["raw_"],
+      excludeFields: [],
+    },
+    computedColumns: {},
   },
   "sales-channels": {
     serviceName: "salesChannel",
@@ -81,6 +144,12 @@ const ENTITY_MAPPINGS = {
       "created_at",
       "updated_at",
     ],
+    fieldFilters: {
+      excludeSuffixes: ["_link"],
+      excludePrefixes: ["raw_"],
+      excludeFields: [],
+    },
+    computedColumns: {},
   },
 }
 
@@ -109,40 +178,114 @@ const isSingleRelationship = (type: any): boolean => {
   if (isArrayField(type)) {
     return false
   }
-  
+
   // Get the underlying type (removing NonNull wrappers)
   const underlyingType = getUnderlyingType(type)
-  
+
   // Check if it's a GraphQL object type (relationship)
   return underlyingType instanceof GraphQLObjectType
 }
 
-// Helper function to determine data type from GraphQL type
-const getDataTypeFromGraphQLType = (
+// Helper function to check if a field should be excluded based on filtering rules
+const shouldExcludeField = (fieldName: string, fieldFilters: any): boolean => {
+  // Check if field matches any exclude suffixes
+  if (
+    fieldFilters.excludeSuffixes?.some((suffix: string) =>
+      fieldName.endsWith(suffix)
+    )
+  ) {
+    return true
+  }
+
+  // Check if field matches any exclude prefixes
+  if (
+    fieldFilters.excludePrefixes?.some((prefix: string) =>
+      fieldName.startsWith(prefix)
+    )
+  ) {
+    return true
+  }
+
+  // Check if field is in the exclude fields list
+  if (fieldFilters.excludeFields?.includes(fieldName)) {
+    return true
+  }
+
+  return false
+}
+
+// Helper function to determine data type and semantic type from GraphQL type
+const getTypeInfoFromGraphQLType = (
   type: any,
   fieldName: string
-): HttpTypes.AdminViews.AdminOrderColumn["data_type"] => {
+): {
+  data_type: HttpTypes.AdminViews.AdminOrderColumn["data_type"]
+  semantic_type: string
+  context?: string
+} => {
   const underlyingType = getUnderlyingType(type)
 
   // Check field name patterns first for more specific types
   if (fieldName.includes("_at") || fieldName.includes("date")) {
-    return "date"
+    return {
+      data_type: "date",
+      semantic_type: "timestamp",
+      context: fieldName.includes("created")
+        ? "creation"
+        : fieldName.includes("updated")
+        ? "update"
+        : "generic",
+    }
   } else if (
     fieldName.includes("total") ||
     fieldName.includes("amount") ||
     fieldName.includes("price")
   ) {
-    return "currency"
+    return {
+      data_type: "currency",
+      semantic_type: "currency",
+      context: fieldName.includes("total") ? "total" : "amount",
+    }
   } else if (fieldName.includes("count") || fieldName.includes("quantity")) {
-    return "number"
-  } else if (
-    fieldName.includes("status") ||
-    fieldName.includes("type") ||
-    fieldName.includes("is_")
-  ) {
-    return "enum"
+    return {
+      data_type: "number",
+      semantic_type: "count",
+      context: fieldName.includes("quantity") ? "quantity" : "count",
+    }
+  } else if (fieldName.includes("status")) {
+    return {
+      data_type: "enum",
+      semantic_type: "status",
+      context: fieldName.includes("payment")
+        ? "payment"
+        : fieldName.includes("fulfillment")
+        ? "fulfillment"
+        : "generic",
+    }
+  } else if (fieldName.includes("type") || fieldName.includes("is_")) {
+    return {
+      data_type: "enum",
+      semantic_type: "enum",
+      context: "generic",
+    }
   } else if (fieldName === "metadata" || fieldName.includes("json")) {
-    return "object"
+    return {
+      data_type: "object",
+      semantic_type: "object",
+      context: "metadata",
+    }
+  } else if (fieldName === "display_id") {
+    return {
+      data_type: "string",
+      semantic_type: "identifier",
+      context: "order",
+    }
+  } else if (fieldName === "email") {
+    return {
+      data_type: "string",
+      semantic_type: "email",
+      context: "contact",
+    }
   }
 
   // Then check GraphQL type
@@ -150,20 +293,48 @@ const getDataTypeFromGraphQLType = (
     switch (underlyingType.name) {
       case "Int":
       case "Float":
-        return "number"
+        return {
+          data_type: "number",
+          semantic_type: "number",
+          context: "generic",
+        }
       case "Boolean":
-        return "boolean"
+        return {
+          data_type: "boolean",
+          semantic_type: "boolean",
+          context: "generic",
+        }
       case "DateTime":
-        return "date"
+        return {
+          data_type: "date",
+          semantic_type: "timestamp",
+          context: "generic",
+        }
       case "JSON":
-        return "object"
+        return {
+          data_type: "object",
+          semantic_type: "object",
+          context: "json",
+        }
       default:
-        return "string"
+        return {
+          data_type: "string",
+          semantic_type: "string",
+          context: "generic",
+        }
     }
   } else if (isEnumType(underlyingType)) {
-    return "enum"
+    return {
+      data_type: "enum",
+      semantic_type: "enum",
+      context: "generic",
+    }
   } else {
-    return "object"
+    return {
+      data_type: "object",
+      semantic_type: "object",
+      context: "relationship",
+    }
   }
 }
 
@@ -174,7 +345,6 @@ const formatFieldName = (field: string): string => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ")
 }
-
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,
@@ -215,7 +385,7 @@ export const GET = async (
     for (const config of joinerConfigs) {
       if (config.schema) {
         schemaFragments.push(config.schema)
-        
+
         // Check if this specific schema contains our entity type definition
         if (config.schema.includes(`type ${entityMapping.graphqlType} {`)) {
           hasEntityType = true
@@ -239,7 +409,8 @@ export const GET = async (
       const mergedSchemaString = print(mergedSchemaAST)
 
       // Clean the schema to remove undefined types and invalid references
-      const { schema: cleanedSchemaString } = cleanGraphQLSchema(mergedSchemaString)
+      const { schema: cleanedSchemaString } =
+        cleanGraphQLSchema(mergedSchemaString)
 
       // Create executable schema from the cleaned schema
       const schema = makeExecutableSchema({
@@ -251,7 +422,9 @@ export const GET = async (
       const schemaTypeMap = schema.getTypeMap()
 
       // Debug the entity type structure
-      const entityType = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
+      const entityType = schemaTypeMap[
+        entityMapping.graphqlType
+      ] as GraphQLObjectType
 
       // Use the battle-tested utility to extract fields
       const allDirectFields = graphqlSchemaToFields(
@@ -259,25 +432,38 @@ export const GET = async (
         entityMapping.graphqlType,
         [] // No relations for direct fields
       )
-      
-      // Filter out any fields that might be arrays (double-check)
-      const directFields = allDirectFields.filter(fieldName => {
+
+      // Filter out problematic fields
+      const directFields = allDirectFields.filter((fieldName) => {
         const field = entityType?.getFields()[fieldName]
         if (!field) return true // Keep field if we can't determine its type
-        
+
         const isArray = isArrayField(field.type)
         if (isArray) {
           console.log(`❌ Filtering out array field: ${fieldName}`)
           return false
         }
+
+        // Apply entity-specific field filters
+        if (shouldExcludeField(fieldName, entityMapping.fieldFilters)) {
+          console.log(`❌ Filtering out field based on rules: ${fieldName}`)
+          return false
+        }
+
         return true
       })
-      
-      console.log(`📋 Filtered direct fields (${directFields.length}/${allDirectFields.length}):`, directFields)
+
+      console.log(
+        `📋 Filtered direct fields (${directFields.length}/${allDirectFields.length}):`,
+        directFields
+      )
       if (entityType) {
         const fields = entityType.getFields()
-        console.log(`🔍 All fields in ${entityMapping.graphqlType}:`, Object.keys(fields))
-        
+        console.log(
+          `🔍 All fields in ${entityMapping.graphqlType}:`,
+          Object.keys(fields)
+        )
+
         // Manually check for relationships
         console.log(`🔍 Field types in ${entityMapping.graphqlType}:`)
         Object.entries(fields).forEach(([fieldName, field]) => {
@@ -285,68 +471,113 @@ export const GET = async (
           const isObject = fieldType instanceof GraphQLObjectType
           const isArray = isArrayField(field.type)
           const isSingleRel = isSingleRelationship(field.type)
-          console.log(`  ${fieldName}: ${fieldType.name} (isObject: ${isObject}, isArray: ${isArray}, isSingleRel: ${isSingleRel})`)
+          console.log(
+            `  ${fieldName}: ${fieldType.name} (isObject: ${isObject}, isArray: ${isArray}, isSingleRel: ${isSingleRel})`
+          )
         })
       }
 
       // Extract relationships using the battle-tested utility
-      const relationMap = extractRelationsFromGQL(new Map(Object.entries(schemaTypeMap)))
+      const relationMap = extractRelationsFromGQL(
+        new Map(Object.entries(schemaTypeMap))
+      )
       const allEntityRelations = relationMap.get(entityMapping.graphqlType)
-      
-      console.log(`🔗 Found ${allEntityRelations?.size || 0} total relationships for ${entityMapping.graphqlType}:`, 
-        allEntityRelations ? Array.from(allEntityRelations.entries()) : 'none')
-      
-      // Filter out array relationships from the extracted relations
+
+      console.log(
+        `🔗 Found ${allEntityRelations?.size || 0} total relationships for ${
+          entityMapping.graphqlType
+        }:`,
+        allEntityRelations ? Array.from(allEntityRelations.entries()) : "none"
+      )
+
+      // Filter out array relationships and excluded fields from the extracted relations
       const filteredUtilityRelations = new Map<string, string>()
       if (allEntityRelations && entityType) {
         const fields = entityType.getFields()
         for (const [fieldName, relatedTypeName] of allEntityRelations) {
           const field = fields[fieldName]
+
+          // Apply field exclusion rules
+          if (shouldExcludeField(fieldName, entityMapping.fieldFilters)) {
+            console.log(
+              `❌ Filtering out utility relationship based on rules: ${fieldName} -> ${relatedTypeName}`
+            )
+            continue
+          }
+
           if (field && isSingleRelationship(field.type)) {
             filteredUtilityRelations.set(fieldName, relatedTypeName)
-            console.log(`✅ Utility single relationship: ${fieldName} -> ${relatedTypeName}`)
+            console.log(
+              `✅ Utility single relationship: ${fieldName} -> ${relatedTypeName}`
+            )
           } else if (field && isArrayField(field.type)) {
-            console.log(`❌ Filtering out utility array relationship: ${fieldName} -> [${relatedTypeName}]`)
+            console.log(
+              `❌ Filtering out utility array relationship: ${fieldName} -> [${relatedTypeName}]`
+            )
           }
         }
       }
-      
+
       // Manual relationship extraction as fallback (only single relationships)
       const manualRelations = new Map<string, string>()
       if (entityType) {
         const fields = entityType.getFields()
         Object.entries(fields).forEach(([fieldName, field]) => {
+          // Apply field exclusion rules
+          if (shouldExcludeField(fieldName, entityMapping.fieldFilters)) {
+            console.log(
+              `❌ Filtering out manual relationship based on rules: ${fieldName}`
+            )
+            return
+          }
+
           // Only include single relationships (many-to-one, one-to-one)
           if (isSingleRelationship(field.type)) {
             const fieldType = getUnderlyingType(field.type)
             manualRelations.set(fieldName, fieldType.name)
-            console.log(`🔗 Manual single relationship found: ${fieldName} -> ${fieldType.name}`)
+            console.log(
+              `🔗 Manual single relationship found: ${fieldName} -> ${fieldType.name}`
+            )
           } else if (isArrayField(field.type)) {
             const fieldType = getUnderlyingType(field.type)
-            console.log(`❌ Skipping array relationship: ${fieldName} -> [${fieldType.name}]`)
+            console.log(
+              `❌ Skipping array relationship: ${fieldName} -> [${fieldType.name}]`
+            )
           }
         })
       }
-      
+
       // Use filtered utility relations if available, otherwise use manual relations
-      const finalRelations = filteredUtilityRelations.size > 0 ? filteredUtilityRelations : manualRelations
-      console.log(`🎯 Using ${finalRelations.size} final relationships:`, Array.from(finalRelations.entries()))
+      const finalRelations =
+        filteredUtilityRelations.size > 0
+          ? filteredUtilityRelations
+          : manualRelations
+      console.log(
+        `🎯 Using ${finalRelations.size} final relationships:`,
+        Array.from(finalRelations.entries())
+      )
 
       if (directFields.length > 0) {
         // Generate columns from schema fields
         const directColumns = directFields.map((fieldName) => {
           const displayName = formatFieldName(fieldName)
-          
+
           // Get the field type from schema for better type inference
-          const type = schemaTypeMap[entityMapping.graphqlType] as GraphQLObjectType
+          const type = schemaTypeMap[
+            entityMapping.graphqlType
+          ] as GraphQLObjectType
           const fieldDef = type?.getFields()?.[fieldName]
-          const dataType = fieldDef
-            ? getDataTypeFromGraphQLType(fieldDef.type, fieldName)
-            : "string"
+          const typeInfo = fieldDef
+            ? getTypeInfoFromGraphQLType(fieldDef.type, fieldName)
+            : {
+                data_type: "string" as const,
+                semantic_type: "string",
+                context: "generic",
+              }
 
           // Simple sortability rules
           const sortable =
-            !fieldName.includes("metadata") && dataType !== "object"
+            !fieldName.includes("metadata") && typeInfo.data_type !== "object"
 
           return {
             id: fieldName,
@@ -357,80 +588,92 @@ export const GET = async (
             hideable: true,
             default_visible:
               entityMapping.defaultVisibleFields.includes(fieldName),
-            data_type: dataType,
+            data_type: typeInfo.data_type,
+            semantic_type: typeInfo.semantic_type,
+            context: typeInfo.context,
           }
         })
 
         // Generate relationship columns from schema
         const relationshipColumns: HttpTypes.AdminViews.AdminOrderColumn[] = []
-        
+
         if (finalRelations.size > 0) {
           for (const [relationName, relatedTypeName] of finalRelations) {
-            console.log(`📊 Processing relationship: ${relationName} -> ${relatedTypeName}`)
-            
-            // First, add the relationship field itself (e.g., customer, sales_channel)
-            const relationDisplayName = formatFieldName(relationName)
-            const isRelationDefaultVisible = entityMapping.defaultVisibleFields.includes(relationName)
-            
-            relationshipColumns.push({
-              id: relationName,
-              name: relationDisplayName,
-              description: `${relationDisplayName} relationship`,
-              field: relationName,
-              sortable: false, // Relationship objects are generally not sortable
-              hideable: true,
-              default_visible: isRelationDefaultVisible,
-              data_type: "object",
-              relationship: {
-                entity: relatedTypeName,
-                field: "id", // Default to ID field for the relationship
-              },
-            })
-            
-            // Then, get fields for the related type
+            console.log(
+              `📊 Processing relationship: ${relationName} -> ${relatedTypeName}`
+            )
+
+            // Skip adding the relationship object itself - we only want nested fields
+            // Get fields for the related type
             const allRelatedFields = graphqlSchemaToFields(
               schemaTypeMap,
               relatedTypeName,
               []
             )
 
-            // Filter out array fields from related type
-            const relatedType = schemaTypeMap[relatedTypeName] as GraphQLObjectType
-            const relatedFields = allRelatedFields.filter(fieldName => {
+            // Filter out problematic fields from related type
+            const relatedType = schemaTypeMap[
+              relatedTypeName
+            ] as GraphQLObjectType
+            const relatedFields = allRelatedFields.filter((fieldName) => {
               const field = relatedType?.getFields()[fieldName]
               if (!field) return true // Keep field if we can't determine its type
-              
+
               const isArray = isArrayField(field.type)
               if (isArray) {
-                console.log(`❌ Filtering out array field in ${relatedTypeName}: ${fieldName}`)
+                console.log(
+                  `❌ Filtering out array field in ${relatedTypeName}: ${fieldName}`
+                )
                 return false
               }
+
+              // Apply entity-specific field filters to related fields as well
+              if (shouldExcludeField(fieldName, entityMapping.fieldFilters)) {
+                console.log(
+                  `❌ Filtering out field based on rules in ${relatedTypeName}: ${fieldName}`
+                )
+                return false
+              }
+
               return true
             })
 
-            console.log(`📋 Found ${relatedFields.length}/${allRelatedFields.length} non-array fields in ${relatedTypeName}:`, relatedFields.slice(0, 5))
+            console.log(
+              `📋 Found ${relatedFields.length}/${allRelatedFields.length} non-array fields in ${relatedTypeName}:`,
+              relatedFields.slice(0, 5)
+            )
 
             // Only take first 10 fields and limit to scalars
             const limitedFields = relatedFields.slice(0, 10)
 
             limitedFields.forEach((fieldName) => {
               const fieldPath = `${relationName}.${fieldName}`
-              const displayName = `${formatFieldName(relationName)} ${formatFieldName(fieldName)}`
+              const displayName = `${formatFieldName(
+                relationName
+              )} ${formatFieldName(fieldName)}`
 
               // Get field type for better type inference
-              const relatedType = schemaTypeMap[relatedTypeName] as GraphQLObjectType
+              const relatedType = schemaTypeMap[
+                relatedTypeName
+              ] as GraphQLObjectType
               const fieldDef = relatedType?.getFields()?.[fieldName]
-              const dataType = fieldDef
-                ? getDataTypeFromGraphQLType(fieldDef.type, fieldName)
-                : "string"
+              const typeInfo = fieldDef
+                ? getTypeInfoFromGraphQLType(fieldDef.type, fieldName)
+                : {
+                    data_type: "string" as const,
+                    semantic_type: "string",
+                    context: "generic",
+                  }
 
               // Most relationship fields are not sortable by default
-              const sortable = ["name", "title", "email", "handle"].includes(fieldName)
+              const sortable = ["name", "title", "email", "handle"].includes(
+                fieldName
+              )
 
               // Check if this field should be visible by default
+              // Support dot notation in defaultVisibleFields (e.g., "sales_channel.name")
               const isDefaultVisible =
-                entityMapping.defaultVisibleFields.includes(relationName) && 
-                limitedFields.slice(0, 3).includes(fieldName)
+                entityMapping.defaultVisibleFields.includes(fieldPath)
 
               relationshipColumns.push({
                 id: fieldPath,
@@ -440,7 +683,9 @@ export const GET = async (
                 sortable,
                 hideable: true,
                 default_visible: isDefaultVisible,
-                data_type: dataType,
+                data_type: typeInfo.data_type,
+                semantic_type: typeInfo.semantic_type,
+                context: typeInfo.context,
                 relationship: {
                   entity: relatedTypeName,
                   field: fieldName,
@@ -450,8 +695,34 @@ export const GET = async (
           }
         }
 
+
+        // Generate computed columns
+        const computedColumns: HttpTypes.AdminViews.AdminOrderColumn[] = []
+        
+        if (entityMapping.computedColumns) {
+          for (const [columnId, columnConfig] of Object.entries(entityMapping.computedColumns)) {
+            computedColumns.push({
+              id: columnId,
+              name: columnConfig.name,
+              description: `${columnConfig.name} (computed)`,
+              field: columnId,
+              sortable: false, // Computed columns can't be sorted server-side
+              hideable: true,
+              default_visible: entityMapping.defaultVisibleFields.includes(columnId),
+              data_type: "string", // Computed columns typically output strings
+              semantic_type: "computed",
+              context: "display",
+              computed: {
+                type: columnConfig.computation_type,
+                required_fields: columnConfig.required_fields,
+                optional_fields: columnConfig.optional_fields || [],
+              },
+            })
+          }
+        }
+
         // Combine all columns
-        const allColumns = [...directColumns, ...relationshipColumns]
+        const allColumns = [...directColumns, ...relationshipColumns, ...computedColumns]
 
         console.log(
           `✅ Generated ${allColumns.length} columns from schema introspection for ${entity}`
@@ -462,11 +733,15 @@ export const GET = async (
         })
       }
     }
-    
-    console.log(`⚠️ No schema found for ${entityMapping.graphqlType}, falling back to hardcoded fields`)
-    
+
+    console.log(
+      `⚠️ No schema found for ${entityMapping.graphqlType}, falling back to hardcoded fields`
+    )
   } catch (schemaError) {
-    console.warn("Failed to use schema introspection, falling back to predefined fields:", schemaError)
+    console.warn(
+      "Failed to use schema introspection, falling back to predefined fields:",
+      schemaError
+    )
   }
 
   // Fallback to hardcoded approach if schema introspection fails

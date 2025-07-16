@@ -252,6 +252,7 @@ type Order {
   sales_channel_id: String
   email: String
   currency_code: String!
+  display_id: Int
   shipping_address: OrderAddress
   billing_address: OrderAddress
   items: [OrderLineItem]
@@ -306,6 +307,8 @@ type Order {
   raw_original_shipping_total: JSON
   raw_original_shipping_subtotal: JSON
   raw_original_shipping_tax_total: JSON
+  fulfillment_status: FulfillmentStatus!
+  payment_status: PaymentStatus!
 }
 
 enum ReturnStatus {
@@ -430,6 +433,7 @@ type OrderDetail {
   sales_channel_id: String
   email: String
   currency_code: String!
+  display_id: Int
   shipping_address: OrderAddress
   billing_address: OrderAddress
   items: [OrderLineItem]

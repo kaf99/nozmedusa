@@ -32,6 +32,14 @@ export interface AdminColumn {
    */
   data_type: "string" | "number" | "date" | "boolean" | "enum" | "object" | "currency"
   /**
+   * The semantic type of the column value (e.g., "timestamp", "currency", "email")
+   */
+  semantic_type?: string
+  /**
+   * Additional context about the field (e.g., "creation", "total", "payment")
+   */
+  context?: string
+  /**
    * Relationship metadata if this column represents a field from a related entity
    */
   relationship?: {
@@ -43,6 +51,23 @@ export interface AdminColumn {
      * The field name on the related entity
      */
     field: string
+  }
+  /**
+   * Computed column metadata if this column represents a computed/virtual field
+   */
+  computed?: {
+    /**
+     * The type of computation to perform
+     */
+    type: string
+    /**
+     * Field paths that must be present for the computation
+     */
+    required_fields: string[]
+    /**
+     * Field paths that are optional for the computation
+     */
+    optional_fields?: string[]
   }
 }
 

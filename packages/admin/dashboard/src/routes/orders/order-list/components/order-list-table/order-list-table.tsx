@@ -10,17 +10,13 @@ import { useOrders } from "../../../../../hooks/api/orders"
 import { useOrderColumns } from "../../../../../hooks/api/views"
 import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
+import { getDisplayStrategy, getEntityAccessor } from "../../../../../components/data-table/display-strategies"
 
 import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../const"
 
 const PAGE_SIZE = 20
 
 const columnHelper = createColumnHelper<HttpTypes.AdminOrder>()
-
-// Helper function to get nested value from object using dot notation
-const getNestedValue = (obj: any, path: string) => {
-  return path.split('.').reduce((current, key) => current?.[key], obj)
-}
 
 export const OrderListTable = () => {
   const { t } = useTranslation()
@@ -38,21 +34,37 @@ export const OrderListTable = () => {
   const requiredFields = useMemo(() => {
     if (!apiColumns?.length) return DEFAULT_FIELDS
     
-    // Get all visible columns (both relationship and direct fields)
+    // Get all visible columns
     // If visibleColumns is empty, fall back to default_visible from API
-    const visibleFields = apiColumns
-      .filter(column => {
-        // If visibleColumns has data, use it; otherwise use default_visible
-        if (Object.keys(visibleColumns).length > 0) {
-          return visibleColumns[column.field] === true
-        }
-        return column.default_visible
-      })
-      .map(column => column.field)
+    const visibleColumnObjects = apiColumns.filter(column => {
+      // If visibleColumns has data, use it; otherwise use default_visible
+      if (Object.keys(visibleColumns).length > 0) {
+        return visibleColumns[column.field] === true
+      }
+      return column.default_visible
+    })
+    
+    // Collect all required fields from visible columns
+    const requiredFieldsSet = new Set<string>()
+    
+    visibleColumnObjects.forEach(column => {
+      if (column.computed) {
+        // For computed columns, add all required and optional fields
+        column.computed.required_fields?.forEach(field => requiredFieldsSet.add(field))
+        column.computed.optional_fields?.forEach(field => requiredFieldsSet.add(field))
+      } else if (!column.field.includes('.')) {
+        // Direct field
+        requiredFieldsSet.add(column.field)
+      } else {
+        // Relationship field
+        requiredFieldsSet.add(column.field)
+      }
+    })
     
     // Separate relationship fields from direct fields
-    const visibleRelationshipFields = visibleFields.filter(field => field.includes('.'))
-    const visibleDirectFields = visibleFields.filter(field => !field.includes('.'))
+    const allRequiredFields = Array.from(requiredFieldsSet)
+    const visibleRelationshipFields = allRequiredFields.filter(field => field.includes('.'))
+    const visibleDirectFields = allRequiredFields.filter(field => !field.includes('.'))
     
     // Check which relationship fields need to be added
     const additionalRelationshipFields = visibleRelationshipFields.filter(field => {
@@ -74,7 +86,8 @@ export const OrderListTable = () => {
     
     // Debug logging
     console.log('🔍 Column Debug:', {
-      visibleFields,
+      visibleColumnObjects,
+      requiredFieldsSet: Array.from(requiredFieldsSet),
       additionalDirectFields,
       additionalRelationshipFields,
       additionalFields,
@@ -108,36 +121,24 @@ export const OrderListTable = () => {
     }
 
     return apiColumns.map(apiColumn => {
-      return columnHelper.accessor((row) => getNestedValue(row, apiColumn.field), {
+      // Get the display strategy for this column
+      const displayStrategy = getDisplayStrategy(apiColumn)
+      
+      // Get the entity-specific accessor or use default
+      const accessor = getEntityAccessor('orders', apiColumn.field, apiColumn)
+      
+      return columnHelper.accessor(accessor, {
         id: apiColumn.field,
         header: () => apiColumn.name,
-        cell: ({ getValue }) => {
+        cell: ({ getValue, row }) => {
           const value = getValue()
           
-          // Format different data types
-          if (apiColumn.data_type === 'date' && value) {
-            return new Date(value as string).toLocaleDateString()
-          }
-          
-          if (apiColumn.data_type === 'currency' && typeof value === 'number') {
-            return new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD'
-            }).format(value / 100) // Assuming cents
-          }
-          
-          if (apiColumn.data_type === 'object' && value && typeof value === 'object') {
-            // Handle object fields like customer, sales_channel
-            if ('name' in value) return value.name
-            if ('email' in value) return value.email
-            if ('title' in value) return value.title
-            return JSON.stringify(value)
-          }
-          
-          return value?.toString() || '-'
+          // Use the display strategy to format the value
+          return displayStrategy(value, row.original)
         },
         meta: {
           name: apiColumn.name,
+          column: apiColumn, // Store column metadata for future use
         },
         enableHiding: apiColumn.hideable,
         enableSorting: apiColumn.sortable,
