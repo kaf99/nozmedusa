@@ -241,6 +241,7 @@ const DataTableTable = (props: DataTableTableProps) => {
                       <HeaderCellComponent
                         key={header.id}
                         id={header.id}
+                        isFirstColumn={isFirstColumn}
                         className={clx("whitespace-nowrap", {
                           "w-[calc(20px+24px+24px)] min-w-[calc(20px+24px+24px)] max-w-[calc(20px+24px+24px)]":
                             isSelectHeader,

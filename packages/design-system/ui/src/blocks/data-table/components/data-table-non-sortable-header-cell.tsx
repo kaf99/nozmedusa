@@ -6,12 +6,13 @@ import { Table } from "@/components/table"
 interface DataTableNonSortableHeaderCellProps extends React.HTMLAttributes<HTMLTableCellElement> {
   id: string
   children: React.ReactNode
+  isFirstColumn?: boolean
 }
 
 export const DataTableNonSortableHeaderCell = React.forwardRef<
   HTMLTableCellElement,
   DataTableNonSortableHeaderCellProps
->(({ id, children, className, style: propStyle, ...props }, ref) => {
+>(({ id, children, className, style: propStyle, isFirstColumn, ...props }, ref) => {
   // Still use sortable hook but without listeners
   const {
     setNodeRef,
