@@ -289,15 +289,15 @@ export const COMPUTED_COLUMN_FUNCTIONS = {
     // Get country code from shipping address
     const countryCode = row.shipping_address?.country_code
     
-    if (!countryCode) return '-'
+    if (!countryCode) return <div className="flex w-full justify-center">-</div>
     
     // Get country information
     const country = getCountryByIso2(countryCode)
     const displayName = country?.display_name || countryCode.toUpperCase()
     
-    // Display country flag with tooltip
+    // Display country flag with tooltip - centered in the cell
     return (
-      <div className="flex size-5 items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         <Tooltip content={displayName}>
           <div className="flex size-4 items-center justify-center overflow-hidden rounded-sm">
             <ReactCountryFlag

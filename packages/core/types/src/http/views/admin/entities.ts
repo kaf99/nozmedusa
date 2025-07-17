@@ -69,6 +69,14 @@ export interface AdminColumn {
      */
     optional_fields?: string[]
   }
+  /**
+   * The default display order for this column (lower numbers appear first)
+   */
+  default_order?: number
+  /**
+   * The category this column belongs to for grouping purposes
+   */
+  category?: 'identifier' | 'relationship' | 'metric' | 'metadata' | 'status' | 'timestamp'
 }
 
 // Keep the existing type for backward compatibility

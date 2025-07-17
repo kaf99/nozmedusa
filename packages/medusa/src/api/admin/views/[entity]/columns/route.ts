@@ -338,6 +338,63 @@ const getTypeInfoFromGraphQLType = (
   }
 }
 
+// Default column orders for common fields
+export const DEFAULT_COLUMN_ORDERS: Record<string, number> = {
+  // Primary identifier
+  display_id: 100,
+  
+  // Timestamp
+  created_at: 200,
+  
+  // Customer info
+  customer_display: 300,
+  
+  // Sales channel
+  'sales_channel.name': 400,
+  
+  // Status fields
+  fulfillment_status: 500,
+  payment_status: 600,
+  
+  // Financial
+  total: 700,
+  
+  // Location
+  country: 800,
+  
+  // Other fields get default 500
+}
+
+// Determine column category based on field characteristics
+const getColumnCategory = (fieldName: string, dataType: string, semanticType?: string): HttpTypes.AdminViews.AdminColumn['category'] => {
+  // Check semantic type first
+  if (semanticType === 'timestamp') return 'timestamp'
+  if (semanticType === 'status') return 'status'
+  
+  // Check field name patterns
+  if (fieldName.includes('_id') || fieldName === 'id' || fieldName.includes('display_id') || fieldName === 'code') {
+    return 'identifier'
+  }
+  
+  if (fieldName.includes('status') || fieldName === 'state') {
+    return 'status'
+  }
+  
+  if (fieldName.includes('_at') || fieldName.includes('date')) {
+    return 'timestamp'
+  }
+  
+  if (fieldName.includes('total') || fieldName.includes('amount') || fieldName.includes('price') || semanticType === 'currency') {
+    return 'metric'
+  }
+  
+  if (dataType === 'object' || fieldName.includes('_display')) {
+    return 'relationship'
+  }
+  
+  return 'metadata'
+}
+
 // Helper function to format field name for display
 const formatFieldName = (field: string): string => {
   return field
@@ -579,6 +636,12 @@ export const GET = async (
           const sortable =
             !fieldName.includes("metadata") && typeInfo.data_type !== "object"
 
+          // Get default order and category
+          // If field is not in default visible fields, place it after country (850)
+          const isDefaultField = entityMapping.defaultVisibleFields.includes(fieldName)
+          const defaultOrder = DEFAULT_COLUMN_ORDERS[fieldName] || (isDefaultField ? 500 : 850)
+          const category = getColumnCategory(fieldName, typeInfo.data_type, typeInfo.semantic_type)
+
           return {
             id: fieldName,
             name: displayName,
@@ -591,6 +654,8 @@ export const GET = async (
             data_type: typeInfo.data_type,
             semantic_type: typeInfo.semantic_type,
             context: typeInfo.context,
+            default_order: defaultOrder,
+            category,
           }
         })
 
@@ -675,6 +740,12 @@ export const GET = async (
               const isDefaultVisible =
                 entityMapping.defaultVisibleFields.includes(fieldPath)
 
+              // Get default order and category
+              // If field is not in default visible fields, place it after country (850)
+              const isDefaultField = entityMapping.defaultVisibleFields.includes(fieldPath)
+              const defaultOrder = DEFAULT_COLUMN_ORDERS[fieldPath] || (isDefaultField ? 700 : 850)
+              const category = getColumnCategory(fieldPath, typeInfo.data_type, typeInfo.semantic_type)
+
               relationshipColumns.push({
                 id: fieldPath,
                 name: displayName,
@@ -690,6 +761,8 @@ export const GET = async (
                   entity: relatedTypeName,
                   field: fieldName,
                 },
+                default_order: defaultOrder,
+                category,
               })
             })
           }
@@ -701,6 +774,12 @@ export const GET = async (
         
         if (entityMapping.computedColumns) {
           for (const [columnId, columnConfig] of Object.entries(entityMapping.computedColumns)) {
+            // Get default order and category for computed columns
+            // If field is not in default visible fields, place it after country (850)
+            const isDefaultField = entityMapping.defaultVisibleFields.includes(columnId)
+            const defaultOrder = DEFAULT_COLUMN_ORDERS[columnId] || (isDefaultField ? 600 : 850)
+            const category = getColumnCategory(columnId, "string", "computed")
+
             computedColumns.push({
               id: columnId,
               name: columnConfig.name,
@@ -717,6 +796,8 @@ export const GET = async (
                 required_fields: columnConfig.required_fields,
                 optional_fields: columnConfig.optional_fields || [],
               },
+              default_order: defaultOrder,
+              category,
             })
           }
         }

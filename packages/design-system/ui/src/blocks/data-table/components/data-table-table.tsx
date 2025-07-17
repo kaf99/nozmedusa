@@ -132,6 +132,11 @@ const DataTableTable = (props: DataTableTableProps) => {
                     const Wrapper = canSort ? "button" : "div"
                     const isFirstColumn = hasSelect ? idx === 1 : idx === 0
 
+                    // Get header alignment from column metadata
+                    const headerAlign = (header.column.columnDef.meta as any)?.___alignMetaData?.headerAlign || 'left'
+                    const isRightAligned = headerAlign === 'right'
+                    const isCenterAligned = headerAlign === 'center'
+
                     return (
                       <Table.HeaderCell
                         key={header.id}
@@ -165,17 +170,24 @@ const DataTableTable = (props: DataTableTableProps) => {
                           type={canSort ? "button" : undefined}
                           onClick={canSort ? sortHandler : undefined}
                           className={clx(
-                            "group flex w-fit cursor-default items-center gap-2",
+                            "group flex cursor-default items-center gap-2",
                             {
                               "cursor-pointer": canSort,
+                              "w-full": isRightAligned || isCenterAligned,
+                              "w-fit": !isRightAligned && !isCenterAligned,
+                              "justify-end": isRightAligned,
+                              "justify-center": isCenterAligned,
                             }
                           )}
                         >
+                          {canSort && isRightAligned && (
+                            <DataTableSortingIcon direction={sortDirection} />
+                          )}
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {canSort && (
+                          {canSort && !isRightAligned && (
                             <DataTableSortingIcon direction={sortDirection} />
                           )}
                         </Wrapper>

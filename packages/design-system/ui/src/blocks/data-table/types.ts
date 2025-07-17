@@ -73,8 +73,22 @@ export type DataTableSortableColumnDef = {
   enableSorting?: boolean
 }
 
+export type DataTableHeaderAlignment = 'left' | 'center' | 'right'
+
+export type DataTableAlignableColumnDef = {
+  /**
+   * The alignment of the header content.
+   * @default 'left'
+   */
+  headerAlign?: DataTableHeaderAlignment
+}
+
 export type DataTableSortableColumnDefMeta = {
   ___sortMetaData?: DataTableSortableColumnDef
+}
+
+export type DataTableAlignableColumnDefMeta = {
+  ___alignMetaData?: DataTableAlignableColumnDef
 }
 
 export type DataTableActionColumnDefMeta<TData> = {
@@ -151,8 +165,8 @@ export interface DataTableColumnHelper<TData> {
   >(
     accessor: TAccessor,
     column: TAccessor extends AccessorFn<TData>
-      ? DataTableDisplayColumnDef<TData, TValue> & DataTableSortableColumnDef
-      : DataTableIdentifiedColumnDef<TData, TValue> & DataTableSortableColumnDef
+      ? DataTableDisplayColumnDef<TData, TValue> & DataTableSortableColumnDef & DataTableAlignableColumnDef
+      : DataTableIdentifiedColumnDef<TData, TValue> & DataTableSortableColumnDef & DataTableAlignableColumnDef
   ) => TAccessor extends AccessorFn<TData>
     ? AccessorFnColumnDef<TData, TValue>
     : AccessorKeyColumnDef<TData, TValue>

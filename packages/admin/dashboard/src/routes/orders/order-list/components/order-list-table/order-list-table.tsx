@@ -1,8 +1,7 @@
-import { Container } from "@medusajs/ui"
+import { Container, createDataTableColumnHelper } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { useMemo, useState, useEffect, useCallback } from "react"
-import { createColumnHelper } from "@tanstack/react-table"
 import { HttpTypes } from "@medusajs/types"
 
 import { DataTable } from "../../../../../components/data-table"
@@ -16,7 +15,7 @@ import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../con
 
 const PAGE_SIZE = 20
 
-const columnHelper = createColumnHelper<HttpTypes.AdminOrder>()
+const columnHelper = createDataTableColumnHelper<HttpTypes.AdminOrder>()
 
 export const OrderListTable = () => {
   const { t } = useTranslation()
@@ -120,12 +119,33 @@ export const OrderListTable = () => {
       return []
     }
 
-    return apiColumns.map(apiColumn => {
+    // Sort columns by default_order before mapping
+    const sortedColumns = [...apiColumns].sort((a, b) => {
+      const orderA = a.default_order ?? 500
+      const orderB = b.default_order ?? 500
+      return orderA - orderB
+    })
+
+    return sortedColumns.map(apiColumn => {
       // Get the display strategy for this column
       const displayStrategy = getDisplayStrategy(apiColumn)
       
       // Get the entity-specific accessor or use default
       const accessor = getEntityAccessor('orders', apiColumn.field, apiColumn)
+      
+      // Check if this is a currency column that needs right-aligned header
+      const isCurrency = apiColumn.semantic_type === 'currency' || apiColumn.data_type === 'currency'
+      
+      // Check if this is the country column that needs center alignment
+      const isCountry = apiColumn.field === 'country'
+      
+      // Determine header alignment
+      let headerAlign: 'left' | 'center' | 'right' = 'left'
+      if (isCurrency) {
+        headerAlign = 'right'
+      } else if (isCountry) {
+        headerAlign = 'center'
+      }
       
       return columnHelper.accessor(accessor, {
         id: apiColumn.field,
@@ -142,6 +162,8 @@ export const OrderListTable = () => {
         },
         enableHiding: apiColumn.hideable,
         enableSorting: apiColumn.sortable,
+        // Set header alignment
+        headerAlign,
       })
     })
   }, [apiColumns])

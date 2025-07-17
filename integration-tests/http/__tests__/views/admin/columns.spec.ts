@@ -104,7 +104,9 @@ medusaIntegrationTestRunner({
               type: "customer_name",
               required_fields: ["customer.first_name", "customer.last_name", "customer.email"],
               optional_fields: ["customer.phone"]
-            }
+            },
+            default_order: 200,
+            category: "relationship"
           })
           
           // Check that we have the country computed column
@@ -123,7 +125,9 @@ medusaIntegrationTestRunner({
               type: "country_code",
               required_fields: ["shipping_address.country_code"],
               optional_fields: []
-            }
+            },
+            default_order: 850,
+            category: "relationship"
           })
           
           // Check that we DON'T have customer or shipping_address objects
@@ -137,6 +141,18 @@ medusaIntegrationTestRunner({
           const directFields = response.data.columns.filter(c => !c.id.includes("."))
           const relationshipFields = response.data.columns.filter(c => c.id.includes("."))
           
+          // Check that important fields have proper ordering
+          const displayIdField = response.data.columns.find(c => c.id === "display_id")
+          expect(displayIdField?.default_order).toBe(100)
+          expect(displayIdField?.category).toBe("identifier")
+          
+          const totalField = response.data.columns.find(c => c.id === "total")
+          expect(totalField?.default_order).toBe(900)
+          expect(totalField?.category).toBe("metric")
+          
+          const createdAtField = response.data.columns.find(c => c.id === "created_at")
+          expect(createdAtField?.default_order).toBe(500)
+          expect(createdAtField?.category).toBe("timestamp")
         })
 
         it("should check filtering behavior", async () => {
