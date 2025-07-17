@@ -29,6 +29,9 @@ export const OrderListTable = () => {
   // Track which relationship fields are currently visible/needed
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({})
   
+  // Track column order
+  const [columnOrder, setColumnOrder] = useState<string[]>([])
+  
   // Calculate required fields based on visible columns
   const requiredFields = useMemo(() => {
     if (!apiColumns?.length) return DEFAULT_FIELDS
@@ -119,14 +122,7 @@ export const OrderListTable = () => {
       return []
     }
 
-    // Sort columns by default_order before mapping
-    const sortedColumns = [...apiColumns].sort((a, b) => {
-      const orderA = a.default_order ?? 500
-      const orderB = b.default_order ?? 500
-      return orderA - orderB
-    })
-
-    return sortedColumns.map(apiColumn => {
+    return apiColumns.map(apiColumn => {
       // Get the display strategy for this column
       const displayStrategy = getDisplayStrategy(apiColumn)
       
@@ -186,16 +182,28 @@ export const OrderListTable = () => {
     setVisibleColumns(visibility)
   }, [])
 
-  // Initialize visible columns when API columns are loaded
+  // Initialize visible columns and column order when API columns are loaded
   useEffect(() => {
-    if (apiColumns?.length && Object.keys(visibleColumns).length === 0) {
-      const initialVisibility: Record<string, boolean> = {}
-      apiColumns.forEach(column => {
-        initialVisibility[column.field] = column.default_visible
-      })
-      setVisibleColumns(initialVisibility)
+    if (apiColumns?.length) {
+      if (Object.keys(visibleColumns).length === 0) {
+        const initialVisibility: Record<string, boolean> = {}
+        apiColumns.forEach(column => {
+          initialVisibility[column.field] = column.default_visible
+        })
+        setVisibleColumns(initialVisibility)
+      }
+      
+      if (columnOrder.length === 0) {
+        // Sort columns by default_order before creating initial order
+        const sortedColumns = [...apiColumns].sort((a, b) => {
+          const orderA = a.default_order ?? 500
+          const orderB = b.default_order ?? 500
+          return orderA - orderB
+        })
+        setColumnOrder(sortedColumns.map(col => col.field))
+      }
     }
-  }, [apiColumns, visibleColumns])
+  }, [apiColumns, visibleColumns, columnOrder])
 
   if (isError) {
     throw error
@@ -236,6 +244,8 @@ export const OrderListTable = () => {
         enableColumnVisibility
         initialColumnVisibility={initialColumnVisibility}
         onColumnVisibilityChange={handleColumnVisibilityChange}
+        columnOrder={columnOrder}
+        onColumnOrderChange={setColumnOrder}
         isLoading={isLoading}
         pageSize={PAGE_SIZE}
         emptyState={{

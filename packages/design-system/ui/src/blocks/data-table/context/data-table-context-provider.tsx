@@ -18,7 +18,8 @@ const DataTableContextProvider = <TData,>({
     <DataTableContext.Provider 
       value={{ 
         instance,
-        enableColumnVisibility: instance.enableColumnVisibility
+        enableColumnVisibility: instance.enableColumnVisibility,
+        enableColumnOrder: instance.enableColumnOrder
       }}
     >
       {children}

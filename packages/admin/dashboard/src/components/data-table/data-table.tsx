@@ -15,6 +15,7 @@ import {
   Text,
   useDataTable,
   type VisibilityState,
+  type ColumnOrderState,
 } from "@medusajs/ui"
 import React, { ReactNode, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -84,6 +85,8 @@ interface DataTableProps<TData> {
   enableColumnVisibility?: boolean
   initialColumnVisibility?: VisibilityState
   onColumnVisibilityChange?: (visibility: VisibilityState) => void
+  columnOrder?: ColumnOrderState
+  onColumnOrderChange?: (order: ColumnOrderState) => void
 }
 
 export const DataTable = <TData,>({
@@ -110,6 +113,8 @@ export const DataTable = <TData,>({
   enableColumnVisibility = false,
   initialColumnVisibility = {},
   onColumnVisibilityChange,
+  columnOrder,
+  onColumnOrderChange,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
 
@@ -290,6 +295,12 @@ export const DataTable = <TData,>({
       ? {
           state: columnVisibility,
           onColumnVisibilityChange: handleColumnVisibilityChange,
+        }
+      : undefined,
+    columnOrder: columnOrder && onColumnOrderChange
+      ? {
+          state: columnOrder,
+          onColumnOrderChange: onColumnOrderChange,
         }
       : undefined,
   })

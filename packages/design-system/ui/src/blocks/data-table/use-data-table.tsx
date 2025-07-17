@@ -2,6 +2,7 @@ import {
   ColumnFilter,
   ColumnFiltersState,
   type ColumnSort,
+  type ColumnOrderState,
   getCoreRowModel,
   PaginationState,
   type RowSelectionState,
@@ -114,6 +115,13 @@ interface DataTableOptions<TData>
     state: VisibilityState
     onColumnVisibilityChange: (state: VisibilityState) => void
   }
+  /**
+   * The state and callback for the column order.
+   */
+  columnOrder?: {
+    state: ColumnOrderState
+    onColumnOrderChange: (state: ColumnOrderState) => void
+  }
 }
 
 interface UseDataTableReturn<TData>
@@ -128,6 +136,7 @@ interface UseDataTableReturn<TData>
     | "getPageCount"
     | "getAllColumns"
     | "setColumnVisibility"
+    | "setColumnOrder"
   > {
   getSorting: () => DataTableSortingState | null
   setSorting: (
@@ -166,6 +175,9 @@ interface UseDataTableReturn<TData>
   enableSorting: boolean
   enableSearch: boolean
   enableColumnVisibility: boolean
+  enableColumnOrder: boolean
+  columnOrder: ColumnOrderState
+  setColumnOrderFromArray: (order: string[]) => void
 }
 
 const useDataTable = <TData,>({
@@ -181,6 +193,7 @@ const useDataTable = <TData,>({
   autoResetPageIndex = true,
   isLoading = false,
   columnVisibility,
+  columnOrder,
   ...options
 }: DataTableOptions<TData>): UseDataTableReturn<TData> => {
   const { state: sortingState, onSortingChange } = sorting ?? {}
@@ -192,6 +205,7 @@ const useDataTable = <TData,>({
     enableRowSelection,
   } = rowSelection ?? {}
   const { state: columnVisibilityState, onColumnVisibilityChange } = columnVisibility ?? {}
+  const { state: columnOrderState, onColumnOrderChange } = columnOrder ?? {}
 
   const autoResetPageIndexHandler = React.useCallback(() => {
     return autoResetPageIndex
@@ -255,6 +269,19 @@ const useDataTable = <TData,>({
       : undefined
   }, [onColumnVisibilityChange, columnVisibilityState])
 
+  const columnOrderStateHandler = React.useCallback(() => {
+    return onColumnOrderChange
+      ? (updaterOrValue: Updater<ColumnOrderState>) => {
+          const value =
+            typeof updaterOrValue === "function"
+              ? updaterOrValue(columnOrderState ?? [])
+              : updaterOrValue
+
+          onColumnOrderChange(value)
+        }
+      : undefined
+  }, [onColumnOrderChange, columnOrderState])
+
   const instance = useReactTable({
     ...options,
     getCoreRowModel: getCoreRowModel(),
@@ -269,6 +296,7 @@ const useDataTable = <TData,>({
       ),
       pagination: paginationState,
       columnVisibility: columnVisibilityState ?? {},
+      columnOrder: columnOrderState ?? [],
     },
     enableRowSelection,
     rowCount,
@@ -277,6 +305,7 @@ const useDataTable = <TData,>({
     onSortingChange: sortingStateHandler(),
     onPaginationChange: paginationStateHandler(),
     onColumnVisibilityChange: columnVisibilityStateHandler(),
+    onColumnOrderChange: columnOrderStateHandler(),
     manualSorting: true,
     manualPagination: true,
     manualFiltering: true,
@@ -452,6 +481,11 @@ const useDataTable = <TData,>({
   const enableSorting: boolean = !!sorting
   const enableSearch: boolean = !!search
   const enableColumnVisibility: boolean = !!columnVisibility
+  const enableColumnOrder: boolean = !!columnOrder
+
+  const setColumnOrderFromArray = React.useCallback((order: string[]) => {
+    instance.setColumnOrder(order)
+  }, [instance])
 
   return {
     // Table
@@ -459,6 +493,7 @@ const useDataTable = <TData,>({
     getRowModel: instance.getRowModel,
     getAllColumns: instance.getAllColumns,
     setColumnVisibility: instance.setColumnVisibility,
+    setColumnOrder: instance.setColumnOrder,
     // Pagination
     enablePagination,
     getCanNextPage: instance.getCanNextPage,
@@ -499,6 +534,10 @@ const useDataTable = <TData,>({
     showSkeleton,
     // Column Visibility
     enableColumnVisibility,
+    // Column Order
+    enableColumnOrder,
+    columnOrder: instance.getState().columnOrder,
+    setColumnOrderFromArray,
   }
 }
 
