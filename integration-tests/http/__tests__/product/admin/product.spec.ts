@@ -2159,6 +2159,99 @@ medusaIntegrationTestRunner({
           })
         })
 
+        it("should recreate a variant with the same sku after deletion", async () => {
+          const payload = {
+            title: "Test sku",
+            shipping_profile_id: shippingProfile.id,
+            variants: [
+              {
+                sku: "test-sku-should-persist",
+                manage_inventory: true,
+                title: "Recreate variant",
+                prices: [
+                  {
+                    currency_code: "usd",
+                    amount: 100,
+                  },
+                ],
+              },
+            ],
+          }
+
+          const created = (
+            await api.post(
+              "/admin/products?fields=*variants.inventory_items.inventory",
+              getProductFixture(payload),
+              adminHeaders
+            )
+          ).data.product
+
+          const createdVariant = created.variants.find(
+            (v) => v.sku === "test-sku-should-persist"
+          )
+
+          const inventoryItem = createdVariant.inventory_items[0]
+
+          expect(created).toEqual(
+            expect.objectContaining({
+              variants: expect.arrayContaining([
+                expect.objectContaining({
+                  sku: "test-sku-should-persist",
+                  inventory_items: expect.arrayContaining([
+                    expect.objectContaining({
+                      inventory: expect.objectContaining({
+                        sku: "test-sku-should-persist",
+                      }),
+                    }),
+                  ]),
+                  title: "Recreate variant",
+                }),
+              ]),
+            })
+          )
+
+          await api.delete(
+            `/admin/products/${created.id}/variants/${createdVariant.id}`,
+            adminHeaders
+          )
+
+          const recreated = (
+            await api.post(
+              `/admin/products/${created.id}/variants?fields=+variants.inventory_items.inventory.sku`,
+              {
+                sku: "test-sku-should-persist",
+                manage_inventory: true,
+                title: "Recreate variant",
+                prices: [
+                  {
+                    currency_code: "usd",
+                    amount: 100,
+                  },
+                ],
+              },
+              adminHeaders
+            )
+          ).data.product
+
+          expect(recreated).toEqual(
+            expect.objectContaining({
+              variants: expect.arrayContaining([
+                expect.objectContaining({
+                  sku: "test-sku-should-persist",
+                  inventory_items: expect.arrayContaining([
+                    expect.objectContaining({
+                      inventory: expect.objectContaining({
+                        sku: "test-sku-should-persist",
+                      }),
+                    }),
+                  ]),
+                  title: "Recreate variant",
+                }),
+              ]),
+            })
+          )
+        })
+
         it("updates products sales channels", async () => {
           const salesChannel1 = (
             await api.post(

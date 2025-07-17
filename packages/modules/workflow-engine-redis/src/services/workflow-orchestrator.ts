@@ -572,14 +572,16 @@ export class WorkflowOrchestratorService {
     }
 
     const handlerIndex = (handlers) => {
-      return handlers.indexOf((s) => s === subscriber || s._id === subscriberId)
+      return handlers.findIndex(
+        (s) => s === subscriber || s._id === subscriberId
+      )
     }
 
     if (transactionId) {
       const transactionSubscribers = subscribers.get(transactionId) ?? []
       const subscriberIndex = handlerIndex(transactionSubscribers)
       if (subscriberIndex !== -1) {
-        transactionSubscribers.slice(subscriberIndex, 1)
+        transactionSubscribers.splice(subscriberIndex, 1)
       }
 
       transactionSubscribers.push(subscriber)
@@ -591,7 +593,7 @@ export class WorkflowOrchestratorService {
     const workflowSubscribers = subscribers.get(AnySubscriber) ?? []
     const subscriberIndex = handlerIndex(workflowSubscribers)
     if (subscriberIndex !== -1) {
-      workflowSubscribers.slice(subscriberIndex, 1)
+      workflowSubscribers.splice(subscriberIndex, 1)
     }
 
     workflowSubscribers.push(subscriber)
@@ -604,7 +606,10 @@ export class WorkflowOrchestratorService {
     transactionId,
     subscriberOrId,
   }: UnsubscribeOptions) {
-    const subscribers = this.subscribers.get(workflowId) ?? new Map()
+    const subscribers = this.subscribers.get(workflowId)
+    if (!subscribers) {
+      return
+    }
 
     const filterSubscribers = (handlers: SubscriberHandler[]) => {
       return handlers.filter((handler) => {
@@ -614,25 +619,36 @@ export class WorkflowOrchestratorService {
       })
     }
 
-    // Unsubscribe instance
-    if (!this.subscribers.has(workflowId)) {
+    if (transactionId) {
+      const transactionSubscribers = subscribers.get(transactionId)
+      if (transactionSubscribers) {
+        const newTransactionSubscribers = filterSubscribers(
+          transactionSubscribers
+        )
+
+        if (newTransactionSubscribers.length) {
+          subscribers.set(transactionId, newTransactionSubscribers)
+        } else {
+          subscribers.delete(transactionId)
+        }
+      }
+    } else {
+      const workflowSubscribers = subscribers.get(AnySubscriber)
+      if (workflowSubscribers) {
+        const newWorkflowSubscribers = filterSubscribers(workflowSubscribers)
+
+        if (newWorkflowSubscribers.length) {
+          subscribers.set(AnySubscriber, newWorkflowSubscribers)
+        } else {
+          subscribers.delete(AnySubscriber)
+        }
+      }
+    }
+
+    if (subscribers.size === 0) {
+      this.subscribers.delete(workflowId)
       void this.redisSubscriber.unsubscribe(this.getChannelName(workflowId))
     }
-
-    if (transactionId) {
-      const transactionSubscribers = subscribers.get(transactionId) ?? []
-      const newTransactionSubscribers = filterSubscribers(
-        transactionSubscribers
-      )
-      subscribers.set(transactionId, newTransactionSubscribers)
-      this.subscribers.set(workflowId, subscribers)
-      return
-    }
-
-    const workflowSubscribers = subscribers.get(AnySubscriber) ?? []
-    const newWorkflowSubscribers = filterSubscribers(workflowSubscribers)
-    subscribers.set(AnySubscriber, newWorkflowSubscribers)
-    this.subscribers.set(workflowId, subscribers)
   }
 
   private async notify(

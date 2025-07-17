@@ -523,14 +523,16 @@ export class WorkflowOrchestratorService {
     const subscribers = this.subscribers.get(workflowId) ?? new Map()
 
     const handlerIndex = (handlers) => {
-      return handlers.indexOf((s) => s === subscriber || s._id === subscriberId)
+      return handlers.findIndex(
+        (s) => s === subscriber || s._id === subscriberId
+      )
     }
 
     if (transactionId) {
       const transactionSubscribers = subscribers.get(transactionId) ?? []
       const subscriberIndex = handlerIndex(transactionSubscribers)
       if (subscriberIndex !== -1) {
-        transactionSubscribers.slice(subscriberIndex, 1)
+        transactionSubscribers.splice(subscriberIndex, 1)
       }
 
       transactionSubscribers.push(subscriber)
@@ -542,7 +544,7 @@ export class WorkflowOrchestratorService {
     const workflowSubscribers = subscribers.get(AnySubscriber) ?? []
     const subscriberIndex = handlerIndex(workflowSubscribers)
     if (subscriberIndex !== -1) {
-      workflowSubscribers.slice(subscriberIndex, 1)
+      workflowSubscribers.splice(subscriberIndex, 1)
     }
 
     workflowSubscribers.push(subscriber)
@@ -570,14 +572,22 @@ export class WorkflowOrchestratorService {
       const newTransactionSubscribers = filterSubscribers(
         transactionSubscribers
       )
-      subscribers.set(transactionId, newTransactionSubscribers)
+      if (newTransactionSubscribers.length) {
+        subscribers.set(transactionId, newTransactionSubscribers)
+      } else {
+        subscribers.delete(transactionId)
+      }
       this.subscribers.set(workflowId, subscribers)
       return
     }
 
     const workflowSubscribers = subscribers.get(AnySubscriber) ?? []
     const newWorkflowSubscribers = filterSubscribers(workflowSubscribers)
-    subscribers.set(AnySubscriber, newWorkflowSubscribers)
+    if (newWorkflowSubscribers.length) {
+      subscribers.set(AnySubscriber, newWorkflowSubscribers)
+    } else {
+      subscribers.delete(AnySubscriber)
+    }
     this.subscribers.set(workflowId, subscribers)
   }
 
@@ -614,6 +624,10 @@ export class WorkflowOrchestratorService {
     if (transactionId) {
       const transactionSubscribers = subscribers.get(transactionId) ?? []
       notifySubscribers(transactionSubscribers)
+
+      if (options.eventType === "onFinish") {
+        subscribers.delete(transactionId)
+      }
     }
 
     const workflowSubscribers = subscribers.get(AnySubscriber) ?? []
@@ -671,7 +685,6 @@ export class WorkflowOrchestratorService {
         notify({ eventType: "onCompensateBegin" })
       },
       onFinish: ({ transaction, result, errors }) => {
-        // TODO: unsubscribe transaction handlers on finish
         customEventHandlers?.onFinish?.({ transaction, result, errors })
       },
 
