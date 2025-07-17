@@ -36,7 +36,7 @@ export const generatedEditDates = {
   "app/learn/fundamentals/data-models/manage-relationships/page.mdx": "2025-04-25T14:16:41.124Z",
   "app/learn/fundamentals/modules/remote-query/page.mdx": "2024-07-21T21:20:24+02:00",
   "app/learn/fundamentals/modules/options/page.mdx": "2025-03-18T15:12:34.510Z",
-  "app/learn/fundamentals/data-models/relationships/page.mdx": "2025-03-18T07:52:07.421Z",
+  "app/learn/fundamentals/data-models/relationships/page.mdx": "2025-07-16T09:51:22.141Z",
   "app/learn/fundamentals/workflows/compensation-function/page.mdx": "2025-04-24T13:16:00.941Z",
   "app/learn/fundamentals/modules/service-factory/page.mdx": "2025-03-18T15:14:13.486Z",
   "app/learn/fundamentals/modules/module-links/page.mdx": "2024-09-30T08:43:53.126Z",
