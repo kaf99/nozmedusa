@@ -841,6 +841,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
 
           void workflowOrcModule.subscribe({
             workflowId: "wf-when",
+            transactionId: "trx_123_when",
             subscriber: (event) => {
               if (event.eventType === "onFinish") {
                 done()
