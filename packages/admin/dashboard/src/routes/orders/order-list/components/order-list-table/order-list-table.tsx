@@ -10,6 +10,7 @@ import { useOrderColumns } from "../../../../../hooks/api/views"
 import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 import { getDisplayStrategy, getEntityAccessor } from "../../../../../components/data-table/display-strategies"
+import { ViewConfiguration } from "../../../../../providers/view-configuration-provider"
 
 import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../const"
 
@@ -182,6 +183,45 @@ export const OrderListTable = () => {
     setVisibleColumns(visibility)
   }, [])
 
+  // Handle view configuration changes
+  const handleViewChange = useCallback((view: ViewConfiguration | null) => {
+    if (view) {
+      // Apply view configuration
+      const newVisibility: Record<string, boolean> = {}
+      apiColumns?.forEach(column => {
+        newVisibility[column.field] = view.configuration.visible_columns.includes(column.field)
+      })
+      setVisibleColumns(newVisibility)
+      setColumnOrder(view.configuration.column_order)
+    } else {
+      // Reset to default visibility when no view is selected
+      const defaultVisibility: Record<string, boolean> = {}
+      apiColumns?.forEach(column => {
+        defaultVisibility[column.field] = column.default_visible
+      })
+      setVisibleColumns(defaultVisibility)
+      // Reset column order to default
+      const sortedColumns = [...(apiColumns || [])].sort((a, b) => {
+        const orderA = a.default_order ?? 500
+        const orderB = b.default_order ?? 500
+        return orderA - orderB
+      })
+      setColumnOrder(sortedColumns.map(col => col.field))
+    }
+  }, [apiColumns])
+
+  // Get current columns state for saving views
+  const currentColumns = useMemo(() => {
+    const visible = Object.entries(visibleColumns)
+      .filter(([_, isVisible]) => isVisible)
+      .map(([field]) => field)
+    
+    return {
+      visible,
+      order: columnOrder,
+    }
+  }, [visibleColumns, columnOrder])
+
   // Initialize visible columns and column order when API columns are loaded
   useEffect(() => {
     if (apiColumns?.length) {
@@ -242,10 +282,14 @@ export const OrderListTable = () => {
         enableSearch
         enablePagination
         enableColumnVisibility
-        initialColumnVisibility={initialColumnVisibility}
+        initialColumnVisibility={Object.keys(visibleColumns).length > 0 ? visibleColumns : initialColumnVisibility}
         onColumnVisibilityChange={handleColumnVisibilityChange}
         columnOrder={columnOrder}
         onColumnOrderChange={setColumnOrder}
+        enableViewSelector
+        entity="orders"
+        onViewChange={handleViewChange}
+        currentColumns={currentColumns}
         isLoading={isLoading}
         pageSize={PAGE_SIZE}
         emptyState={{

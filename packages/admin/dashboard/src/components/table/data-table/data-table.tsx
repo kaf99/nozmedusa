@@ -40,6 +40,10 @@ export const _DataTable = <TData,>({
   layout = "fit",
   noRecords: noRecordsProps = {},
   enableColumnVisibility = false,
+  enableViewSelector = false,
+  entity,
+  onViewChange,
+  currentColumns,
 }: DataTableProps<TData>) => {
   if (isLoading) {
     return (
@@ -83,6 +87,10 @@ export const _DataTable = <TData,>({
         prefix={prefix}
         table={table}
         enableColumnVisibility={enableColumnVisibility}
+        enableViewSelector={enableViewSelector}
+        entity={entity}
+        onViewChange={onViewChange}
+        currentColumns={currentColumns}
       />
       <DataTableRoot
         table={table}

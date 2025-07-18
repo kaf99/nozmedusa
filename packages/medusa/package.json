@@ -104,6 +104,7 @@
     "@medusajs/promotion": "2.8.6",
     "@medusajs/region": "2.8.6",
     "@medusajs/sales-channel": "2.8.6",
+    "@medusajs/settings": "2.8.6",
     "@medusajs/stock-location": "2.8.6",
     "@medusajs/store": "2.8.6",
     "@medusajs/tax": "2.8.6",

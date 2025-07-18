@@ -426,6 +426,10 @@ export const GET = async (
     } as any)
   }
 
+  // TODO: Add settings service when available
+  // For now, we'll skip user preference loading
+  // const userId = req.auth_context.actor_id
+
   // Try to use schema introspection first
   try {
     // Get all joiner configurations which contain GraphQL schemas
@@ -809,6 +813,9 @@ export const GET = async (
           `✅ Generated ${allColumns.length} columns from schema introspection for ${entity}`
         )
 
+        // TODO: Check for user-specific column preferences when settings service is available
+        // For now, we'll use the default visibility from the column definitions
+
         return res.json({
           columns: allColumns,
         })
@@ -830,4 +837,62 @@ export const GET = async (
     message: `Schema introspection failed for entity: ${entity}. Please check if the entity exists in the schema.`,
     type: "server_error",
   } as any)
+}
+
+export const POST = async (
+  req: AuthenticatedMedusaRequest<{
+    visible_columns: string[]
+  }>,
+  res: MedusaResponse<{ success: boolean }>
+) => {
+  const entity = req.params.entity as string
+  const { visible_columns } = req.body
+
+  // Validate entity parameter
+  if (!entity) {
+    return res.status(400).json({
+      message: "Entity parameter is required",
+      type: "invalid_data",
+    } as any)
+  }
+
+  // Get entity mapping
+  const entityMapping = ENTITY_MAPPINGS[entity as keyof typeof ENTITY_MAPPINGS]
+  if (!entityMapping) {
+    return res.status(400).json({
+      message: `Unsupported entity: ${entity}`,
+      type: "invalid_data",
+    } as any)
+  }
+
+  // Validate visible_columns
+  if (!Array.isArray(visible_columns)) {
+    return res.status(400).json({
+      message: "visible_columns must be an array",
+      type: "invalid_data",
+    } as any)
+  }
+
+  // TODO: Implement settings service to persist user preferences
+  // For now, we'll just acknowledge the request
+  const userId = req.auth_context.actor_id
+
+  console.log(
+    `📝 Column visibility update requested for user ${userId} on entity ${entity}:`,
+    visible_columns
+  )
+
+  // TODO: When settings service is available, save the preferences
+  // await settingsService.setUserPreference(
+  //   userId,
+  //   `${entity}_columns_visibility`,
+  //   {
+  //     visible_columns,
+  //     updated_at: new Date().toISOString(),
+  //   }
+  // )
+
+  return res.json({
+    success: true,
+  })
 }

@@ -23,6 +23,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
 import { useQueryParams } from "../../hooks/use-query-params"
 import { ActionMenu } from "../common/action-menu"
+import { ViewConfiguration } from "../../providers/view-configuration-provider"
+import { ViewSelector } from "../table/view-selector"
 
 type DataTableActionProps = {
   label: string
@@ -87,6 +89,13 @@ interface DataTableProps<TData> {
   onColumnVisibilityChange?: (visibility: VisibilityState) => void
   columnOrder?: ColumnOrderState
   onColumnOrderChange?: (order: ColumnOrderState) => void
+  enableViewSelector?: boolean
+  entity?: string
+  onViewChange?: (view: ViewConfiguration | null) => void
+  currentColumns?: {
+    visible: string[]
+    order: string[]
+  }
 }
 
 export const DataTable = <TData,>({
@@ -115,6 +124,10 @@ export const DataTable = <TData,>({
   onColumnVisibilityChange,
   columnOrder,
   onColumnOrderChange,
+  enableViewSelector = false,
+  entity,
+  onViewChange,
+  currentColumns,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
 
@@ -126,7 +139,17 @@ export const DataTable = <TData,>({
 
   // Update column visibility when initial visibility changes
   React.useEffect(() => {
-    setColumnVisibility(initialColumnVisibility)
+    // Deep compare to check if the visibility has actually changed
+    const currentKeys = Object.keys(columnVisibility).sort()
+    const newKeys = Object.keys(initialColumnVisibility).sort()
+    
+    const hasChanged = currentKeys.length !== newKeys.length || 
+      currentKeys.some((key, index) => key !== newKeys[index]) ||
+      Object.entries(initialColumnVisibility).some(([key, value]) => columnVisibility[key] !== value)
+    
+    if (hasChanged) {
+      setColumnVisibility(initialColumnVisibility)
+    }
   }, [initialColumnVisibility])
 
   // Wrapper function to handle column visibility changes
@@ -337,6 +360,13 @@ export const DataTable = <TData,>({
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
             {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {enableViewSelector && entity && (
+              <ViewSelector 
+                entity={entity} 
+                onViewChange={onViewChange} 
+                currentColumns={currentColumns}
+              />
+            )}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
@@ -358,6 +388,13 @@ export const DataTable = <TData,>({
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
             {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {enableViewSelector && entity && (
+              <ViewSelector 
+                entity={entity} 
+                onViewChange={onViewChange} 
+                currentColumns={currentColumns}
+              />
+            )}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>

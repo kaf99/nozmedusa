@@ -4,6 +4,8 @@ import { DataTableColumnVisibility } from "../data-table-column-visibility"
 import { DataTableFilter } from "../data-table-filter"
 import { DataTableOrderBy, DataTableOrderByKey } from "../data-table-order-by"
 import { DataTableSearch } from "../data-table-search"
+import { ViewSelector } from "../../view-selector"
+import { ViewConfiguration } from "../../../../providers/view-configuration-provider"
 
 export interface DataTableQueryProps<TData> {
   search?: boolean | "autofocus"
@@ -12,6 +14,13 @@ export interface DataTableQueryProps<TData> {
   prefix?: string
   table?: ReactTable<TData>
   enableColumnVisibility?: boolean
+  enableViewSelector?: boolean
+  entity?: string
+  onViewChange?: (view: ViewConfiguration | null) => void
+  currentColumns?: {
+    visible: string[]
+    order: string[]
+  }
 }
 
 export const DataTableQuery = <TData,>({
@@ -21,9 +30,16 @@ export const DataTableQuery = <TData,>({
   prefix,
   table,
   enableColumnVisibility = false,
+  enableViewSelector = false,
+  entity,
+  onViewChange,
+  currentColumns,
 }: DataTableQueryProps<TData>) => {
+  const showQuery = search || orderBy || filters || prefix || 
+    (enableColumnVisibility && table) || (enableViewSelector && entity)
+    
   return (
-    (search || orderBy || filters || prefix || (enableColumnVisibility && table)) && (
+    showQuery && (
       <div className="flex items-start justify-between gap-x-4 px-6 py-4">
         <div className="w-full max-w-[60%]">
           {filters && filters.length > 0 && (
@@ -38,8 +54,15 @@ export const DataTableQuery = <TData,>({
             />
           )}
           {orderBy && <DataTableOrderBy keys={orderBy} prefix={prefix} />}
+          {enableViewSelector && entity && (
+            <ViewSelector
+              entity={entity}
+              onViewChange={onViewChange}
+              currentColumns={currentColumns}
+            />
+          )}
           {enableColumnVisibility && table && (
-            <DataTableColumnVisibility table={table} />
+            <DataTableColumnVisibility table={table} entity={entity} />
           )}
         </div>
       </div>

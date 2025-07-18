@@ -41,6 +41,7 @@ import { adminTaxRegionRoutesMiddlewares } from "./admin/tax-regions/middlewares
 import { adminTaxProviderRoutesMiddlewares } from "./admin/tax-providers/middlewares"
 import { adminUploadRoutesMiddlewares } from "./admin/uploads/middlewares"
 import { adminUserRoutesMiddlewares } from "./admin/users/middlewares"
+import { viewConfigurationRoutesMiddlewares } from "./admin/view-configurations/middlewares"
 import { adminWorkflowsExecutionsMiddlewares } from "./admin/workflows-executions/middlewares"
 import { authRoutesMiddlewares } from "./auth/middlewares"
 
@@ -86,6 +87,7 @@ export default defineMiddlewares([
   ...adminReturnRoutesMiddlewares,
   ...adminUserRoutesMiddlewares,
   ...adminInviteRoutesMiddlewares,
+  ...viewConfigurationRoutesMiddlewares,
   ...adminTaxRateRoutesMiddlewares,
   ...adminTaxRegionRoutesMiddlewares,
   ...adminApiKeyRoutesMiddlewares,

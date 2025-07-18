@@ -1,16 +1,22 @@
 import { Button, Checkbox, DropdownMenu } from "@medusajs/ui"
 import { Adjustments, Spinner } from "@medusajs/icons"
 import { Table as ReactTable, Column } from "@tanstack/react-table"
-import { useOrderColumns } from "../../../../hooks/api"
+import { useEntityColumns } from "../../../../hooks/api"
+import { useState, useEffect, useCallback } from "react"
+import { sdk } from "../../../../lib/client"
+import { toast } from "@medusajs/ui"
 
 interface DataTableColumnVisibilityProps<TData> {
   table: ReactTable<TData>
+  entity?: string
 }
 
 export const DataTableColumnVisibility = <TData,>({
   table,
+  entity = "orders",
 }: DataTableColumnVisibilityProps<TData>) => {
-  const { columns: apiColumns, isLoading } = useOrderColumns()
+  const { columns: apiColumns, isLoading } = useEntityColumns(entity)
+  const [isSaving, setIsSaving] = useState(false)
 
   const columns = table
     .getAllColumns()
@@ -20,8 +26,44 @@ export const DataTableColumnVisibility = <TData,>({
     return null
   }
 
+  // Save column visibility to the backend
+  const saveColumnVisibility = useCallback(async () => {
+    try {
+      setIsSaving(true)
+      const visibleColumns = columns
+        .filter((column) => column.getIsVisible())
+        .map((column) => column.id)
+
+      // Make a direct API call to save column visibility
+      const response = await fetch(`/admin/views/${entity}/columns`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Auth is handled by session cookies
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          visible_columns: visibleColumns,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to save column visibility")
+      }
+
+      toast.success("Column preferences saved")
+    } catch (error) {
+      console.error("Failed to save column visibility:", error)
+      toast.error("Failed to save column preferences")
+    } finally {
+      setIsSaving(false)
+    }
+  }, [columns, entity])
+
   const handleToggleColumn = (column: Column<TData, any>) => {
     column.toggleVisibility()
+    // Debounce the save operation
+    setTimeout(() => saveColumnVisibility(), 500)
   }
 
   const handleToggleAll = (value: boolean) => {
@@ -30,6 +72,8 @@ export const DataTableColumnVisibility = <TData,>({
         columns.map((column: Column<TData, any>) => [column.id, value])
       )
     )
+    // Debounce the save operation
+    setTimeout(() => saveColumnVisibility(), 500)
   }
 
   const allColumnsVisible = columns.every((column: Column<TData, any>) => 
