@@ -213,6 +213,7 @@ export class WorkflowOrchestratorService {
         eventType: "onFinish",
         workflowId,
         transactionId: context.transactionId,
+        state: ret.transaction.getFlow().state as TransactionState,
         result,
         errors,
       })
