@@ -995,17 +995,30 @@ npx medusa db:migrate
 
 # Using TypeScript Aliases
 
-By default, Medusa doesn't support TypeScript aliases in production.
+In this chapter, you'll learn how to use TypeScript aliases in your Medusa application.
 
-If you prefer using TypeScript aliases, install following development dependencies:
+## Support for TypeScript Aliases
+
+By default, Medusa doesn't support TypeScript aliases in production. That means you may get build errors in production if you use them in your development.
+
+If you prefer using TypeScript aliases, this section will guide you through the steps to enable them in your Medusa application.
+
+### Step 1: Install Required Dependencies
+
+Start by installing the following development dependencies:
 
 ```bash npm2yarn
 npm install --save-dev tsc-alias rimraf
 ```
 
-Where `tsc-alias` is a package that resolves TypeScript aliases, and `rimraf` is a package that removes files and directories.
+Where:
 
-Then, add a new `resolve:aliases` script to your `package.json` and update the `build` script:
+- `tsc-alias` resolves TypeScript aliases.
+- `rimraf` removes files and directories.
+
+### Step 2: Update `package.json`
+
+Then, add a new `resolve:aliases` script to your `package.json` and update the existing `build` script:
 
 ```json title="package.json"
 {
@@ -1017,7 +1030,11 @@ Then, add a new `resolve:aliases` script to your `package.json` and update the `
 }
 ```
 
-You can now use TypeScript aliases in your Medusa application. For example, add the following in `tsconfig.json`:
+### Step 3: Update `tsconfig.json`
+
+Next, configure the TypeScript aliases you want to use in your `tsconfig.json` file by adding a `paths` property under `compilerOptions`.
+
+For example, to import anything under the `src` directory using type aliases, add the following in `tsconfig.json`:
 
 ```json title="tsconfig.json"
 {
@@ -1030,10 +1047,108 @@ You can now use TypeScript aliases in your Medusa application. For example, add 
 }
 ```
 
-Now, you can import modules, for example, using TypeScript aliases:
+### Step 4: Use TypeScript Aliases
+
+Then, you can use the `@` alias in your application code.
+
+For example, if you have a service in `src/modules/brand/service.ts`, you can import it like this:
 
 ```ts
 import { BrandModuleService } from "@/modules/brand/service"
+```
+
+***
+
+## Support TypeScript Aliases for Admin Customizations
+
+Medusa also doesn't support TypeScript aliases in the admin customizations by default. However, you can also configure your Medusa application to use TypeScript aliases in your admin customizations.
+
+### Step 1: Update `src/admin/tsconfig.json`
+
+Update `src/admin/tsconfig.json` to include `baseUrl` and `paths` configuration:
+
+```json title="src/admin/tsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"] 
+    }
+
+    // other options...
+  }
+}
+```
+
+The `baseUrl` option sets the base directory to `src/admin`, and the `paths` option defines the `@` alias to allow importing files from the `src/admin` directory using aliases.
+
+### Step 2: Update `medusa-config.ts`
+
+Next, update the `vite` configuration in `medusa-config.ts` to include the `resolve.alias` configuration:
+
+```ts title="medusa-config.ts"
+import path from 'path'
+
+module.exports = defineConfig({
+  // ...
+  admin: {
+    vite: () => ({
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./src/admin"),
+        },
+      },
+    }),
+  },
+})
+```
+
+Learn more about the `vite` configuration in the [Medusa configuration](https://docs.medusajs.com/learn/configurations/medusa-config/index.html.md) chapter.
+
+### Step 3: Use TypeScript Aliases in Admin Customizations
+
+You can now use the `@` alias in your admin customizations, just like you do in your main application code.
+
+For example, if you have a component in `src/admin/components/Container.tsx`, you can import it in a widget like this:
+
+```ts
+import Container from "@/components/Container"
+```
+
+### Match TSConfig and Vite Alias Configuration
+
+Make sure that the `@` alias points to the same path as in your `src/admin/tsconfig.json`.
+
+For example, if you set the `@/*` alias to point to `./components/*`:
+
+```json title="src/admin/tsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./components/*"]
+    }
+  }
+}
+```
+
+Then, the `vite` alias configuration would be:
+
+```ts title="medusa-config.ts"
+import path from 'path'
+
+module.exports = defineConfig({
+  // ...
+  admin: {
+    vite: () => ({
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./src/admin/components"),
+        },
+      },
+    }),
+  },
+})
 ```
 
 
@@ -4413,26 +4528,28 @@ The `errors` property contains an array of errors thrown during the execution of
 If you threw a `MedusaError`, then you can check the error message in `errors[0].error.message`.
 
 
-# Example: Integration Tests for a Module
+# Write Tests for Modules
 
-In this chapter, find an example of writing an integration test for a module using [moduleIntegrationTestRunner](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools/modules-tests/index.html.md) from Medusa's Testing Framework.
+In this chapter, you'll learn about `moduleIntegrationTestRunner` from Medusa's Testing Framework and how to use it to write integration tests for a module's main service.
 
 ### Prerequisites
 
 - [Testing Tools Setup](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools/index.html.md)
 
-## Write Integration Test for Module
+## moduleIntegrationTestRunner Utility
 
-Consider a `blog` module with a `BlogModuleService` that has a `getMessage` method:
+`moduleIntegrationTestRunner` creates integration tests for a module's service. The integration tests run on a test Medusa application with only the specified module enabled.
+
+For example, consider a Blog Module with a `BlogModuleService` that has a `getMessage` method:
 
 ```ts title="src/modules/blog/service.ts"
 import { MedusaService } from "@medusajs/framework/utils"
-import MyCustom from "./models/my-custom"
+import Post from "./models/post"
 
 class BlogModuleService extends MedusaService({
-  MyCustom,
+  Post,
 }){
-  getMessage(): string {
+  async getMessage(): Promise<string> {
     return "Hello, World!"
   }
 }
@@ -4440,17 +4557,17 @@ class BlogModuleService extends MedusaService({
 export default BlogModuleService
 ```
 
-To create an integration test for the method, create the file `src/modules/blog/__tests__/service.spec.ts` with the following content:
+To create an integration test for the module's service, create the file `src/modules/blog/__tests__/service.spec.ts` with the following content:
 
 ```ts title="src/modules/blog/__tests__/service.spec.ts"
 import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { BLOG_MODULE } from ".."
 import BlogModuleService from "../service"
-import MyCustom from "../models/my-custom"
+import Post from "../models/post"
 
 moduleIntegrationTestRunner<BlogModuleService>({
   moduleName: BLOG_MODULE,
-  moduleModels: [MyCustom],
+  moduleModels: [Post],
   resolve: "./src/modules/blog",
   testSuite: ({ service }) => {
     describe("BlogModuleService", () => {
@@ -4466,61 +4583,12 @@ moduleIntegrationTestRunner<BlogModuleService>({
 jest.setTimeout(60 * 1000)
 ```
 
-You use the `moduleIntegrationTestRunner` function to add tests for the `blog` module. You have one test that passes if the `getMessage` method returns the `"Hello, World!"` string.
-
-***
-
-## Run Test
-
-Run the following command to run your module integration tests:
-
-```bash npm2yarn
-npm run test:integration:modules
-```
-
-If you don't have a `test:integration:modules` script in `package.json`, refer to the [Medusa Testing Tools chapter](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools#add-test-commands/index.html.md).
-
-This runs your Medusa application and runs the tests available in any `__tests__` directory under the `src/modules` directory.
-
-
-# Write Tests for Modules
-
-In this chapter, you'll learn about `moduleIntegrationTestRunner` from Medusa's Testing Framework and how to use it to write integration tests for a module's main service.
-
-### Prerequisites
-
-- [Testing Tools Setup](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools/index.html.md)
-
-## moduleIntegrationTestRunner Utility
-
-`moduleIntegrationTestRunner` creates integration tests for a module. The integration tests run on a test Medusa application with only the specified module enabled.
-
-For example, assuming you have a `blog` module, create a test file at `src/modules/blog/__tests__/service.spec.ts`:
-
-```ts title="src/modules/blog/__tests__/service.spec.ts"
-import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
-import { BLOG_MODULE } from ".."
-import BlogModuleService from "../service"
-import Post from "../models/post"
-
-moduleIntegrationTestRunner<BlogModuleService>({
-  moduleName: BLOG_MODULE,
-  moduleModels: [Post],
-  resolve: "./src/modules/blog",
-  testSuite: ({ service }) => {
-    // TODO write tests
-  },
-})
-
-jest.setTimeout(60 * 1000)
-```
-
 The `moduleIntegrationTestRunner` function accepts as a parameter an object with the following properties:
 
-- `moduleName`: The name of the module.
+- `moduleName`: The registration name of the module.
 - `moduleModels`: An array of models in the module. Refer to [this section](#write-tests-for-modules-without-data-models) if your module doesn't have data models.
 - `resolve`: The path to the module's directory.
-- `testSuite`: A function that defines the tests to run.
+- `testSuite`: A function that defines [Jest](https://jestjs.io/) tests to run.
 
 The `testSuite` function accepts as a parameter an object having the `service` property, which is an instance of the module's main service.
 
@@ -4562,6 +4630,8 @@ moduleIntegrationTestRunner<BlogModuleService>({
 })
 ```
 
+`moduleOptions` is an object of key-value pair options that your module's service receives in its constructor.
+
 ***
 
 ## Write Tests for Modules without Data Models
@@ -4586,6 +4656,52 @@ moduleIntegrationTestRunner<BlogModuleService>({
 
 jest.setTimeout(60 * 1000)
 ```
+
+***
+
+## Inject Dependencies in Module Tests
+
+Some modules have injected dependencies, such as the [Event Module's service](https://docs.medusajs.com/resources/infrastructure-modules/event/index.html.md). When writing tests for those modules, you need to inject the dependencies that the module's service requires to avoid errors.
+
+You can inject dependencies as mock dependencies that simulate the behavior of the original service. This way you avoid unexpected behavior or results, such as sending real events or making real API calls.
+
+To inject dependencies, pass the `injectedDependencies` property to the `moduleIntegrationTestRunner` function.
+
+For example:
+
+```ts title="src/modules/blog/__tests__/service.spec.ts" highlights={mockDependenciesHighlights}
+import { MockEventBusService, moduleIntegrationTestRunner } from "@medusajs/test-utils"
+import { BLOG_MODULE } from ".."
+import BlogModuleService from "../service"
+import Post from "../models/post"
+import { Modules } from "@medusajs/framework/utils"
+
+moduleIntegrationTestRunner<BlogModuleService>({
+  moduleName: BLOG_MODULE,
+  moduleModels: [Post],
+  resolve: "./src/modules/blog",
+  injectedDependencies: {
+    [Modules.EVENT_BUS]: new MockEventBusService()
+  },
+  testSuite: ({ service }) => {
+    describe("BlogModuleService", () => {
+      it("says hello world", async () => {
+        const message = await service.getMessage()
+
+        expect(message).toEqual("Hello, World!")
+      })
+    })
+  },
+})
+
+jest.setTimeout(60 * 1000)
+```
+
+`injectedDependencies`'s value is an object whose keys are registration names of the dependencies you want to inject, and the values are the mock services.
+
+In this example, you inject a mock Event Module service into the `BlogModuleService`. Medusa exposes a `MockEventBusService` class that you can use to mock the Event Module's service.
+
+For other modules, you can create a mock service that implements the same interface as the original service. Make sure to use the same registration name as the original service when injecting it.
 
 ***
 
@@ -4678,7 +4794,7 @@ Finally, add the following scripts to `package.json`:
 "scripts": {
   // ...
   "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
-  "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+  "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
   "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit"
 },
 ```
@@ -9503,6 +9619,64 @@ So, always rollback the migration before deleting it.
 ## More Database Commands
 
 To learn more about the Medusa CLI's database commands, refer to [this CLI reference](https://docs.medusajs.com/resources/medusa-cli/commands/db/index.html.md).
+
+***
+
+## Data Migration Scripts
+
+In some use cases, you may need to perform data migration after updates to the database. For example, after you added a `Site` data model to the Blog Module, you want to assign all existing posts and authors to a default site. Another example is updating data stored in a third-party system.
+
+In those scenarios, you can instead create a data migration script. They are asynchronous function that the Medusa application executes once when you run the `npx medusa db:migrate command`.
+
+### How to Create a Data Migration Script
+
+You can create data migration scripts in a TypeScript or JavaScript file under the `src/migration-scripts` directory. The file must export an asynchronous function that will be executed when the `db:migrate` command is executed.
+
+For example, to create a data migration script for the Blog Module example, create the file `src/migration-scripts/migrate-blog-data.ts` with the following content:
+
+```ts title="src/migration-scripts/migrate-blog-data.ts" highlights={dataMigrationHighlights}
+import { MedusaModule } from "@medusajs/framework/modules-sdk";
+import { ExecArgs } from "@medusajs/framework/types";
+import { BLOG_MODULE } from "../modules/blog";
+import { createWorkflow } from "@medusajs/framework/workflows-sdk";
+
+export default async function migrateBlogData({ container }: ExecArgs) {
+  // Check that the blog module exists
+  if (!MedusaModule.isInstalled(BLOG_MODULE)) {
+    return
+  }
+
+  await migrateBlogDataWorkflow(container).run({})
+}
+
+const migrateBlogDataWorkflow = createWorkflow(
+  "migrate-blog-data",
+  () => {
+    // Assuming you have these steps
+    createDefaultSiteStep()
+
+    assignBlogDataToSiteStep()
+  }
+)
+```
+
+In the above example, you default export an asynchronous function that receives an object parameter with the [Medusa Container](https://docs.medusajs.com/learn/fundamentals/medusa-container/index.html.md) property.
+
+In the function, you first ensure that the Blog Module is installed to avoid errors otherwise. Then, you run a workflow that you've created in the same file that performs the necessary data migration.
+
+#### Test Data Migration Script
+
+To test out the data migration script, run the migration command:
+
+```bash
+npx medusa db:migrate
+```
+
+Medusa will run any pending migrations and migration scripts, including your script.
+
+If the script runs successfully, Medusa won't run the script again.
+
+If there are errors in the script, you'll receive an error in the migration script logs. Medusa will keep running the script every time you run the migration command until it runs successfully.
 
 
 # Environment Variables
@@ -16008,11 +16182,17 @@ The next time you start the Medusa application, it will run this job every day a
 
 In this chapter, you'll learn how to expose a hook in your workflow.
 
-## When to Expose a Hook
+Refer to the [Workflow Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/workflow-hooks/index.html.md) chapter to learn what a workflow hook is and how to consume Medusa's workflow hooks.
 
-Your workflow is reusable in other applications, and you allow performing an external action at some point in your workflow.
+## When to Expose a Hook?
 
-Your workflow isn't reusable by other applications. Use a step that performs what a hook handler would instead.
+Medusa exposes hooks in many of its workflows to allow you to inject custom functionality.
+
+You can also expose your own hooks in your workflows to allow other developers to consume them. This is useful when you're creating a workflow in a [plugin](https://docs.medusajs.com/learn/fundamentals/plugins/index.html.md) and you want plugin users to extend the workflow's functionality.
+
+For example, you are creating a blog plugin and you want to allow developers to perform custom validation before a blog post is created. You can expose a hook in your workflow that developers can consume to perform their custom validation.
+
+If your workflow is not in a plugin, you probably don't need to expose a hook as you can perform the necessary actions directly in the workflow.
 
 ***
 
@@ -16022,26 +16202,26 @@ To expose a hook in your workflow, use `createHook` from the Workflows SDK.
 
 For example:
 
-```ts title="src/workflows/my-workflow/index.ts" highlights={hookHighlights}
+```ts title="src/workflows/create-blog-post/index.ts" highlights={hookHighlights}
 import {
   createStep,
   createHook,
   createWorkflow,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createProductStep } from "./steps/create-product"
+import { createPostStep } from "./steps/create-post"
 
-export const myWorkflow = createWorkflow(
-  "my-workflow", 
+export const createBlogPostWorkflow = createWorkflow(
+  "create-blog-post", 
   function (input) {
-    const product = createProductStep(input)
-    const productCreatedHook = createHook(
-      "productCreated", 
-      { productId: product.id }
+    const validate = createHook(
+      "validate", 
+      { post: input }
     )
+    const post = createPostStep(input)
 
-    return new WorkflowResponse(product, {
-      hooks: [productCreatedHook],
+    return new WorkflowResponse(post, {
+      hooks: [validate],
     })
   }
 )
@@ -16049,28 +16229,60 @@ export const myWorkflow = createWorkflow(
 
 The `createHook` function accepts two parameters:
 
-1. The first is a string indicating the hook's name. You use this to consume the hook later.
-2. The second is the input to pass to the hook handler.
+1. The first is a string indicating the hook's name. Developers consuming the hook will use this name to access the hook.
+2. The second is the input to pass to the hook handler. Developers consuming the hook will receive this input in the hook handler.
 
-The workflow must also pass an object having a `hooks` property as a second parameter to the `WorkflowResponse` constructor. Its value is an array of the workflow's hooks.
+You must also return the hook in the workflow's response by passing a `hooks` property to the `WorkflowResponse`'s second parameter object. Its value is an array of the workflow's hooks.
 
 ### How to Consume the Hook?
 
-To consume the hook of the workflow, create the file `src/workflows/hooks/my-workflow.ts` with the following content:
+To consume the hook of the workflow, create the file `src/workflows/hooks/create-blog-post.ts` with the following content:
 
-```ts title="src/workflows/hooks/my-workflow.ts" highlights={handlerHighlights}
-import { myWorkflow } from "../my-workflow"
+```ts title="src/workflows/hooks/create-blog-post.ts" highlights={handlerHighlights}
+import { MedusaError } from "@medusajs/framework/utils"
+import { createBlogPostWorkflow } from "../create-blog-post"
 
-myWorkflow.hooks.productCreated(
-  async ({ productId }, { container }) => {
+createBlogPostWorkflow.hooks.validate(
+  async ({ post }, { container }) => {
     // TODO perform an action
+    if (!post.additional_data.custom_title) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        "Custom title is required"
+      )
+    }
   }
 )
 ```
 
-The hook is available on the workflow's `hooks` property using its name `productCreated`.
+The hook is available on the workflow's `hooks` property using its name `validate`.
 
 You invoke the hook, passing a step function (the hook handler) as a parameter.
+
+The hook handler is essentially a step function. You can perform in it any actions you perform in a step. For example, you can throw an error, which would stop the workflow execution.
+
+You can also access the Medusa container in the hook handler to perform actions like using Query or module services.
+
+For example:
+
+```ts title="src/workflows/hooks/create-blog-post.ts"
+import { createBlogPostWorkflow } from "../create-blog-post"
+
+createBlogPostWorkflow.hooks.validate(
+  async ({ post }, { container }) => {
+    const query = container.resolve("query")
+
+    const { data: existingPosts } = await query.graph({
+      entity: "post",
+      fields: ["*"],
+    })
+
+    // TODO do something with existing posts...
+  }
+)
+```
+
+Learn more about the hook handler in the [Workflow Hooks](https://docs.medusajs.com/learn/fundamentals/workflows/workflow-hooks/index.html.md) chapter.
 
 
 # Compensation Function
@@ -29457,25 +29669,31 @@ Learn more about workflows in [this documentation](https://docs.medusajs.com/doc
 
 # Configure Selling Products
 
-In this guide, you'll learn how to set up and configure your products based on their shipping and inventory requirements, the product type, how you want to sell them, or your commerce ecosystem.
+In this guide, you'll learn how to set up and configure your products based on their shipping and inventory requirements, their type, how you want to sell them, or your commerce ecosystem.
 
-The concepts in this guide are applicable starting from Medusa v2.5.1.
+The concepts in this guide are applicable starting from [Medusa v2.5.1](https://github.com/medusajs/medusa/releases/tag/v2.5.1).
 
 ## Scenario
 
-Businesses can have different selling requirements:
+Businesses can have different selling requirements. They may sell:
 
-1. They may sell physical or digital items.
-2. They may sell items that don't require shipping or inventory management, such as selling digital products, services, or booking appointments.
-3. They may sell items whose inventory is managed by an external system, such as an ERP.
+1. Physical or digital items.
+2. Items that don't require shipping or inventory management, such as selling digital products, services, or booking appointments.
+3. Items whose inventory is managed by an external system, such as an ERP.
 
-Medusa supports these different selling requirements by allowing you to configure shipping and inventory requirements for products and their variants. This guide explains how these configurations work, then provides examples of setting up different use cases.
+Medusa supports these different selling requirements by allowing you to configure shipping and inventory requirements for products and their variants.
+
+This guide explains how these configurations work, then provides examples of setting up different use cases.
 
 ***
 
 ## Configuring Shipping Requirements
 
-The Medusa application defines a link between the `Product` data model and a [ShippingProfile](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/fulfillment/concepts#shipping-profile/index.html.md) in the [Fulfillment Module](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/fulfillment/index.html.md), allowing you to associate a product with a shipping profile.
+### Product Shipping Requirement
+
+The Medusa application defines a link between the `Product` data model and the [ShippingProfile](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/fulfillment/concepts#shipping-profile/index.html.md) data model in the [Fulfillment Module](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/fulfillment/index.html.md), allowing you to associate a product with a shipping profile.
+
+![Diagram showcasing the link between a product and its shipping profile](https://res.cloudinary.com/dza7lstvk/image/upload/v1752827367/Medusa%20Resources/product-shipping-requirement_cpfpkz.jpg)
 
 When a product is associated with a shipping profile, its variants require shipping and fulfillment when purchased. This is useful for physical products or digital products that require custom fulfillment.
 
@@ -29483,14 +29701,31 @@ If a product doesn't have an associated shipping profile, its variants don't req
 
 ### Overriding Shipping Requirements for Variants
 
-A product variant whose inventory is managed by Medusa (its `manage_inventory` property is enabled) has an [inventory item](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/inventory/concepts#inventoryitem/index.html.md). The inventory item has a `requires_shipping` property that can be used to override its shipping requirement. This is useful if the product has an associated shipping profile but you want to disable shipping for a specific variant, or vice versa.
+A product variant whose inventory is managed by Medusa (its `manage_inventory` property is enabled) has an [inventory item](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/inventory/concepts#inventoryitem/index.html.md).
 
-Learn more about product variant's inventory in [this guide](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/product/variant-inventory/index.html.md).
+The inventory item has a `requires_shipping` property that can be used to override the variant's shipping requirement. This is useful if the product has an associated shipping profile but you want to disable shipping for a specific variant, or vice versa.
 
-When a product variant is purchased, the Medusa application decides whether the purchased item requires shipping in the following order:
+![Diagram showcasing the link between a product variant and its inventory item, and the inventory item's shipping requirement](https://res.cloudinary.com/dza7lstvk/image/upload/v1752828341/Medusa%20Resources/product-variant-shipping-requirement_ux5y44.jpg)
 
-1. The product variant has an inventory item. In this case, the Medusa application uses the inventory item's `requires_shipping` property to determine if the item requires shipping.
+Refer to the [Product Variant Inventory](https://docs.medusajs.com/Users/shahednasser/medusa/www/apps/resources/app/commerce-modules/product/variant-inventory/index.html.md) guide to learn more.
+
+When a product variant is purchased, the Medusa application decides whether the purchased item requires shipping based on the following conditions (in the following order):
+
+1. If the product variant has an inventory item, the Medusa application uses the inventory item's `requires_shipping` property to determine if the item requires shipping.
 2. If the product variant doesn't have an inventory item, the Medusa application checks whether the product has an associated shipping profile to determine if the item requires shipping.
+
+![Diagram showcasing the conditions that determine whether a product variant requires shipping](https://res.cloudinary.com/dza7lstvk/image/upload/v1752828969/Medusa%20Resources/shipping-requirement-check_fdh6lp.jpg)
+
+### Shipping Requirements vs Shipping Options
+
+The shipping options that you retrieve during checkout depend on the cart's shipping address. So, whether the items in the cart require shipping doesn't affect what shipping options are available at checkout.
+
+This is a common misconception, where you expect to not receive any shipping options at checkout if the cart doesn't have any items that require shipping. However, the Medusa application always returns shipping options based on the cart's shipping address.
+
+If you want to show the shipping options only if the cart has items that require shipping, you can either:
+
+- Create a custom [API route](https://docs.medusajs.com/docs/learn/fundamentals/api-routes/index.html.md) that checks whether the cart has items that require shipping.
+- Perform this check in your storefront's frontend code, such as in the checkout page, and show or hide the shipping options accordingly.
 
 ***
 

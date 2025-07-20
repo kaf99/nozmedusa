@@ -6106,6 +6106,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
+              "title": "Implement Pre-Orders",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/preorder",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
               "title": "Implement Quote Management",
               "path": "https://docs.medusajs.com/resources/examples/guides/quote-management",
               "children": []
@@ -11475,6 +11483,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "type": "ref",
               "title": "Implement Custom Line Item Pricing in Medusa",
               "path": "https://docs.medusajs.com/resources/examples/guides/custom-item-price",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Implement Pre-Order Products",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/preorder",
               "children": []
             },
             {

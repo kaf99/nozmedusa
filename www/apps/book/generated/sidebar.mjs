@@ -1117,18 +1117,7 @@ export const generatedSidebars = [
             "type": "link",
             "path": "/learn/debugging-and-testing/testing-tools/modules-tests",
             "title": "Modules Tests",
-            "children": [
-              {
-                "loaded": true,
-                "isPathHref": true,
-                "type": "link",
-                "path": "/learn/debugging-and-testing/testing-tools/modules-tests/module-example",
-                "title": "Example",
-                "children": [],
-                "chapterTitle": "7.3.1. Example",
-                "number": "7.3.1."
-              }
-            ],
+            "children": [],
             "chapterTitle": "7.3. Modules Tests",
             "number": "7.3."
           },
