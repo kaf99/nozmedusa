@@ -54,10 +54,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <DisplayIdCell displayId={id!} />
         },
-        meta: {
-          name: "Order",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("created_at", {
         header: () => <DateHeader />,
@@ -66,10 +62,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <DateCell date={date} />
         },
-        meta: {
-          name: "Date",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("customer", {
         header: () => <CustomerHeader />,
@@ -78,10 +70,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <CustomerCell customer={customer} />
         },
-        meta: {
-          name: "Customer",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("sales_channel", {
         header: () => <SalesChannelHeader />,
@@ -90,10 +78,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <SalesChannelCell channel={channel} />
         },
-        meta: {
-          name: "Sales Channel",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("payment_status", {
         header: () => <PaymentStatusHeader />,
@@ -102,10 +86,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <PaymentStatusCell status={status} />
         },
-        meta: {
-          name: "Payment Status",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("fulfillment_status", {
         header: () => <FulfillmentStatusHeader />,
@@ -114,10 +94,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <FulfillmentStatusCell status={status} />
         },
-        meta: {
-          name: "Fulfillment Status",
-        },
-        enableHiding: true,
       }),
       columnHelper.accessor("total", {
         header: () => <TotalHeader />,
@@ -127,10 +103,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <TotalCell currencyCode={currencyCode} total={total} />
         },
-        meta: {
-          name: "Total",
-        },
-        enableHiding: true,
       }),
       columnHelper.display({
         id: "actions",
@@ -139,10 +111,6 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
 
           return <CountryCell country={country} />
         },
-        meta: {
-          name: "Country",
-        },
-        enableHiding: true,
       }),
     ],
     []
