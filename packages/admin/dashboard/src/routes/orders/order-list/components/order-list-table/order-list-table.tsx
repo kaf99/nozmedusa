@@ -11,8 +11,10 @@ import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-ord
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 import { getDisplayStrategy, getEntityAccessor } from "../../../../../components/data-table/display-strategies"
 import { ViewConfiguration } from "../../../../../providers/view-configuration-provider"
+import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 
 import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../const"
+import { OrderListTableLegacy } from "./order-list-table-legacy"
 
 const PAGE_SIZE = 20
 
@@ -20,6 +22,12 @@ const columnHelper = createDataTableColumnHelper<HttpTypes.AdminOrder>()
 
 export const OrderListTable = () => {
   const { t } = useTranslation()
+  const isViewConfigEnabled = useFeatureFlag("view_configurations")
+  
+  // If feature flag is disabled, use legacy table
+  if (!isViewConfigEnabled) {
+    return <OrderListTableLegacy />
+  }
   const { searchParams, raw } = useOrderTableQuery({
     pageSize: PAGE_SIZE,
   })

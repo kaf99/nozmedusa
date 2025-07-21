@@ -12,7 +12,6 @@ interface DataTableProps<TData>
   pageSize: number
   queryObject?: Record<string, any>
   noRecords?: Pick<NoResultsProps, "title" | "message">
-  enableColumnVisibility?: boolean
 }
 
 // Maybe we should use the memoized version of DataTableRoot
@@ -39,11 +38,6 @@ export const _DataTable = <TData,>({
   noHeader = false,
   layout = "fit",
   noRecords: noRecordsProps = {},
-  enableColumnVisibility = false,
-  enableViewSelector = false,
-  entity,
-  onViewChange,
-  currentColumns,
 }: DataTableProps<TData>) => {
   if (isLoading) {
     return (
@@ -85,12 +79,6 @@ export const _DataTable = <TData,>({
         orderBy={orderBy}
         filters={filters}
         prefix={prefix}
-        table={table}
-        enableColumnVisibility={enableColumnVisibility}
-        enableViewSelector={enableViewSelector}
-        entity={entity}
-        onViewChange={onViewChange}
-        currentColumns={currentColumns}
       />
       <DataTableRoot
         table={table}

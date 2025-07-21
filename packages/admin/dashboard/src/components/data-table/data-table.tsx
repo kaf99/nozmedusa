@@ -25,6 +25,7 @@ import { useQueryParams } from "../../hooks/use-query-params"
 import { ActionMenu } from "../common/action-menu"
 import { ViewConfiguration } from "../../providers/view-configuration-provider"
 import { ViewSelector } from "../table/view-selector"
+import { useFeatureFlag } from "../../providers/feature-flag-provider"
 
 type DataTableActionProps = {
   label: string
@@ -130,6 +131,11 @@ export const DataTable = <TData,>({
   currentColumns,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
+  const isViewConfigEnabled = useFeatureFlag("view_configurations")
+
+  // If view config is disabled, don't use column visibility features
+  const effectiveEnableColumnVisibility = isViewConfigEnabled && enableColumnVisibility
+  const effectiveEnableViewSelector = isViewConfigEnabled && enableViewSelector
 
   const enableFiltering = filters && filters.length > 0
   const enableCommands = commands && commands.length > 0
@@ -314,13 +320,13 @@ export const DataTable = <TData,>({
       : undefined,
     rowSelection,
     isLoading,
-    columnVisibility: enableColumnVisibility
+    columnVisibility: effectiveEnableColumnVisibility
       ? {
           state: columnVisibility,
           onColumnVisibilityChange: handleColumnVisibilityChange,
         }
       : undefined,
-    columnOrder: columnOrder && onColumnOrderChange
+    columnOrder: effectiveEnableColumnVisibility && columnOrder && onColumnOrderChange
       ? {
           state: columnOrder,
           onColumnOrderChange: onColumnOrderChange,
@@ -359,8 +365,8 @@ export const DataTable = <TData,>({
             {enableSorting && (
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
-            {enableViewSelector && entity && (
+            {effectiveEnableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {effectiveEnableViewSelector && entity && (
               <ViewSelector 
                 entity={entity} 
                 onViewChange={onViewChange} 
@@ -387,8 +393,8 @@ export const DataTable = <TData,>({
             {enableSorting && (
               <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {enableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
-            {enableViewSelector && entity && (
+            {effectiveEnableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {effectiveEnableViewSelector && entity && (
               <ViewSelector 
                 entity={entity} 
                 onViewChange={onViewChange} 

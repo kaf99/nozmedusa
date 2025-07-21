@@ -9,8 +9,15 @@ import {
   AdminGetActiveViewConfigurationParams,
   AdminGetViewConfigurationsParams,
 } from "./validators"
+import { ensureViewConfigurationsEnabled } from "./middleware"
 
 export const viewConfigurationRoutesMiddlewares: MiddlewareRoute[] = [
+  // Apply feature flag check to all view configuration routes
+  {
+    method: ["GET", "POST", "DELETE"],
+    matcher: "/admin/view-configurations*",
+    middlewares: [ensureViewConfigurationsEnabled],
+  },
   {
     method: ["GET"],
     matcher: "/admin/view-configurations",

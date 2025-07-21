@@ -2,16 +2,23 @@ import { PropsWithChildren, useCallback, useRef, useState } from "react"
 import { ViewConfigurationContext, ViewConfiguration } from "./view-configuration-context"
 import { sdk } from "../../lib/client"
 import { toast } from "@medusajs/ui"
+import { useFeatureFlag } from "../feature-flag-provider"
 
 export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
   const [viewConfigurations] = useState<Map<string, ViewConfiguration[]>>(new Map())
   const [activeViews] = useState<Map<string, ViewConfiguration>>(new Map())
   const [isLoading] = useState<Map<string, boolean>>(new Map())
+  const isViewConfigEnabled = useFeatureFlag("view_configurations")
   
   // Use ref to track ongoing requests to prevent duplicate fetches
   const fetchingRef = useRef<Map<string, Promise<ViewConfiguration[]>>>(new Map())
 
   const getViewConfigurations = useCallback(async (entity: string): Promise<ViewConfiguration[]> => {
+    // Return empty array if feature is disabled
+    if (!isViewConfigEnabled) {
+      return []
+    }
+    
     // Check cache first
     if (viewConfigurations.has(entity)) {
       return viewConfigurations.get(entity)!
@@ -44,9 +51,14 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
 
     fetchingRef.current.set(entity, fetchPromise)
     return fetchPromise
-  }, [viewConfigurations, isLoading])
+  }, [viewConfigurations, isLoading, isViewConfigEnabled])
 
   const getActiveView = useCallback(async (entity: string): Promise<ViewConfiguration | null> => {
+    // Return null if feature is disabled
+    if (!isViewConfigEnabled) {
+      return null
+    }
+    
     // Check cache first
     if (activeViews.has(entity)) {
       return activeViews.get(entity)
@@ -63,9 +75,14 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       console.error("Failed to fetch active view configuration:", error)
       return null
     }
-  }, [activeViews])
+  }, [activeViews, isViewConfigEnabled])
 
   const setActiveView = useCallback(async (entity: string, viewConfigurationId: string) => {
+    // Do nothing if feature is disabled
+    if (!isViewConfigEnabled) {
+      return
+    }
+    
     try {
       await sdk.admin.viewConfiguration.setActive({
         entity,
@@ -82,11 +99,16 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       console.error("Failed to set active view configuration:", error)
       toast.error("Failed to set active view")
     }
-  }, [activeViews, getViewConfigurations])
+  }, [activeViews, getViewConfigurations, isViewConfigEnabled])
 
   const createViewConfiguration = useCallback(async (
     config: Omit<ViewConfiguration, "id" | "created_at" | "updated_at">
   ): Promise<ViewConfiguration> => {
+    // Throw error if feature is disabled
+    if (!isViewConfigEnabled) {
+      throw new Error("View configurations feature is not enabled")
+    }
+    
     try {
       const response = await sdk.admin.viewConfiguration.create(config)
       const newConfig = response.view_configuration
@@ -101,12 +123,17 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       toast.error(errorMessage)
       throw error
     }
-  }, [viewConfigurations])
+  }, [viewConfigurations, isViewConfigEnabled])
 
   const updateViewConfiguration = useCallback(async (
     id: string, 
     config: Partial<ViewConfiguration>
   ): Promise<ViewConfiguration> => {
+    // Throw error if feature is disabled
+    if (!isViewConfigEnabled) {
+      throw new Error("View configurations feature is not enabled")
+    }
+    
     try {
       const response = await sdk.admin.viewConfiguration.update(id, config)
       const updatedConfig = response.view_configuration
@@ -128,9 +155,14 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       toast.error(errorMessage)
       throw error
     }
-  }, [viewConfigurations, activeViews])
+  }, [viewConfigurations, activeViews, isViewConfigEnabled])
 
   const deleteViewConfiguration = useCallback(async (id: string) => {
+    // Throw error if feature is disabled
+    if (!isViewConfigEnabled) {
+      throw new Error("View configurations feature is not enabled")
+    }
+    
     try {
       // First get the config to know which entity to invalidate
       const configs = Array.from(viewConfigurations.values()).flat()
@@ -152,7 +184,7 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       toast.error("Failed to delete view")
       throw error
     }
-  }, [viewConfigurations, activeViews])
+  }, [viewConfigurations, activeViews, isViewConfigEnabled])
 
   const invalidateCache = useCallback((entity: string) => {
     viewConfigurations.delete(entity)
