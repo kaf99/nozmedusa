@@ -14,16 +14,11 @@ export const GET = async (
   
   const flags = featureFlagRouter.listFlags()
   
-  // Debug logging
-  console.log("All feature flags:", flags)
-  
   // Convert array of flags to a simple key-value object
   const featureFlags: Record<string, boolean> = {}
   flags.forEach(flag => {
     featureFlags[flag.key] = flag.value
   })
-  
-  console.log("view_configurations flag value:", featureFlags.view_configurations)
   
   res.json({ feature_flags: featureFlags })
 }

@@ -124,7 +124,6 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
         onSaved(created)
       }
     } catch (error) {
-      console.error("Failed to save view:", error)
       toast.error("Failed to save view")
     } finally {
       setIsLoading(false)

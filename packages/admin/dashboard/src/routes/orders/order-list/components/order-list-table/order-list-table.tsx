@@ -9,7 +9,7 @@ import { useOrders } from "../../../../../hooks/api/orders"
 import { useOrderColumns } from "../../../../../hooks/api/views"
 import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
-import { getDisplayStrategy, getEntityAccessor } from "../../../../../components/data-table/display-strategies"
+import { getDisplayStrategy, getEntityAccessor } from "../../../../../lib/table-display-utils"
 import { ViewConfiguration } from "../../../../../providers/view-configuration-provider"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 
@@ -95,20 +95,9 @@ export const OrderListTable = () => {
     // Combine all additional fields
     const additionalFields = [...additionalRelationshipFields, ...additionalDirectFields]
     
-    // Debug logging
-    console.log('🔍 Column Debug:', {
-      visibleColumnObjects,
-      requiredFieldsSet: Array.from(requiredFieldsSet),
-      additionalDirectFields,
-      additionalRelationshipFields,
-      additionalFields,
-      visibleColumnsState: visibleColumns
-    })
-    
     // Combine default fields with additional needed fields
     if (additionalFields.length > 0) {
       const finalFields = `${DEFAULT_FIELDS},${additionalFields.join(',')}`
-      console.log('📊 Final Fields:', finalFields)
       return finalFields
     }
     

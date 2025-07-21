@@ -43,7 +43,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       fetchingRef.current.delete(entity)
       return configs
     }).catch(error => {
-      console.error("Failed to fetch view configurations:", error)
       isLoading.set(entity, false)
       fetchingRef.current.delete(entity)
       return []
@@ -72,7 +71,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       }
       return config
     } catch (error) {
-      console.error("Failed to fetch active view configuration:", error)
       return null
     }
   }, [activeViews, isViewConfigEnabled])
@@ -96,7 +94,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
         activeViews.set(entity, activeConfig)
       }
     } catch (error) {
-      console.error("Failed to set active view configuration:", error)
       toast.error("Failed to set active view")
     }
   }, [activeViews, getViewConfigurations, isViewConfigEnabled])
@@ -118,7 +115,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       
       return newConfig
     } catch (error: any) {
-      console.error("Failed to create view configuration:", error)
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to create view"
       toast.error(errorMessage)
       throw error
@@ -150,7 +146,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       
       return updatedConfig
     } catch (error: any) {
-      console.error("Failed to update view configuration:", error)
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to update view"
       toast.error(errorMessage)
       throw error
@@ -180,7 +175,6 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
         }
       }
     } catch (error) {
-      console.error("Failed to delete view configuration:", error)
       toast.error("Failed to delete view")
       throw error
     }

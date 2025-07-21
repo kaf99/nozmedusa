@@ -2,8 +2,7 @@ import { Button, Checkbox, DropdownMenu } from "@medusajs/ui"
 import { Adjustments, Spinner } from "@medusajs/icons"
 import { Table as ReactTable, Column } from "@tanstack/react-table"
 import { useEntityColumns } from "../../../../hooks/api"
-import { useState, useEffect, useCallback } from "react"
-import { sdk } from "../../../../lib/client"
+import { useState, useCallback } from "react"
 import { toast } from "@medusajs/ui"
 
 interface DataTableColumnVisibilityProps<TData> {
@@ -53,7 +52,6 @@ export const DataTableColumnVisibility = <TData,>({
 
       toast.success("Column preferences saved")
     } catch (error) {
-      console.error("Failed to save column visibility:", error)
       toast.error("Failed to save column preferences")
     } finally {
       setIsSaving(false)

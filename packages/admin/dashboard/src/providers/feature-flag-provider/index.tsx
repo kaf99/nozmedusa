@@ -33,20 +33,8 @@ interface FeatureFlagProviderProps {
 export const FeatureFlagProvider: React.FC<FeatureFlagProviderProps> = ({ children }) => {
   const { data: flags = {}, isLoading, error } = useFeatureFlags()
 
-  // Debug logging
-  React.useEffect(() => {
-    if (!isLoading) {
-      console.log("Feature flags loaded:", flags)
-      console.log("view_configurations flag:", flags.view_configurations)
-    }
-    if (error) {
-      console.error("Error loading feature flags:", error)
-    }
-  }, [flags, isLoading, error])
-
   const isFeatureEnabled = (flag: keyof FeatureFlags): boolean => {
     const enabled = flags[flag] === true
-    console.log(`Checking feature flag ${flag}:`, enabled)
     return enabled
   }
 
