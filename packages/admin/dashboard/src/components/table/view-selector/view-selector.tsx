@@ -16,6 +16,7 @@ import {
   PencilSquare,
   Star,
   CheckCircleSolid,
+  ArrowUturnLeft,
 } from "@medusajs/icons"
 import { useViewConfiguration } from "../../../providers/view-configuration-provider"
 import { ViewConfiguration } from "../../../providers/view-configuration-provider"
@@ -112,6 +113,31 @@ export const ViewSelector: React.FC<ViewSelectorProps> = ({
     setSaveDialogOpen(true)
   }
 
+  const handleResetSystemDefault = async (systemDefaultView: ViewConfiguration) => {
+    const result = await prompt({
+      title: "Reset system default",
+      description: "This will delete the saved system default and revert to the original code-level defaults. All users will be affected. Are you sure?",
+      confirmText: "Reset",
+      cancelText: "Cancel",
+    })
+
+    if (result) {
+      try {
+        await deleteViewConfiguration(systemDefaultView.id)
+        setViews(views.filter(v => v.id !== systemDefaultView.id))
+        if (activeView?.id === systemDefaultView.id) {
+          setActiveViewState(null)
+          if (onViewChange) {
+            onViewChange(null)
+          }
+        }
+        toast.success("System default reset to code-level defaults")
+      } catch (error) {
+        toast.error("Failed to reset system default")
+      }
+    }
+  }
+
   const systemDefaultView = views.find(v => v.is_system_default)
   const personalViews = views.filter(v => !v.is_system_default)
 
@@ -131,15 +157,31 @@ export const ViewSelector: React.FC<ViewSelectorProps> = ({
                 <DropdownMenu.Label>System Default</DropdownMenu.Label>
                 <DropdownMenu.Item
                   onClick={() => handleViewSelect(systemDefaultView.id)}
-                  className="justify-between"
+                  className="justify-between group"
                 >
                   <span className="flex items-center gap-2">
                     <Star className="h-4 w-4" />
-                    {systemDefaultView.name}
+                    {systemDefaultView.name || "System Default"}
                   </span>
-                  {activeView?.id === systemDefaultView.id && (
-                    <CheckCircleSolid className="h-4 w-4 text-ui-fg-positive" />
-                  )}
+                  <div className="flex items-center gap-1">
+                    {activeView?.id === systemDefaultView.id && (
+                      <CheckCircleSolid className="h-4 w-4 text-ui-fg-positive" />
+                    )}
+                    <div className="opacity-0 group-hover:opacity-100">
+                      <Tooltip content="Reset to code defaults">
+                        <Button
+                          variant="transparent"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleResetSystemDefault(systemDefaultView)
+                          }}
+                        >
+                          <ArrowUturnLeft className="h-3 w-3" />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  </div>
                 </DropdownMenu.Item>
                 {personalViews.length > 0 && <DropdownMenu.Separator />}
               </>

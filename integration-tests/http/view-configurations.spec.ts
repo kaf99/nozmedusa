@@ -737,6 +737,56 @@ medusaIntegrationTestRunner({
             personalView.data.view_configuration.configuration
           )
         })
+
+        it("should allow resetting system default to code-level defaults", async () => {
+          // Create a system default view
+          const systemDefaultView = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "Custom System Default",
+              is_system_default: true,
+              configuration: {
+                visible_columns: ["id", "status", "total"],
+                column_order: ["status", "total", "id"],
+              },
+            },
+            adminHeaders
+          )
+
+          expect(systemDefaultView.status).toEqual(201)
+          const viewId = systemDefaultView.data.view_configuration.id
+
+          // Verify it exists
+          let viewsList = await api.get(
+            "/admin/view-configurations?entity=orders",
+            adminHeaders
+          )
+          expect(viewsList.data.view_configurations.some((v: any) => v.id === viewId)).toBe(true)
+
+          // Delete the system default view (reset to code defaults)
+          const deleteResponse = await api.delete(
+            `/admin/view-configurations/${viewId}`,
+            adminHeaders
+          )
+
+          expect(deleteResponse.status).toEqual(200)
+          expect(deleteResponse.data.deleted).toBe(true)
+
+          // Verify it's gone
+          viewsList = await api.get(
+            "/admin/view-configurations?entity=orders",
+            adminHeaders
+          )
+          expect(viewsList.data.view_configurations.some((v: any) => v.id === viewId)).toBe(false)
+
+          // Getting active view should return null (falls back to code defaults)
+          const activeView = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            adminHeaders
+          )
+          expect(activeView.data.view_configuration).toBeNull()
+        })
       })
     })
   },
