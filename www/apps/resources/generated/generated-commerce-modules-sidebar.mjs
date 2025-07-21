@@ -6106,6 +6106,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
+              "title": "Implement Pre-Orders",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/preorder",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
               "title": "Implement Quote Management",
               "path": "https://docs.medusajs.com/resources/examples/guides/quote-management",
               "children": []
@@ -9221,14 +9229,6 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "loaded": true,
               "isPathHref": true,
               "type": "ref",
-              "title": "Customize the Stripe Integration in the Next.js Starter",
-              "path": "https://docs.medusajs.com/resources/nextjs-starter/guides/customize-stripe",
-              "children": []
-            },
-            {
-              "loaded": true,
-              "isPathHref": true,
-              "type": "ref",
               "title": "Implement Express Checkout with Medusa",
               "path": "https://docs.medusajs.com/resources/storefront-development/guides/express-checkout",
               "children": []
@@ -9239,6 +9239,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "type": "ref",
               "title": "Payment with Stripe in React Storefront",
               "path": "https://docs.medusajs.com/resources/storefront-development/checkout/payment/stripe",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Use Stripe's Payment Element in the Next.js Starter Storefront",
+              "path": "https://docs.medusajs.com/resources/nextjs-starter/guides/customize-stripe",
               "children": []
             }
           ]
@@ -11475,6 +11483,14 @@ const generatedgeneratedCommerceModulesSidebarSidebar = {
               "type": "ref",
               "title": "Implement Custom Line Item Pricing in Medusa",
               "path": "https://docs.medusajs.com/resources/examples/guides/custom-item-price",
+              "children": []
+            },
+            {
+              "loaded": true,
+              "isPathHref": true,
+              "type": "ref",
+              "title": "Implement Pre-Order Products",
+              "path": "https://docs.medusajs.com/resources/how-to-tutorials/tutorials/preorder",
               "children": []
             },
             {

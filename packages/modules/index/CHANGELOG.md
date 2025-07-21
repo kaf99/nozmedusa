@@ -1,5 +1,16 @@
 # @medusajs/index
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12889](https://github.com/medusajs/medusa/pull/12889) [`2f70f133511857b499a992b65a0a4d6170e03ab9`](https://github.com/medusajs/medusa/commit/2f70f133511857b499a992b65a0a4d6170e03ab9) Thanks [@adrien2p](https://github.com/adrien2p)! - fix(): Order constraint and receive return
+
+- [#12888](https://github.com/medusajs/medusa/pull/12888) [`fa76f85bba253528964bacf86c061fef6d3d0742`](https://github.com/medusajs/medusa/commit/fa76f85bba253528964bacf86c061fef6d3d0742) Thanks [@carlos-r-l-rodrigues](https://github.com/carlos-r-l-rodrigues)! - fix(index): merge filterable fields with default fields
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.7
+
 ## 2.8.6
 
 ### Patch Changes

@@ -1731,6 +1731,7 @@ medusaIntegrationTestRunner({
             {
               code: "TEST_TWO",
               application_method: { value: 200 },
+              is_tax_inclusive: true,
             },
             adminHeaders
           )
@@ -1743,6 +1744,7 @@ medusaIntegrationTestRunner({
               application_method: expect.objectContaining({
                 value: 200,
               }),
+              is_tax_inclusive: true,
             })
           )
         })

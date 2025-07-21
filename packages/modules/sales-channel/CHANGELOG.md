@@ -1,5 +1,14 @@
 # @medusajs/sales-channel
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12889](https://github.com/medusajs/medusa/pull/12889) [`2f70f133511857b499a992b65a0a4d6170e03ab9`](https://github.com/medusajs/medusa/commit/2f70f133511857b499a992b65a0a4d6170e03ab9) Thanks [@adrien2p](https://github.com/adrien2p)! - fix(): Order constraint and receive return
+
+- Updated dependencies []:
+  - @medusajs/framework@2.8.7
+
 ## 2.8.6
 
 ### Patch Changes

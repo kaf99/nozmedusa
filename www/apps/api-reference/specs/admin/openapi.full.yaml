@@ -23266,7 +23266,9 @@ paths:
       operationId: PostOrderEditsIdItemsItemItem_id
       summary: Update Order Item Quantity of Order Edit
       x-sidebar-summary: Update Item Quantity
-      description: Update an existing order item's quantity of an order edit.
+      description: |
+        Update an existing order item's quantity of an order edit.
+        You can also use this API route to remove an item from an order by setting its quantity to `0`.
       x-authenticated: true
       parameters:
         - name: id
@@ -65983,8 +65985,18 @@ components:
             - gte
             - nin
         value:
-          type: string
-          title: value
+          oneOf:
+            - type: string
+              title: value
+              description: The shipping option rule's value.
+              example: 'true'
+            - type: array
+              description: The shipping option rule's values.
+              items:
+                type: string
+                title: value
+                description: A value of the shipping option rule.
+                example: 'true'
         shipping_option_id:
           type: string
           title: shipping_option_id
@@ -75865,31 +75877,6 @@ components:
           format: date-time
           title: updated_at
           description: The date the gift card was updated.
-    StoreGiftCardInvitation:
-      type: object
-      description: The gift card invitation's details.
-      x-schemaName: StoreGiftCardInvitation
-      required:
-        - id
-        - email
-        - status
-        - gift_card
-      properties:
-        id:
-          type: string
-          title: id
-          description: The gift card invitation's ID.
-        email:
-          type: string
-          title: email
-          description: The gift card invitation's email.
-          format: email
-        status:
-          type: string
-          title: status
-          description: The gift card invitation's status.
-        gift_card:
-          $ref: '#/components/schemas/StoreGiftCard'
     StoreGiftCardResponse:
       type: object
       description: The gift card's details.

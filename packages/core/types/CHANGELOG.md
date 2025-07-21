@@ -1,5 +1,11 @@
 # @medusajs/types
 
+## 2.8.7
+
+### Patch Changes
+
+- [#12885](https://github.com/medusajs/medusa/pull/12885) [`42be9a88d61a11db7aebde2d6f4d96d43f54ea79`](https://github.com/medusajs/medusa/commit/42be9a88d61a11db7aebde2d6f4d96d43f54ea79) Thanks [@olivermrbl](https://github.com/olivermrbl)! - fix: Update TIP on promotions
+
 ## 2.8.6
 
 ## 2.8.5

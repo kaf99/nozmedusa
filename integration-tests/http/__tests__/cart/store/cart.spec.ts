@@ -1252,6 +1252,60 @@ medusaIntegrationTestRunner({
             )
           })
 
+          it("should successfully complete cart with promotions", async () => {
+            const oldCart = (
+              await api.get(`/store/carts/${cart.id}`, storeHeaders)
+            ).data.cart
+
+            createCartCreditLinesWorkflow.run({
+              input: [
+                {
+                  cart_id: oldCart.id,
+                  amount: oldCart.total,
+                  currency_code: "usd",
+                  reference: "test",
+                  reference_id: "test",
+                },
+              ],
+              container: appContainer,
+            })
+
+            const cartResponse = await api.post(
+              `/store/carts/${cart.id}/complete`,
+              {},
+              storeHeaders
+            )
+
+            const orderResponse = await api.get(
+              `/store/orders/${cartResponse.data.order.id}?fields=+promotions.*`,
+              storeHeaders
+            )
+
+            expect(cartResponse.status).toEqual(200)
+            expect(orderResponse.data.order).toEqual(
+              expect.objectContaining({
+                promotions: [
+                  expect.objectContaining({
+                    code: promotion.code,
+                  }),
+                ],
+                items: expect.arrayContaining([
+                  expect.objectContaining({
+                    unit_price: 1500,
+                    compare_at_unit_price: null,
+                    quantity: 1,
+                    adjustments: expect.arrayContaining([
+                      expect.objectContaining({
+                        amount: 100,
+                        code: promotion.code,
+                      }),
+                    ]),
+                  }),
+                ]),
+              })
+            )
+          })
+
           it("should successfully complete cart without shipping for digital products", async () => {
             /**
              * Product has a shipping profile so cart item should not require shipping
