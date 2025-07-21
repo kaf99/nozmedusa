@@ -9,7 +9,10 @@ import { createOrderSeeder } from "../../fixtures/order"
 
 jest.setTimeout(300000)
 
+const env = { MEDUSA_FF_VIEW_CONFIGURATIONS: true }
+
 medusaIntegrationTestRunner({
+  env,
   testSuite: ({ dbConnection, getContainer, api }) => {
     beforeEach(async () => {
       const container = getContainer()
@@ -105,7 +108,7 @@ medusaIntegrationTestRunner({
               required_fields: ["customer.first_name", "customer.last_name", "customer.email"],
               optional_fields: ["customer.phone"]
             },
-            default_order: 200,
+            default_order: 300,
             category: "relationship"
           })
           
@@ -126,8 +129,8 @@ medusaIntegrationTestRunner({
               required_fields: ["shipping_address.country_code"],
               optional_fields: []
             },
-            default_order: 850,
-            category: "relationship"
+            default_order: 800,
+            category: "metadata"
           })
           
           // Check that we DON'T have customer or shipping_address objects
@@ -147,11 +150,11 @@ medusaIntegrationTestRunner({
           expect(displayIdField?.category).toBe("identifier")
           
           const totalField = response.data.columns.find(c => c.id === "total")
-          expect(totalField?.default_order).toBe(900)
+          expect(totalField?.default_order).toBe(700)
           expect(totalField?.category).toBe("metric")
           
           const createdAtField = response.data.columns.find(c => c.id === "created_at")
-          expect(createdAtField?.default_order).toBe(500)
+          expect(createdAtField?.default_order).toBe(200)
           expect(createdAtField?.category).toBe("timestamp")
         })
 

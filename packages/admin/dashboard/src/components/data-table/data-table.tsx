@@ -1,23 +1,22 @@
 import {
-  Button,
-  clx,
+  DataTable as UiDataTable,
+  useDataTable,
   DataTableColumnDef,
   DataTableCommand,
   DataTableEmptyStateProps,
   DataTableFilter,
-  DataTableFilteringState,
-  DataTablePaginationState,
   DataTableRow,
   DataTableRowSelectionState,
-  DataTableSortingState,
   Heading,
-  DataTable as Primitive,
   Text,
-  useDataTable,
   type VisibilityState,
   type ColumnOrderState,
+  Button,
+  DataTableFilteringState,
+  DataTablePaginationState,
+  DataTableSortingState,
 } from "@medusajs/ui"
-import React, { ReactNode, useCallback, useMemo, useState } from "react"
+import React, { ReactNode, useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
@@ -337,13 +336,11 @@ export const DataTable = <TData,>({
   const shouldRenderHeading = heading || subHeading
 
   return (
-    <Primitive
+    <UiDataTable
       instance={instance}
-      className={clx({
-        "h-full [&_tr]:last-of-type:!border-b": layout === "fill",
-      })}
+      className={layout === "fill" ? "h-full [&_tr]:last-of-type:!border-b" : undefined}
     >
-      <Primitive.Toolbar
+      <UiDataTable.Toolbar
         className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center"
         translations={toolbarTranslations}
       >
@@ -360,12 +357,12 @@ export const DataTable = <TData,>({
           )}
           <div className="flex items-center justify-end gap-x-2 md:hidden">
             {enableFiltering && (
-              <Primitive.FilterMenu tooltip={t("filters.filterLabel")} />
+              <UiDataTable.FilterMenu tooltip={t("filters.filterLabel")} />
             )}
             {enableSorting && (
-              <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+              <UiDataTable.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {effectiveEnableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {effectiveEnableColumnVisibility && <UiDataTable.ColumnVisibilityMenu />}
             {effectiveEnableViewSelector && entity && (
               <ViewSelector 
                 entity={entity} 
@@ -380,7 +377,7 @@ export const DataTable = <TData,>({
         <div className="flex w-full items-center gap-2 md:justify-end">
           {enableSearch && (
             <div className="w-full md:w-auto">
-              <Primitive.Search
+              <UiDataTable.Search
                 placeholder={t("filters.searchLabel")}
                 autoFocus={autoFocusSearch}
               />
@@ -388,12 +385,12 @@ export const DataTable = <TData,>({
           )}
           <div className="hidden items-center gap-x-2 md:flex">
             {enableFiltering && (
-              <Primitive.FilterMenu tooltip={t("filters.filterLabel")} />
+              <UiDataTable.FilterMenu tooltip={t("filters.filterLabel")} />
             )}
             {enableSorting && (
-              <Primitive.SortingMenu tooltip={t("filters.sortLabel")} />
+              <UiDataTable.SortingMenu tooltip={t("filters.sortLabel")} />
             )}
-            {effectiveEnableColumnVisibility && <Primitive.ColumnVisibilityMenu />}
+            {effectiveEnableColumnVisibility && <UiDataTable.ColumnVisibilityMenu />}
             {effectiveEnableViewSelector && entity && (
               <ViewSelector 
                 entity={entity} 
@@ -405,15 +402,15 @@ export const DataTable = <TData,>({
             {action && <DataTableAction {...action} />}
           </div>
         </div>
-      </Primitive.Toolbar>
-      <Primitive.Table emptyState={emptyState} />
+      </UiDataTable.Toolbar>
+      <UiDataTable.Table emptyState={emptyState} />
       {enablePagination && (
-        <Primitive.Pagination translations={paginationTranslations} />
+        <UiDataTable.Pagination translations={paginationTranslations} />
       )}
       {enableCommands && (
-        <Primitive.CommandBar selectedLabel={(count) => `${count} selected`} />
+        <UiDataTable.CommandBar selectedLabel={(count) => `${count} selected`} />
       )}
-    </Primitive>
+    </UiDataTable>
   )
 }
 
@@ -512,3 +509,4 @@ const DataTableAction = ({
     </Button>
   )
 }
+

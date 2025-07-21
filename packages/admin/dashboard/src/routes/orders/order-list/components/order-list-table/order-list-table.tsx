@@ -1,7 +1,7 @@
 import { Container, createDataTableColumnHelper } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { useMemo, useState, useEffect, useCallback } from "react"
+import React, { useMemo, useState, useEffect, useCallback } from "react"
 import { HttpTypes } from "@medusajs/types"
 
 import { DataTable } from "../../../../../components/data-table"
@@ -127,18 +127,28 @@ export const OrderListTable = () => {
       // Get the entity-specific accessor or use default
       const accessor = getEntityAccessor('orders', apiColumn.field, apiColumn)
       
-      // Check if this is a currency column that needs right-aligned header
-      const isCurrency = apiColumn.semantic_type === 'currency' || apiColumn.data_type === 'currency'
-      
-      // Check if this is the country column that needs center alignment
-      const isCountry = apiColumn.field === 'country'
-      
-      // Determine header alignment
+      // Determine header alignment based on semantic type, context, or data type
       let headerAlign: 'left' | 'center' | 'right' = 'left'
-      if (isCurrency) {
+      
+      // Currency columns should be right-aligned
+      if (apiColumn.semantic_type === 'currency' || apiColumn.data_type === 'currency') {
         headerAlign = 'right'
-      } else if (isCountry) {
+      }
+      // Number columns should be right-aligned
+      else if (apiColumn.data_type === 'number' && apiColumn.context !== 'identifier') {
+        headerAlign = 'right'
+      }
+      // Total/amount/price columns should be right-aligned
+      else if (apiColumn.field.includes('total') || apiColumn.field.includes('amount') || apiColumn.field.includes('price')) {
+        headerAlign = 'right'
+      }
+      // Country columns should be center-aligned
+      else if (apiColumn.field === 'country' || apiColumn.field.includes('country_code')) {
         headerAlign = 'center'
+      }
+      // Status columns could be center-aligned
+      else if (apiColumn.semantic_type === 'status') {
+        headerAlign = 'left' // Keep status left-aligned for consistency with existing tables
       }
       
       return columnHelper.accessor(accessor, {
@@ -147,7 +157,12 @@ export const OrderListTable = () => {
         cell: ({ getValue, row }) => {
           const value = getValue()
           
-          // Use the display strategy to format the value
+          // If the value is already a React element (from computed columns), return it directly
+          if (React.isValidElement(value)) {
+            return value
+          }
+          
+          // Otherwise, use the display strategy to format the value
           return displayStrategy(value, row.original)
         },
         meta: {
@@ -156,9 +171,8 @@ export const OrderListTable = () => {
         },
         enableHiding: apiColumn.hideable,
         enableSorting: apiColumn.sortable,
-        // Set header alignment
-        headerAlign,
-      })
+        headerAlign, // Pass the header alignment to the DataTable
+      } as any)
     })
   }, [apiColumns])
 

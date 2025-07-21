@@ -1,6 +1,5 @@
 import { Table as ReactTable } from "@tanstack/react-table"
 import { Filter } from ".."
-import { DataTableColumnVisibility } from "../data-table-column-visibility"
 import { DataTableFilter } from "../data-table-filter"
 import { DataTableOrderBy, DataTableOrderByKey } from "../data-table-order-by"
 import { DataTableSearch } from "../data-table-search"
@@ -61,9 +60,7 @@ export const DataTableQuery = <TData,>({
               currentColumns={currentColumns}
             />
           )}
-          {enableColumnVisibility && table && (
-            <DataTableColumnVisibility table={table} entity={entity} />
-          )}
+          {/* Column visibility is now handled by the UI package */}
         </div>
       </div>
     )

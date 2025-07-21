@@ -100,23 +100,100 @@ const FulfillmentStatusBadge = ({ status }: { status: string }) => {
   )
 }
 
-// Display strategies for different column types
+// Generic status badge
+const GenericStatusBadge = ({ status }: { status: string }) => {
+  return (
+    <Badge variant="outline" className="capitalize">
+      {status}
+    </Badge>
+  )
+}
+
+// Display strategies registry
 export const DISPLAY_STRATEGIES = {
-  // Semantic types
+  // Known semantic types with pixel-perfect display
   status: {
     payment: (value: any) => <PaymentStatusBadge status={value} />,
     fulfillment: (value: any) => <FulfillmentStatusBadge status={value} />,
-    default: (value: any) => <Badge>{value}</Badge>
+    default: (value: any) => <GenericStatusBadge status={value} />
   },
   
   currency: {
     default: (value: any, row: any) => {
-      if (!value) return '-'
-      return getStylizedAmount(value, row.currency_code || 'USD')
+      if (value === null || value === undefined) return '-'
+      const currencyCode = row.currency_code || 'USD'
+      const formatted = getStylizedAmount(value, currencyCode)
+      
+      return (
+        <div className="flex h-full w-full items-center justify-end text-right">
+          <span className="truncate">{formatted}</span>
+        </div>
+      )
     }
   },
   
-  // Data types
+  timestamp: {
+    creation: (value: any) => value ? formatDate(value, 'short') : '-',
+    update: (value: any) => value ? formatDate(value, 'relative') : '-',
+    default: (value: any) => value ? formatDate(value, 'short') : '-'
+  },
+  
+  identifier: {
+    order: (value: any) => `#${value}`,
+    default: (value: any) => value
+  },
+  
+  email: {
+    default: (value: any) => value || '-'
+  },
+  
+  // Generic fallbacks for custom fields
+  enum: {
+    default: (value: any) => <GenericStatusBadge status={value} />
+  },
+  
+  // Base type fallbacks
+  string: {
+    default: (value: any) => value || '-'
+  },
+  
+  number: {
+    default: (value: any) => value?.toLocaleString() || '0'
+  },
+  
+  boolean: {
+    default: (value: any) => (
+      <Badge variant={value ? 'solid' : 'outline'}>
+        {value ? 'Yes' : 'No'}
+      </Badge>
+    )
+  },
+  
+  object: {
+    relationship: (value: any) => {
+      if (!value || typeof value !== 'object') return '-'
+      
+      // Try common display fields
+      if (value.name) return value.name
+      if (value.title) return value.title
+      if (value.email) return value.email
+      if (value.display_name) return value.display_name
+      
+      return JSON.stringify(value)
+    },
+    default: (value: any) => {
+      if (!value || typeof value !== 'object') return '-'
+      
+      // Try common display fields
+      if (value.name) return value.name
+      if (value.title) return value.title
+      if (value.email) return value.email
+      
+      return JSON.stringify(value)
+    }
+  },
+  
+  // Date types (in addition to timestamp)
   date: {
     default: (value: any) => value ? formatDate(value, 'short') : '-'
   },
@@ -125,46 +202,28 @@ export const DISPLAY_STRATEGIES = {
     default: (value: any) => value ? formatDate(value, 'long') : '-'
   },
   
-  boolean: {
-    default: (value: any) => value ? 'Yes' : 'No'
-  },
-  
-  json: {
-    default: (value: any) => {
-      if (!value) return '-'
-      try {
-        return JSON.stringify(value, null, 2)
-      } catch {
-        return String(value)
-      }
-    }
-  },
-  
-  text: {
+  // Computed columns
+  computed: {
+    display: (value: any) => value || '-',
     default: (value: any) => value || '-'
-  },
-  
-  number: {
-    default: (value: any) => value?.toString() || '-'
   }
 }
 
-// Get display strategy for a column
+// Strategy selection function
 export const getDisplayStrategy = (column: HttpTypes.AdminViews.AdminColumn) => {
-  // Check semantic type first
-  if (column.semantic_type) {
-    const semanticStrategies = DISPLAY_STRATEGIES[column.semantic_type as keyof typeof DISPLAY_STRATEGIES]
-    if (semanticStrategies) {
-      const specificStrategy = semanticStrategies[column.field as keyof typeof semanticStrategies]
-      if (specificStrategy) return specificStrategy
-      
-      const defaultStrategy = semanticStrategies.default
-      if (defaultStrategy) return defaultStrategy
-    }
+  const semanticStrategies = DISPLAY_STRATEGIES[column.semantic_type as keyof typeof DISPLAY_STRATEGIES]
+  if (semanticStrategies) {
+    const contextStrategy = semanticStrategies[column.context as keyof typeof semanticStrategies]
+    if (contextStrategy) return contextStrategy
+    
+    const defaultStrategy = semanticStrategies.default
+    if (defaultStrategy) return defaultStrategy
   }
   
   // Fallback to data type
-  const dataTypeStrategies = DISPLAY_STRATEGIES[column.data_type as keyof typeof DISPLAY_STRATEGIES]
+  // Map 'text' data type to 'string' strategy
+  const dataType = column.data_type === 'text' ? 'string' : column.data_type
+  const dataTypeStrategies = DISPLAY_STRATEGIES[dataType as keyof typeof DISPLAY_STRATEGIES]
   if (dataTypeStrategies) {
     const defaultStrategy = dataTypeStrategies.default
     if (defaultStrategy) return defaultStrategy
