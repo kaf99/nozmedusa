@@ -1524,7 +1524,7 @@ In the upcoming chapters, you'll follow step-by-step guides to build custom feat
 
 By following these guides, you'll add brands to the Medusa application that you can associate with products.
 
-To build a custom feature in Medusa, you need three main tools:
+To build a custom feature in Medusa, you need three main [Framework](https://docs.medusajs.com/learn/fundamentals/framework/index.html.md) tools:
 
 - [Module](https://docs.medusajs.com/learn/fundamentals/modules/index.html.md): a package with commerce logic for a single domain. It defines new tables to add to the database, and a class of methods to manage these tables.
 - [Workflow](https://docs.medusajs.com/learn/fundamentals/workflows/index.html.md): a tool to perform an operation comprising multiple steps with built-in rollback and retry mechanisms.
@@ -1687,10 +1687,10 @@ In the previous chapters, you've customized your Medusa application to [add bran
 
 After customizing and extending your application with new features, you may need to provide an interface for admin users to utilize these features. The Medusa Admin dashboard is extendable, allowing you to:
 
-- Insert components, called [widgets](https://docs.medusajs.com/learn/fundamentals/admin/widgets/index.html.md), on existing pages.
-- Add new pages, called [UI Routes](https://docs.medusajs.com/learn/fundamentals/admin/ui-routes/index.html.md).
+- Insert components, called [widgets](https://docs.medusajs.com/learn/fundamentals/admin/widgets/index.html.md), into existing pages. For example, you can add a widget to the product details page that shows the product's brand.
+- Add new pages, called [UI Routes](https://docs.medusajs.com/learn/fundamentals/admin/ui-routes/index.html.md). For example, you can create a new page in the dashboard that lists all brands in the store.
 
-From these customizations, you can send requests to custom API routes, allowing admin users to manage custom resources on the dashboard
+Within these customizations, you can send requests to custom API routes, allowing admin users to view and manage custom resources on the dashboard.
 
 ***
 
@@ -4757,6 +4757,7 @@ module.exports = {
       {
         jsc: {
           parser: { syntax: "typescript", decorators: true },
+          target: "es2021"
         },
       },
     ],
@@ -5133,7 +5134,7 @@ A standard Medusa project is made up of:
 - Medusa application: The Medusa server and the Medusa Admin.
 - One or more storefronts
 
-![Diagram showcasing the connection between the three deployed components](https://res.cloudinary.com/dza7lstvk/image/upload/v1708600807/Medusa%20Book/deployment-options_ceuuvo.jpg)
+![Medusa deployment architecture showing the relationship between three main components: the Medusa server (backend API), Medusa Admin dashboard (for store management), and customer-facing storefronts, all connected to facilitate complete ecommerce functionality](https://res.cloudinary.com/dza7lstvk/image/upload/v1708600807/Medusa%20Book/deployment-options_ceuuvo.jpg)
 
 You deploy the Medusa application, with the server and admin, separately from the storefront.
 
@@ -5145,7 +5146,7 @@ You must deploy the Medusa application before the storefront, as it connects to 
 
 The Medusa application must be deployed to a hosting provider supporting Node.js server deployments, such as Railway, DigitalOcean, AWS, Heroku, etc…
 
-![Diagram showcasing how the Medusa server and its associated services would be deployed](https://res.cloudinary.com/dza7lstvk/image/upload/v1708600972/Medusa%20Book/backend_deployment_pgexo3.jpg)
+![Medusa server deployment infrastructure diagram illustrating the backend services ecosystem: the Node.js Medusa server connected to essential services including PostgreSQL database for data storage, and Redis for caching and session management](https://res.cloudinary.com/dza7lstvk/image/upload/v1708600972/Medusa%20Book/backend_deployment_pgexo3.jpg)
 
 Your server connects to a PostgreSQL database, Redis, and other services relevant for your setup. Most hosting providers support deploying and managing these databases along with your Medusa server (such as Railway and DigitalOcean).
 
@@ -5194,11 +5195,11 @@ Refer to [this reference](https://docs.medusajs.com/resources/deployment/index.h
 
 # Admin Development Constraints
 
-This chapter lists some constraints of admin widgets and UI routes.
+This chapter lists some development constraints of admin widgets and UI routes.
 
 ## Arrow Functions
 
-Widget and UI route components must be created as arrow functions.
+Widget and UI route components must be created as arrow functions. Otherwise, Medusa doesn't register them correctly.
 
 ```ts highlights={arrowHighlights}
 // Don't
@@ -5216,7 +5217,7 @@ const ProductWidget = () => {
 
 ## Widget Zone
 
-A widget zone's value must be wrapped in double or single quotes. It can't be a template literal or a variable.
+A widget zone's value must be wrapped in double or single quotes. It can't be a template literal or a variable. Otherwise, Medusa doesn't register the widget correctly.
 
 ```ts highlights={zoneHighlights}
 // Don't
@@ -6562,7 +6563,7 @@ A middleware is a function executed when a request is sent to an API Route. It's
 
 Middlewares are used to guard API routes, parse request content types other than `application/json`, manipulate request data, and more.
 
-![Diagram showcasing how a middleware is executed when a request is sent to an API route.](https://res.cloudinary.com/dza7lstvk/image/upload/v1746775148/Medusa%20Book/middleware-overview_wc2ws5.jpg)
+![API middleware execution flow diagram showing how HTTP requests first pass through middleware functions for authentication, validation, and data processing before reaching the actual route handler, providing a secure and flexible request processing pipeline in Medusa applications](https://res.cloudinary.com/dza7lstvk/image/upload/v1746775148/Medusa%20Book/middleware-overview_wc2ws5.jpg)
 
 As Medusa's server is based on Express, you can use any [Express middleware](https://expressjs.com/en/resources/middleware.html).
 
@@ -15103,7 +15104,7 @@ A data model represents a table in the database. You create data models using Me
 
 You create a data model in a TypeScript or JavaScript file under the `models` directory of a module. So, to create a `Post` data model in the Blog Module, create the file `src/modules/blog/models/post.ts` with the following content:
 
-![Updated directory overview after adding the data model](https://res.cloudinary.com/dza7lstvk/image/upload/v1732806790/Medusa%20Book/blog-dir-overview-1_jfvovj.jpg)
+![Blog module directory structure showing the organized file hierarchy with the newly created 'models' folder containing the 'post.ts' data model file, which defines the data model for blog posts using Medusa's data modeling language](https://res.cloudinary.com/dza7lstvk/image/upload/v1732806790/Medusa%20Book/blog-dir-overview-1_jfvovj.jpg)
 
 ```ts title="src/modules/blog/models/post.ts"
 import { model } from "@medusajs/framework/utils"
@@ -18807,7 +18808,7 @@ After answering the prompts, the command installs the Medusa application in a di
 
 If you chose to install the storefront with the Medusa application, the storefront is installed in a separate directory named `{project-name}-storefront`.
 
-![Diagram showcasing an overview of the installation directories](https://res.cloudinary.com/dza7lstvk/image/upload/v1745856132/Medusa%20Resources/installation-dirs_x8jux4.jpg)
+![Directory structure overview after Medusa installation showing the main project folder containing the Medusa backend application and admin dashboard, alongside the separate storefront directory for the customer-facing Next.js application](https://res.cloudinary.com/dza7lstvk/image/upload/v1745856132/Medusa%20Resources/installation-dirs_x8jux4.jpg)
 
 ### Successful Installation Result
 
@@ -18819,7 +18820,7 @@ If you also installed the Next.js Starter Storefront, it'll be running at `http:
 
 You can stop the servers for the Medusa application and Next.js Starter Storefront by exiting the installation command. To run the server for the Medusa application again, refer to [this section](#run-medusa-application-in-development).
 
-![Diagram showcasing the server and applications running after successful installation](https://res.cloudinary.com/dza7lstvk/image/upload/v1745856706/Medusa%20Resources/success-overview_bj4pbt.jpg)
+![Post-installation running services overview: Medusa backend server and admin dashboard running on localhost:9000, Next.js Starter Storefront running on localhost:8000, with PostgreSQL database and other essential services active and ready for development](https://res.cloudinary.com/dza7lstvk/image/upload/v1745856706/Medusa%20Resources/success-overview_bj4pbt.jpg)
 
 ### Troubleshooting Installation Errors
 
@@ -18934,7 +18935,7 @@ In a common Medusa application, requests go through four layers in the stack. In
 
 These layers of stack can be implemented within [plugins](https://docs.medusajs.com/learn/fundamentals/plugins/index.html.md).
 
-![This diagram illustrates the entry point of requests into the Medusa application through API routes. It shows a storefront and an admin that can send a request to the HTTP layer. The HTTP layer then uses workflows to handle the business logic. Finally, the workflows use modules to query and manipulate data in the data stores.](https://res.cloudinary.com/dza7lstvk/image/upload/v1727175296/Medusa%20Book/http-layer_sroafr.jpg)
+![Medusa application architecture diagram illustrating the HTTP layer flow: External clients (storefront and admin) send requests to API routes, which execute workflows containing business logic, which then interact with modules to perform data operations on PostgreSQL databases](https://res.cloudinary.com/dza7lstvk/image/upload/v1727175296/Medusa%20Book/http-layer_sroafr.jpg)
 
 ***
 
@@ -18944,7 +18945,7 @@ The Medusa application injects into each module, including your [custom modules]
 
 Modules can be implemented within [plugins](https://docs.medusajs.com/learn/fundamentals/plugins/index.html.md).
 
-![This diagram illustrates how modules connect to the database.](https://res.cloudinary.com/dza7lstvk/image/upload/v1727175379/Medusa%20Book/db-layer_pi7tix.jpg)
+![Database layer architecture diagram showing how Medusa modules establish connections to PostgreSQL databases through injected database connections, enabling data persistence and retrieval operations](https://res.cloudinary.com/dza7lstvk/image/upload/v1727175379/Medusa%20Book/db-layer_pi7tix.jpg)
 
 ***
 
@@ -18986,7 +18987,7 @@ All of the third-party services mentioned above can be replaced to help you buil
 
 The following diagram illustrates Medusa's architecture including all its layers.
 
-![Full diagram illustrating Medusa's architecture combining all the different layers.](https://res.cloudinary.com/dza7lstvk/image/upload/v1727174897/Medusa%20Book/architectural-diagram-full.jpg)
+![Complete Medusa architecture overview showing the full technology stack: client applications (storefront and admin) connecting through HTTP layer to workflows, which coordinate with commerce and Infrastructure Modules to manage data operations, third-party integrations, and database persistence](https://res.cloudinary.com/dza7lstvk/image/upload/v1727174897/Medusa%20Book/architectural-diagram-full.jpg)
 
 
 # Build with AI Assistants and LLMs
@@ -19131,7 +19132,7 @@ You don't need to set up different projects for each instance. Instead, you can 
 
 This separation ensures that the server instance remains responsive to incoming requests, while the worker instance processes tasks in the background.
 
-![Diagram showcasing how the server and worker work together](https://res.cloudinary.com/dza7lstvk/image/upload/fl_lossy/f_auto/r_16/ar_16:9,c_pad/v1/Medusa%20Book/medusa-worker_klkbch.jpg?_a=BATFJtAA0)
+![Medusa worker mode architecture diagram illustrating the separation of responsibilities: the server instance handling HTTP requests, API calls, and real-time operations while the dedicated worker instance processes background tasks like data imports, email sending, and resource-intensive operations to maintain optimal server performance](https://res.cloudinary.com/dza7lstvk/image/upload/fl_lossy/f_auto/r_16/ar_16:9,c_pad/v1/Medusa%20Book/medusa-worker_klkbch.jpg?_a=BATFJtAA0)
 
 ***
 
@@ -32900,7 +32901,7 @@ The Analytics Module exposes functionalities to track and analyze user interacti
 
 In your Medusa application, you can use the Analytics Module to send data to third-party analytics services like PostHog or Segment, enabling you to gain insights into user behavior and system performance.
 
-![Diagram showcasing the flow of tracking an event like order.placed](https://res.cloudinary.com/dza7lstvk/image/upload/v1747832107/Medusa%20Resources/analytics-module-overview_egz7xg.jpg)
+![Analytics Module workflow diagram showing the event tracking flow: when a customer places an order in the storefront, the Medusa application uses the Analytics Module to capture the event data and forwards it to configured third-party analytics services for business intelligence and user behavior analysis](https://res.cloudinary.com/dza7lstvk/image/upload/v1747832107/Medusa%20Resources/analytics-module-overview_egz7xg.jpg)
 
 ***
 
@@ -39847,7 +39848,7 @@ By following this guide, you'll add the following features to Medusa:
 3. Customers can accept or reject a quote once it's been sent by the merchant.
 4. Once the customer accepts a quote, it's converted to an order in Medusa.
 
-![Diagram showcasing the features summary](https://res.cloudinary.com/dza7lstvk/image/upload/v1741173690/Medusa%20Resources/quote-management-summary_xd319j.jpg)
+![Quote management system workflow diagram illustrating the complete quote lifecycle: customers request quotes from cart items, merchants review and create detailed quotes with pricing, quotes are sent to customers for approval, and upon acceptance, quotes are automatically converted into processable orders within the Medusa e-commerce platform](https://res.cloudinary.com/dza7lstvk/image/upload/v1741173690/Medusa%20Resources/quote-management-summary_xd319j.jpg)
 
 To implement these features, you'll be customizing the Medusa server and the Medusa Admin dashboard.
 
@@ -41374,7 +41375,7 @@ Then, open the Medusa Admin dashboard at `http://localhost:9000/app` and login u
 
 You'll find a "Quotes" sidebar item. If you click on it, it will show you the table of quotes.
 
-![Quotes table in Medusa Admin](https://res.cloudinary.com/dza7lstvk/image/upload/v1741099952/Medusa%20Resources/Screenshot_2025-03-04_at_4.52.17_PM_nqxyfq.png)
+![Medusa Admin dashboard displaying the Quotes management interface with a data table showing quote entries including columns for quote ID, customer information, status, and creation date](https://res.cloudinary.com/dza7lstvk/image/upload/v1741099952/Medusa%20Resources/Screenshot_2025-03-04_at_4.52.17_PM_nqxyfq.png)
 
 ***
 
@@ -62803,11 +62804,11 @@ In addition, Resend allows you to send emails from the address `onboarding@resen
 1. Go to Domains from the sidebar.
 2. Click on Add Domain.
 
-![Click on Domains in the sidebar then on the Add Domain button in the middle of the page.](https://res.cloudinary.com/dza7lstvk/image/upload/v1732523238/Medusa%20Resources/Screenshot_2024-11-25_at_10.18.11_AM_pmqgtv.png)
+![Resend dashboard interface showing the Domains section in the left sidebar navigation and the prominent "Add Domain" button in the main content area, which initiates the process of configuring a custom domain for email sending through the Resend service](https://res.cloudinary.com/dza7lstvk/image/upload/v1732523238/Medusa%20Resources/Screenshot_2024-11-25_at_10.18.11_AM_pmqgtv.png)
 
 3\. In the form that opens, enter your domain name and select a region close to your users, then click Add.
 
-![A pop-up window with Domain and Region fields.](https://res.cloudinary.com/dza7lstvk/image/upload/v1732523280/Medusa%20Resources/Screenshot_2024-11-25_at_10.18.52_AM_sw2pr4.png)
+![Domain configuration modal in Resend showing form fields for entering the custom domain name and selecting the appropriate geographical region for optimal email delivery performance, with an "Add" button to confirm the domain setup](https://res.cloudinary.com/dza7lstvk/image/upload/v1732523280/Medusa%20Resources/Screenshot_2024-11-25_at_10.18.52_AM_sw2pr4.png)
 
 4\. In the domain's details page that opens, you'll find DNS records to add to your DNS provider. After you add them, click on Verify DNS Records. You can start sending emails from your custom domain once it's verified.
 
@@ -68119,7 +68120,7 @@ By following this tutorial, you'll learn how to:
 
 You can follow this tutorial whether you're new to Medusa or an advanced Medusa developer.
 
-![Diagram showcasing the flow of the integration between Medusa and Slack](https://res.cloudinary.com/dza7lstvk/image/upload/v1748943447/slack-integration-overview_vkdijx.jpg)
+![Slack integration workflow diagram showing the complete integration flow: when ecommerce events occur in Medusa (such as order placement), the system automatically sends webhook notifications to Slack channels, enabling real-time team communication and order monitoring for business operations](https://res.cloudinary.com/dza7lstvk/image/upload/v1748943447/slack-integration-overview_vkdijx.jpg)
 
 [Example Repository](https://github.com/medusajs/examples/tree/main/slack-integration): Find the full code of the guide in this repository.
 
@@ -68508,27 +68509,27 @@ To set the webhook URL, you need to create a Slack application and configure a w
 1. Go to your [Slack Apps](https://api.slack.com/apps) page.
 2. Click the "Create New App" button.
 
-![Create New App button on Slack Apps page](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940543/Medusa%20Resources/CleanShot_2025-06-03_at_10.43.01_2x_zadmwn.png)
+![Slack Apps page interface showing the prominent green "Create New App" button in the top navigation area, which initiates the process of creating a new Slack application for integrating with external services like Medusa](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940543/Medusa%20Resources/CleanShot_2025-06-03_at_10.43.01_2x_zadmwn.png)
 
 3. In the pop-up, choose "From scratch".
 4. Enter the app's name and select the workspace to install it in.
 5. Once you're done, click the "Create App" button.
 
-![Create App pop-up](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940602/Medusa%20Resources/CleanShot_2025-06-03_at_10.43.52_2x_edqawv.png)
+![Slack app creation modal dialog with options to create app "From scratch" or "From an app manifest", including form fields for app name and workspace selection, with a "Create App" button to confirm the new Slack application setup](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940602/Medusa%20Resources/CleanShot_2025-06-03_at_10.43.52_2x_edqawv.png)
 
 6. In the app's settings, go to the "Incoming Webhooks" section.
 7. Enable the "Activate Incoming Webhooks" toggle.
 
-![Enable Incoming Webhooks toggle](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940647/Medusa%20Resources/CleanShot_2025-06-03_at_10.44.07_2x_rykabg.png)
+![Slack app configuration page showing the Incoming Webhooks settings with the "Activate Incoming Webhooks" toggle switch prominently displayed, which enables the app to receive webhook notifications from external services like Medusa](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940647/Medusa%20Resources/CleanShot_2025-06-03_at_10.44.07_2x_rykabg.png)
 
 8. In the "Webhook URLs for Your Workspace" section, click the "Add New Webhook" button.
 
-![Add New Webhook button](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940671/Medusa%20Resources/CleanShot_2025-06-03_at_10.44.33_2x_e7qk8o.png)
+![Webhook configuration section displaying the "Add New Webhook" button in the "Webhook URLs for Your Workspace" area, allowing users to create a new webhook endpoint for receiving automated notifications in their Slack workspace](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940671/Medusa%20Resources/CleanShot_2025-06-03_at_10.44.33_2x_e7qk8o.png)
 
 9. Select the channel or conversation to send notifications to and click the "Allow" button.
 10. Copy the generated webhook URL.
 
-![Copy the generated webhook URL](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940718/Medusa%20Resources/CleanShot_2025-06-03_at_10.45.51_2x_xet5u5.png)
+![Slack webhook URL generation interface showing the newly created webhook URL with a copy button, which provides the unique endpoint URL needed to configure Medusa for sending automated notifications to the selected Slack channel](https://res.cloudinary.com/dza7lstvk/image/upload/v1748940718/Medusa%20Resources/CleanShot_2025-06-03_at_10.45.51_2x_xet5u5.png)
 
 Then, in the `.env` file of your Medusa application, set the `SLACK_WEBHOOK_URL` and `SLACK_ADMIN_URL` environment variables:
 
@@ -81528,7 +81529,7 @@ By following this tutorial, you'll learn how to:
 - Customize the add-to-cart flow to support bundled products.
 - Customize the Next.js Starter Storefront to display bundled products.
 
-![Diagram illustrating the bundled products architecture](https://res.cloudinary.com/dza7lstvk/image/upload/v1745855513/Medusa%20Resources/bundled-products-overview_r5zejm.jpg)
+![Bundled products system architecture diagram showing the relationship between bundled products and individual products and variants](https://res.cloudinary.com/dza7lstvk/image/upload/v1745855513/Medusa%20Resources/bundled-products-overview_r5zejm.jpg)
 
 - [Bundled Products Repository](https://github.com/medusajs/examples/tree/main/bundled-products): Find the full code for this guide in this repository.
 - [OpenApi Specs for Postman](https://res.cloudinary.com/dza7lstvk/raw/upload/v1746024108/OpenApi/Bundled_Products_vloupx.yaml): Import this OpenApi Specs file into tools like Postman.
