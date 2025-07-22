@@ -1855,8 +1855,6 @@ medusaIntegrationTestRunner({
             await api.post("/admin/products", payload, adminHeaders)
           ).data.product
 
-          console.log("createdProduct", createdProduct)
-
           let updatedProduct = (
             await api.post(
               `/admin/products/${createdProduct.id}`,
