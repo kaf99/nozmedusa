@@ -167,8 +167,6 @@ export class ProductRepository extends DALUtils.mikroOrmBaseRepositoryFactory(
         )
       }
 
-      console.log("productToUpdate", productToUpdate)
-
       wrappedProduct.assign(productToUpdate)
     }
 
