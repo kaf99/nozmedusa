@@ -405,11 +405,11 @@ export const ReturnCreateForm = ({
   return (
     <RouteFocusModal.Form
       form={form}
-      onClose={(isSubmitSuccessful) => {
-        if (!isSubmitSuccessful) {
-          cancelReturnRequest()
-        }
-      }}
+      // onClose={(isSubmitSuccessful) => {
+      //   if (!isSubmitSuccessful) {
+      //     cancelReturnRequest()
+      //   }
+      // }}
     >
       <KeyboundForm onSubmit={handleSubmit} className="flex h-full flex-col">
         <RouteFocusModal.Header />
