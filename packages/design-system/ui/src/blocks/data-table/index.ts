@@ -12,6 +12,7 @@ export type {
   DataTableColumnFilter,
   DataTableCommand,
   DataTableDateComparisonOperator,
+  DataTableNumberComparisonOperator,
   DataTableEmptyState,
   DataTableEmptyStateContent,
   DataTableEmptyStateProps,

@@ -206,6 +206,8 @@ const useDataTable = <TData,>({
   } = rowSelection ?? {}
   const { state: columnVisibilityState, onColumnVisibilityChange } = columnVisibility ?? {}
   const { state: columnOrderState, onColumnOrderChange } = columnOrder ?? {}
+  
+  // Store filter metadata like openOnMount
 
   const autoResetPageIndexHandler = React.useCallback(() => {
     return autoResetPageIndex
@@ -345,7 +347,7 @@ const useDataTable = <TData,>({
         return null
       }
 
-      return filter.options as DataTableFilterOption<T>[]
+      return ((filter as any).options as DataTableFilterOption<T>[]) || null
     },
     [getFilters]
   )
@@ -363,11 +365,11 @@ const useDataTable = <TData,>({
   }, [instance])
 
   const addFilter = React.useCallback(
-    (filter: ColumnFilter) => {
-      if (filter.value) {
-        autoResetPageIndexHandler()?.()
-      }
-      onFilteringChange?.({ ...getFiltering(), [filter.id]: filter.value })
+    (filter: DataTableColumnFilter) => {
+      const currentFilters = getFiltering()
+      const newFilters = { ...currentFilters, [filter.id]: filter.value }
+      autoResetPageIndexHandler()?.()
+      onFilteringChange?.(newFilters)
     },
     [onFilteringChange, getFiltering, autoResetPageIndexHandler]
   )
@@ -586,7 +588,7 @@ function onFilteringChangeTransformer(
         : updaterOrValue
 
     const transformedValue = Object.fromEntries(
-      value.map((filter) => [filter.id, filter])
+      value.map((filter) => [filter.id, filter.value])
     )
 
     onFilteringChange(transformedValue)

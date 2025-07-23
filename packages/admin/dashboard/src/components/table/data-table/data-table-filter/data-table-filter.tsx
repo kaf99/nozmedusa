@@ -19,25 +19,25 @@ export type Filter = {
   key: string
   label: string
 } & (
-  | {
+    | {
       type: "select"
       options: Option[]
       multiple?: boolean
       searchable?: boolean
     }
-  | {
+    | {
       type: "date"
       options?: never
     }
-  | {
+    | {
       type: "string"
       options?: never
     }
-  | {
+    | {
       type: "number"
       options?: never
     }
-)
+  )
 
 type DataTableFilterProps = {
   filters: Filter[]

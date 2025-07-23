@@ -1,4 +1,4 @@
-import { Container, createDataTableColumnHelper } from "@medusajs/ui"
+import { Container, createDataTableColumnHelper, createDataTableFilterHelper } from "@medusajs/ui"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import React, { useMemo, useState, useEffect, useCallback } from "react"
@@ -7,11 +7,13 @@ import { HttpTypes } from "@medusajs/types"
 import { DataTable } from "../../../../../components/data-table"
 import { useOrders } from "../../../../../hooks/api/orders"
 import { useOrderColumns } from "../../../../../hooks/api/views"
-import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 import { getDisplayStrategy, getEntityAccessor } from "../../../../../lib/table-display-utils"
 import { ViewConfiguration } from "../../../../../providers/view-configuration-provider"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
+import { useDataTableDateFilters } from "../../../../../components/data-table/helpers/general/use-data-table-date-filters"
+import { useRegions } from "../../../../../hooks/api/regions"
+import { useSalesChannels } from "../../../../../hooks/api/sales-channels"
 
 import { DEFAULT_FIELDS, DEFAULT_PROPERTIES, DEFAULT_RELATIONS } from "../../const"
 import { OrderListTableLegacy } from "./order-list-table-legacy"
@@ -19,6 +21,58 @@ import { OrderListTableLegacy } from "./order-list-table-legacy"
 const PAGE_SIZE = 20
 
 const columnHelper = createDataTableColumnHelper<HttpTypes.AdminOrder>()
+const filterHelper = createDataTableFilterHelper<HttpTypes.AdminOrder>()
+
+// Hook to create filters in the format expected by @medusajs/ui DataTable
+const useOrderDataTableFilters = () => {
+  const { t } = useTranslation()
+  const dateFilters = useDataTableDateFilters()
+  
+  const { regions } = useRegions({
+    limit: 1000,
+    fields: "id,name",
+  })
+
+  const { sales_channels } = useSalesChannels({
+    limit: 1000,
+    fields: "id,name",
+  })
+
+  return useMemo(() => {
+    const filters = [...dateFilters]
+
+    if (regions?.length) {
+      filters.push(
+        filterHelper.accessor("region_id", {
+          label: t("fields.region"),
+          type: "multiselect",
+          options: regions.map((r) => ({
+            label: r.name,
+            value: r.id,
+          })),
+        })
+      )
+    }
+
+    if (sales_channels?.length) {
+      filters.push(
+        filterHelper.accessor("sales_channel_id", {
+          label: t("fields.salesChannel"),
+          type: "multiselect",
+          options: sales_channels.map((s) => ({
+            label: s.name,
+            value: s.id,
+          })),
+        })
+      )
+    }
+
+    // TODO: Add payment and fulfillment status filters when they are properly linked to orders
+    // Note: These filters are commented out in the legacy implementation as well
+
+    return filters
+  }, [regions, sales_channels, dateFilters, t])
+}
 
 export const OrderListTable = () => {
   const { t } = useTranslation()
@@ -32,7 +86,7 @@ export const OrderListTable = () => {
     pageSize: PAGE_SIZE,
   })
 
-  const filters = useOrderTableFilters()
+  const newFilters = useOrderDataTableFilters()
   const { columns: apiColumns, isLoading: isLoadingColumns } = useOrderColumns()
   
   // Track which relationship fields are currently visible/needed
@@ -289,7 +343,7 @@ export const OrderListTable = () => {
         rowCount={count}
         getRowId={(row) => row.id}
         rowHref={(row) => `/orders/${row.id}`}
-        filters={filters}
+        filters={newFilters}
         enableSearch
         enablePagination
         enableColumnVisibility

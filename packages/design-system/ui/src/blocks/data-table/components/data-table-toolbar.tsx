@@ -1,4 +1,5 @@
 import { DataTableFilterBar } from "@/blocks/data-table/components/data-table-filter-bar"
+import { useDataTableContext } from "@/blocks/data-table/context/use-data-table-context"
 import { clx } from "@/utils/clx"
 import * as React from "react"
 
@@ -29,6 +30,9 @@ interface DataTableToolbarProps {
  * Toolbar shown for the data table.
  */
 const DataTableToolbar = (props: DataTableToolbarProps) => {
+  const { instance } = useDataTableContext()
+  const hasFilters = instance.getFilters().length > 0
+
   return (
     <div className="flex flex-col divide-y">
       <div className={clx("flex items-center px-6 py-4", props.className)}>
@@ -36,6 +40,7 @@ const DataTableToolbar = (props: DataTableToolbarProps) => {
       </div>
       <DataTableFilterBar
         clearAllFiltersLabel={props.translations?.clearAll}
+        alwaysShow={hasFilters}
       />
     </div>
   )

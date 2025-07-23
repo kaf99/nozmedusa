@@ -206,7 +206,7 @@ export type DataTableFilteringState<
   [K in keyof T]: T[K]
 }
 
-export type DataTableFilterType = "radio" | "select" | "date"
+export type DataTableFilterType = "radio" | "select" | "date" | "multiselect" | "string" | "number" | "custom"
 export type DataTableFilterOption<T = string> = {
   label: string
   value: T
@@ -273,10 +273,57 @@ export interface DataTableDateFilterProps extends DataTableBaseFilterProps {
   options: DataTableFilterOption<DataTableDateComparisonOperator>[]
 }
 
+export interface DataTableMultiselectFilterProps extends DataTableBaseFilterProps {
+  type: "multiselect"
+  options: DataTableFilterOption[]
+  /**
+   * Whether to show a search input for the options.
+   * @default true
+   */
+  searchable?: boolean
+}
+
+export interface DataTableStringFilterProps extends DataTableBaseFilterProps {
+  type: "string"
+  /**
+   * Placeholder text for the input.
+   */
+  placeholder?: string
+}
+
+export interface DataTableNumberFilterProps extends DataTableBaseFilterProps {
+  type: "number"
+  /**
+   * Placeholder text for the input.
+   */
+  placeholder?: string
+  /**
+   * Whether to include comparison operators.
+   * @default true
+   */
+  includeOperators?: boolean
+}
+
+export interface DataTableCustomFilterProps extends DataTableBaseFilterProps {
+  type: "custom"
+  /**
+   * Custom render function for the filter.
+   */
+  render: (props: {
+    value: any
+    onChange: (value: any) => void
+    onRemove: () => void
+  }) => React.ReactNode
+}
+
 export type DataTableFilterProps =
   | DataTableRadioFilterProps
   | DataTableSelectFilterProps
   | DataTableDateFilterProps
+  | DataTableMultiselectFilterProps
+  | DataTableStringFilterProps
+  | DataTableNumberFilterProps
+  | DataTableCustomFilterProps
 
 export type DataTableFilter<
   T extends DataTableFilterProps = DataTableFilterProps
@@ -307,6 +354,29 @@ export type DataTableDateComparisonOperator = {
    * The filtered date must be greater than this value.
    */
   $gt?: string
+}
+
+export type DataTableNumberComparisonOperator = {
+  /**
+   * The filtered number must be greater than or equal to this value.
+   */
+  $gte?: number
+  /**
+   * The filtered number must be less than or equal to this value.
+   */
+  $lte?: number
+  /**
+   * The filtered number must be less than this value.
+   */
+  $lt?: number
+  /**
+   * The filtered number must be greater than this value.
+   */
+  $gt?: number
+  /**
+   * The filtered number must be equal to this value.
+   */
+  $eq?: number
 }
 
 type DataTableCommandAction = (

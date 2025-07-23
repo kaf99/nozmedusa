@@ -163,6 +163,7 @@ export const DataTable = <TData,>({
     onColumnVisibilityChange?.(visibility)
   }, [onColumnVisibilityChange])
 
+  // Extract filter IDs for query param management
   const filterIds = useMemo(() => filters?.map((f) => f.id) ?? [], [filters])
   const prefixedFilterIds = filterIds.map((id) => getQueryParamKey(id, prefix))
 
@@ -227,11 +228,10 @@ export const DataTable = <TData,>({
       })
 
       Object.entries(value).forEach(([key, filter]) => {
-        if (
-          prefixedFilterIds.includes(getQueryParamKey(key, prefix)) &&
-          filter
-        ) {
-          prev.set(getQueryParamKey(key, prefix), JSON.stringify(filter))
+        if (prefixedFilterIds.includes(getQueryParamKey(key, prefix))) {
+          if (filter !== undefined) {
+            prev.set(getQueryParamKey(key, prefix), JSON.stringify(filter))
+          }
         }
       })
 
@@ -355,37 +355,14 @@ export const DataTable = <TData,>({
               )}
             </div>
           )}
-          <div className="flex items-center justify-end gap-x-2 md:hidden">
-            {enableFiltering && (
-              <UiDataTable.FilterMenu tooltip={t("filters.filterLabel")} />
-            )}
-            {enableSorting && (
-              <UiDataTable.SortingMenu tooltip={t("filters.sortLabel")} />
-            )}
-            {effectiveEnableColumnVisibility && <UiDataTable.ColumnVisibilityMenu />}
-            {effectiveEnableViewSelector && entity && (
-              <ViewSelector 
-                entity={entity} 
-                onViewChange={onViewChange} 
-                currentColumns={currentColumns}
-              />
-            )}
-            {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
-            {action && <DataTableAction {...action} />}
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-2 md:justify-end">
-          {enableSearch && (
-            <div className="w-full md:w-auto">
-              <UiDataTable.Search
-                placeholder={t("filters.searchLabel")}
-                autoFocus={autoFocusSearch}
-              />
-            </div>
-          )}
-          <div className="hidden items-center gap-x-2 md:flex">
-            {enableFiltering && (
-              <UiDataTable.FilterMenu tooltip={t("filters.filterLabel")} />
+          <div className="flex items-center gap-x-2">
+            {enableSearch && (
+              <div className="w-full md:w-auto">
+                <UiDataTable.Search
+                  placeholder={t("filters.searchLabel")}
+                  autoFocus={autoFocusSearch}
+                />
+              </div>
             )}
             {enableSorting && (
               <UiDataTable.SortingMenu tooltip={t("filters.sortLabel")} />
@@ -450,7 +427,7 @@ function parseFilterState(
   for (const id of filterIds) {
     const filterValue = value[id]
 
-    if (filterValue) {
+    if (filterValue !== undefined) {
       filters[id] = JSON.parse(filterValue)
     }
   }
