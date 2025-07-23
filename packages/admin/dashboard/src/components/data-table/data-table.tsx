@@ -30,26 +30,26 @@ type DataTableActionProps = {
   label: string
   disabled?: boolean
 } & (
-  | {
+    | {
       to: string
     }
-  | {
+    | {
       onClick: () => void
     }
-)
+  )
 
 type DataTableActionMenuActionProps = {
   label: string
   icon: ReactNode
   disabled?: boolean
 } & (
-  | {
+    | {
       to: string
     }
-  | {
+    | {
       onClick: () => void
     }
-)
+  )
 
 type DataTableActionMenuGroupProps = {
   actions: DataTableActionMenuActionProps[]
@@ -147,11 +147,11 @@ export const DataTable = <TData,>({
     // Deep compare to check if the visibility has actually changed
     const currentKeys = Object.keys(columnVisibility).sort()
     const newKeys = Object.keys(initialColumnVisibility).sort()
-    
-    const hasChanged = currentKeys.length !== newKeys.length || 
+
+    const hasChanged = currentKeys.length !== newKeys.length ||
       currentKeys.some((key, index) => key !== newKeys[index]) ||
       Object.entries(initialColumnVisibility).some(([key, value]) => columnVisibility[key] !== value)
-    
+
     if (hasChanged) {
       setColumnVisibility(initialColumnVisibility)
     }
@@ -221,17 +221,24 @@ export const DataTable = <TData,>({
 
   const handleFilteringChange = (value: DataTableFilteringState) => {
     setSearchParams((prev) => {
+      // Remove filters that are no longer in the state
       Array.from(prev.keys()).forEach((key) => {
-        if (prefixedFilterIds.includes(key) && !(key in value)) {
-          prev.delete(key)
+        if (prefixedFilterIds.includes(key)) {
+          // Extract the unprefixed key
+          const unprefixedKey = prefix ? key.replace(`${prefix}_`, '') : key
+          if (!(unprefixedKey in value)) {
+            prev.delete(key)
+          }
         }
       })
 
+      // Add or update filters in the state
       Object.entries(value).forEach(([key, filter]) => {
-        if (prefixedFilterIds.includes(getQueryParamKey(key, prefix))) {
-          if (filter !== undefined) {
-            prev.set(getQueryParamKey(key, prefix), JSON.stringify(filter))
-          }
+        const prefixedKey = getQueryParamKey(key, prefix)
+        if (filter !== undefined) {
+          prev.set(prefixedKey, JSON.stringify(filter))
+        } else {
+          prev.delete(prefixedKey)
         }
       })
 
@@ -295,41 +302,41 @@ export const DataTable = <TData,>({
     onRowClick: rowHref ? onRowClick : undefined,
     pagination: enablePagination
       ? {
-          state: pagination,
-          onPaginationChange: handlePaginationChange,
-        }
+        state: pagination,
+        onPaginationChange: handlePaginationChange,
+      }
       : undefined,
     filtering: enableFiltering
       ? {
-          state: filtering,
-          onFilteringChange: handleFilteringChange,
-        }
+        state: filtering,
+        onFilteringChange: handleFilteringChange,
+      }
       : undefined,
     sorting: enableSorting
       ? {
-          state: sorting,
-          onSortingChange: handleSortingChange,
-        }
+        state: sorting,
+        onSortingChange: handleSortingChange,
+      }
       : undefined,
     search: enableSearch
       ? {
-          state: search,
-          onSearchChange: handleSearchChange,
-        }
+        state: search,
+        onSearchChange: handleSearchChange,
+      }
       : undefined,
     rowSelection,
     isLoading,
     columnVisibility: effectiveEnableColumnVisibility
       ? {
-          state: columnVisibility,
-          onColumnVisibilityChange: handleColumnVisibilityChange,
-        }
+        state: columnVisibility,
+        onColumnVisibilityChange: handleColumnVisibilityChange,
+      }
       : undefined,
     columnOrder: effectiveEnableColumnVisibility && columnOrder && onColumnOrderChange
       ? {
-          state: columnOrder,
-          onColumnOrderChange: onColumnOrderChange,
-        }
+        state: columnOrder,
+        onColumnOrderChange: onColumnOrderChange,
+      }
       : undefined,
   })
 
@@ -369,9 +376,9 @@ export const DataTable = <TData,>({
             )}
             {effectiveEnableColumnVisibility && <UiDataTable.ColumnVisibilityMenu />}
             {effectiveEnableViewSelector && entity && (
-              <ViewSelector 
-                entity={entity} 
-                onViewChange={onViewChange} 
+              <ViewSelector
+                entity={entity}
+                onViewChange={onViewChange}
                 currentColumns={currentColumns}
               />
             )}

@@ -84,6 +84,7 @@ export const OrderListTable = () => {
   }
   const { searchParams, raw } = useOrderTableQuery({
     pageSize: PAGE_SIZE,
+    prefix: "o",
   })
 
   const newFilters = useOrderDataTableFilters()
@@ -358,7 +359,14 @@ export const OrderListTable = () => {
         isLoading={isLoading}
         pageSize={PAGE_SIZE}
         emptyState={{
-          heading: t("orders.list.noRecordsMessage"),
+          empty: {
+            heading: t("orders.domain"),
+            description: t("orders.list.noRecordsMessage"),
+          },
+          filtered: {
+            heading: t("general.noResultsTitle"),
+            description: t("general.noResultsMessage"),
+          },
         }}
         prefix="o"
       />
