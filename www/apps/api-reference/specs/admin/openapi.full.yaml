@@ -1671,7 +1671,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateApiKey'
+              type: object
+              description: The API key's details.
+              required:
+                - title
+                - type
+              properties:
+                title:
+                  type: string
+                  title: title
+                  description: The API key's title.
+                type:
+                  type: string
+                  description: The API key's type. Use `secret` for a user's API key; Use `publishable` for Publishable API keys.
+                  enum:
+                    - publishable
+                    - secret
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -1827,7 +1842,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateApiKey'
+              type: object
+              description: The details to update in an API key.
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  title: title
+                  description: The API key's title.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -1994,7 +2017,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminRevokeApiKey'
+              type: object
+              description: The details of revoking the API key.
+              properties:
+                revoke_in:
+                  type: number
+                  title: revoke_in
+                  description: The time in seconds to revoke the API key after. If not set, the API key is revoked immediately.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -3709,7 +3738,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderClaimsReqSchema'
+              type: object
+              description: The claim's details.
+              required:
+                - type
+                - order_id
+              properties:
+                type:
+                  type: string
+                  description: The claim's type.
+                  enum:
+                    - refund
+                    - replace
+                order_id:
+                  type: string
+                  title: order_id
+                  description: The ID of the order the claim is created for.
+                description:
+                  type: string
+                  title: description
+                  description: The claim's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the associated return reason.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -3857,7 +3916,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostCancelClaimReqSchema'
+              type: object
+              description: The details of canceling a claim.
+              properties:
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send the customer a notification about the claim's cancelation.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -3936,7 +4001,43 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimItemsReqSchema'
+              type: object
+              description: The details of the order items to add to the claim.
+              properties:
+                items:
+                  type: array
+                  description: The item's details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The ID of the order's item.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The quantity of the order's item to add to the claim.
+                      reason:
+                        type: string
+                        description: The reason the item is claimed.
+                        enum:
+                          - missing_item
+                          - wrong_item
+                          - production_failure
+                          - other
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note that's only viewed by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4030,7 +4131,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsItemsActionReqSchema'
+              type: object
+              description: The details to update in the item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the return reason associated with the item.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note that's only viewed by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4191,7 +4306,42 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsRequestItemsReqSchema'
+              type: object
+              description: The items' details.
+              properties:
+                items:
+                  type: array
+                  description: The items' details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The item's ID.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      reason_id:
+                        type: string
+                        title: reason_id
+                        description: The ID of the associated return reason.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4279,7 +4429,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsRequestItemsActionReqSchema'
+              type: object
+              description: The details to update in the item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the associated return reason.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4428,7 +4595,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsShippingReqSchema'
+              type: object
+              description: The shipping method's details.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set the price of the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4526,7 +4716,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsShippingActionReqSchema'
+              type: object
+              description: The details to update in the shipping method.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The shipping method's custom amount.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note only viewed by admin users.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4685,7 +4888,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsAddItemsReqSchema'
+              type: object
+              description: The details of the outbound items to add to the claim.
+              properties:
+                items:
+                  type: array
+                  description: The outbound item's details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - variant_id
+                      - quantity
+                    properties:
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the associated product variant.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The quantity to send to the customer.
+                      unit_price:
+                        type: number
+                        title: unit_price
+                        description: The item's unit price.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4781,7 +5015,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsItemsActionReqSchema'
+              type: object
+              description: The details to update in the item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the return reason associated with the item.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note that's only viewed by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -4950,7 +5198,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsShippingReqSchema'
+              type: object
+              description: The details of the shipping method used to ship outbound items.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set a custom price for the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note only viewed by admin users.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -5048,7 +5319,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostClaimsShippingActionReqSchema'
+              type: object
+              description: The details to update in the shipping method.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The shipping method's custom amount.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note only viewed by admin users.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -7808,7 +8092,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateCustomerGroup'
+              type: object
+              description: The customer group's details.
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  title: name
+                  description: The customer group's name.
+                metadata:
+                  type: object
+                  description: The customer group's metadata, used to store custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -7963,7 +8258,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateCustomerGroup'
+              type: object
+              description: The details to update in a customer group.
+              properties:
+                name:
+                  type: string
+                  title: name
+                  description: The customer group's name.
+                metadata:
+                  type: object
+                  description: The customer group's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -14906,7 +15210,129 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateDraftOrder'
+              type: object
+              description: The data to update in the draft order.
+              properties:
+                email:
+                  type: string
+                  title: email
+                  description: The customer email associated with the draft order.
+                  format: email
+                shipping_address:
+                  type: object
+                  description: The draft order's shipping address.
+                  properties:
+                    first_name:
+                      type: string
+                      title: first_name
+                      description: The shipping address's first name.
+                    last_name:
+                      type: string
+                      title: last_name
+                      description: The shipping address's last name.
+                    phone:
+                      type: string
+                      title: phone
+                      description: The shipping address's phone.
+                    company:
+                      type: string
+                      title: company
+                      description: The shipping address's company.
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The first address line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The second address line.
+                    city:
+                      type: string
+                      title: city
+                      description: The shipping address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The shipping address's country code.
+                      example: us
+                    province:
+                      type: string
+                      title: province
+                      description: The shipping address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The shipping address's postal code.
+                    metadata:
+                      type: object
+                      description: The shipping address's metadata, can hold custom key-value pairs.
+                billing_address:
+                  type: object
+                  description: The draft order's billing address.
+                  properties:
+                    first_name:
+                      type: string
+                      title: first_name
+                      description: The billing address's first name.
+                    last_name:
+                      type: string
+                      title: last_name
+                      description: The billing address's last name.
+                    phone:
+                      type: string
+                      title: phone
+                      description: The billing address's phone.
+                    company:
+                      type: string
+                      title: company
+                      description: The billing address's company.
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The first address line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The second address line.
+                    city:
+                      type: string
+                      title: city
+                      description: The billing address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The billing address's country code.
+                      example: us
+                    province:
+                      type: string
+                      title: province
+                      description: The billing address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The billing address's postal code.
+                    metadata:
+                      type: object
+                      description: The billing address's metadata, can hold custom key-value pairs.
+                metadata:
+                  type: object
+                  description: The draft order's metadata, can hold custom key-value pairs.
+                customer_id:
+                  type: string
+                  title: customer_id
+                  description: The ID of the customer associated with the draft order.
+                sales_channel_id:
+                  type: string
+                  title: sales_channel_id
+                  description: The ID of the sales channel associated with the draft order.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15310,7 +15736,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminAddDraftOrderItems'
+              type: object
+              description: The details of the items to add to a draft order.
+              properties:
+                items:
+                  type: array
+                  description: The items to add to the draft order.
+                  items:
+                    type: object
+                    description: The item's details
+                    required:
+                      - quantity
+                    properties:
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the variant to add to the draft order.
+                      title:
+                        type: string
+                        title: title
+                        description: The item's title.
+                      unit_price:
+                        type: number
+                        title: unit_price
+                        description: The item's unit price.
+                      compare_at_unit_price:
+                        type: number
+                        title: compare_at_unit_price
+                        description: The original price of the item before a promotion or sale.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users about the item.
+                      allow_backorder:
+                        type: boolean
+                        title: allow_backorder
+                        description: Whether the item can be purchased if it's out of stock.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15388,7 +15856,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateDraftOrderItem'
+              type: object
+              description: The updates to make on a draft order's item.
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                unit_price:
+                  type: number
+                  title: unit_price
+                  description: The item's unit price.
+                compare_at_unit_price:
+                  type: number
+                  title: compare_at_unit_price
+                  description: The original price of the item before a promotion or sale.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users about the item.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15468,7 +15956,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateDraftOrderItem'
+              type: object
+              description: The updates to make on a draft order's item.
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                unit_price:
+                  type: number
+                  title: unit_price
+                  description: The item's unit price.
+                compare_at_unit_price:
+                  type: number
+                  title: compare_at_unit_price
+                  description: The original price of the item before a promotion or sale.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users about the item.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15607,7 +16115,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminAddDraftOrderPromotions'
+              type: object
+              description: The details of the promotions to add to a draft order.
+              required:
+                - promo_codes
+              properties:
+                promo_codes:
+                  type: array
+                  description: The list promotion codes to add to the draft order.
+                  items:
+                    type: string
+                    title: promo_codes
+                    description: A promotion's code.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15727,7 +16246,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminRemoveDraftOrderPromotions'
+              type: object
+              description: The promotion codes to remove from the draft order.
+              required:
+                - promo_codes
+              properties:
+                promo_codes:
+                  type: array
+                  description: The promotion codes to remove from the draft order.
+                  items:
+                    type: string
+                    title: promo_codes
+                    description: A promotion code to remove from the draft order.
       x-events: []
   /admin/draft-orders/{id}/edit/request:
     post:
@@ -15811,7 +16341,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminAddDraftOrderShippingMethod'
+              type: object
+              description: The details of the shipping method to add to a draft order.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the shipping option that this method is created from.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: A custom amount to be charged for this shipping method. If not provided, the shipping option's amount will be used.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users about the shipping method.
+                metadata:
+                  type: object
+                  description: The shipping method's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -15888,7 +16441,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateDraftOrderShippingMethod'
+              type: object
+              description: The updates to make on a draft order's shipping method.
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users about the shipping method.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -16032,7 +16599,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateDraftOrderActionShippingMethod'
+              type: object
+              description: The updates to make on a changed shipping method.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users about the shipping method.
+                metadata:
+                  type: object
+                  description: The shipping method's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17038,7 +17628,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderExchangesReqSchema'
+              type: object
+              description: The exchange's details.
+              required:
+                - order_id
+              properties:
+                order_id:
+                  type: string
+                  title: order_id
+                  description: The ID of the order this exchange is created for.
+                description:
+                  type: string
+                  title: description
+                  description: The exchange's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17184,7 +17793,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostCancelExchangeReqSchema'
+              type: object
+              description: The details of canceling an exchange.
+              properties:
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send a notification to the customer about the exchange's cancelation.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17253,7 +17868,42 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesReturnRequestItemsReqSchema'
+              type: object
+              description: The details of the inbound (return) items.
+              properties:
+                items:
+                  type: array
+                  description: The details of the inbound (return) items.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The ID of the order's item.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      reason_id:
+                        type: string
+                        title: reason_id
+                        description: The ID of the return reason to associate with the item.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17336,7 +17986,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesRequestItemsReturnActionReqSchema'
+              type: object
+              description: The details to update in an inbound (returned) item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the associated return reason.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17484,7 +18151,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsShippingReqSchema'
+              type: object
+              description: The shipping method's details.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set the price of the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17578,7 +18268,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesShippingActionReqSchema'
+              type: object
+              description: The details of the shipping method to update.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The shipping method's custom amount.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed by admin users only.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17735,7 +18438,42 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesAddItemsReqSchema'
+              type: object
+              description: The details of outbound items.
+              properties:
+                items:
+                  type: array
+                  description: The details of outbound items.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - variant_id
+                      - quantity
+                    properties:
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the associated product variant.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      unit_price:
+                        type: number
+                        title: unit_price
+                        description: The item's unit price.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      allow_backorder:
+                        type: boolean
+                        title: allow_backorder
+                        description: Whether the item can be added even if it's not in stock.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17828,7 +18566,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesItemsActionReqSchema'
+              type: object
+              description: The details to update in an outbound item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note only viewed by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -17996,7 +18744,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesShippingReqSchema'
+              type: object
+              description: The outbound shipping method's details.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set a custom amount for the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed by admin users only.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -18090,7 +18861,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostExchangesShippingActionReqSchema'
+              type: object
+              description: The details of the shipping method to update.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: The shipping method's custom amount.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed by admin users only.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -19273,7 +20057,173 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateFulfillment'
+              type: object
+              description: The filfillment's details.
+              required:
+                - items
+                - metadata
+                - order_id
+                - data
+                - location_id
+                - provider_id
+                - delivery_address
+                - labels
+              properties:
+                location_id:
+                  type: string
+                  title: location_id
+                  description: The ID of the location the items are fulfilled from.
+                provider_id:
+                  type: string
+                  title: provider_id
+                  description: The ID of the provider handling this fulfillment.
+                delivery_address:
+                  type: object
+                  description: The address to deliver the items to.
+                  properties:
+                    first_name:
+                      type: string
+                      title: first_name
+                      description: The customer's first name.
+                    last_name:
+                      type: string
+                      title: last_name
+                      description: The customer's last name.
+                    phone:
+                      type: string
+                      title: phone
+                      description: The customer's phone.
+                    company:
+                      type: string
+                      title: company
+                      description: The delivery address's company.
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The delivery address's first line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The delivery address's second line.
+                    city:
+                      type: string
+                      title: city
+                      description: The delivery address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The delivery address's country code.
+                    province:
+                      type: string
+                      title: province
+                      description: The delivery address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The delivery address's postal code.
+                    metadata:
+                      type: object
+                      description: The delivery address's metadata, used to store custom key-value pairs.
+                items:
+                  type: array
+                  description: The items to fulfill.
+                  items:
+                    type: object
+                    description: An item to fulfill.
+                    required:
+                      - title
+                      - quantity
+                      - sku
+                      - barcode
+                    properties:
+                      title:
+                        type: string
+                        title: title
+                        description: The item's title.
+                      sku:
+                        type: string
+                        title: sku
+                        description: The item's SKU.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The quantity to fulfill of the item.
+                      barcode:
+                        type: string
+                        title: barcode
+                        description: The item's barcode.
+                      line_item_id:
+                        type: string
+                        title: line_item_id
+                        description: The ID of the associated line item.
+                      inventory_item_id:
+                        type: string
+                        title: inventory_item_id
+                        description: The ID of the inventory item associated with the underlying variant.
+                labels:
+                  type: array
+                  description: The labels for the fulfillment's shipments.
+                  items:
+                    type: object
+                    description: A shipment's label.
+                    required:
+                      - tracking_number
+                      - tracking_url
+                      - label_url
+                    properties:
+                      tracking_number:
+                        type: string
+                        title: tracking_number
+                        description: The label's tracking number.
+                      tracking_url:
+                        type: string
+                        title: tracking_url
+                        description: The label's tracking URL.
+                      label_url:
+                        type: string
+                        title: label_url
+                        description: The label's URL.
+                order_id:
+                  type: string
+                  title: order_id
+                  description: The ID of the order this fulfillment is created for.
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the shipping option used in the order.
+                data:
+                  type: object
+                  description: Any data useful for the fulfillment provider to handle the fulfillment.
+                  externalDocs:
+                    url: https://docs.medusajs.com/v2/resources/commerce-modules/fulfillment/shipping-option#data-property
+                    description: Learn more about the data property.
+                packed_at:
+                  type: string
+                  title: packed_at
+                  description: The date and time the fulfillment was packed.
+                  format: date-time
+                shipped_at:
+                  type: string
+                  title: shipped_at
+                  description: The date and time the fulfillment was shipped.
+                  format: date-time
+                delivered_at:
+                  type: string
+                  title: delivered_at
+                  description: The date and time the fulfillment was delivered.
+                  format: date-time
+                canceled_at:
+                  type: string
+                  title: canceled_at
+                  description: The date and time the fulfillment was canceled.
+                  format: date-time
+                metadata:
+                  type: object
+                  description: The fulfillment's metadata, used to store custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -19489,7 +20439,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateShipment'
+              type: object
+              description: The shipment's details.
+              required:
+                - labels
+              properties:
+                labels:
+                  type: array
+                  description: The shipment's labels.
+                  items:
+                    type: object
+                    description: A shipment label's details.
+                    required:
+                      - tracking_number
+                      - tracking_url
+                      - label_url
+                    properties:
+                      tracking_number:
+                        type: string
+                        title: tracking_number
+                        description: The label's tracking number.
+                      tracking_url:
+                        type: string
+                        title: tracking_url
+                        description: The label's tracking URL.
+                      label_url:
+                        type: string
+                        title: label_url
+                        description: The label's URL.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -21458,7 +22435,66 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminBatchInventoryItemLocationsLevel'
+              type: object
+              description: The inventory levels to create, update, or delete.
+              properties:
+                create:
+                  type: array
+                  description: The inventory levels to create.
+                  items:
+                    type: object
+                    description: The inventory level's details.
+                    required:
+                      - location_id
+                    properties:
+                      location_id:
+                        type: string
+                        title: location_id
+                        description: The ID of the associated location.
+                      stocked_quantity:
+                        type: number
+                        title: stocked_quantity
+                        description: The inventory level's stocked quantity.
+                      incoming_quantity:
+                        type: number
+                        title: incoming_quantity
+                        description: The inventory level's incoming quantity.
+                update:
+                  type: array
+                  description: The inventory levels to update.
+                  items:
+                    type: object
+                    description: The inventory level's details.
+                    properties:
+                      stocked_quantity:
+                        type: number
+                        title: stocked_quantity
+                        description: The inventory level's stocked quantity.
+                      incoming_quantity:
+                        type: number
+                        title: incoming_quantity
+                        description: The inventory level's incoming quantity.
+                      location_id:
+                        type: string
+                        title: location_id
+                        description: The associated stock location's ID.
+                      id:
+                        type: string
+                        title: id
+                        description: The ID of the location level.
+                    required:
+                      - location_id
+                delete:
+                  type: array
+                  description: The inventory levels to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: The ID of the inventory level to delete.
+                force:
+                  type: boolean
+                  title: force
+                  description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -22964,7 +24000,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsReqSchema'
+              type: object
+              description: The order edit's details.
+              required:
+                - order_id
+              properties:
+                order_id:
+                  type: string
+                  title: order_id
+                  description: The ID of the order this edit is for.
+                description:
+                  type: string
+                  title: description
+                  description: The order edit's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The order edit's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -23207,7 +24262,46 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsAddItemsReqSchema'
+              type: object
+              description: The details of items to be edited.
+              properties:
+                items:
+                  type: array
+                  description: The details of items to be edited.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - variant_id
+                      - quantity
+                    properties:
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the associated product variant.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      unit_price:
+                        type: number
+                        title: unit_price
+                        description: The item's unit price.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      allow_backorder:
+                        type: boolean
+                        title: allow_backorder
+                        description: Whether the item can be added even if there's no available invenotory quantity of the variant.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
+                      compare_at_unit_price:
+                        type: number
+                        title: compare_at_unit_price
+                        description: The original price of the item before a promotion or sale.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -23291,7 +24385,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsUpdateItemQuantityReqSchema'
+              type: object
+              description: The order item's details to update.
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                unit_price:
+                  type: number
+                  title: unit_price
+                  description: The item's unit price.
+                compare_at_unit_price:
+                  type: number
+                  title: compare_at_unit_price
+                  description: The original price of the item before a promotion or sale.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -23379,7 +24493,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsItemsActionReqSchema'
+              type: object
+              description: The details to update in the item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                unit_price:
+                  type: number
+                  title: unit_price
+                  description: The item's unit price.
+                compare_at_unit_price:
+                  type: number
+                  title: compare_at_unit_price
+                  description: The original price of the item before a promotion or sale.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -23603,7 +24735,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsShippingReqSchema'
+              type: object
+              description: The shipping method's details.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set a custom price for the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The shipping method's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -23668,7 +24823,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostOrderEditsShippingActionReqSchema'
+              type: object
+              description: The shipping method's details.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set a custom price for the shipping method.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The order edit's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -24597,7 +25765,121 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateOrder'
+              type: object
+              description: The details to update in the order.
+              properties:
+                email:
+                  type: string
+                  title: email
+                  description: The order's email.
+                  format: email
+                shipping_address:
+                  type: object
+                  description: The order's shipping address.
+                  properties:
+                    first_name:
+                      type: string
+                      title: first_name
+                      description: The address's first name.
+                    last_name:
+                      type: string
+                      title: last_name
+                      description: The address's last name.
+                    phone:
+                      type: string
+                      title: phone
+                      description: The address's phone.
+                    company:
+                      type: string
+                      title: company
+                      description: The address's company.
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The address's first line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The address's second line.
+                    city:
+                      type: string
+                      title: city
+                      description: The address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The address's country code.
+                      example: us
+                    province:
+                      type: string
+                      title: province
+                      description: The address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The address's postal code.
+                    metadata:
+                      type: object
+                      description: The address's metadata, can hold custom key-value pairs.
+                billing_address:
+                  type: object
+                  description: The order's billing address.
+                  properties:
+                    first_name:
+                      type: string
+                      title: first_name
+                      description: The address's first name.
+                    last_name:
+                      type: string
+                      title: last_name
+                      description: The address's last name.
+                    phone:
+                      type: string
+                      title: phone
+                      description: The address's phone.
+                    company:
+                      type: string
+                      title: company
+                      description: The address's company.
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The address's first line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The address's second line.
+                    city:
+                      type: string
+                      title: city
+                      description: The address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The address's country code.
+                      example: us
+                    province:
+                      type: string
+                      title: province
+                      description: The address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The address's postal code.
+                    metadata:
+                      type: object
+                      description: The address's metadata, can hold custom key-value pairs.
+                metadata:
+                  type: object
+                  description: The order's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -24693,6 +25975,23 @@ paths:
         - cookie_auth: []
         - jwt_token: []
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            export const sdk = new Medusa({
+              baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+              debug: import.meta.env.DEV,
+              auth: {
+                type: "session",
+              },
+            })
+
+            sdk.admin.order.archive("order_123")
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -24941,6 +26240,23 @@ paths:
                   type: object
                   description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
       x-codeSamples:
+        - lang: JavaScript
+          label: JS SDK
+          source: |-
+            import Medusa from "@medusajs/js-sdk"
+
+            export const sdk = new Medusa({
+              baseUrl: import.meta.env.VITE_BACKEND_URL || "/",
+              debug: import.meta.env.DEV,
+              auth: {
+                type: "session",
+              },
+            })
+
+            sdk.admin.order.complete("order_123")
+            .then(({ order }) => {
+              console.log(order)
+            })
         - lang: Shell
           label: cURL
           source: |-
@@ -25017,7 +26333,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateOrderCreditLines'
+              type: object
+              description: The details of a credit line to add to an order.
+              required:
+                - amount
+                - reference
+                - reference_id
+              properties:
+                amount:
+                  type: number
+                  title: amount
+                  description: The amount of the credit line.
+                  example: 100
+                reference:
+                  type: string
+                  title: reference
+                  description: The name of the table that the credit line is referencing.
+                  example: order
+                reference_id:
+                  type: string
+                  title: reference_id
+                  description: The ID of a record in the table that the credit line is referencing.
+                  example: order_123
+                metadata:
+                  type: object
+                  description: The credit line's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -25878,7 +27218,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminTransferOrder'
+              type: object
+              description: The details of the request to transfer the order.
+              required:
+                - customer_id
+              properties:
+                customer_id:
+                  type: string
+                  title: customer_id
+                  description: The ID of the customer to transfer the order to.
+                description:
+                  type: string
+                  title: description
+                  description: The description of the order transfer, which can be shown to the customer receiving the order transfer request.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: An internal note viewable only by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -27736,7 +29092,83 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreatePriceList'
+              type: object
+              description: The price list's details.
+              required:
+                - title
+                - description
+              properties:
+                title:
+                  type: string
+                  title: title
+                  description: The price list's title.
+                description:
+                  type: string
+                  title: description
+                  description: The price list's description.
+                starts_at:
+                  type: string
+                  title: starts_at
+                  description: The date and time the price list starts at.
+                  format: date-time
+                ends_at:
+                  type: string
+                  title: ends_at
+                  description: The date and time the price list ends at.
+                  format: date-time
+                status:
+                  type: string
+                  description: The price list's status.
+                  enum:
+                    - active
+                    - draft
+                type:
+                  type: string
+                  description: The price list's type.
+                  enum:
+                    - sale
+                    - override
+                rules:
+                  type: object
+                  description: The price list's rules.
+                  example:
+                    product_category_id: pcat_123
+                prices:
+                  type: array
+                  description: The price list's prices.
+                  items:
+                    type: object
+                    description: A price's details.
+                    required:
+                      - currency_code
+                      - variant_id
+                      - amount
+                    properties:
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The price's currency code.
+                      amount:
+                        type: number
+                        title: amount
+                        description: The price's amount.
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the product variant this price is for.
+                      min_quantity:
+                        type: number
+                        title: min_quantity
+                        description: The minimum quantity required in the cart for this price to be applied.
+                      max_quantity:
+                        type: number
+                        title: max_quantity
+                        description: The maximum quantity in the cart that shouldn't be crossed for this price to be applied.
+                      rules:
+                        type: object
+                        description: The price's rules.
+                        example:
+                          region_id: reg_123
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -27905,7 +29337,43 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdatePriceList'
+              type: object
+              description: the details to update in a price list.
+              properties:
+                title:
+                  type: string
+                  title: title
+                  description: The price list's title.
+                description:
+                  type: string
+                  title: description
+                  description: The price list's description.
+                starts_at:
+                  type: string
+                  title: starts_at
+                  description: The date the price list starts.
+                ends_at:
+                  type: string
+                  title: ends_at
+                  description: The date the price list ends.
+                status:
+                  type: string
+                  description: The price list's status.
+                  enum:
+                    - active
+                    - draft
+                type:
+                  type: string
+                  description: The price list's type.
+                  enum:
+                    - sale
+                    - override
+                rules:
+                  type: object
+                  description: The price list's rules.
+                  example:
+                    customer_group_id:
+                      - cusgrp_123
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -33650,7 +35118,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminImportProducts'
+              type: object
+              description: The details of the product's import file.
+              required:
+                - file_key
+                - originalname
+                - extension
+                - size
+                - mime_type
+              properties:
+                file_key:
+                  type: string
+                  title: file_key
+                  description: The name of the file as stored in the configured File Module Provider.
+                originalname:
+                  type: string
+                  title: originalname
+                  description: The file's original name.
+                extension:
+                  type: string
+                  title: extension
+                  description: The file's extension.
+                  example: csv
+                size:
+                  type: number
+                  title: size
+                  description: The file's size in bytes.
+                mime_type:
+                  type: string
+                  title: mime_type
+                  description: The file's mime type.
+                  example: text/csv
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -35885,7 +37383,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateVariantInventoryItem'
+              type: object
+              description: The details of the variant-inventory item association.
+              required:
+                - inventory_item_id
+                - required_quantity
+              properties:
+                required_quantity:
+                  type: number
+                  title: required_quantity
+                  description: The quantity of the variant in the inventory item.
+                inventory_item_id:
+                  type: string
+                  title: inventory_item_id
+                  description: The inventory item's ID.
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -35964,7 +37475,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateVariantInventoryItem'
+              type: object
+              description: The properties to update of the variant's inventory item association.
+              required:
+                - required_quantity
+              properties:
+                required_quantity:
+                  type: number
+                  title: required_quantity
+                  description: The number of units a single quantity is equivalent to. For example, if a customer orders one quantity of the variant, Medusa checks the availability of the quantity multiplied by the value set for `required_quantity`. When the customer orders the quantity, Medusa reserves the ordered quantity multiplied by the value set for `required_quantity`.
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -41929,7 +43448,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsReqSchema'
+              type: object
+              description: The return's details.
+              required:
+                - order_id
+              properties:
+                order_id:
+                  type: string
+                  title: order_id
+                  description: The ID of the order the return belongs to.
+                location_id:
+                  type: string
+                  title: location_id
+                  description: The ID of the location the items are returned to.
+                description:
+                  type: string
+                  title: description
+                  description: The return's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send the customer a notification about the created return.
+                metadata:
+                  type: object
+                  description: The return's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42097,7 +43643,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsReturnReqSchema'
+              type: object
+              description: The return's details.
+              properties:
+                location_id:
+                  type: string
+                  title: location_id
+                  description: The ID of the location to return items to.
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether the customer should receive notifications about updates to the return.
+                metadata:
+                  type: object
+                  description: The return's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42215,7 +43774,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostCancelReturnReqSchema'
+              type: object
+              description: The details of canceling a return.
+              properties:
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send the customer a notification about the return's cancelation.
       x-workflow: cancelReturnWorkflow
       x-events: []
   /admin/returns/{id}/dismiss-items:
@@ -42250,7 +43815,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsReceiveItemsReqSchema'
+              type: object
+              description: The items details.
+              properties:
+                items:
+                  type: array
+                  description: The items details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The ID of the item in the order.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42342,7 +43935,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsDismissItemsActionReqSchema'
+              type: object
+              description: The details to update of the damaged item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42504,7 +44107,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReceiveReturnsReqSchema'
+              type: object
+              description: The return receival details.
+              properties:
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                description:
+                  type: string
+                  title: description
+                  description: The return's description.
+                metadata:
+                  type: object
+                  description: The return's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42679,7 +44295,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsReceiveItemsReqSchema'
+              type: object
+              description: The items details.
+              properties:
+                items:
+                  type: array
+                  description: The items details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The ID of the item in the order.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42771,7 +44415,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsReceiveItemsActionReqSchema'
+              type: object
+              description: The details of the received item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -42934,7 +44588,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsConfirmRequestReqSchema'
+              type: object
+              description: The confirmation's details.
+              properties:
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send the customer a notification about the confirmation.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -43025,7 +44685,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsConfirmRequestReqSchema'
+              type: object
+              description: The confirmation's details.
+              properties:
+                no_notification:
+                  type: boolean
+                  title: no_notification
+                  description: Whether to send the customer a notification about the confirmation.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -43197,7 +44863,42 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsRequestItemsReqSchema'
+              type: object
+              description: The items' details.
+              properties:
+                items:
+                  type: array
+                  description: The items' details.
+                  items:
+                    type: object
+                    description: An item's details.
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The item's ID.
+                      quantity:
+                        type: number
+                        title: quantity
+                        description: The item's quantity.
+                      description:
+                        type: string
+                        title: description
+                        description: The item's description.
+                      internal_note:
+                        type: string
+                        title: internal_note
+                        description: A note viewed only by admin users.
+                      reason_id:
+                        type: string
+                        title: reason_id
+                        description: The ID of the associated return reason.
+                      metadata:
+                        type: object
+                        description: The item's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -43288,7 +44989,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsRequestItemsActionReqSchema'
+              type: object
+              description: The details to update in the item.
+              properties:
+                quantity:
+                  type: number
+                  title: quantity
+                  description: The item's quantity.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                reason_id:
+                  type: string
+                  title: reason_id
+                  description: The ID of the associated return reason.
+                metadata:
+                  type: object
+                  description: The claim's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -43451,7 +45169,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsShippingReqSchema'
+              type: object
+              description: The shipping method's details.
+              required:
+                - shipping_option_id
+              properties:
+                shipping_option_id:
+                  type: string
+                  title: shipping_option_id
+                  description: The ID of the associated shipping option.
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set the price of the shipping method.
+                description:
+                  type: string
+                  title: description
+                  description: The shipping method's description.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The exchange's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -43545,7 +45286,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminPostReturnsShippingActionReqSchema'
+              type: object
+              description: The shipping method's details.
+              properties:
+                custom_amount:
+                  type: number
+                  title: custom_amount
+                  description: Set a custom price for the shipping method.
+                internal_note:
+                  type: string
+                  title: internal_note
+                  description: A note viewed only by admin users.
+                metadata:
+                  type: object
+                  description: The return's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -44450,7 +46204,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateSalesChannel'
+              type: object
+              description: The properties to update in the sales channel.
+              properties:
+                name:
+                  type: string
+                  title: name
+                  description: The sales channel's name.
+                description:
+                  type: string
+                  title: description
+                  description: The sales channel's description.
+                is_disabled:
+                  type: boolean
+                  title: is_disabled
+                  description: Whether the sales channel is disabled.
+                metadata:
+                  type: object
+                  description: The sales channel's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -47460,7 +49231,64 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateStockLocation'
+              type: object
+              description: The properties to update in a stock location.
+              properties:
+                name:
+                  type: string
+                  title: name
+                  description: The stock location's name.
+                address:
+                  type: object
+                  description: The stock location's address. Pass this property if you're creating a new address to associate with the location.
+                  required:
+                    - address_1
+                    - country_code
+                  properties:
+                    address_1:
+                      type: string
+                      title: address_1
+                      description: The address's first line.
+                    address_2:
+                      type: string
+                      title: address_2
+                      description: The address's second line.
+                    company:
+                      type: string
+                      title: company
+                      description: The address's company.
+                    city:
+                      type: string
+                      title: city
+                      description: The address's city.
+                    country_code:
+                      type: string
+                      title: country_code
+                      description: The address's country code.
+                      example: us
+                    phone:
+                      type: string
+                      title: phone
+                      description: The address's phone.
+                    postal_code:
+                      type: string
+                      title: postal_code
+                      description: The address's postal code.
+                    province:
+                      type: string
+                      title: province
+                      description: The address's ISO 3166-2 province code. Must be lower-case.
+                      example: us-ca
+                      externalDocs:
+                        url: https://en.wikipedia.org/wiki/ISO_3166-2
+                        description: Learn more about ISO 3166-2
+                address_id:
+                  type: string
+                  title: address_id
+                  description: The ID of an existing stock location address to associate the stock location with.
+                metadata:
+                  type: object
+                  description: The stock location's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -49400,7 +51228,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateStore'
+              type: object
+              description: The properties to update in a store.
+              properties:
+                name:
+                  type: string
+                  title: name
+                  description: The store's name.
+                supported_currencies:
+                  type: array
+                  description: The store's supported currencies.
+                  items:
+                    type: object
+                    description: A store currency.
+                    required:
+                      - currency_code
+                    properties:
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The currency's code.
+                        example: usd
+                      is_default:
+                        type: boolean
+                        title: is_default
+                        description: Whether the currency is the default in the store.
+                      is_tax_inclusive:
+                        type: boolean
+                        title: is_tax_inclusive
+                        description: Whether prices using this currency are tax inclusive.
+                default_sales_channel_id:
+                  type: string
+                  title: default_sales_channel_id
+                  description: The ID of the default sales channel in the store.
+                default_region_id:
+                  type: string
+                  title: default_region_id
+                  description: The ID of the default region in the store.
+                default_location_id:
+                  type: string
+                  title: default_location_id
+                  description: The ID of the default stock location in the store.
+                metadata:
+                  type: object
+                  description: The store's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -50436,7 +52307,54 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateTaxRate'
+              type: object
+              description: The properties to update in the tax rate.
+              properties:
+                rate:
+                  type: number
+                  title: rate
+                  description: The rate to charge.
+                code:
+                  type: string
+                  title: code
+                  description: The code that the tax rate is identified by.
+                rules:
+                  type: array
+                  description: The tax rate's rules.
+                  items:
+                    type: object
+                    description: A tax rate rule.
+                    required:
+                      - reference
+                      - reference_id
+                    properties:
+                      reference:
+                        type: string
+                        title: reference
+                        description: The name of the table this rule references.
+                        example: product_type
+                      reference_id:
+                        type: string
+                        title: reference_id
+                        description: The ID of the record in the table that the rule references.
+                        example: ptyp_123
+                name:
+                  type: string
+                  title: name
+                  description: The tax rate's name.
+                is_default:
+                  type: boolean
+                  title: is_default
+                  description: Whether the tax rate is the default in the store.
+                is_combinable:
+                  type: boolean
+                  title: is_combinable
+                  description: Whether the tax rate should be combined with parent rates.
+                  externalDocs:
+                    url: https://docs.medusajs.com/v2/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
+                metadata:
+                  type: object
+                  description: The tax rate's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -50584,7 +52502,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateTaxRateRule'
+              type: object
+              description: The tax rate rule's details.
+              required:
+                - reference
+                - reference_id
+              properties:
+                reference:
+                  type: string
+                  title: reference
+                  description: The name of a table in the database that this rule points to.
+                  example: product_type
+                reference_id:
+                  type: string
+                  title: reference_id
+                  description: The ID of a record in the table specified in reference.
+                  example: ptype_123
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -51995,7 +53928,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateTaxRegion'
+              type: object
+              description: The details to update in a tax region.
+              properties:
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The tax region's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                metadata:
+                  type: object
+                  description: The tax region's metadata, can hold custom key-value pairs.
+                provider_id:
+                  type: string
+                  title: provider_id
+                  description: The ID of the tax provider to use when calculating taxes for this tax region.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -52602,7 +54552,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUploadPreSignedUrl'
+              type: object
+              description: The details of the file to upload.
+              required:
+                - originalname
+                - size
+                - mime_type
+              properties:
+                originalname:
+                  type: string
+                  title: originalname
+                  description: The file's original name.
+                size:
+                  type: number
+                  title: size
+                  description: The file's size in bytes.
+                mime_type:
+                  type: string
+                  title: mime_type
+                  description: The file's mime type.
+                  example: text/csv
+                access:
+                  type: string
+                  description: The access level of the file. If `private`, the file will not be publicly accessible. The default value depends on the configured File Module Provider.
+                  enum:
+                    - public
+                    - private
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -53464,7 +55439,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateUser'
+              type: object
+              description: The properties to update in a user.
+              properties:
+                first_name:
+                  type: string
+                  title: first_name
+                  description: The user's first name.
+                last_name:
+                  type: string
+                  title: last_name
+                  description: The user's last name.
+                avatar_url:
+                  type: string
+                  title: avatar_url
+                  description: The URL of the user's avatar.
+                metadata:
+                  type: object
+                  description: The user's metadata, can hold custom key-value pairs.
       x-codeSamples:
         - lang: JavaScript
           label: JS SDK
@@ -53857,7 +55849,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateWorkflowsRun'
+              type: object
+              description: The details of the workflow to execute.
+              properties:
+                input:
+                  description: The input to pass to the workflow. Can be of any type.
+                transaction_id:
+                  type: string
+                  title: transaction_id
+                  description: The ID of the workflow execution's transaction.
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -53940,7 +55940,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateWorkflowsAsyncResponse'
+              type: object
+              description: The details of changing a workflow execution's step status.
+              required:
+                - transaction_id
+                - step_id
+              properties:
+                transaction_id:
+                  type: string
+                  title: transaction_id
+                  description: The workflows execution's transaction ID.
+                step_id:
+                  type: string
+                  title: step_id
+                  description: The ID of the step whose status was changed.
+                response:
+                  description: Sets the step's response. It accepts any type.
+                compensate_input:
+                  description: Sets the compensation function's input. It accepts any response.
+                action:
+                  type: string
+                  description: Whether to invoke or compensate the step.
+                  enum:
+                    - invoke
+                    - compensate
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -54003,7 +56026,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminCreateWorkflowsAsyncResponse'
+              type: object
+              description: The details of changing a workflow execution's step status.
+              required:
+                - transaction_id
+                - step_id
+              properties:
+                transaction_id:
+                  type: string
+                  title: transaction_id
+                  description: The workflows execution's transaction ID.
+                step_id:
+                  type: string
+                  title: step_id
+                  description: The ID of the step whose status was changed.
+                response:
+                  description: Sets the step's response. It accepts any type.
+                compensate_input:
+                  description: Sets the compensation function's input. It accepts any response.
+                action:
+                  type: string
+                  description: Whether to invoke or compensate the step.
+                  enum:
+                    - invoke
+                    - compensate
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -54838,91 +56884,6 @@ paths:
           $ref: '#/components/responses/500_error'
 components:
   schemas:
-    AdminAddDraftOrderItems:
-      type: object
-      description: The details of the items to add to a draft order.
-      x-schemaName: AdminAddDraftOrderItems
-      properties:
-        items:
-          type: array
-          description: The items to add to the draft order.
-          items:
-            type: object
-            description: The item's details
-            required:
-              - quantity
-            properties:
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              variant_id:
-                type: string
-                title: variant_id
-                description: The ID of the variant to add to the draft order.
-              title:
-                type: string
-                title: title
-                description: The item's title.
-              unit_price:
-                type: number
-                title: unit_price
-                description: The item's unit price.
-              compare_at_unit_price:
-                type: number
-                title: compare_at_unit_price
-                description: The original price of the item before a promotion or sale.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users about the item.
-              allow_backorder:
-                type: boolean
-                title: allow_backorder
-                description: Whether the item can be purchased if it's out of stock.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-    AdminAddDraftOrderPromotions:
-      type: object
-      description: The details of the promotions to add to a draft order.
-      x-schemaName: AdminAddDraftOrderPromotions
-      required:
-        - promo_codes
-      properties:
-        promo_codes:
-          type: array
-          description: The list promotion codes to add to the draft order.
-          items:
-            type: string
-            title: promo_codes
-            description: A promotion's code.
-    AdminAddDraftOrderShippingMethod:
-      type: object
-      description: The details of the shipping method to add to a draft order.
-      x-schemaName: AdminAddDraftOrderShippingMethod
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the shipping option that this method is created from.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: A custom amount to be charged for this shipping method. If not provided, the shipping option's amount will be used.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users about the shipping method.
-        metadata:
-          type: object
-          description: The shipping method's metadata, can hold custom key-value pairs.
     AdminApiKey:
       type: object
       description: The API key's details.
@@ -55093,68 +57054,6 @@ components:
           title: incoming_quantity
           description: The incoming quantity to be added to stock.
       x-schemaName: AdminBatchCreateInventoryItemsLocationLevels
-    AdminBatchInventoryItemLocationsLevel:
-      type: object
-      description: The inventory levels to create, update, or delete.
-      properties:
-        create:
-          type: array
-          description: The inventory levels to create.
-          items:
-            type: object
-            description: The inventory level's details.
-            required:
-              - location_id
-            properties:
-              location_id:
-                type: string
-                title: location_id
-                description: The ID of the associated location.
-              stocked_quantity:
-                type: number
-                title: stocked_quantity
-                description: The inventory level's stocked quantity.
-              incoming_quantity:
-                type: number
-                title: incoming_quantity
-                description: The inventory level's incoming quantity.
-        update:
-          type: array
-          description: The inventory levels to update.
-          items:
-            type: object
-            description: The inventory level's details.
-            properties:
-              stocked_quantity:
-                type: number
-                title: stocked_quantity
-                description: The inventory level's stocked quantity.
-              incoming_quantity:
-                type: number
-                title: incoming_quantity
-                description: The inventory level's incoming quantity.
-              location_id:
-                type: string
-                title: location_id
-                description: The associated stock location's ID.
-              id:
-                type: string
-                title: id
-                description: The ID of the location level.
-            required:
-              - location_id
-        delete:
-          type: array
-          description: The inventory levels to delete.
-          items:
-            type: string
-            title: delete
-            description: The ID of the inventory level to delete.
-        force:
-          type: boolean
-          title: force
-          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
-      x-schemaName: AdminBatchInventoryItemLocationsLevel
     AdminBatchInventoryItemsLocationLevels:
       type: object
       description: The inventory levels to manage.
@@ -56047,207 +57946,6 @@ components:
       properties:
         collection:
           $ref: '#/components/schemas/AdminCollection'
-    AdminCreateApiKey:
-      type: object
-      description: The API key's details.
-      x-schemaName: AdminCreateApiKey
-      required:
-        - title
-        - type
-      properties:
-        title:
-          type: string
-          title: title
-          description: The API key's title.
-        type:
-          type: string
-          description: The API key's type. Use `secret` for a user's API key; Use `publishable` for Publishable API keys.
-          enum:
-            - publishable
-            - secret
-    AdminCreateCustomerGroup:
-      type: object
-      description: The customer group's details.
-      x-schemaName: AdminCreateCustomerGroup
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          title: name
-          description: The customer group's name.
-        metadata:
-          type: object
-          description: The customer group's metadata, used to store custom key-value pairs.
-    AdminCreateFulfillment:
-      type: object
-      description: The filfillment's details.
-      x-schemaName: AdminCreateFulfillment
-      required:
-        - data
-        - items
-        - metadata
-        - order_id
-        - location_id
-        - provider_id
-        - delivery_address
-        - labels
-      properties:
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location the items are fulfilled from.
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the provider handling this fulfillment.
-        delivery_address:
-          type: object
-          description: The address to deliver the items to.
-          properties:
-            first_name:
-              type: string
-              title: first_name
-              description: The customer's first name.
-            last_name:
-              type: string
-              title: last_name
-              description: The customer's last name.
-            phone:
-              type: string
-              title: phone
-              description: The customer's phone.
-            company:
-              type: string
-              title: company
-              description: The delivery address's company.
-            address_1:
-              type: string
-              title: address_1
-              description: The delivery address's first line.
-            address_2:
-              type: string
-              title: address_2
-              description: The delivery address's second line.
-            city:
-              type: string
-              title: city
-              description: The delivery address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The delivery address's country code.
-            province:
-              type: string
-              title: province
-              description: The delivery address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-            postal_code:
-              type: string
-              title: postal_code
-              description: The delivery address's postal code.
-            metadata:
-              type: object
-              description: The delivery address's metadata, used to store custom key-value pairs.
-        items:
-          type: array
-          description: The items to fulfill.
-          items:
-            type: object
-            description: An item to fulfill.
-            required:
-              - title
-              - quantity
-              - sku
-              - barcode
-            properties:
-              title:
-                type: string
-                title: title
-                description: The item's title.
-              sku:
-                type: string
-                title: sku
-                description: The item's SKU.
-              quantity:
-                type: number
-                title: quantity
-                description: The quantity to fulfill of the item.
-              barcode:
-                type: string
-                title: barcode
-                description: The item's barcode.
-              line_item_id:
-                type: string
-                title: line_item_id
-                description: The ID of the associated line item.
-              inventory_item_id:
-                type: string
-                title: inventory_item_id
-                description: The ID of the inventory item associated with the underlying variant.
-        labels:
-          type: array
-          description: The labels for the fulfillment's shipments.
-          items:
-            type: object
-            description: A shipment's label.
-            required:
-              - tracking_number
-              - tracking_url
-              - label_url
-            properties:
-              tracking_number:
-                type: string
-                title: tracking_number
-                description: The label's tracking number.
-              tracking_url:
-                type: string
-                title: tracking_url
-                description: The label's tracking URL.
-              label_url:
-                type: string
-                title: label_url
-                description: The label's URL.
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this fulfillment is created for.
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the shipping option used in the order.
-        data:
-          type: object
-          description: Any data useful for the fulfillment provider to handle the fulfillment.
-          externalDocs:
-            url: https://docs.medusajs.com/v2/resources/commerce-modules/fulfillment/shipping-option#data-property
-            description: Learn more about the data property.
-        packed_at:
-          type: string
-          title: packed_at
-          description: The date and time the fulfillment was packed.
-          format: date-time
-        shipped_at:
-          type: string
-          title: shipped_at
-          description: The date and time the fulfillment was shipped.
-          format: date-time
-        delivered_at:
-          type: string
-          title: delivered_at
-          description: The date and time the fulfillment was delivered.
-          format: date-time
-        canceled_at:
-          type: string
-          title: canceled_at
-          description: The date and time the fulfillment was canceled.
-          format: date-time
-        metadata:
-          type: object
-          description: The fulfillment's metadata, used to store custom key-value pairs.
     AdminCreateGiftCardParams:
       type: object
       description: The details of the gift card to create.
@@ -56360,112 +58058,6 @@ components:
         metadata:
           type: object
           description: The inventory item's metadata, used to store custom key-value pairs.
-    AdminCreateOrderCreditLines:
-      type: object
-      description: The details of a credit line to add to an order.
-      x-schemaName: AdminCreateOrderCreditLines
-      required:
-        - amount
-        - reference
-        - reference_id
-      properties:
-        amount:
-          type: number
-          title: amount
-          description: The amount of the credit line.
-          example: 100
-        reference:
-          type: string
-          title: reference
-          description: The name of the table that the credit line is referencing.
-          example: order
-        reference_id:
-          type: string
-          title: reference_id
-          description: The ID of a record in the table that the credit line is referencing.
-          example: order_123
-        metadata:
-          type: object
-          description: The credit line's metadata, can hold custom key-value pairs.
-    AdminCreatePriceList:
-      type: object
-      description: The price list's details.
-      x-schemaName: AdminCreatePriceList
-      required:
-        - title
-        - description
-      properties:
-        title:
-          type: string
-          title: title
-          description: The price list's title.
-        description:
-          type: string
-          title: description
-          description: The price list's description.
-        starts_at:
-          type: string
-          title: starts_at
-          description: The date and time the price list starts at.
-          format: date-time
-        ends_at:
-          type: string
-          title: ends_at
-          description: The date and time the price list ends at.
-          format: date-time
-        status:
-          type: string
-          description: The price list's status.
-          enum:
-            - active
-            - draft
-        type:
-          type: string
-          description: The price list's type.
-          enum:
-            - sale
-            - override
-        rules:
-          type: object
-          description: The price list's rules.
-          example:
-            product_category_id: pcat_123
-        prices:
-          type: array
-          description: The price list's prices.
-          items:
-            type: object
-            description: A price's details.
-            required:
-              - currency_code
-              - variant_id
-              - amount
-            properties:
-              currency_code:
-                type: string
-                title: currency_code
-                description: The price's currency code.
-              amount:
-                type: number
-                title: amount
-                description: The price's amount.
-              variant_id:
-                type: string
-                title: variant_id
-                description: The ID of the product variant this price is for.
-              min_quantity:
-                type: number
-                title: min_quantity
-                description: The minimum quantity required in the cart for this price to be applied.
-              max_quantity:
-                type: number
-                title: max_quantity
-                description: The maximum quantity in the cart that shouldn't be crossed for this price to be applied.
-              rules:
-                type: object
-                description: The price's rules.
-                example:
-                  region_id: reg_123
     AdminCreatePricePreference:
       type: object
       description: The price preference's details.
@@ -57050,36 +58642,6 @@ components:
         metadata:
           type: object
           description: The sales channel's metadata, used to store custom key-value pairs.
-    AdminCreateShipment:
-      type: object
-      description: The shipment's details.
-      x-schemaName: AdminCreateShipment
-      required:
-        - labels
-      properties:
-        labels:
-          type: array
-          description: The shipment's labels.
-          items:
-            type: object
-            description: A shipment label's details.
-            required:
-              - tracking_number
-              - tracking_url
-              - label_url
-            properties:
-              tracking_number:
-                type: string
-                title: tracking_number
-                description: The label's tracking number.
-              tracking_url:
-                type: string
-                title: tracking_url
-                description: The label's tracking URL.
-              label_url:
-                type: string
-                title: label_url
-                description: The label's URL.
     AdminCreateShippingOption:
       type: object
       description: The shipping option's details.
@@ -57405,59 +58967,6 @@ components:
           type: string
           title: provider_id
           description: The ID of the tax provider used to calculate the tax rate in this tax region.
-    AdminCreateVariantInventoryItem:
-      type: object
-      description: The details of the variant-inventory item association.
-      x-schemaName: AdminCreateVariantInventoryItem
-      required:
-        - inventory_item_id
-        - required_quantity
-      properties:
-        required_quantity:
-          type: number
-          title: required_quantity
-          description: The quantity of the variant in the inventory item.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The inventory item's ID.
-    AdminCreateWorkflowsAsyncResponse:
-      type: object
-      description: The details of changing a workflow execution's step status.
-      x-schemaName: AdminCreateWorkflowsAsyncResponse
-      required:
-        - transaction_id
-        - step_id
-      properties:
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The workflows execution's transaction ID.
-        step_id:
-          type: string
-          title: step_id
-          description: The ID of the step whose status was changed.
-        response:
-          description: Sets the step's response. It accepts any type.
-        compensate_input:
-          description: Sets the compensation function's input. It accepts any response.
-        action:
-          type: string
-          description: Whether to invoke or compensate the step.
-          enum:
-            - invoke
-            - compensate
-    AdminCreateWorkflowsRun:
-      type: object
-      description: The details of the workflow to execute.
-      x-schemaName: AdminCreateWorkflowsRun
-      properties:
-        input:
-          description: The input to pass to the workflow. Can be of any type.
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The ID of the workflow execution's transaction.
     AdminCurrency:
       type: object
       description: The currency's currencies.
@@ -60254,39 +61763,6 @@ components:
               type: number
               title: toUpdate
               description: The number of products that will be updated by this import.
-    AdminImportProducts:
-      type: object
-      description: The details of the product's import file.
-      x-schemaName: AdminImportProducts
-      required:
-        - file_key
-        - originalname
-        - extension
-        - size
-        - mime_type
-      properties:
-        file_key:
-          type: string
-          title: file_key
-          description: The name of the file as stored in the configured File Module Provider.
-        originalname:
-          type: string
-          title: originalname
-          description: The file's original name.
-        extension:
-          type: string
-          title: extension
-          description: The file's extension.
-          example: csv
-        size:
-          type: number
-          title: size
-          description: The file's size in bytes.
-        mime_type:
-          type: string
-          title: mime_type
-          description: The file's mime type.
-          example: text/csv
     AdminInventoryItem:
       type: object
       description: The inventory item's details.
@@ -62602,749 +64078,6 @@ components:
           description: The list of plugins.
           items:
             $ref: '#/components/schemas/AdminPlugin'
-    AdminPostCancelClaimReqSchema:
-      type: object
-      description: The details of canceling a claim.
-      x-schemaName: AdminPostCancelClaimReqSchema
-      properties:
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether to send the customer a notification about the claim's cancelation.
-    AdminPostCancelExchangeReqSchema:
-      type: object
-      description: The details of canceling an exchange.
-      x-schemaName: AdminPostCancelExchangeReqSchema
-      properties:
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether to send a notification to the customer about the exchange's cancelation.
-    AdminPostCancelReturnReqSchema:
-      type: object
-      description: The details of canceling a return.
-      x-schemaName: AdminPostCancelReturnReqSchema
-      properties:
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether to send the customer a notification about the return's cancelation.
-    AdminPostClaimItemsReqSchema:
-      type: object
-      description: The details of the order items to add to the claim.
-      x-schemaName: AdminPostClaimItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The item's details.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - id
-              - quantity
-            properties:
-              id:
-                type: string
-                title: id
-                description: The ID of the order's item.
-              quantity:
-                type: number
-                title: quantity
-                description: The quantity of the order's item to add to the claim.
-              reason:
-                type: string
-                description: The reason the item is claimed.
-                enum:
-                  - missing_item
-                  - wrong_item
-                  - production_failure
-                  - other
-              description:
-                type: string
-                title: description
-                description: The item's description.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note that's only viewed by admin users.
-    AdminPostClaimsAddItemsReqSchema:
-      type: object
-      description: The details of the outbound items to add to the claim.
-      x-schemaName: AdminPostClaimsAddItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The outbound item's details.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - variant_id
-              - quantity
-            properties:
-              variant_id:
-                type: string
-                title: variant_id
-                description: The ID of the associated product variant.
-              quantity:
-                type: number
-                title: quantity
-                description: The quantity to send to the customer.
-              unit_price:
-                type: number
-                title: unit_price
-                description: The item's unit price.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-    AdminPostClaimsItemsActionReqSchema:
-      type: object
-      description: The details to update in the item.
-      x-schemaName: AdminPostClaimsItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        reason_id:
-          type: string
-          title: reason_id
-          description: The ID of the return reason associated with the item.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note that's only viewed by admin users.
-    AdminPostClaimsShippingActionReqSchema:
-      type: object
-      description: The details to update in the shipping method.
-      x-schemaName: AdminPostClaimsShippingActionReqSchema
-      properties:
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: The shipping method's custom amount.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note only viewed by admin users.
-        metadata:
-          type: object
-          description: The claim's metadata, can hold custom key-value pairs.
-    AdminPostClaimsShippingReqSchema:
-      type: object
-      description: The details of the shipping method used to ship outbound items.
-      x-schemaName: AdminPostClaimsShippingReqSchema
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set a custom price for the shipping method.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note only viewed by admin users.
-        metadata:
-          type: object
-          description: The claim's metadata, can hold custom key-value pairs.
-    AdminPostExchangesAddItemsReqSchema:
-      type: object
-      description: The details of outbound items.
-      x-schemaName: AdminPostExchangesAddItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The details of outbound items.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - variant_id
-              - quantity
-            properties:
-              variant_id:
-                type: string
-                title: variant_id
-                description: The ID of the associated product variant.
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              unit_price:
-                type: number
-                title: unit_price
-                description: The item's unit price.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-              allow_backorder:
-                type: boolean
-                title: allow_backorder
-                description: Whether the item can be added even if it's not in stock.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-    AdminPostExchangesItemsActionReqSchema:
-      type: object
-      description: The details to update in an outbound item.
-      x-schemaName: AdminPostExchangesItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note only viewed by admin users.
-    AdminPostExchangesRequestItemsReturnActionReqSchema:
-      type: object
-      description: The details to update in an inbound (returned) item.
-      x-schemaName: AdminPostExchangesRequestItemsReturnActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        reason_id:
-          type: string
-          title: reason_id
-          description: The ID of the associated return reason.
-        metadata:
-          type: object
-          description: The exchange's metadata, can hold custom key-value pairs.
-    AdminPostExchangesReturnRequestItemsReqSchema:
-      type: object
-      description: The details of the inbound (return) items.
-      x-schemaName: AdminPostExchangesReturnRequestItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The details of the inbound (return) items.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - id
-              - quantity
-            properties:
-              id:
-                type: string
-                title: id
-                description: The ID of the order's item.
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              description:
-                type: string
-                title: description
-                description: The item's description.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-              reason_id:
-                type: string
-                title: reason_id
-                description: The ID of the return reason to associate with the item.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-    AdminPostExchangesShippingActionReqSchema:
-      type: object
-      description: The details of the shipping method to update.
-      x-schemaName: AdminPostExchangesShippingActionReqSchema
-      properties:
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: The shipping method's custom amount.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed by admin users only.
-        metadata:
-          type: object
-          description: The exchange's metadata, can hold custom key-value pairs.
-    AdminPostExchangesShippingReqSchema:
-      type: object
-      description: The outbound shipping method's details.
-      x-schemaName: AdminPostExchangesShippingReqSchema
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set a custom amount for the shipping method.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed by admin users only.
-        metadata:
-          type: object
-          description: The exchange's metadata, can hold custom key-value pairs.
-    AdminPostOrderClaimsReqSchema:
-      type: object
-      description: The claim's details.
-      x-schemaName: AdminPostOrderClaimsReqSchema
-      required:
-        - type
-        - order_id
-      properties:
-        type:
-          type: string
-          description: The claim's type.
-          enum:
-            - refund
-            - replace
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order the claim is created for.
-        description:
-          type: string
-          title: description
-          description: The claim's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        reason_id:
-          type: string
-          title: reason_id
-          description: The ID of the associated return reason.
-        metadata:
-          type: object
-          description: The claim's metadata, can hold custom key-value pairs.
-    AdminPostOrderEditsAddItemsReqSchema:
-      type: object
-      description: The details of items to be edited.
-      x-schemaName: AdminPostOrderEditsAddItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The details of items to be edited.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - variant_id
-              - quantity
-            properties:
-              variant_id:
-                type: string
-                title: variant_id
-                description: The ID of the associated product variant.
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              unit_price:
-                type: number
-                title: unit_price
-                description: The item's unit price.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-              allow_backorder:
-                type: boolean
-                title: allow_backorder
-                description: Whether the item can be added even if there's no available invenotory quantity of the variant.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-              compare_at_unit_price:
-                type: number
-                title: compare_at_unit_price
-                description: The original price of the item before a promotion or sale.
-    AdminPostOrderEditsItemsActionReqSchema:
-      type: object
-      description: The details to update in the item.
-      x-schemaName: AdminPostOrderEditsItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        unit_price:
-          type: number
-          title: unit_price
-          description: The item's unit price.
-        compare_at_unit_price:
-          type: number
-          title: compare_at_unit_price
-          description: The original price of the item before a promotion or sale.
-    AdminPostOrderEditsReqSchema:
-      type: object
-      description: The order edit's details.
-      x-schemaName: AdminPostOrderEditsReqSchema
-      required:
-        - order_id
-      properties:
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this edit is for.
-        description:
-          type: string
-          title: description
-          description: The order edit's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The order edit's metadata, can hold custom key-value pairs.
-    AdminPostOrderEditsShippingActionReqSchema:
-      type: object
-      description: The shipping method's details.
-      x-schemaName: AdminPostOrderEditsShippingActionReqSchema
-      properties:
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set a custom price for the shipping method.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The order edit's metadata, can hold custom key-value pairs.
-    AdminPostOrderEditsShippingReqSchema:
-      type: object
-      description: The shipping method's details.
-      x-schemaName: AdminPostOrderEditsShippingReqSchema
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set a custom price for the shipping method.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The shipping method's metadata, can hold custom key-value pairs.
-    AdminPostOrderEditsUpdateItemQuantityReqSchema:
-      type: object
-      description: The order item's details to update.
-      x-schemaName: AdminPostOrderEditsUpdateItemQuantityReqSchema
-      required:
-        - quantity
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        unit_price:
-          type: number
-          title: unit_price
-          description: The item's unit price.
-        compare_at_unit_price:
-          type: number
-          title: compare_at_unit_price
-          description: The original price of the item before a promotion or sale.
-    AdminPostOrderExchangesReqSchema:
-      type: object
-      description: The exchange's details.
-      x-schemaName: AdminPostOrderExchangesReqSchema
-      required:
-        - order_id
-      properties:
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this exchange is created for.
-        description:
-          type: string
-          title: description
-          description: The exchange's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The exchange's metadata, can hold custom key-value pairs.
-    AdminPostReceiveReturnsReqSchema:
-      type: object
-      description: The return receival details.
-      x-schemaName: AdminPostReceiveReturnsReqSchema
-      properties:
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        description:
-          type: string
-          title: description
-          description: The return's description.
-        metadata:
-          type: object
-          description: The return's metadata, can hold custom key-value pairs.
-    AdminPostReturnsConfirmRequestReqSchema:
-      type: object
-      description: The confirmation's details.
-      x-schemaName: AdminPostReturnsConfirmRequestReqSchema
-      properties:
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether to send the customer a notification about the confirmation.
-    AdminPostReturnsDismissItemsActionReqSchema:
-      type: object
-      description: The details to update of the damaged item.
-      x-schemaName: AdminPostReturnsDismissItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-    AdminPostReturnsReceiveItemsActionReqSchema:
-      type: object
-      description: The details of the received item.
-      x-schemaName: AdminPostReturnsReceiveItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-    AdminPostReturnsReceiveItemsReqSchema:
-      type: object
-      description: The items details.
-      x-schemaName: AdminPostReturnsReceiveItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The items details.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - id
-              - quantity
-            properties:
-              id:
-                type: string
-                title: id
-                description: The ID of the item in the order.
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              description:
-                type: string
-                title: description
-                description: The item's description.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-    AdminPostReturnsReqSchema:
-      type: object
-      description: The return's details.
-      x-schemaName: AdminPostReturnsReqSchema
-      required:
-        - order_id
-      properties:
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order the return belongs to.
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location the items are returned to.
-        description:
-          type: string
-          title: description
-          description: The return's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether to send the customer a notification about the created return.
-        metadata:
-          type: object
-          description: The return's metadata, can hold custom key-value pairs.
-    AdminPostReturnsRequestItemsActionReqSchema:
-      type: object
-      description: The details to update in the item.
-      x-schemaName: AdminPostReturnsRequestItemsActionReqSchema
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        reason_id:
-          type: string
-          title: reason_id
-          description: The ID of the associated return reason.
-        metadata:
-          type: object
-          description: The claim's metadata, can hold custom key-value pairs.
-    AdminPostReturnsRequestItemsReqSchema:
-      type: object
-      description: The items' details.
-      x-schemaName: AdminPostReturnsRequestItemsReqSchema
-      properties:
-        items:
-          type: array
-          description: The items' details.
-          items:
-            type: object
-            description: An item's details.
-            required:
-              - id
-              - quantity
-            properties:
-              id:
-                type: string
-                title: id
-                description: The item's ID.
-              quantity:
-                type: number
-                title: quantity
-                description: The item's quantity.
-              description:
-                type: string
-                title: description
-                description: The item's description.
-              internal_note:
-                type: string
-                title: internal_note
-                description: A note viewed only by admin users.
-              reason_id:
-                type: string
-                title: reason_id
-                description: The ID of the associated return reason.
-              metadata:
-                type: object
-                description: The item's metadata, can hold custom key-value pairs.
-    AdminPostReturnsReturnReqSchema:
-      type: object
-      description: The return's details.
-      x-schemaName: AdminPostReturnsReturnReqSchema
-      properties:
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location to return items to.
-        no_notification:
-          type: boolean
-          title: no_notification
-          description: Whether the customer should receive notifications about updates to the return.
-        metadata:
-          type: object
-          description: The return's metadata, can hold custom key-value pairs.
-    AdminPostReturnsShippingActionReqSchema:
-      type: object
-      description: The shipping method's details.
-      x-schemaName: AdminPostReturnsShippingActionReqSchema
-      properties:
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set a custom price for the shipping method.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The return's metadata, can hold custom key-value pairs.
-    AdminPostReturnsShippingReqSchema:
-      type: object
-      description: The shipping method's details.
-      x-schemaName: AdminPostReturnsShippingReqSchema
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: Set the price of the shipping method.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users.
-        metadata:
-          type: object
-          description: The exchange's metadata, can hold custom key-value pairs.
     AdminPrice:
       type: object
       description: The price's details.
@@ -65122,20 +65855,6 @@ components:
       properties:
         region:
           $ref: '#/components/schemas/AdminRegion'
-    AdminRemoveDraftOrderPromotions:
-      type: object
-      description: The promotion codes to remove from the draft order.
-      x-schemaName: AdminRemoveDraftOrderPromotions
-      required:
-        - promo_codes
-      properties:
-        promo_codes:
-          type: array
-          description: The promotion codes to remove from the draft order.
-          items:
-            type: string
-            title: promo_codes
-            description: A promotion code to remove from the draft order.
     AdminReservation:
       type: object
       description: The reservation's details.
@@ -65458,15 +66177,6 @@ components:
       properties:
         return:
           $ref: '#/components/schemas/AdminReturn'
-    AdminRevokeApiKey:
-      type: object
-      description: The details of revoking the API key.
-      x-schemaName: AdminRevokeApiKey
-      properties:
-        revoke_in:
-          type: number
-          title: revoke_in
-          description: The time in seconds to revoke the API key after. If not set, the API key is revoked immediately.
     AdminRuleAttributeOption:
       type: object
       description: The details of a potential rule attribute.
@@ -66957,239 +67667,6 @@ components:
           title: estimate_count
           description: The store credit account's estimate count.
           x-featureFlag: index_engine
-    AdminTransferOrder:
-      type: object
-      description: The details of the request to transfer the order.
-      x-schemaName: AdminTransferOrder
-      required:
-        - customer_id
-      properties:
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer to transfer the order to.
-        description:
-          type: string
-          title: description
-          description: The description of the order transfer, which can be shown to the customer receiving the order transfer request.
-        internal_note:
-          type: string
-          title: internal_note
-          description: An internal note viewable only by admin users.
-    AdminUpdateApiKey:
-      type: object
-      description: The details to update in an API key.
-      x-schemaName: AdminUpdateApiKey
-      required:
-        - title
-      properties:
-        title:
-          type: string
-          title: title
-          description: The API key's title.
-    AdminUpdateCustomerGroup:
-      type: object
-      description: The details to update in a customer group.
-      x-schemaName: AdminUpdateCustomerGroup
-      properties:
-        name:
-          type: string
-          title: name
-          description: The customer group's name.
-        metadata:
-          type: object
-          description: The customer group's metadata, can hold custom key-value pairs.
-    AdminUpdateDraftOrder:
-      type: object
-      description: The data to update in the draft order.
-      x-schemaName: AdminUpdateDraftOrder
-      properties:
-        email:
-          type: string
-          title: email
-          description: The customer email associated with the draft order.
-          format: email
-        shipping_address:
-          type: object
-          description: The draft order's shipping address.
-          properties:
-            first_name:
-              type: string
-              title: first_name
-              description: The shipping address's first name.
-            last_name:
-              type: string
-              title: last_name
-              description: The shipping address's last name.
-            phone:
-              type: string
-              title: phone
-              description: The shipping address's phone.
-            company:
-              type: string
-              title: company
-              description: The shipping address's company.
-            address_1:
-              type: string
-              title: address_1
-              description: The first address line.
-            address_2:
-              type: string
-              title: address_2
-              description: The second address line.
-            city:
-              type: string
-              title: city
-              description: The shipping address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The shipping address's country code.
-              example: us
-            province:
-              type: string
-              title: province
-              description: The shipping address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-            postal_code:
-              type: string
-              title: postal_code
-              description: The shipping address's postal code.
-            metadata:
-              type: object
-              description: The shipping address's metadata, can hold custom key-value pairs.
-        billing_address:
-          type: object
-          description: The draft order's billing address.
-          properties:
-            first_name:
-              type: string
-              title: first_name
-              description: The billing address's first name.
-            last_name:
-              type: string
-              title: last_name
-              description: The billing address's last name.
-            phone:
-              type: string
-              title: phone
-              description: The billing address's phone.
-            company:
-              type: string
-              title: company
-              description: The billing address's company.
-            address_1:
-              type: string
-              title: address_1
-              description: The first address line.
-            address_2:
-              type: string
-              title: address_2
-              description: The second address line.
-            city:
-              type: string
-              title: city
-              description: The billing address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The billing address's country code.
-              example: us
-            province:
-              type: string
-              title: province
-              description: The billing address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-            postal_code:
-              type: string
-              title: postal_code
-              description: The billing address's postal code.
-            metadata:
-              type: object
-              description: The billing address's metadata, can hold custom key-value pairs.
-        metadata:
-          type: object
-          description: The draft order's metadata, can hold custom key-value pairs.
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer associated with the draft order.
-        sales_channel_id:
-          type: string
-          title: sales_channel_id
-          description: The ID of the sales channel associated with the draft order.
-    AdminUpdateDraftOrderActionShippingMethod:
-      type: object
-      description: The updates to make on a changed shipping method.
-      x-schemaName: AdminUpdateDraftOrderActionShippingMethod
-      required:
-        - shipping_option_id
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
-        description:
-          type: string
-          title: description
-          description: The shipping method's description.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users about the shipping method.
-        metadata:
-          type: object
-          description: The shipping method's metadata, can hold custom key-value pairs.
-    AdminUpdateDraftOrderItem:
-      type: object
-      description: The updates to make on a draft order's item.
-      x-schemaName: AdminUpdateDraftOrderItem
-      required:
-        - quantity
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        unit_price:
-          type: number
-          title: unit_price
-          description: The item's unit price.
-        compare_at_unit_price:
-          type: number
-          title: compare_at_unit_price
-          description: The original price of the item before a promotion or sale.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users about the item.
-    AdminUpdateDraftOrderShippingMethod:
-      type: object
-      description: The updates to make on a draft order's shipping method.
-      x-schemaName: AdminUpdateDraftOrderShippingMethod
-      properties:
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the associated shipping option.
-        custom_amount:
-          type: number
-          title: custom_amount
-          description: The custom amount of the shipping method. If not provided, the shipping option's amount will be used.
-        internal_note:
-          type: string
-          title: internal_note
-          description: A note viewed only by admin users about the shipping method.
     AdminUpdateGiftCardParams:
       type: object
       description: The details to update in the gift card.
@@ -67225,162 +67702,6 @@ components:
         metadata:
           type: object
           description: The gift card's metadata.
-    AdminUpdateOrder:
-      type: object
-      description: The details to update in the order.
-      x-schemaName: AdminUpdateOrder
-      properties:
-        email:
-          type: string
-          title: email
-          description: The order's email.
-          format: email
-        shipping_address:
-          type: object
-          description: The order's shipping address.
-          properties:
-            first_name:
-              type: string
-              title: first_name
-              description: The address's first name.
-            last_name:
-              type: string
-              title: last_name
-              description: The address's last name.
-            phone:
-              type: string
-              title: phone
-              description: The address's phone.
-            company:
-              type: string
-              title: company
-              description: The address's company.
-            address_1:
-              type: string
-              title: address_1
-              description: The address's first line.
-            address_2:
-              type: string
-              title: address_2
-              description: The address's second line.
-            city:
-              type: string
-              title: city
-              description: The address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The address's country code.
-              example: us
-            province:
-              type: string
-              title: province
-              description: The address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-            postal_code:
-              type: string
-              title: postal_code
-              description: The address's postal code.
-            metadata:
-              type: object
-              description: The address's metadata, can hold custom key-value pairs.
-        billing_address:
-          type: object
-          description: The order's billing address.
-          properties:
-            first_name:
-              type: string
-              title: first_name
-              description: The address's first name.
-            last_name:
-              type: string
-              title: last_name
-              description: The address's last name.
-            phone:
-              type: string
-              title: phone
-              description: The address's phone.
-            company:
-              type: string
-              title: company
-              description: The address's company.
-            address_1:
-              type: string
-              title: address_1
-              description: The address's first line.
-            address_2:
-              type: string
-              title: address_2
-              description: The address's second line.
-            city:
-              type: string
-              title: city
-              description: The address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The address's country code.
-              example: us
-            province:
-              type: string
-              title: province
-              description: The address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-            postal_code:
-              type: string
-              title: postal_code
-              description: The address's postal code.
-            metadata:
-              type: object
-              description: The address's metadata, can hold custom key-value pairs.
-        metadata:
-          type: object
-          description: The order's metadata, can hold custom key-value pairs.
-    AdminUpdatePriceList:
-      type: object
-      description: the details to update in a price list.
-      x-schemaName: AdminUpdatePriceList
-      properties:
-        title:
-          type: string
-          title: title
-          description: The price list's title.
-        description:
-          type: string
-          title: description
-          description: The price list's description.
-        starts_at:
-          type: string
-          title: starts_at
-          description: The date the price list starts.
-        ends_at:
-          type: string
-          title: ends_at
-          description: The date the price list ends.
-        status:
-          type: string
-          description: The price list's status.
-          enum:
-            - active
-            - draft
-        type:
-          type: string
-          description: The price list's type.
-          enum:
-            - sale
-            - override
-        rules:
-          type: object
-          description: The price list's rules.
-          example:
-            customer_group_id:
-              - cusgrp_123
     AdminUpdatePricePreference:
       type: object
       description: The details to update in the price preference.
@@ -67716,26 +68037,6 @@ components:
       required:
         - value
         - label
-    AdminUpdateSalesChannel:
-      type: object
-      description: The properties to update in the sales channel.
-      x-schemaName: AdminUpdateSalesChannel
-      properties:
-        name:
-          type: string
-          title: name
-          description: The sales channel's name.
-        description:
-          type: string
-          title: description
-          description: The sales channel's description.
-        is_disabled:
-          type: boolean
-          title: is_disabled
-          description: Whether the sales channel is disabled.
-        metadata:
-          type: object
-          description: The sales channel's metadata, can hold custom key-value pairs.
     AdminUpdateShippingOptionRule:
       type: object
       description: The properties to update in the shipping option rule.
@@ -67780,241 +68081,6 @@ components:
                 description: A value of the attribute that enables this rule.
                 example: cusgroup_123
       x-schemaName: AdminUpdateShippingOptionRule
-    AdminUpdateStockLocation:
-      type: object
-      description: The properties to update in a stock location.
-      x-schemaName: AdminUpdateStockLocation
-      properties:
-        name:
-          type: string
-          title: name
-          description: The stock location's name.
-        address:
-          type: object
-          description: The stock location's address. Pass this property if you're creating a new address to associate with the location.
-          required:
-            - address_1
-            - country_code
-          properties:
-            address_1:
-              type: string
-              title: address_1
-              description: The address's first line.
-            address_2:
-              type: string
-              title: address_2
-              description: The address's second line.
-            company:
-              type: string
-              title: company
-              description: The address's company.
-            city:
-              type: string
-              title: city
-              description: The address's city.
-            country_code:
-              type: string
-              title: country_code
-              description: The address's country code.
-              example: us
-            phone:
-              type: string
-              title: phone
-              description: The address's phone.
-            postal_code:
-              type: string
-              title: postal_code
-              description: The address's postal code.
-            province:
-              type: string
-              title: province
-              description: The address's ISO 3166-2 province code. Must be lower-case.
-              example: us-ca
-              externalDocs:
-                url: https://en.wikipedia.org/wiki/ISO_3166-2
-                description: Learn more about ISO 3166-2
-        address_id:
-          type: string
-          title: address_id
-          description: The ID of an existing stock location address to associate the stock location with.
-        metadata:
-          type: object
-          description: The stock location's metadata, can hold custom key-value pairs.
-    AdminUpdateStore:
-      type: object
-      description: The properties to update in a store.
-      x-schemaName: AdminUpdateStore
-      properties:
-        name:
-          type: string
-          title: name
-          description: The store's name.
-        supported_currencies:
-          type: array
-          description: The store's supported currencies.
-          items:
-            type: object
-            description: A store currency.
-            required:
-              - currency_code
-            properties:
-              currency_code:
-                type: string
-                title: currency_code
-                description: The currency's code.
-                example: usd
-              is_default:
-                type: boolean
-                title: is_default
-                description: Whether the currency is the default in the store.
-              is_tax_inclusive:
-                type: boolean
-                title: is_tax_inclusive
-                description: Whether prices using this currency are tax inclusive.
-        default_sales_channel_id:
-          type: string
-          title: default_sales_channel_id
-          description: The ID of the default sales channel in the store.
-        default_region_id:
-          type: string
-          title: default_region_id
-          description: The ID of the default region in the store.
-        default_location_id:
-          type: string
-          title: default_location_id
-          description: The ID of the default stock location in the store.
-        metadata:
-          type: object
-          description: The store's metadata, can hold custom key-value pairs.
-    AdminUpdateTaxRate:
-      type: object
-      description: The properties to update in the tax rate.
-      x-schemaName: AdminUpdateTaxRate
-      properties:
-        rate:
-          type: number
-          title: rate
-          description: The rate to charge.
-        code:
-          type: string
-          title: code
-          description: The code that the tax rate is identified by.
-        rules:
-          type: array
-          description: The tax rate's rules.
-          items:
-            type: object
-            description: A tax rate rule.
-            required:
-              - reference
-              - reference_id
-            properties:
-              reference:
-                type: string
-                title: reference
-                description: The name of the table this rule references.
-                example: product_type
-              reference_id:
-                type: string
-                title: reference_id
-                description: The ID of the record in the table that the rule references.
-                example: ptyp_123
-        name:
-          type: string
-          title: name
-          description: The tax rate's name.
-        is_default:
-          type: boolean
-          title: is_default
-          description: Whether the tax rate is the default in the store.
-        is_combinable:
-          type: boolean
-          title: is_combinable
-          description: Whether the tax rate should be combined with parent rates.
-          externalDocs:
-            url: https://docs.medusajs.com/v2/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
-        metadata:
-          type: object
-          description: The tax rate's metadata, can hold custom key-value pairs.
-    AdminUpdateTaxRegion:
-      type: object
-      description: The details to update in a tax region.
-      x-schemaName: AdminUpdateTaxRegion
-      properties:
-        province_code:
-          type: string
-          title: province_code
-          description: The tax region's ISO 3166-2 province code. Must be lower-case.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        metadata:
-          type: object
-          description: The tax region's metadata, can hold custom key-value pairs.
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the tax provider to use when calculating taxes for this tax region.
-    AdminUpdateUser:
-      type: object
-      description: The properties to update in a user.
-      x-schemaName: AdminUpdateUser
-      properties:
-        first_name:
-          type: string
-          title: first_name
-          description: The user's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The user's last name.
-        avatar_url:
-          type: string
-          title: avatar_url
-          description: The URL of the user's avatar.
-        metadata:
-          type: object
-          description: The user's metadata, can hold custom key-value pairs.
-    AdminUpdateVariantInventoryItem:
-      type: object
-      description: The properties to update of the variant's inventory item association.
-      x-schemaName: AdminUpdateVariantInventoryItem
-      required:
-        - required_quantity
-      properties:
-        required_quantity:
-          type: number
-          title: required_quantity
-          description: The number of units a single quantity is equivalent to. For example, if a customer orders one quantity of the variant, Medusa checks the availability of the quantity multiplied by the value set for `required_quantity`. When the customer orders the quantity, Medusa reserves the ordered quantity multiplied by the value set for `required_quantity`.
-    AdminUploadPreSignedUrl:
-      type: object
-      description: The details of the file to upload.
-      x-schemaName: AdminUploadPreSignedUrl
-      required:
-        - originalname
-        - size
-        - mime_type
-      properties:
-        originalname:
-          type: string
-          title: originalname
-          description: The file's original name.
-        size:
-          type: number
-          title: size
-          description: The file's size in bytes.
-        mime_type:
-          type: string
-          title: mime_type
-          description: The file's mime type.
-          example: text/csv
-        access:
-          type: string
-          description: The access level of the file. If `private`, the file will not be publicly accessible. The default value depends on the configured File Module Provider.
-          enum:
-            - public
-            - private
     AdminUploadPreSignedUrlResponse:
       type: object
       description: The result of the pre-signed URL upload request.
@@ -74064,36 +74130,6 @@ components:
           title: received_at
           description: The date the return was received.
           format: date-time
-    StoreAcceptOrderTransfer:
-      type: object
-      description: The details of accepting the order transfer.
-      x-schemaName: StoreAcceptOrderTransfer
-      required:
-        - token
-      properties:
-        token:
-          type: string
-          title: token
-          description: The order transfer's token issued when the transfer was requested.
-    StoreAddCartLineItem:
-      type: object
-      description: The details of the line item to add.
-      x-schemaName: StoreAddCartLineItem
-      required:
-        - variant_id
-        - quantity
-      properties:
-        variant_id:
-          type: string
-          title: variant_id
-          description: The ID of the product variant to add to the cart.
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        metadata:
-          type: object
-          description: The item's metadata, can hold custom key-value pairs.
     StoreAddGiftCardToCart:
       type: object
       description: The details to add a gift card to the cart.
@@ -75788,17 +75824,6 @@ components:
       properties:
         customer:
           $ref: '#/components/schemas/StoreCustomer'
-    StoreDeclineOrderTransferRequest:
-      type: object
-      description: The details of declining the order transfer request.
-      x-schemaName: StoreDeclineOrderTransferRequest
-      required:
-        - token
-      properties:
-        token:
-          type: string
-          title: token
-          description: The order transfer's token issued when the transfer was requested.
     StoreGiftCard:
       type: object
       description: The gift card's details.
@@ -83053,15 +83078,6 @@ components:
           type: string
           title: code
           description: The gift card code to remove from the cart.
-    StoreRequestOrderTransfer:
-      type: object
-      description: The details of requesting the order transfer.
-      x-schemaName: StoreRequestOrderTransfer
-      properties:
-        description:
-          type: string
-          title: description
-          description: The transfer's description, which can be shown to the other customer receiving the request.
     StoreReturn:
       type: object
       description: The return's details.
@@ -83515,44 +83531,6 @@ components:
           type: object
           description: The transaction group's metadata, can hold custom key-value pairs.
       x-schemaName: StoreTransactionGroup
-    StoreUpdateCartLineItem:
-      type: object
-      description: The details to update in the line item.
-      x-schemaName: StoreUpdateCartLineItem
-      required:
-        - quantity
-      properties:
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity.
-        metadata:
-          type: object
-          description: The item's metadata, can hold custom key-value pairs.
-    StoreUpdateCustomer:
-      type: object
-      description: The details to update in the customer.
-      x-schemaName: StoreUpdateCustomer
-      properties:
-        company_name:
-          type: string
-          title: company_name
-          description: The customer's company name.
-        first_name:
-          type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The customer's last name.
-        phone:
-          type: string
-          title: phone
-          description: The customer's phone.
-        metadata:
-          type: object
-          description: The customer's metadata, can hold custom key-value pairs.
     UpdateAddress:
       type: object
       description: The details to update in the address.

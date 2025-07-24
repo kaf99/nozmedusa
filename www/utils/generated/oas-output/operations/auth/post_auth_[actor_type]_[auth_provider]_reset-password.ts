@@ -66,7 +66,15 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/ResetPasswordRequest"
+ *         type: object
+ *         description: SUMMARY
+ *         required:
+ *           - identifier
+ *         properties:
+ *           identifier:
+ *             type: string
+ *             title: identifier
+ *             description: The [actor type]'s identifier.
  * x-events:
  *   - name: auth.password_reset
  *     payload: |-

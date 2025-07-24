@@ -29,7 +29,24 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminPostReturnsRequestItemsActionReqSchema"
+ *         type: object
+ *         description: The details to update in the item.
+ *         properties:
+ *           quantity:
+ *             type: number
+ *             title: quantity
+ *             description: The item's quantity.
+ *           internal_note:
+ *             type: string
+ *             title: internal_note
+ *             description: A note viewed only by admin users.
+ *           reason_id:
+ *             type: string
+ *             title: reason_id
+ *             description: The ID of the associated return reason.
+ *           metadata:
+ *             type: object
+ *             description: The claim's metadata, can hold custom key-value pairs.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

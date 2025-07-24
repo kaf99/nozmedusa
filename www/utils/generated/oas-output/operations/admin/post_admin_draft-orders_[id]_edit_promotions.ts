@@ -20,7 +20,18 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminAddDraftOrderPromotions"
+ *         type: object
+ *         description: The details of the promotions to add to a draft order.
+ *         required:
+ *           - promo_codes
+ *         properties:
+ *           promo_codes:
+ *             type: array
+ *             description: The list promotion codes to add to the draft order.
+ *             items:
+ *               type: string
+ *               title: promo_codes
+ *               description: A promotion's code.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

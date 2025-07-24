@@ -32,7 +32,13 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminPostReturnsConfirmRequestReqSchema"
+ *         type: object
+ *         description: The confirmation's details.
+ *         properties:
+ *           no_notification:
+ *             type: boolean
+ *             title: no_notification
+ *             description: Whether to send the customer a notification about the confirmation.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

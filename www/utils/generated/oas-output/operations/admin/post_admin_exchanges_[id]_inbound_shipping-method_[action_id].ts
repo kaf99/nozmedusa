@@ -41,7 +41,20 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminPostExchangesShippingActionReqSchema"
+ *         type: object
+ *         description: The details of the shipping method to update.
+ *         properties:
+ *           custom_amount:
+ *             type: number
+ *             title: custom_amount
+ *             description: The shipping method's custom amount.
+ *           internal_note:
+ *             type: string
+ *             title: internal_note
+ *             description: A note viewed by admin users only.
+ *           metadata:
+ *             type: object
+ *             description: The exchange's metadata, can hold custom key-value pairs.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

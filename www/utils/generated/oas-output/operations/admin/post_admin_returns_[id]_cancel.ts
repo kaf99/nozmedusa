@@ -63,7 +63,13 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminPostCancelReturnReqSchema"
+ *         type: object
+ *         description: The details of canceling a return.
+ *         properties:
+ *           no_notification:
+ *             type: boolean
+ *             title: no_notification
+ *             description: Whether to send the customer a notification about the return's cancelation.
  * x-workflow: cancelReturnWorkflow
  * x-events: []
  * 

@@ -38,7 +38,20 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminCreateVariantInventoryItem"
+ *         type: object
+ *         description: The details of the variant-inventory item association.
+ *         required:
+ *           - inventory_item_id
+ *           - required_quantity
+ *         properties:
+ *           required_quantity:
+ *             type: number
+ *             title: required_quantity
+ *             description: The quantity of the variant in the inventory item.
+ *           inventory_item_id:
+ *             type: string
+ *             title: inventory_item_id
+ *             description: The inventory item's ID.
  * x-codeSamples:
  *   - lang: Shell
  *     label: cURL

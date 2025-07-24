@@ -64,7 +64,18 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminRemoveDraftOrderPromotions"
+ *         type: object
+ *         description: The promotion codes to remove from the draft order.
+ *         required:
+ *           - promo_codes
+ *         properties:
+ *           promo_codes:
+ *             type: array
+ *             description: The promotion codes to remove from the draft order.
+ *             items:
+ *               type: string
+ *               title: promo_codes
+ *               description: A promotion code to remove from the draft order.
  * x-events: []
  * 
 */

@@ -25,7 +25,18 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminCreateCustomerGroup"
+ *         type: object
+ *         description: The customer group's details.
+ *         required:
+ *           - name
+ *         properties:
+ *           name:
+ *             type: string
+ *             title: name
+ *             description: The customer group's name.
+ *           metadata:
+ *             type: object
+ *             description: The customer group's metadata, used to store custom key-value pairs.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

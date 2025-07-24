@@ -39,7 +39,13 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/StoreRequestOrderTransfer"
+ *         type: object
+ *         description: The details of requesting the order transfer.
+ *         properties:
+ *           description:
+ *             type: string
+ *             title: description
+ *             description: The transfer's description, which can be shown to the other customer receiving the request.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

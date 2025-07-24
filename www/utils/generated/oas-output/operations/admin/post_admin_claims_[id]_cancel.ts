@@ -19,7 +19,13 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminPostCancelClaimReqSchema"
+ *         type: object
+ *         description: The details of canceling a claim.
+ *         properties:
+ *           no_notification:
+ *             type: boolean
+ *             title: no_notification
+ *             description: Whether to send the customer a notification about the claim's cancelation.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

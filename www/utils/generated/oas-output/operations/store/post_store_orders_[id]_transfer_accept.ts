@@ -40,7 +40,15 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/StoreAcceptOrderTransfer"
+ *         type: object
+ *         description: The details of accepting the order transfer.
+ *         required:
+ *           - token
+ *         properties:
+ *           token:
+ *             type: string
+ *             title: token
+ *             description: The order transfer's token issued when the transfer was requested.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

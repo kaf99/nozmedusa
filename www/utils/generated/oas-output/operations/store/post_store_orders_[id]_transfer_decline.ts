@@ -38,7 +38,15 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/StoreDeclineOrderTransferRequest"
+ *         type: object
+ *         description: The details of declining the order transfer request.
+ *         required:
+ *           - token
+ *         properties:
+ *           token:
+ *             type: string
+ *             title: token
+ *             description: The order transfer's token issued when the transfer was requested.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

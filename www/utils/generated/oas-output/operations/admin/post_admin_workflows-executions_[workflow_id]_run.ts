@@ -19,7 +19,15 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminCreateWorkflowsRun"
+ *         type: object
+ *         description: The details of the workflow to execute.
+ *         properties:
+ *           input:
+ *             description: The input to pass to the workflow. Can be of any type.
+ *           transaction_id:
+ *             type: string
+ *             title: transaction_id
+ *             description: The ID of the workflow execution's transaction.
  * x-codeSamples:
  *   - lang: Shell
  *     label: cURL

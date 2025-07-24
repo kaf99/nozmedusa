@@ -31,7 +31,15 @@
  *   content:
  *     application/json:
  *       schema:
- *         $ref: "#/components/schemas/AdminUpdateApiKey"
+ *         type: object
+ *         description: The details to update in an API key.
+ *         required:
+ *           - title
+ *         properties:
+ *           title:
+ *             type: string
+ *             title: title
+ *             description: The API key's title.
  * x-codeSamples:
  *   - lang: JavaScript
  *     label: JS SDK

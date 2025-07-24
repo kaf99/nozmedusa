@@ -39,7 +39,15 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../components/schemas/AdminRevokeApiKey.yaml
+          type: object
+          description: The details of revoking the API key.
+          properties:
+            revoke_in:
+              type: number
+              title: revoke_in
+              description: >-
+                The time in seconds to revoke the API key after. If not set, the
+                API key is revoked immediately.
   x-codeSamples:
     - lang: JavaScript
       label: JS SDK

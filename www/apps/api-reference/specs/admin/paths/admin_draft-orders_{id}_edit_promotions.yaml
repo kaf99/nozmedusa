@@ -19,7 +19,18 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../components/schemas/AdminAddDraftOrderPromotions.yaml
+          type: object
+          description: The details of the promotions to add to a draft order.
+          required:
+            - promo_codes
+          properties:
+            promo_codes:
+              type: array
+              description: The list promotion codes to add to the draft order.
+              items:
+                type: string
+                title: promo_codes
+                description: A promotion's code.
   x-codeSamples:
     - lang: JavaScript
       label: JS SDK
@@ -107,5 +118,16 @@ delete:
     content:
       application/json:
         schema:
-          $ref: ../components/schemas/AdminRemoveDraftOrderPromotions.yaml
+          type: object
+          description: The promotion codes to remove from the draft order.
+          required:
+            - promo_codes
+          properties:
+            promo_codes:
+              type: array
+              description: The promotion codes to remove from the draft order.
+              items:
+                type: string
+                title: promo_codes
+                description: A promotion code to remove from the draft order.
   x-events: []
