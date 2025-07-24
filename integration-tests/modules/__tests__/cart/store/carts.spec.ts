@@ -1730,6 +1730,99 @@ medusaIntegrationTestRunner({
           })
         })
 
+        it("should update the cart email from one guest account to another", async () => {
+          const guestsMainEmail = "guest.main@acme.com"
+          const guestMain = await customerModule.createCustomers({
+            email: guestsMainEmail,
+            has_account: false,
+          })
+
+          const guestsSecondaryEmail = "guest.secondary@acme.com"
+          const guestSecondary = await customerModule.createCustomers({
+            email: guestsSecondaryEmail,
+            has_account: false,
+          })
+
+          const cart = (
+            await api.post(
+              `/store/carts`,
+              {
+                currency_code: "usd",
+                email: "guest.secondary@acme.com",
+                shipping_address: {
+                  address_1: "test address 1",
+                  address_2: "test address 2",
+                  city: "ny",
+                  country_code: "us",
+                  province: "ny",
+                  postal_code: "94016",
+                },
+                sales_channel_id: salesChannel.id,
+              },
+              storeHeaders
+            )
+          ).data.cart
+
+          expect(cart.customer.id).toBe(guestSecondary.id)
+
+          // update the cart without providing an email
+          await api.post(
+            `/store/carts/${cart.id}`,
+            {
+              metadata: {
+                test: "test updated",
+              },
+            },
+            storeHeaders
+          )
+
+          let currentCart = await api.get(
+            `/store/carts/${cart.id}`,
+            storeHeaders
+          )
+          let currentCartCustomer = currentCart.data.cart.customer
+
+          let customerData = (
+            await api.get(
+              `/admin/customers/${currentCart.data.cart.customer_id}`,
+              adminHeaders
+            )
+          ).data.customer
+
+          expect(currentCartCustomer.id).toEqual(guestSecondary.id)
+          expect(currentCartCustomer.email).toEqual(guestSecondary.email)
+          expect(currentCart.data.cart.metadata).toEqual({
+            test: "test updated",
+          })
+
+          // update the cart providing an email
+          await api.post(
+            `/store/carts/${cart.id}`,
+            {
+              email: guestsMainEmail,
+              metadata: {
+                test: "test updated 2, new customer",
+              },
+            },
+            storeHeaders
+          )
+
+          currentCart = await api.get(`/store/carts/${cart.id}`, storeHeaders)
+
+          customerData = (
+            await api.get(
+              `/admin/customers/${currentCart.data.cart.customer_id}`,
+              adminHeaders
+            )
+          ).data.customer
+
+          expect(currentCart.data.cart.customer.id).not.toEqual(guestMain.id)
+          expect(currentCart.data.cart.email).toEqual(guestMain.email)
+          expect(currentCart.data.cart.metadata).toEqual({
+            test: "test updated 2, new customer",
+          })
+        })
+
         it("should keep the same customer when updating the customer cart and update Cart's email if provided", async () => {
           // create a customer
           const mainEmail = "jhon.doe@acme.com"

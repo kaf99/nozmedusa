@@ -39,12 +39,12 @@ interface StepCompensateInput {
 export const findOrCreateCustomerStepId = "find-or-create-customer"
 /**
  * This step finds or creates a customer based on the provided ID or email. It prioritizes finding the customer by ID, then by email.
- * 
+ *
  * The step creates a new customer either if:
- * 
+ *
  * - No customer is found with the provided ID and email;
  * - Or if it found the customer by ID but their email does not match the email in the input.
- * 
+ *
  * The step returns the details of the customer found or created, along with their email.
  */
 export const findOrCreateCustomerStep = createStep(
@@ -96,12 +96,16 @@ export const findOrCreateCustomerStep = createStep(
         })
       }
 
-      if (
-        !customer ||
-        (isDefined(data.email) && customer.email !== validatedEmail)
-      ) {
+      // at this point customer either doesn't exist or is a guest customer
+      if (!customer) {
         customer = await service.createCustomers({ email: validatedEmail })
         customerWasCreated = true
+      } else if (isDefined(data.email) && customer.email !== validatedEmail) {
+        // email of an existing guest customer is passed
+        ;[customer] = await service.listCustomers({
+          email: validatedEmail,
+          has_account: false,
+        })
       }
 
       originalCustomer = customer
