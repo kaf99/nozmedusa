@@ -96,16 +96,16 @@ export const findOrCreateCustomerStep = createStep(
         })
       }
 
-      // at this point customer either doesn't exist or is a guest customer
-      if (!customer) {
-        customer = await service.createCustomers({ email: validatedEmail })
-        customerWasCreated = true
-      } else if (isDefined(data.email) && customer.email !== validatedEmail) {
-        // email of an existing guest customer is passed
+      if (customer && customer.email !== validatedEmail) {
         ;[customer] = await service.listCustomers({
           email: validatedEmail,
           has_account: false,
         })
+      }
+
+      if (!customer) {
+        customer = await service.createCustomers({ email: validatedEmail })
+        customerWasCreated = true
       }
 
       originalCustomer = customer
