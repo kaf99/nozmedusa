@@ -1782,13 +1782,6 @@ medusaIntegrationTestRunner({
           )
           let currentCartCustomer = currentCart.data.cart.customer
 
-          let customerData = (
-            await api.get(
-              `/admin/customers/${currentCart.data.cart.customer_id}`,
-              adminHeaders
-            )
-          ).data.customer
-
           expect(currentCartCustomer.id).toEqual(guestSecondary.id)
           expect(currentCartCustomer.email).toEqual(guestSecondary.email)
           expect(currentCart.data.cart.metadata).toEqual({
@@ -1809,14 +1802,7 @@ medusaIntegrationTestRunner({
 
           currentCart = await api.get(`/store/carts/${cart.id}`, storeHeaders)
 
-          customerData = (
-            await api.get(
-              `/admin/customers/${currentCart.data.cart.customer_id}`,
-              adminHeaders
-            )
-          ).data.customer
-
-          expect(currentCart.data.cart.customer.id).not.toEqual(guestMain.id)
+          expect(currentCart.data.cart.customer.id).toEqual(guestMain.id)
           expect(currentCart.data.cart.email).toEqual(guestMain.email)
           expect(currentCart.data.cart.metadata).toEqual({
             test: "test updated 2, new customer",
