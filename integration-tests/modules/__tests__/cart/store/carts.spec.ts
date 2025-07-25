@@ -1843,7 +1843,7 @@ medusaIntegrationTestRunner({
             {
               email: guestsMainEmail, // update with the same mail
               metadata: {
-                test: "test updated 2, new customer",
+                test: "test updated 2, same customer",
               },
             },
             storeHeaders
