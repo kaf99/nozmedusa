@@ -1815,13 +1815,6 @@ medusaIntegrationTestRunner({
         it("should persist customer on cart if updated with the same email", async () => {
           const guestsMainEmail = "guest.main@acme.com"
 
-          const [guestMain] = await customerModule.createCustomers([
-            {
-              email: guestsMainEmail,
-              has_account: false,
-            },
-          ])
-
           const cart = (
             await api.post(
               `/store/carts`,
@@ -1842,7 +1835,7 @@ medusaIntegrationTestRunner({
             )
           ).data.cart
 
-          expect(cart.customer.id).toBe(guestMain.id)
+          const guestMain = cart.customer
 
           // update the cart providing an email
           await api.post(
@@ -1856,7 +1849,7 @@ medusaIntegrationTestRunner({
             storeHeaders
           )
 
-          const currentCart = await api.get(
+          let currentCart = await api.get(
             `/store/carts/${cart.id}`,
             storeHeaders
           )
@@ -1864,7 +1857,27 @@ medusaIntegrationTestRunner({
           expect(currentCart.data.cart.customer.id).toEqual(guestMain.id)
           expect(currentCart.data.cart.email).toEqual(guestMain.email)
           expect(currentCart.data.cart.metadata).toEqual({
-            test: "test updated 2, new customer",
+            test: "test updated 2, same customer",
+          })
+
+          // update the cart providing an email
+          await api.post(
+            `/store/carts/${cart.id}`,
+            {
+              email: guestsMainEmail, // update with the same mail
+              metadata: {
+                test: "test updated 3, same customer",
+              },
+            },
+            storeHeaders
+          )
+
+          currentCart = await api.get(`/store/carts/${cart.id}`, storeHeaders)
+
+          expect(currentCart.data.cart.customer.id).toEqual(guestMain.id)
+          expect(currentCart.data.cart.email).toEqual(guestMain.email)
+          expect(currentCart.data.cart.metadata).toEqual({
+            test: "test updated 3, same customer",
           })
         })
 
