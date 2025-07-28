@@ -44,6 +44,10 @@ declare module "@medusajs/types" {
      */
     [ContainerRegistrationKeys.LINK]: Link
     [ContainerRegistrationKeys.CONFIG_MODULE]: ConfigModule
+    /**
+     * @deprecated use {@link ContainerRegistrationKeys.QUERY} instead.
+     */
+    [ContainerRegistrationKeys.REMOTE_QUERY]: RemoteQueryFunction
     [ContainerRegistrationKeys.QUERY]: Omit<RemoteQueryFunction, symbol>
     [ContainerRegistrationKeys.LOGGER]: Logger
     [Modules.ANALYTICS]: IAnalyticsModuleService
