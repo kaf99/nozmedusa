@@ -31,7 +31,6 @@ import {
   RemoteQueryFunction,
 } from "@medusajs/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/utils"
-import { Knex } from "@mikro-orm/knex"
 import { AwilixContainer, ResolveOptions } from "awilix"
 
 declare module "@medusajs/types" {
@@ -45,8 +44,6 @@ declare module "@medusajs/types" {
      */
     [ContainerRegistrationKeys.LINK]: Link
     [ContainerRegistrationKeys.CONFIG_MODULE]: ConfigModule
-    [ContainerRegistrationKeys.PG_CONNECTION]: Knex<any>
-    [ContainerRegistrationKeys.REMOTE_QUERY]: RemoteQueryFunction
     [ContainerRegistrationKeys.QUERY]: Omit<RemoteQueryFunction, symbol>
     [ContainerRegistrationKeys.LOGGER]: Logger
     [Modules.ANALYTICS]: IAnalyticsModuleService
