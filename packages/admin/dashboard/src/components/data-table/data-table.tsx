@@ -23,7 +23,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useQueryParams } from "../../hooks/use-query-params"
 import { ActionMenu } from "../common/action-menu"
 import { ViewConfiguration } from "../../providers/view-configuration-provider"
-import { ViewSelector } from "../table/view-selector"
+import { ViewSelector, ViewPills } from "../table/view-selector"
 import { useFeatureFlag } from "../../providers/feature-flag-provider"
 
 type DataTableActionProps = {
@@ -250,6 +250,13 @@ export const DataTable = <TData,>({
     return order ? parseSortingState(order) : null
   }, [order])
 
+  // Memoize current configuration to prevent infinite loops
+  const currentConfiguration = useMemo(() => ({
+    filters: filtering,
+    sorting: sorting,
+    search: search,
+  }), [filtering, sorting, search])
+
   const handleSortingChange = (value: DataTableSortingState) => {
     setSearchParams((prev) => {
       if (value) {
@@ -352,16 +359,26 @@ export const DataTable = <TData,>({
         translations={toolbarTranslations}
       >
         <div className="flex w-full items-center justify-between gap-2">
-          {shouldRenderHeading && (
-            <div>
-              {heading && <Heading>{heading}</Heading>}
-              {subHeading && (
-                <Text size="small" className="text-ui-fg-subtle">
-                  {subHeading}
-                </Text>
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-x-4">
+            {shouldRenderHeading && (
+              <div>
+                {heading && <Heading>{heading}</Heading>}
+                {subHeading && (
+                  <Text size="small" className="text-ui-fg-subtle">
+                    {subHeading}
+                  </Text>
+                )}
+              </div>
+            )}
+            {effectiveEnableViewSelector && entity && (
+              <ViewPills
+                entity={entity}
+                onViewChange={onViewChange}
+                currentColumns={currentColumns}
+                currentConfiguration={currentConfiguration}
+              />
+            )}
+          </div>
           <div className="flex items-center gap-x-2">
             {enableSearch && (
               <div className="w-full md:w-auto">
@@ -370,17 +387,6 @@ export const DataTable = <TData,>({
                   autoFocus={autoFocusSearch}
                 />
               </div>
-            )}
-            {enableSorting && (
-              <UiDataTable.SortingMenu tooltip={t("filters.sortLabel")} />
-            )}
-            {effectiveEnableColumnVisibility && <UiDataTable.ColumnVisibilityMenu />}
-            {effectiveEnableViewSelector && entity && (
-              <ViewSelector
-                entity={entity}
-                onViewChange={onViewChange}
-                currentColumns={currentColumns}
-              />
             )}
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
@@ -459,6 +465,8 @@ const useDataTableTranslations = () => {
 
   const toolbarTranslations = {
     clearAll: t("actions.clearAll"),
+    sort: t("filters.sortLabel"),
+    columns: "Columns",
   }
 
   return {

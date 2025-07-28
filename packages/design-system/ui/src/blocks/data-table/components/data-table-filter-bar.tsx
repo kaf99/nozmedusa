@@ -4,6 +4,8 @@ import * as React from "react"
 
 import { DataTableFilter } from "@/blocks/data-table/components/data-table-filter"
 import { DataTableFilterMenu } from "@/blocks/data-table/components/data-table-filter-menu"
+import { DataTableSortingMenu } from "@/blocks/data-table/components/data-table-sorting-menu"
+import { DataTableColumnVisibilityMenu } from "@/blocks/data-table/components/data-table-column-visibility-menu"
 import { useDataTableContext } from "@/blocks/data-table/context/use-data-table-context"
 import { Button } from "@/components/button"
 import { Skeleton } from "@/components/skeleton"
@@ -11,6 +13,8 @@ import { Skeleton } from "@/components/skeleton"
 interface DataTableFilterBarProps {
   clearAllFiltersLabel?: string
   alwaysShow?: boolean
+  sortingTooltip?: string
+  columnsTooltip?: string
 }
 
 interface LocalFilter {
@@ -22,8 +26,10 @@ interface LocalFilter {
 const DataTableFilterBar = ({
   clearAllFiltersLabel = "Clear all",
   alwaysShow = false,
+  sortingTooltip,
+  columnsTooltip,
 }: DataTableFilterBarProps) => {
-  const { instance } = useDataTableContext()
+  const { instance, enableColumnVisibility } = useDataTableContext()
   
   // Local state for managing intermediate filters
   const [localFilters, setLocalFilters] = React.useState<LocalFilter[]>([])
@@ -33,28 +39,33 @@ const DataTableFilterBar = ({
   
   // Sync parent filters with local state
   React.useEffect(() => {
-    const parentIds = Object.keys(parentFilterState)
-    const localIds = localFilters.map(f => f.id)
-    
-    // Remove local filters that have been removed from parent
-    const updatedLocalFilters = localFilters.filter(f => 
-      parentIds.includes(f.id) || f.isNew
-    )
-    
-    // Add parent filters that don't exist locally
-    parentIds.forEach(id => {
-      if (!localIds.includes(id)) {
-        updatedLocalFilters.push({
-          id,
-          value: parentFilterState[id],
-          isNew: false
-        })
+    setLocalFilters(prevLocalFilters => {
+      const parentIds = Object.keys(parentFilterState)
+      const localIds = prevLocalFilters.map(f => f.id)
+      
+      // Remove local filters that have been removed from parent
+      const updatedLocalFilters = prevLocalFilters.filter(f => 
+        parentIds.includes(f.id) || f.isNew
+      )
+      
+      // Add parent filters that don't exist locally
+      parentIds.forEach(id => {
+        if (!localIds.includes(id)) {
+          updatedLocalFilters.push({
+            id,
+            value: parentFilterState[id],
+            isNew: false
+          })
+        }
+      })
+      
+      // Only update if there's an actual change
+      if (updatedLocalFilters.length !== prevLocalFilters.length ||
+          updatedLocalFilters.some((f, i) => f.id !== prevLocalFilters[i]?.id)) {
+        return updatedLocalFilters
       }
+      return prevLocalFilters
     })
-    
-    if (updatedLocalFilters.length !== localFilters.length) {
-      setLocalFilters(updatedLocalFilters)
-    }
   }, [parentFilterState])
   
   // Add a new filter locally
@@ -91,13 +102,13 @@ const DataTableFilterBar = ({
 
   const filterCount = localFilters.length
   const hasAvailableFilters = availableFilters.length > 0
+  
+  // Check if sorting is enabled
+  const sortableColumns = instance.getAllColumns().filter((column) => column.getCanSort())
+  const hasSorting = instance.enableSorting && sortableColumns.length > 0
 
-  // Always show the filter bar when there are available filters
-  if (filterCount === 0 && !hasAvailableFilters) {
-    return null
-  }
-
-  if (!hasAvailableFilters) {
+  // Always show the filter bar when there are available filters, sorting, or column visibility
+  if (filterCount === 0 && !hasAvailableFilters && !hasSorting && !enableColumnVisibility && !alwaysShow) {
     return null
   }
 
@@ -106,29 +117,37 @@ const DataTableFilterBar = ({
   }
 
   return (
-    <div className="bg-ui-bg-subtle flex w-full flex-nowrap items-center gap-2 overflow-x-auto border-t px-6 py-2 md:flex-wrap">
-      {localFilters.map((localFilter) => (
-        <DataTableFilter 
-          key={localFilter.id} 
-          id={localFilter.id} 
-          filter={localFilter.value} 
-          isNew={localFilter.isNew}
-          onUpdate={(value) => updateLocalFilter(localFilter.id, value)}
-          onRemove={() => removeLocalFilter(localFilter.id)}
-        />
-      ))}
-      <DataTableFilterMenu onAddFilter={addLocalFilter} />
-      {Object.keys(parentFilterState).length > 0 ? (
-        <Button
-          variant="transparent"
-          size="small"
-          className="text-ui-fg-muted hover:text-ui-fg-subtle flex-shrink-0 whitespace-nowrap"
-          type="button"
-          onClick={clearFilters}
-        >
-          {clearAllFiltersLabel}
-        </Button>
-      ) : null}
+    <div className="bg-ui-bg-subtle flex w-full flex-nowrap items-center justify-between gap-2 overflow-x-auto border-t px-6 py-2">
+      <div className="flex flex-nowrap items-center gap-2 md:flex-wrap">
+        {localFilters.map((localFilter) => (
+          <DataTableFilter 
+            key={localFilter.id} 
+            id={localFilter.id} 
+            filter={localFilter.value} 
+            isNew={localFilter.isNew}
+            onUpdate={(value) => updateLocalFilter(localFilter.id, value)}
+            onRemove={() => removeLocalFilter(localFilter.id)}
+          />
+        ))}
+        {hasAvailableFilters && (
+          <DataTableFilterMenu onAddFilter={addLocalFilter} />
+        )}
+        {filterCount > 0 && (
+          <Button
+            variant="transparent"
+            size="small"
+            className="text-ui-fg-muted hover:text-ui-fg-subtle flex-shrink-0 whitespace-nowrap"
+            type="button"
+            onClick={clearFilters}
+          >
+            {clearAllFiltersLabel}
+          </Button>
+        )}
+      </div>
+      <div className="flex flex-shrink-0 items-center gap-2">
+        {hasSorting && <DataTableSortingMenu tooltip={sortingTooltip} />}
+        {enableColumnVisibility && <DataTableColumnVisibilityMenu tooltip={columnsTooltip} />}
+      </div>
     </div>
   )
 }

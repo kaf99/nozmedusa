@@ -3,9 +3,10 @@
 import * as React from "react"
 import { Column } from "@tanstack/react-table"
 
-import { Button } from "@/components/button"
 import { Checkbox } from "@/components/checkbox"
 import { DropdownMenu } from "@/components/dropdown-menu"
+import { IconButton } from "@/components/icon-button"
+import { Tooltip } from "@/components/tooltip"
 import { Adjustments } from "@medusajs/icons"
 import { clx } from "@/utils/clx"
 
@@ -13,10 +14,12 @@ import { useDataTableContext } from "../context/use-data-table-context"
 
 interface DataTableColumnVisibilityMenuProps {
   className?: string
+  tooltip?: string
 }
 
 const DataTableColumnVisibilityMenu = ({
   className,
+  tooltip,
 }: DataTableColumnVisibilityMenuProps) => {
   const { instance, enableColumnVisibility } = useDataTableContext()
 
@@ -43,23 +46,18 @@ const DataTableColumnVisibilityMenu = ({
   const allColumnsVisible = columns.every((column: Column<any, any>) => column.getIsVisible())
   const someColumnsVisible = columns.some((column: Column<any, any>) => column.getIsVisible())
 
+  const Wrapper = tooltip ? Tooltip : React.Fragment
+  const wrapperProps = tooltip ? { content: tooltip } : ({} as any)
+
   return (
     <DropdownMenu>
-      <DropdownMenu.Trigger asChild>
-        <Button
-          variant="secondary"
-          size="small"
-          className={clx(
-            "gap-x-1.5 px-2.5 py-1.5",
-            "text-ui-fg-muted hover:text-ui-fg-base",
-            "transition-fg",
-            className
-          )}
-        >
-          <Adjustments />
-          Columns
-        </Button>
-      </DropdownMenu.Trigger>
+      <Wrapper {...wrapperProps}>
+        <DropdownMenu.Trigger asChild>
+          <IconButton size="small" className={className}>
+            <Adjustments />
+          </IconButton>
+        </DropdownMenu.Trigger>
+      </Wrapper>
       <DropdownMenu.Content align="end" className="min-w-[200px] max-h-[400px] overflow-hidden">
         <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
         <DropdownMenu.Separator />

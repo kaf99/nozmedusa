@@ -9,6 +9,14 @@ interface DataTableToolbarTranslations {
    * @default "Clear all"
    */
   clearAll?: string
+  /**
+   * The tooltip for the sorting menu
+   */
+  sort?: string
+  /**
+   * The tooltip for the columns menu  
+   */
+  columns?: string
 }
 
 interface DataTableToolbarProps {
@@ -41,6 +49,8 @@ const DataTableToolbar = (props: DataTableToolbarProps) => {
       <DataTableFilterBar
         clearAllFiltersLabel={props.translations?.clearAll}
         alwaysShow={hasFilters}
+        sortingTooltip={props.translations?.sort}
+        columnsTooltip={props.translations?.columns}
       />
     </div>
   )

@@ -69,10 +69,6 @@ const DataTableTable = (props: DataTableTableProps) => {
     }
     return columns.map(col => col.id)
   }, [columns, instance.columnOrder])
-  
-  console.log('DataTableTable - sortableItems:', sortableItems)
-  console.log('DataTableTable - columnOrder:', instance.columnOrder)
-  console.log('DataTableTable - enableColumnOrder:', instance.enableColumnOrder)
 
   // Setup drag-and-drop sensors
   const sensors = useSensors(
@@ -234,8 +230,6 @@ const DataTableTable = (props: DataTableTableProps) => {
                     const isCenterAligned = headerAlign === 'center'
 
                     const HeaderCellComponent = isDraggable ? DataTableSortableHeaderCell : DataTableNonSortableHeaderCell
-                    
-                    console.log(`Header ${header.id}: isDraggable=${isDraggable}, isSpecialHeader=${isSpecialHeader}`)
 
                     return (
                       <HeaderCellComponent
