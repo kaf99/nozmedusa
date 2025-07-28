@@ -1,11 +1,12 @@
 import { logger } from "@medusajs/framework/logger"
 import { MedusaContainer } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { Knex } from "@mikro-orm/knex"
 
 export async function ensureDbExists(container: MedusaContainer) {
   const pgConnection = container.resolve(
     ContainerRegistrationKeys.PG_CONNECTION
-  )
+  ) as Knex<any>
 
   try {
     await pgConnection.raw("SELECT 1 + 1;")

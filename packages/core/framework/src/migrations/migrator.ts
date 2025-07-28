@@ -36,7 +36,7 @@ export abstract class Migrator {
   async ensureDatabase(): Promise<void> {
     const pgConnection = this.container.resolve(
       ContainerRegistrationKeys.PG_CONNECTION
-    )
+    ) as Knex<any>
 
     try {
       await pgConnection.raw("SELECT 1 + 1;")
