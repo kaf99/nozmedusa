@@ -168,6 +168,34 @@ export class PricingRepository
         })
     })
 
+    const preparedBindings = flattenedContext.flatMap(([key, value]) => {
+      if (typeof value === "number") {
+        return [key, value.toString(), value, value, value, value]
+      } else {
+        const arrayValue = Array.isArray(value) ? value : [value]
+        return [key, JSON.stringify(arrayValue)]
+      }
+    })
+
+    const preparedParameters = (tableName) =>
+      flattenedContext
+        .map(([key, value]) => {
+          if (typeof value === "number") {
+            return `
+                    (${tableName}.attribute = ? AND (
+                      (${tableName}.operator = 'eq' AND ${tableName}.value = ?) OR
+                      (${tableName}.operator = 'gt' AND ? > ${tableName}.value::numeric) OR
+                      (${tableName}.operator = 'gte' AND ? >= ${tableName}.value::numeric) OR
+                      (${tableName}.operator = 'lt' AND ? < ${tableName}.value::numeric) OR
+                      (${tableName}.operator = 'lte' AND ? <= ${tableName}.value::numeric)
+                    ))
+                    `
+          } else {
+            return `(${tableName}.attribute = ? AND ${tableName}.value IN (?))`
+          }
+        })
+        .join(" OR ")
+
     if (hasComplexContext) {
       const priceRuleConditions = knex.raw(
         `
@@ -179,29 +207,7 @@ export class PricingRepository
             FROM price_rule pr
             WHERE pr.price_id = price.id 
             AND pr.deleted_at IS NULL
-            AND (
-              ${flattenedContext
-                .map(([key, value]) => {
-                  if (typeof value === "number") {
-                    return `
-                    (pr.attribute = ? AND (
-                      (pr.operator = 'eq' AND pr.value = ?) OR
-                      (pr.operator = 'gt' AND ? > pr.value::numeric) OR
-                      (pr.operator = 'gte' AND ? >= pr.value::numeric) OR
-                      (pr.operator = 'lt' AND ? < pr.value::numeric) OR
-                      (pr.operator = 'lte' AND ? <= pr.value::numeric)
-                    ))
-                    `
-                  } else {
-                    const normalizeValue = Array.isArray(value)
-                      ? value
-                      : [value]
-                    const placeholders = normalizeValue.map(() => "?").join(",")
-                    return `(pr.attribute = ? AND pr.value IN (${placeholders}))`
-                  }
-                })
-                .join(" OR ")}
-            )
+            AND (${preparedParameters("pr")})
           ) = (
             /* Get total rule count */
             SELECT COUNT(*) 
@@ -211,14 +217,7 @@ export class PricingRepository
           )
         )
         `,
-        flattenedContext.flatMap(([key, value]) => {
-          if (typeof value === "number") {
-            return [key, value.toString(), value, value, value, value]
-          } else {
-            const normalizeValue = Array.isArray(value) ? value : [value]
-            return [key, ...normalizeValue]
-          }
-        })
+        preparedBindings
       )
 
       const priceListRuleConditions = knex.raw(
@@ -231,13 +230,7 @@ export class PricingRepository
             FROM price_list_rule plr
             WHERE plr.price_list_id = pl.id
               AND plr.deleted_at IS NULL
-              AND (
-                ${flattenedContext
-                  .map(([key, value]) => {
-                    return `(plr.attribute = ? AND plr.value @> ?)`
-                  })
-                  .join(" OR ")}
-              )
+              AND (${preparedParameters("plr")})
           ) = (
             /* Get total rule count */
             SELECT COUNT(*) 
@@ -247,9 +240,7 @@ export class PricingRepository
           )
         )
         `,
-        flattenedContext.flatMap(([key, value]) => {
-          return [key, JSON.stringify(Array.isArray(value) ? value : [value])]
-        })
+        preparedBindings
       )
 
       query.where((qb) => {
