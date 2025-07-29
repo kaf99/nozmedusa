@@ -2,6 +2,7 @@ import { Container, Button } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import React, { useEffect, useState, useMemo, useCallback } from "react"
 import { HttpTypes } from "@medusajs/types"
+import { useSearchParams } from "react-router-dom"
 
 import { DataTable } from "../../../../../components/data-table"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
@@ -195,16 +196,63 @@ export const OrderListTable = () => {
     return () => clearTimeout(timer)
   }, [hasConfigurationChanged, isTransitioningView])
   
+  // Get setSearchParams hook at component level
+  const [_, setSearchParams] = useSearchParams()
+  
   // Handler to reset configuration back to active view
   const handleClearConfiguration = React.useCallback(() => {
     if (activeView) {
       // Reset to active view's configuration
       handleViewChange(activeView, apiColumns)
+      
+      // Apply the view's filters, sorting, and search from its configuration
+      setSearchParams((prev) => {
+        // Clear all existing parameters with the prefix
+        const keysToDelete = Array.from(prev.keys()).filter(key => 
+          key.startsWith(QUERY_PREFIX + "_") || key === QUERY_PREFIX + "_q" || key === QUERY_PREFIX + "_order"
+        )
+        keysToDelete.forEach(key => prev.delete(key))
+        
+        // Apply view's configuration
+        const viewConfig = activeView.configuration
+        
+        // Apply filters
+        if (viewConfig.filters) {
+          Object.entries(viewConfig.filters).forEach(([key, value]) => {
+            prev.set(`${QUERY_PREFIX}_${key}`, JSON.stringify(value))
+          })
+        }
+        
+        // Apply sorting
+        if (viewConfig.sorting) {
+          const sortValue = viewConfig.sorting.desc 
+            ? `-${viewConfig.sorting.id}` 
+            : viewConfig.sorting.id
+          prev.set(`${QUERY_PREFIX}_order`, sortValue)
+        }
+        
+        // Apply search
+        if (viewConfig.search) {
+          prev.set(`${QUERY_PREFIX}_q`, viewConfig.search)
+        }
+        
+        return prev
+      })
     } else {
-      // No active view - clear all configuration
+      // No active view - clear all configuration including URL params
       handleViewChange(null, apiColumns)
+      
+      // Clear all query parameters
+      setSearchParams((prev) => {
+        // Remove all parameters with our prefix
+        const keysToDelete = Array.from(prev.keys()).filter(key => 
+          key.startsWith(QUERY_PREFIX + "_") || key === QUERY_PREFIX + "_q" || key === QUERY_PREFIX + "_order"
+        )
+        keysToDelete.forEach(key => prev.delete(key))
+        return prev
+      })
     }
-  }, [activeView, apiColumns, handleViewChange])
+  }, [activeView, apiColumns, handleViewChange, setSearchParams])
   
   // Get current configuration for save button
   const currentConfiguration = useMemo(() => {

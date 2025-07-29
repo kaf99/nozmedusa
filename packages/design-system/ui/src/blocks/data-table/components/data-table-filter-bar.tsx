@@ -134,17 +134,6 @@ const DataTableFilterBar = ({
         {hasAvailableFilters && (
           <DataTableFilterMenu onAddFilter={addLocalFilter} />
         )}
-        {filterCount > 0 && (
-          <Button
-            variant="transparent"
-            size="small"
-            className="text-ui-fg-muted hover:text-ui-fg-subtle flex-shrink-0 whitespace-nowrap"
-            type="button"
-            onClick={clearFilters}
-          >
-            {clearAllFiltersLabel}
-          </Button>
-        )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
         {hasSorting && <DataTableSortingMenu tooltip={sortingTooltip} />}
