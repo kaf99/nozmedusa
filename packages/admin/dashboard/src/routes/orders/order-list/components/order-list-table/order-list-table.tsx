@@ -41,9 +41,6 @@ export const OrderListTable = () => {
     return <OrderListTableLegacy />
   }
 
-  const renderCount = React.useRef(0)
-  renderCount.current += 1
-  console.log("Rendering OrderListTable", renderCount.current, "times")
 
   const { activeViews } = useViewConfiguration()
 
@@ -168,6 +165,7 @@ export const OrderListTable = () => {
       const viewSearch = activeView.configuration.search || ""
       const viewVisibleColumns = [...(activeView.configuration.visible_columns || [])].sort()
       const viewColumnOrder = activeView.configuration.column_order || []
+
 
       // Check filters
       const filterKeys = new Set([...Object.keys(currentFilters), ...Object.keys(viewFilters)])

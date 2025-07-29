@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { HttpTypes } from "@medusajs/types"
 import { ViewConfiguration } from "../../../../../../providers/view-configuration-provider"
 import { ColumnState } from "../constants"
@@ -96,6 +96,30 @@ export function useColumnState(
       setColumnOrder(getInitialColumnOrder(apiColumns))
     }
   }, [])
+
+  // Track previous active view to detect changes
+  const prevActiveViewRef = useRef<ViewConfiguration | null | undefined>()
+  
+  // Sync local state when active view updates (e.g., after saving)
+  useEffect(() => {
+    if (apiColumns?.length && activeView && prevActiveViewRef.current) {
+      // Check if the active view has been updated (same ID but different updated_at)
+      if (
+        prevActiveViewRef.current.id === activeView.id &&
+        prevActiveViewRef.current.updated_at !== activeView.updated_at
+      ) {
+        // Sync local state with the updated view configuration
+        const newVisibility: Record<string, boolean> = {}
+        apiColumns.forEach(column => {
+          newVisibility[column.field] = activeView.configuration.visible_columns.includes(column.field)
+        })
+        setVisibleColumns(newVisibility)
+        setColumnOrder(activeView.configuration.column_order)
+      }
+    }
+    
+    prevActiveViewRef.current = activeView
+  }, [activeView, apiColumns])
 
   return {
     visibleColumns,

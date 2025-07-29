@@ -113,7 +113,13 @@ export const POST = async (
     )
   }
 
-  res.json({ view_configuration: viewConfiguration })
+  // Retrieve the full updated view configuration to ensure all fields are included
+  const fullViewConfiguration = await settingsService.retrieveViewConfiguration(
+    req.params.id,
+    req.queryConfig
+  )
+
+  res.json({ view_configuration: fullViewConfiguration })
 }
 
 export const DELETE = async (

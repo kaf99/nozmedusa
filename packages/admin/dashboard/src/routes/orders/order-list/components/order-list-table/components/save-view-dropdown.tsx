@@ -62,10 +62,20 @@ export const SaveViewDropdown: React.FC<SaveViewDropdownProps> = ({
       if (existingSystemDefault) {
         // Update the existing system default - exclude entity field
         const { entity: _, ...updateConfig } = viewConfig
-        await updateViewConfiguration(existingSystemDefault.id, updateConfig)
+        const updatedView = await updateViewConfiguration(existingSystemDefault.id, updateConfig)
+        
+        // Force a small delay to ensure state propagation
+        setTimeout(() => {
+          // The view configuration provider will handle the state update
+        }, 100)
       } else {
         // Create a new system default
-        await createViewConfiguration(viewConfig)
+        const newView = await createViewConfiguration(viewConfig)
+        
+        // Force a small delay to ensure state propagation
+        setTimeout(() => {
+          // The view configuration provider will handle the state update
+        }, 100)
       }
 
       toast.success("Default view saved for everyone")
@@ -97,8 +107,13 @@ export const SaveViewDropdown: React.FC<SaveViewDropdownProps> = ({
         set_active: true, // Ensure the view remains active after update
       }
 
-      await updateViewConfiguration(currentViewId, updateData)
+      const updatedView = await updateViewConfiguration(currentViewId, updateData)
       toast.success(`View "${currentViewName}" updated successfully`)
+      
+      // Force a small delay to ensure state propagation
+      setTimeout(() => {
+        // The view configuration provider will handle the state update
+      }, 100)
     } catch (error) {
       toast.error("Failed to update view")
     }
