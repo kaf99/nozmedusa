@@ -62,7 +62,7 @@ export const OrderListTable = () => {
     setColumnOrder,
     handleColumnVisibilityChange,
     handleViewChange: originalHandleViewChange,
-  } = useColumnState(apiColumns)
+  } = useColumnState(apiColumns, activeView)
 
   // Wrap handleViewChange to manage transition state and apply view configuration
   const handleViewChange = useCallback((view: ViewConfiguration | null, columns: HttpTypes.AdminViewColumn[]) => {
@@ -211,6 +211,15 @@ export const OrderListTable = () => {
 
     return false
   }, [activeView, visibleColumns, columnOrder, filters, queryParams, apiColumns])
+
+  // Debounce the configuration changed state
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedHasConfigChanged(hasConfigurationChanged)
+    }, 50)
+
+    return () => clearTimeout(timer)
+  }, [hasConfigurationChanged])
 
   // Handler to reset configuration back to active view
   const handleClearConfiguration = React.useCallback(() => {
