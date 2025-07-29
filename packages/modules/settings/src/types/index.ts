@@ -111,6 +111,9 @@ export interface ViewConfigurationDTO {
     visible_columns: string[]
     column_order: string[]
     column_widths?: Record<string, number>
+    filters?: Record<string, any>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
   }
   created_at: Date
   updated_at: Date
@@ -125,6 +128,9 @@ export interface CreateViewConfigurationDTO {
     visible_columns: string[]
     column_order: string[]
     column_widths?: Record<string, number>
+    filters?: Record<string, any>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
   }
 }
 
@@ -134,6 +140,9 @@ export interface UpdateViewConfigurationDTO {
     visible_columns?: string[]
     column_order?: string[]
     column_widths?: Record<string, number>
+    filters?: Record<string, any>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
   }
 }
 

@@ -214,6 +214,49 @@ export class SettingsModuleService
       selector = idOrSelector
     }
 
+    // Special handling for configuration updates to ensure replacement instead of merge
+    if (data.configuration) {
+      // First, get the entities to update
+      const entities = await this.viewConfigurationService_.list(
+        selector,
+        {},
+        sharedContext
+      )
+      
+      if (entities.length === 0) {
+        return typeof idOrSelector === "string" ? [] : []
+      }
+      
+      // Use upsertWithReplace to update the configuration field without merging
+      const updateDataArray = entities.map(entity => ({
+        id: entity.id,
+        ...data,
+        configuration: {
+          visible_columns: data.configuration?.visible_columns ?? [],
+          column_order: data.configuration?.column_order ?? [],
+          column_widths: data.configuration?.column_widths !== undefined ? data.configuration.column_widths : {},
+          filters: data.configuration?.filters !== undefined ? data.configuration.filters : {},
+          sorting: data.configuration?.sorting !== undefined ? data.configuration.sorting : null,
+          search: data.configuration?.search !== undefined ? data.configuration.search : "",
+        }
+      }))
+      
+      // Use upsertWithReplace which uses nativeUpdateMany internally and doesn't merge JSON fields
+      const { entities: updatedEntities } = await this.viewConfigurationService_.upsertWithReplace(
+        updateDataArray,
+        { relations: [] },
+        sharedContext
+      )
+      
+      const serialized = await this.baseRepository_.serialize<ViewConfigurationDTO[]>(
+        updatedEntities,
+        { populate: true }
+      )
+
+      return typeof idOrSelector === "string" ? serialized[0] : serialized
+    }
+
+    // For non-configuration updates, use the standard update method
     const updated = await this.viewConfigurationService_.update(
       [{ ...selector, ...data }],
       sharedContext

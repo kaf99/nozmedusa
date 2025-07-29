@@ -928,6 +928,163 @@ medusaIntegrationTestRunner({
           expect(activeView.data.default_type).toEqual("system")
         })
       })
+
+      describe("Filter, Sorting, and Search Persistence", () => {
+        it("should save and restore filters, sorting, and search configuration", async () => {
+          // Create a view with filters, sorting, and search
+          const viewConfig = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "Filtered View",
+              configuration: {
+                visible_columns: ["id", "status", "total", "created_at"],
+                column_order: ["status", "total", "created_at", "id"],
+                filters: {
+                  status: ["pending", "completed"],
+                  total: { gte: 100 }
+                },
+                sorting: { id: "created_at", desc: true },
+                search: "test search"
+              },
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(viewConfig.status).toEqual(201)
+          expect(viewConfig.data.view_configuration.configuration.filters).toEqual({
+            status: ["pending", "completed"],
+            total: { gte: 100 }
+          })
+          expect(viewConfig.data.view_configuration.configuration.sorting).toEqual({
+            id: "created_at",
+            desc: true
+          })
+          expect(viewConfig.data.view_configuration.configuration.search).toEqual("test search")
+
+          // Retrieve the view and verify filters are preserved
+          const getResponse = await api.get(
+            `/admin/view-configurations/${viewConfig.data.view_configuration.id}`,
+            { headers: nonAdminHeader }
+          )
+
+          expect(getResponse.status).toEqual(200)
+          expect(getResponse.data.view_configuration.configuration.filters).toEqual({
+            status: ["pending", "completed"],
+            total: { gte: 100 }
+          })
+        })
+
+        it("should remove filters when updating a view without filters", async () => {
+          // Create a view with filters
+          const viewConfig = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "View with Filters",
+              configuration: {
+                visible_columns: ["id", "status", "total"],
+                column_order: ["status", "total", "id"],
+                filters: {
+                  status: ["pending", "completed"],
+                  total: { gte: 100 }
+                },
+                sorting: { id: "total", desc: true },
+                search: "initial search"
+              },
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(viewConfig.status).toEqual(201)
+          const viewId = viewConfig.data.view_configuration.id
+
+          // Update the view to remove filters
+          const updateResponse = await api.post(
+            `/admin/view-configurations/${viewId}`,
+            {
+              configuration: {
+                visible_columns: ["id", "status", "total"],
+                column_order: ["status", "total", "id"],
+                filters: {}, // Empty filters object
+                sorting: null, // Remove sorting
+                search: "" // Clear search
+              },
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(updateResponse.status).toEqual(200)
+          
+          // Verify filters were removed
+          expect(updateResponse.data.view_configuration.configuration.filters).toEqual({})
+          expect(updateResponse.data.view_configuration.configuration.sorting).toBeNull()
+          expect(updateResponse.data.view_configuration.configuration.search).toEqual("")
+
+          // Retrieve again to double-check persistence
+          const getResponse = await api.get(
+            `/admin/view-configurations/${viewId}`,
+            { headers: nonAdminHeader }
+          )
+
+          expect(getResponse.status).toEqual(200)
+          expect(getResponse.data.view_configuration.configuration.filters).toEqual({})
+          expect(getResponse.data.view_configuration.configuration.sorting).toBeNull()
+          expect(getResponse.data.view_configuration.configuration.search).toEqual("")
+        })
+
+        it("should update only specific filters while keeping others", async () => {
+          // Create a view with multiple filters
+          const viewConfig = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "Multi-Filter View",
+              configuration: {
+                visible_columns: ["id", "status", "total", "created_at"],
+                column_order: ["status", "total", "created_at", "id"],
+                filters: {
+                  status: ["pending", "completed"],
+                  total: { gte: 100, lte: 1000 },
+                  created_at: { gte: "2024-01-01" }
+                },
+                sorting: { id: "created_at", desc: true },
+                search: "customer"
+              },
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(viewConfig.status).toEqual(201)
+          const viewId = viewConfig.data.view_configuration.id
+
+          // Update to remove only the 'total' filter
+          const updateResponse = await api.post(
+            `/admin/view-configurations/${viewId}`,
+            {
+              configuration: {
+                visible_columns: ["id", "status", "total", "created_at"],
+                column_order: ["status", "total", "created_at", "id"],
+                filters: {
+                  status: ["pending", "completed"],
+                  created_at: { gte: "2024-01-01" }
+                  // 'total' filter removed
+                },
+                sorting: { id: "created_at", desc: true },
+                search: "customer"
+              },
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(updateResponse.status).toEqual(200)
+          expect(updateResponse.data.view_configuration.configuration.filters).toEqual({
+            status: ["pending", "completed"],
+            created_at: { gte: "2024-01-01" }
+          })
+          expect(updateResponse.data.view_configuration.configuration.filters.total).toBeUndefined()
+        })
+      })
     })
   },
 })

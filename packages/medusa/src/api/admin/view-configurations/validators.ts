@@ -41,6 +41,12 @@ export const AdminCreateViewConfiguration = z.object({
     visible_columns: z.array(z.string()),
     column_order: z.array(z.string()),
     column_widths: z.record(z.string(), z.number()).optional(),
+    filters: z.record(z.string(), z.any()).optional(),
+    sorting: z.object({
+      id: z.string(),
+      desc: z.boolean(),
+    }).nullable().optional(),
+    search: z.string().optional(),
   }),
 })
 
@@ -53,6 +59,12 @@ export const AdminUpdateViewConfiguration = z.object({
     visible_columns: z.array(z.string()).optional(),
     column_order: z.array(z.string()).optional(),
     column_widths: z.record(z.string(), z.number()).optional(),
+    filters: z.record(z.string(), z.any()).optional(),
+    sorting: z.object({
+      id: z.string(),
+      desc: z.boolean(),
+    }).nullable().optional(),
+    search: z.string().optional(),
   }).optional(),
 })
 

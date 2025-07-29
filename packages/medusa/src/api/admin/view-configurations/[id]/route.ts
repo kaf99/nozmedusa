@@ -65,6 +65,40 @@ export const POST = async (
     user_id: req.body.is_system_default ? null : existing.user_id,
   }
 
+  // If configuration is provided, we need to handle it specially because
+  // MikroORM merges JSON fields by default. We ensure all fields are explicitly set.
+  if (input.configuration) {
+    // Retrieve the full existing view to get current configuration
+    const fullExisting = await settingsService.retrieveViewConfiguration(
+      req.params.id,
+      { select: ["id", "configuration"] }
+    )
+    
+    // Create a complete configuration object
+    // If a field is explicitly provided (even as null/empty), use it
+    // Otherwise, keep the existing value
+    input.configuration = {
+      visible_columns: input.configuration.visible_columns !== undefined 
+        ? input.configuration.visible_columns 
+        : (fullExisting.configuration.visible_columns || []),
+      column_order: input.configuration.column_order !== undefined 
+        ? input.configuration.column_order 
+        : (fullExisting.configuration.column_order || []),
+      column_widths: input.configuration.column_widths !== undefined 
+        ? input.configuration.column_widths 
+        : (fullExisting.configuration.column_widths || {}),
+      filters: input.configuration.filters !== undefined 
+        ? input.configuration.filters 
+        : (fullExisting.configuration.filters || {}),
+      sorting: input.configuration.sorting !== undefined 
+        ? input.configuration.sorting 
+        : (fullExisting.configuration.sorting || null),
+      search: input.configuration.search !== undefined 
+        ? input.configuration.search 
+        : (fullExisting.configuration.search || ""),
+    }
+  }
+
   const viewConfiguration = await settingsService.updateViewConfigurations(
     req.params.id,
     input
@@ -73,7 +107,7 @@ export const POST = async (
   // If set_active is true, set this view as the active one
   if (set_active) {
     await settingsService.setActiveViewConfiguration(
-      viewConfiguration.entity,
+      existing.entity,
       req.auth_context.actor_id,
       viewConfiguration.id
     )
