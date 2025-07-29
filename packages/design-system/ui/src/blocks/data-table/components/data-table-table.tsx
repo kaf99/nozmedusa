@@ -265,6 +265,7 @@ const DataTableTable = (props: DataTableTableProps) => {
                         <Wrapper
                           type={canSort ? "button" : undefined}
                           onClick={canSort ? sortHandler : undefined}
+                          onMouseDown={canSort ? (e) => e.stopPropagation() : undefined}
                           className={clx(
                             "group flex cursor-default items-center gap-2",
                             {
@@ -429,6 +430,7 @@ const DataTableTable = (props: DataTableTableProps) => {
                         <Wrapper
                           type={canSort ? "button" : undefined}
                           onClick={canSort ? sortHandler : undefined}
+                          onMouseDown={canSort ? (e) => e.stopPropagation() : undefined}
                           className={clx(
                             "group flex cursor-default items-center gap-2",
                             {

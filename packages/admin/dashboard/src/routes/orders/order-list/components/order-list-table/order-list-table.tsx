@@ -1,31 +1,23 @@
+import React, { useState, useMemo, useCallback } from "react"
 import { Container, Button } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
-import React, { useEffect, useState, useMemo, useCallback } from "react"
 import { HttpTypes } from "@medusajs/types"
 import { useSearchParams } from "react-router-dom"
-
 import { DataTable } from "../../../../../components/data-table"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 import { useViewConfiguration } from "../../../../../providers/view-configuration-provider"
 import { OrderListTableLegacy } from "./order-list-table-legacy"
 import { OrderListTableLoading } from "./components/order-list-table-loading"
 import { SaveViewDropdown } from "./components/save-view-dropdown"
-
-// Custom hooks
 import { useColumnState } from "./hooks/use-column-state"
 import { useRequiredFields } from "./hooks/use-required-fields"
 import { useOrderTableColumns } from "./hooks/use-order-table-columns"
 import { useOrderListData } from "./hooks/use-order-list-data"
 import { useOrderDataTableFilters } from "./hooks/use-order-data-table-filters"
 import { useQueryParams } from "../../../../../hooks/use-query-params"
-
-// Constants
 import { PAGE_SIZE, QUERY_PREFIX } from "./constants"
-
-// Utils
 import { getInitialColumnVisibility, getInitialColumnOrder } from "./utils/column-utils"
 
-// Helper function to parse sorting state
 function parseSortingState(value: string) {
   return value.startsWith("-")
     ? { id: value.slice(1), desc: true }
@@ -41,11 +33,7 @@ export const OrderListTable = () => {
     return <OrderListTableLegacy />
   }
 
-
   const { activeViews } = useViewConfiguration()
-
-  // Track if we're transitioning between views
-  const [isTransitioningView, setIsTransitioningView] = useState(false)
 
   // Get filters
   const filters = useOrderDataTableFilters()
@@ -74,14 +62,12 @@ export const OrderListTable = () => {
     setColumnOrder,
     handleColumnVisibilityChange,
     handleViewChange: originalHandleViewChange,
-    initializeColumns,
-  } = useColumnState(apiColumns, activeView)
+  } = useColumnState(apiColumns)
 
   // Wrap handleViewChange to manage transition state and apply view configuration
   const handleViewChange = useCallback((view: ViewConfiguration | null, columns: HttpTypes.AdminViewColumn[]) => {
-    setIsTransitioningView(true)
     originalHandleViewChange(view, columns)
-    
+
     // Apply the view's filters, sorting, and search to URL params
     setSearchParams((prev) => {
       // Clear all existing parameters with the prefix
@@ -89,37 +75,34 @@ export const OrderListTable = () => {
         key.startsWith(QUERY_PREFIX + "_") || key === QUERY_PREFIX + "_q" || key === QUERY_PREFIX + "_order"
       )
       keysToDelete.forEach(key => prev.delete(key))
-      
+
       if (view) {
         // Apply view's configuration
         const viewConfig = view.configuration
-        
+
         // Apply filters
         if (viewConfig.filters) {
           Object.entries(viewConfig.filters).forEach(([key, value]) => {
             prev.set(`${QUERY_PREFIX}_${key}`, JSON.stringify(value))
           })
         }
-        
+
         // Apply sorting
         if (viewConfig.sorting) {
-          const sortValue = viewConfig.sorting.desc 
-            ? `-${viewConfig.sorting.id}` 
+          const sortValue = viewConfig.sorting.desc
+            ? `-${viewConfig.sorting.id}`
             : viewConfig.sorting.id
           prev.set(`${QUERY_PREFIX}_order`, sortValue)
         }
-        
+
         // Apply search
         if (viewConfig.search) {
           prev.set(`${QUERY_PREFIX}_q`, viewConfig.search)
         }
       }
-      
+
       return prev
     })
-    
-    // Clear transition state after a short delay to allow state to settle
-    setTimeout(() => setIsTransitioningView(false), 100)
   }, [originalHandleViewChange, setSearchParams])
 
   // Calculate required fields based on visible columns
@@ -228,15 +211,6 @@ export const OrderListTable = () => {
 
     return false
   }, [activeView, visibleColumns, columnOrder, filters, queryParams, apiColumns])
-
-  // Debounce the configuration changed state
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedHasConfigChanged(hasConfigurationChanged && !isTransitioningView)
-    }, 50)
-
-    return () => clearTimeout(timer)
-  }, [hasConfigurationChanged, isTransitioningView])
 
   // Handler to reset configuration back to active view
   const handleClearConfiguration = React.useCallback(() => {

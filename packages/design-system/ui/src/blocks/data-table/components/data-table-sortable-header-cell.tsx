@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { DotsSix } from "@medusajs/icons"
 import { clx } from "@/utils/clx"
 import { Table } from "@/components/table"
 
@@ -41,7 +40,6 @@ export const DataTableSortableHeaderCell = React.forwardRef<
     opacity: isDragging ? 0.8 : 1,
     zIndex: isDragging ? 50 : undefined,
     position: 'relative' as const,
-    cursor: isDragging ? 'grabbing' : undefined,
   }
 
   const combineRefs = (element: HTMLTableCellElement | null) => {
@@ -59,31 +57,11 @@ export const DataTableSortableHeaderCell = React.forwardRef<
     <Table.HeaderCell
       ref={combineRefs}
       style={style}
-      className={clx(className, "group/header-cell relative", {
-        "cursor-grabbing": isDragging,
-      })}
+      className={clx(className, "group/header-cell relative")}
+      {...attributes}
+      {...listeners}
       {...props}
     >
-      <button
-        type="button"
-        className={clx(
-          "absolute top-1/2 -translate-y-1/2 z-10",
-          isFirstColumn ? "left-[6px]" : "-left-[18px]",
-          "flex h-5 w-4 cursor-grab items-center justify-center rounded outline-none",
-          "text-ui-text-subtle transition-all",
-          "opacity-0 group-hover/header-cell:opacity-100",
-          "hover:text-ui-text-base",
-          "focus-visible:text-ui-text-base focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ui-focus",
-          "disabled:cursor-not-allowed disabled:text-ui-text-disabled",
-          {
-            "opacity-100": isDragging,
-          }
-        )}
-        {...attributes}
-        {...listeners}
-      >
-        <DotsSix className="h-4 w-4" />
-      </button>
       {children}
     </Table.HeaderCell>
   )

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react"
-import { 
+import {
   Badge,
   usePrompt,
   toast,
   DropdownMenu,
 } from "@medusajs/ui"
-import { 
+import {
   Trash,
   PencilSquare,
   ArrowUturnLeft,
@@ -13,7 +13,6 @@ import {
 import { useViewConfiguration } from "../../../providers/view-configuration-provider"
 import { ViewConfiguration } from "../../../providers/view-configuration-provider"
 import { SaveViewDialog } from "../save-view-dialog"
-import { clx } from "@medusajs/ui"
 
 interface ViewPillsProps {
   entity: string
@@ -44,7 +43,6 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
     getActiveView,
     setActiveView,
     deleteViewConfiguration,
-    isLoading,
   } = useViewConfiguration()
 
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
@@ -59,7 +57,7 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
 
   // Track if we've notified parent of initial view
   const hasNotifiedInitialView = useRef(false)
-  
+
   // Load views on mount if not cached
   useEffect(() => {
     const loadData = async () => {
@@ -68,7 +66,7 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
         getViewConfigurations(entity),
         getActiveView(entity),
       ])
-      
+
       // Only notify parent of active view once on mount
       if (!hasNotifiedInitialView.current) {
         hasNotifiedInitialView.current = true
@@ -91,7 +89,7 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
     if (viewId === null) {
       // Select default view - clear the active view
       await setActiveView(entity, null)
-      
+
       // After clearing, check if there's a system default
       const updatedActiveView = await getActiveView(entity)
       if (onViewChange) {
@@ -169,9 +167,9 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
   // Determine if we're showing default or system default
   // Check both defaultActiveEntities and metadata to be sure
   const metadata = activeViewMetadata.get(entity)
-  const isDefaultActive = defaultActiveEntities.has(entity) || 
-    (metadata && metadata.is_default_active) || 
-    (!activeView && !metadata) || 
+  const isDefaultActive = defaultActiveEntities.has(entity) ||
+    (metadata && metadata.is_default_active) ||
+    (!activeView && !metadata) ||
     (systemDefaultView && activeView?.id === systemDefaultView.id)
   const defaultLabel = "Default"
 
@@ -181,8 +179,9 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
         {/* Default view badge (either code-level or system default) */}
         <div className="relative inline-block">
           <Badge
-            color={isDefaultActive ? "green" : "grey"}
-            size="small"
+            rounded="full"
+            color={isDefaultActive ? "blue" : "grey"}
+            size="xsmall"
             className="cursor-pointer"
             onClick={() => handleViewSelect(null)}
             onContextMenu={(e) => {
@@ -203,14 +202,14 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
               }}
             >
               <DropdownMenu.Trigger asChild>
-                <div 
-                  style={{ 
-                    position: 'fixed', 
-                    left: contextMenuPosition.x, 
+                <div
+                  style={{
+                    position: 'fixed',
+                    left: contextMenuPosition.x,
                     top: contextMenuPosition.y,
                     width: 0,
                     height: 0
-                  }} 
+                  }}
                 />
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="start" sideOffset={0}>
@@ -236,8 +235,9 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
         {personalViews.map((view) => (
           <div key={view.id} className="relative inline-block">
             <Badge
-              color={activeView?.id === view.id ? "green" : "grey"}
-              size="small"
+              color={activeView?.id === view.id ? "blue" : "grey"}
+              size="xsmall"
+              rounded="full"
               className="cursor-pointer"
               onClick={() => handleViewSelect(view.id)}
               onContextMenu={(e) => {
@@ -256,18 +256,18 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
                 }}
               >
                 <DropdownMenu.Trigger asChild>
-                  <div 
-                    style={{ 
-                      position: 'fixed', 
-                      left: contextMenuPosition.x, 
+                  <div
+                    style={{
+                      position: 'fixed',
+                      left: contextMenuPosition.x,
                       top: contextMenuPosition.y,
                       width: 0,
                       height: 0
-                    }} 
+                    }}
                   />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content align="start" sideOffset={0}>
-                  <DropdownMenu.Item 
+                  <DropdownMenu.Item
                     onClick={() => {
                       handleEditView(view)
                       setContextMenuOpen(null)
@@ -277,7 +277,7 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
                     <PencilSquare className="text-ui-fg-subtle" />
                     <span>Edit name</span>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item 
+                  <DropdownMenu.Item
                     onClick={() => {
                       handleDeleteView(view)
                       setContextMenuOpen(null)
