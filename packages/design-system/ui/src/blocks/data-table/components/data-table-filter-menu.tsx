@@ -55,7 +55,7 @@ const DataTableFilterMenu = ({ tooltip, onAddFilter }: DataTableFilterMenuProps)
           </IconButton>
         </DropdownMenu.Trigger>
       </Wrapper>
-      <DropdownMenu.Content side="bottom">
+      <DropdownMenu.Content side="bottom" align="start">
         {filterOptions.map((filter) => {
           const getDefaultValue = () => {
             switch (filter.type) {
