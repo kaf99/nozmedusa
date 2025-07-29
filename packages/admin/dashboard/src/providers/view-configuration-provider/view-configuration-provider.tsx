@@ -158,8 +158,19 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       const response = await sdk.admin.viewConfiguration.create(config)
       const newConfig = response.view_configuration
       
-      // Invalidate cache for this entity
-      viewConfigurations.delete(config.entity)
+      // Update the cache by adding the new view
+      const existingViews = viewConfigurations.get(config.entity) || []
+      viewConfigurations.set(config.entity, [...existingViews, newConfig])
+      
+      // If set_active was true, update the active view
+      if ((config as any).set_active) {
+        activeViews.set(config.entity, newConfig)
+        activeViewMetadata.set(config.entity, { is_default_active: false })
+        defaultActiveEntities.delete(config.entity)
+      }
+      
+      // Force re-render
+      forceUpdate({})
       
       return newConfig
     } catch (error: any) {
@@ -167,7 +178,7 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       toast.error(errorMessage)
       throw error
     }
-  }, [viewConfigurations, isViewConfigEnabled])
+  }, [viewConfigurations, activeViews, activeViewMetadata, defaultActiveEntities, isViewConfigEnabled])
 
   const updateViewConfiguration = useCallback(async (
     id: string, 
@@ -182,14 +193,29 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       const response = await sdk.admin.viewConfiguration.update(id, config)
       const updatedConfig = response.view_configuration
       
-      // Invalidate cache for this entity
+      // Update the cache instead of invalidating it
       if (updatedConfig.entity) {
-        viewConfigurations.delete(updatedConfig.entity)
+        const existingViews = viewConfigurations.get(updatedConfig.entity) || []
+        const updatedViews = existingViews.map(view => 
+          view.id === id ? updatedConfig : view
+        )
+        viewConfigurations.set(updatedConfig.entity, updatedViews)
+        
         // Update active view if it's the one being updated
         const activeView = activeViews.get(updatedConfig.entity)
         if (activeView?.id === id) {
           activeViews.set(updatedConfig.entity, updatedConfig)
         }
+        
+        // If set_active was true, update the active view
+        if ((config as any).set_active) {
+          activeViews.set(updatedConfig.entity, updatedConfig)
+          activeViewMetadata.set(updatedConfig.entity, { is_default_active: false })
+          defaultActiveEntities.delete(updatedConfig.entity)
+        }
+        
+        // Force re-render
+        forceUpdate({})
       }
       
       return updatedConfig
@@ -198,7 +224,7 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       toast.error(errorMessage)
       throw error
     }
-  }, [viewConfigurations, activeViews, isViewConfigEnabled])
+  }, [viewConfigurations, activeViews, activeViewMetadata, defaultActiveEntities, isViewConfigEnabled])
 
   const deleteViewConfiguration = useCallback(async (id: string) => {
     // Throw error if feature is disabled
@@ -213,20 +239,27 @@ export const ViewConfigurationProvider = ({ children }: PropsWithChildren) => {
       
       await sdk.admin.viewConfiguration.delete(id)
       
-      // Invalidate cache
+      // Update the cache by removing the deleted view
       if (configToDelete) {
-        viewConfigurations.delete(configToDelete.entity)
+        const existingViews = viewConfigurations.get(configToDelete.entity) || []
+        const updatedViews = existingViews.filter(view => view.id !== id)
+        viewConfigurations.set(configToDelete.entity, updatedViews)
+        
         // Remove from active views if it was active
         const activeView = activeViews.get(configToDelete.entity)
         if (activeView?.id === id) {
           activeViews.delete(configToDelete.entity)
+          activeViewMetadata.delete(configToDelete.entity)
         }
+        
+        // Force re-render
+        forceUpdate({})
       }
     } catch (error) {
       toast.error("Failed to delete view")
       throw error
     }
-  }, [viewConfigurations, activeViews, isViewConfigEnabled])
+  }, [viewConfigurations, activeViews, activeViewMetadata, isViewConfigEnabled])
 
   const invalidateCache = useCallback((entity: string) => {
     viewConfigurations.delete(entity)

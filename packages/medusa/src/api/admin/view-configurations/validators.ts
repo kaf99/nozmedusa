@@ -36,6 +36,7 @@ export const AdminCreateViewConfiguration = z.object({
   entity: z.string(),
   name: z.string().optional(),  // Make name optional
   is_system_default: z.boolean().optional().default(false),
+  set_active: z.boolean().optional().default(false),
   configuration: z.object({
     visible_columns: z.array(z.string()),
     column_order: z.array(z.string()),
@@ -47,6 +48,7 @@ export type AdminUpdateViewConfigurationType = z.infer<typeof AdminUpdateViewCon
 export const AdminUpdateViewConfiguration = z.object({
   name: z.string().optional(),
   is_system_default: z.boolean().optional(),
+  set_active: z.boolean().optional().default(false),
   configuration: z.object({
     visible_columns: z.array(z.string()).optional(),
     column_order: z.array(z.string()).optional(),

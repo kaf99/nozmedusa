@@ -47,8 +47,10 @@ export const POST = async (
     )
   }
 
+  const { set_active, ...bodyWithoutSetActive } = req.body
+
   const input = {
-    ...req.body,
+    ...bodyWithoutSetActive,
     user_id: req.body.is_system_default ? null : req.auth_context.actor_id,
   }
 
@@ -56,6 +58,15 @@ export const POST = async (
   // TODO: Add proper permission checks when permission system is implemented
 
   const viewConfiguration = await settingsService.createViewConfigurations(input)
+
+  // If set_active is true, set this view as the active one
+  if (set_active) {
+    await settingsService.setActiveViewConfiguration(
+      viewConfiguration.entity,
+      req.auth_context.actor_id,
+      viewConfiguration.id
+    )
+  }
 
   return res.status(201).json({ view_configuration: viewConfiguration })
 }

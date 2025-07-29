@@ -716,6 +716,93 @@ medusaIntegrationTestRunner({
           expect(systemDefaultView.data.view_configuration.name).toBeFalsy()
         })
 
+        it("should set view as active when created with set_active flag", async () => {
+          // Create a view with set_active = true
+          const viewConfig = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "Auto-Active View",
+              configuration: {
+                visible_columns: ["id", "display_id", "status"],
+                column_order: ["display_id", "status", "id"],
+              },
+              set_active: true,
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(viewConfig.status).toEqual(201)
+          
+          // Verify the view is now active
+          const activeView = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            { headers: nonAdminHeader }
+          )
+
+          expect(activeView.status).toEqual(200)
+          expect(activeView.data.view_configuration).toBeTruthy()
+          expect(activeView.data.view_configuration.id).toEqual(viewConfig.data.view_configuration.id)
+          expect(activeView.data.view_configuration.name).toEqual("Auto-Active View")
+        })
+
+        it("should set view as active when updated with set_active flag", async () => {
+          const container = getContainer()
+          const settingsService = container.resolve("settings")
+
+          // Create two views
+          const view1 = await settingsService.createViewConfigurations({
+            entity: "orders",
+            name: "View 1",
+            is_system_default: false,
+            user_id: nonAdminUserId,
+            configuration: {
+              visible_columns: ["id"],
+              column_order: ["id"],
+            },
+          })
+
+          const view2 = await settingsService.createViewConfigurations({
+            entity: "orders",
+            name: "View 2",
+            is_system_default: false,
+            user_id: nonAdminUserId,
+            configuration: {
+              visible_columns: ["id", "total"],
+              column_order: ["total", "id"],
+            },
+          })
+
+          // Set view1 as active initially
+          await settingsService.setActiveViewConfiguration(
+            "orders",
+            nonAdminUserId,
+            view1.id
+          )
+
+          // Update view2 with set_active flag
+          const updateResponse = await api.post(
+            `/admin/view-configurations/${view2.id}`,
+            {
+              name: "Updated View 2",
+              set_active: true,
+            },
+            { headers: nonAdminHeader }
+          )
+
+          expect(updateResponse.status).toEqual(200)
+
+          // Verify view2 is now the active view
+          const activeView = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            { headers: nonAdminHeader }
+          )
+
+          expect(activeView.status).toEqual(200)
+          expect(activeView.data.view_configuration.id).toEqual(view2.id)
+          expect(activeView.data.view_configuration.name).toEqual("Updated View 2")
+        })
+
         it("should allow updating only the system default flag without name", async () => {
           // Create a personal view first
           const personalView = await api.post(

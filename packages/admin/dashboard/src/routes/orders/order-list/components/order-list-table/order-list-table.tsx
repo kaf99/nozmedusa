@@ -1,6 +1,7 @@
 import { Container, Button } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
-import React, { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState, useMemo, useCallback } from "react"
+import { HttpTypes } from "@medusajs/types"
 
 import { DataTable } from "../../../../../components/data-table"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
@@ -41,6 +42,9 @@ export const OrderListTable = () => {
 
   const { activeViews } = useViewConfiguration()
 
+  // Track if we're transitioning between views
+  const [isTransitioningView, setIsTransitioningView] = useState(false)
+
   // Get filters
   const filters = useOrderDataTableFilters()
   
@@ -68,8 +72,13 @@ export const OrderListTable = () => {
     initializeColumns,
   } = useColumnState(apiColumns, activeView)
   
-  // Use the original handleViewChange directly
-  const handleViewChange = originalHandleViewChange
+  // Wrap handleViewChange to manage transition state
+  const handleViewChange = useCallback((view: ViewConfiguration | null, columns: HttpTypes.AdminViewColumn[]) => {
+    setIsTransitioningView(true)
+    originalHandleViewChange(view, columns)
+    // Clear transition state after a short delay to allow state to settle
+    setTimeout(() => setIsTransitioningView(false), 100)
+  }, [originalHandleViewChange])
 
   // Calculate required fields based on visible columns
   const requiredFields = useRequiredFields(apiColumns, visibleColumns)
@@ -87,6 +96,9 @@ export const OrderListTable = () => {
   // Create table columns
   const columns = useOrderTableColumns(apiColumns)
 
+  // Debounced state for configuration changes
+  const [debouncedHasConfigChanged, setDebouncedHasConfigChanged] = useState(false)
+  
   // Check if configuration has diverged from the active view
   const hasConfigurationChanged = React.useMemo(() => {
     // Get current state
@@ -174,6 +186,15 @@ export const OrderListTable = () => {
     return false
   }, [activeView, visibleColumns, columnOrder, filters, queryParams, apiColumns])
   
+  // Debounce the configuration changed state
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedHasConfigChanged(hasConfigurationChanged && !isTransitioningView)
+    }, 50)
+    
+    return () => clearTimeout(timer)
+  }, [hasConfigurationChanged, isTransitioningView])
+  
   // Handler to reset configuration back to active view
   const handleClearConfiguration = React.useCallback(() => {
     if (activeView) {
@@ -201,8 +222,8 @@ export const OrderListTable = () => {
     }
   }, [filters, queryParams])
   
-  // Create filter bar content
-  const filterBarContent = hasConfigurationChanged ? (
+  // Create filter bar content - use debounced state to prevent flashing
+  const filterBarContent = debouncedHasConfigChanged ? (
     <>
       <Button
         variant="secondary"
@@ -252,7 +273,9 @@ export const OrderListTable = () => {
         onColumnOrderChange={setColumnOrder}
         enableViewSelector
         entity="orders"
-        onViewChange={(view) => handleViewChange(view, apiColumns)}
+        onViewChange={(view) => {
+          handleViewChange(view, apiColumns)
+        }}
         currentColumns={currentColumns}
         filterBarContent={filterBarContent}
         isLoading={isLoading}

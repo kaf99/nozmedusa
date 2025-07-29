@@ -35,14 +35,8 @@ yarn test
 yarn test --filter=@medusajs/medusa
 
 # Run integration tests (different suites)
-yarn test:integration:packages:fast
-yarn test:integration:packages:slow
-yarn test:integration:api
-yarn test:integration:http
-yarn test:integration:modules
-
-# Run a single test file
-yarn test --filter=@medusajs/medusa -- path/to/test.spec.ts
+cd integration-tests/http && yarn test:integration -- [file to run]
+# NOTE: you cannot run tests with the -t flag - this will cause the test to time out.
 ```
 
 ### Code Quality

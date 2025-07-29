@@ -85,8 +85,9 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
     try {
       if (editingView) {
         // Update existing view
-        const updateData: Partial<ViewConfiguration> = {
+        const updateData: any = {
           is_system_default: data.isSystemDefault,
+          set_active: true, // Always set updated view as active
         }
 
         // Only include name if it was provided and changed (empty string means keep current)
@@ -118,6 +119,7 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
         const createData: any = {
           entity,
           is_system_default: data.isSystemDefault,
+          set_active: true, // Always set newly created view as active
           configuration: {
             visible_columns: currentColumns.visible,
             column_order: currentColumns.order,

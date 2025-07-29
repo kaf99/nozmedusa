@@ -57,8 +57,10 @@ export const POST = async (
     )
   }
 
+  const { set_active, ...bodyWithoutSetActive } = req.body
+
   const input = {
-    ...req.body,
+    ...bodyWithoutSetActive,
     // If setting as system default, remove user_id to make it available to everyone
     user_id: req.body.is_system_default ? null : existing.user_id,
   }
@@ -67,6 +69,15 @@ export const POST = async (
     req.params.id,
     input
   )
+
+  // If set_active is true, set this view as the active one
+  if (set_active) {
+    await settingsService.setActiveViewConfiguration(
+      viewConfiguration.entity,
+      req.auth_context.actor_id,
+      viewConfiguration.id
+    )
+  }
 
   res.json({ view_configuration: viewConfiguration })
 }

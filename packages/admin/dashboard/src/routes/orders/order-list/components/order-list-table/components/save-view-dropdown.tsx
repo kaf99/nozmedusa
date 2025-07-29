@@ -56,6 +56,7 @@ export const SaveViewDropdown: React.FC<SaveViewDropdownProps> = ({
           search: currentConfiguration.search,
         },
         is_system_default: true,
+        set_active: true, // Set as active when saving as default for everyone
       }
 
       if (existingSystemDefault) {
@@ -78,9 +79,29 @@ export const SaveViewDropdown: React.FC<SaveViewDropdownProps> = ({
     setSaveDialogOpen(true)
   }
 
-  const handleUpdateView = () => {
-    setSaveMode("update")
-    setSaveDialogOpen(true)
+  const handleUpdateView = async () => {
+    try {
+      if (!currentColumns || !currentConfiguration || !currentViewId) {
+        toast.error("Configuration data is missing")
+        return
+      }
+
+      const updateData: any = {
+        configuration: {
+          visible_columns: currentColumns.visible,
+          column_order: currentColumns.order,
+          filters: currentConfiguration.filters || {},
+          sorting: currentConfiguration.sorting || null,
+          search: currentConfiguration.search || "",
+        },
+        set_active: true, // Ensure the view remains active after update
+      }
+
+      await updateViewConfiguration(currentViewId, updateData)
+      toast.success(`View "${currentViewName}" updated successfully`)
+    } catch (error) {
+      toast.error("Failed to update view")
+    }
   }
 
   return (
@@ -105,7 +126,7 @@ export const SaveViewDropdown: React.FC<SaveViewDropdownProps> = ({
           ) : (
             <>
               <DropdownMenu.Item onClick={handleUpdateView}>
-                {t("orders.updateViewConfiguration")}
+                {t("orders.saveView") || "Save view"}
               </DropdownMenu.Item>
               <DropdownMenu.Item onClick={handleSaveAsNew}>
                 {t("orders.saveAsNewView")}
