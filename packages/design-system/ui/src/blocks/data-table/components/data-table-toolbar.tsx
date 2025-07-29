@@ -32,6 +32,10 @@ interface DataTableToolbarProps {
    * The translations of strings in the toolbar.
    */
   translations?: DataTableToolbarTranslations
+  /**
+   * Custom content to render in the filter bar
+   */
+  filterBarContent?: React.ReactNode
 }
 
 /**
@@ -51,7 +55,9 @@ const DataTableToolbar = (props: DataTableToolbarProps) => {
         alwaysShow={hasFilters}
         sortingTooltip={props.translations?.sort}
         columnsTooltip={props.translations?.columns}
-      />
+      >
+        {props.filterBarContent}
+      </DataTableFilterBar>
     </div>
   )
 }

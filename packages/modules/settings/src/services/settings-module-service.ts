@@ -359,7 +359,8 @@ export class SettingsModuleService
       sharedContext
     )
 
-    if (activeViewPref?.value?.viewConfigurationId) {
+    // Check if we have a preference with a view configuration ID (not explicitly null)
+    if (activeViewPref && activeViewPref.value?.viewConfigurationId && activeViewPref.value.viewConfigurationId !== null) {
       try {
         return await this.retrieveViewConfiguration(
           activeViewPref.value.viewConfigurationId,
@@ -371,15 +372,20 @@ export class SettingsModuleService
       }
     }
 
-    // Check if user has any personal views
-    const personalViews = await this.listViewConfigurations(
-      { entity, user_id: userId },
-      { order: { created_at: "ASC" } },
-      sharedContext
-    )
+    // If we have an explicit null preference, or no preference, or a deleted view
+    // We should check for defaults in this order:
+    
+    // Check if user has any personal views (only if no explicit null preference)
+    if (!activeViewPref || activeViewPref.value?.viewConfigurationId !== null) {
+      const personalViews = await this.listViewConfigurations(
+        { entity, user_id: userId },
+        { order: { created_at: "ASC" } },
+        sharedContext
+      )
 
-    if (personalViews.length > 0) {
-      return personalViews[0]
+      if (personalViews.length > 0) {
+        return personalViews[0]
+      }
     }
 
     // Fall back to system default
@@ -424,6 +430,36 @@ export class SettingsModuleService
       userId,
       `active_view.${entity}`,
       { viewConfigurationId },
+      sharedContext
+    )
+  }
+
+  @InjectManager()
+  async getSystemDefaultViewConfiguration(
+    entity: string,
+    @MedusaContext() sharedContext: Context = {}
+  ): Promise<ViewConfigurationDTO | null> {
+    const systemDefaults = await this.listViewConfigurations(
+      { entity, is_system_default: true },
+      {},
+      sharedContext
+    )
+
+    return systemDefaults.length > 0 ? systemDefaults[0] : null
+  }
+
+  @InjectTransactionManager()
+  async clearActiveViewConfiguration(
+    entity: string,
+    userId: string,
+    @MedusaContext() sharedContext: Context = {}
+  ): Promise<void> {
+    // Instead of deleting, set the preference to null
+    // This ensures we're using the same transaction pattern as setActiveViewConfiguration
+    await this.setUserPreference(
+      userId,
+      `active_view.${entity}`,
+      { viewConfigurationId: null },
       sharedContext
     )
   }

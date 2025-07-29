@@ -41,7 +41,7 @@ export function useOrderTableColumns(apiColumns: HttpTypes.AdminViewColumn[] | u
           column: apiColumn, // Store column metadata for future use
         },
         enableHiding: apiColumn.hideable,
-        enableSorting: apiColumn.sortable,
+        enableSorting: false, // Disable sorting for all columns
         headerAlign, // Pass the header alignment to the DataTable
       } as any)
     })

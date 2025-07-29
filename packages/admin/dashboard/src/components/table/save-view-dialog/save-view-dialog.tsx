@@ -24,6 +24,11 @@ interface SaveViewDialogProps {
     visible: string[]
     order: string[]
   }
+  currentConfiguration?: {
+    filters?: Record<string, unknown>
+    sorting?: { id: string; desc: boolean } | null
+    search?: string
+  }
   editingView?: ViewConfiguration | null
   onClose: () => void
   onSaved: (view: ViewConfiguration) => void
@@ -32,6 +37,7 @@ interface SaveViewDialogProps {
 export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
   entity,
   currentColumns,
+  currentConfiguration,
   editingView,
   onClose,
   onSaved,
@@ -93,6 +99,9 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
           updateData.configuration = {
             visible_columns: currentColumns.visible,
             column_order: currentColumns.order,
+            filters: currentConfiguration?.filters || {},
+            sorting: currentConfiguration?.sorting || null,
+            search: currentConfiguration?.search || "",
           }
         }
 
@@ -112,6 +121,9 @@ export const SaveViewDialog: React.FC<SaveViewDialogProps> = ({
           configuration: {
             visible_columns: currentColumns.visible,
             column_order: currentColumns.order,
+            filters: currentConfiguration?.filters || {},
+            sorting: currentConfiguration?.sorting || null,
+            search: currentConfiguration?.search || "",
           },
         }
         

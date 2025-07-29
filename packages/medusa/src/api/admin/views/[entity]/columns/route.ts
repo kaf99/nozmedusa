@@ -735,7 +735,8 @@ export const GET = async (
                   }
 
               // Most relationship fields are not sortable by default
-              const sortable = ["name", "title", "email", "handle"].includes(
+              // Nested fields (with dots) cannot be sorted by the backend currently
+              const sortable = fieldPath.includes('.') ? false : ["name", "title", "email", "handle"].includes(
                 fieldName
               )
 

@@ -38,6 +38,8 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
   const {
     viewConfigurations,
     activeViews,
+    defaultActiveEntities,
+    activeViewMetadata,
     getViewConfigurations,
     getActiveView,
     setActiveView,
@@ -87,10 +89,13 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
 
   const handleViewSelect = async (viewId: string | null) => {
     if (viewId === null) {
-      // Select default view
+      // Select default view - clear the active view
       await setActiveView(entity, null)
+      
+      // After clearing, check if there's a system default
+      const updatedActiveView = await getActiveView(entity)
       if (onViewChange) {
-        onViewChange(null)
+        onViewChange(updatedActiveView)
       }
       toast.success("Switched to default view")
       return
@@ -162,7 +167,12 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
   const personalViews = views.filter(v => !v.is_system_default)
 
   // Determine if we're showing default or system default
-  const isDefaultActive = !activeView || (systemDefaultView && activeView?.id === systemDefaultView.id)
+  // Check both defaultActiveEntities and metadata to be sure
+  const metadata = activeViewMetadata.get(entity)
+  const isDefaultActive = defaultActiveEntities.has(entity) || 
+    (metadata && metadata.is_default_active) || 
+    (!activeView && !metadata) || 
+    (systemDefaultView && activeView?.id === systemDefaultView.id)
   const defaultLabel = "Default"
 
   return (
@@ -174,7 +184,7 @@ export const ViewPills: React.FC<ViewPillsProps> = ({
             color={isDefaultActive ? "green" : "grey"}
             size="small"
             className="cursor-pointer"
-            onClick={() => handleViewSelect(systemDefaultView ? systemDefaultView.id : null)}
+            onClick={() => handleViewSelect(null)}
             onContextMenu={(e) => {
               e.preventDefault()
               if (systemDefaultView) {

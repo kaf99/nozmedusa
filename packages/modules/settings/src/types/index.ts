@@ -88,6 +88,17 @@ export interface ISettingsModuleService {
     viewConfigurationId: string,
     sharedContext?: any
   ): Promise<void>
+
+  getSystemDefaultViewConfiguration(
+    entity: string,
+    sharedContext?: any
+  ): Promise<ViewConfigurationDTO | null>
+
+  clearActiveViewConfiguration(
+    entity: string,
+    userId: string,
+    sharedContext?: any
+  ): Promise<void>
 }
 
 export interface ViewConfigurationDTO {

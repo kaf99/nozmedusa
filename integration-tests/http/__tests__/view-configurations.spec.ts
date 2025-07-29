@@ -466,6 +466,69 @@ medusaIntegrationTestRunner({
 
           expect(activeResponse.data.view_configuration.id).toBe(viewConfig.id)
         })
+
+        it("should clear active view and return to default when setting view_configuration_id to null", async () => {
+          // First set an active view
+          await api.post(
+            "/admin/view-configurations/active",
+            {
+              entity: "orders",
+              view_configuration_id: viewConfig.id,
+            },
+            {
+              headers: nonAdminHeader,
+            }
+          )
+
+          // Verify it's active
+          let activeResponse = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            {
+              headers: nonAdminHeader,
+            }
+          )
+          expect(activeResponse.data.view_configuration.id).toBe(viewConfig.id)
+
+          // Now clear the active view
+          const clearResponse = await api.post(
+            "/admin/view-configurations/active",
+            {
+              entity: "orders",
+              view_configuration_id: null,
+            },
+            {
+              headers: nonAdminHeader,
+            }
+          )
+
+          expect(clearResponse.status).toBe(200)
+          expect(clearResponse.data.success).toBe(true)
+
+          // Verify the active view is cleared
+          activeResponse = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            {
+              headers: nonAdminHeader,
+            }
+          )
+
+          // Debug output
+          if (activeResponse.data.view_configuration) {
+            console.log("Active view after clearing:", {
+              id: activeResponse.data.view_configuration.id,
+              name: activeResponse.data.view_configuration.name,
+              is_system_default: activeResponse.data.view_configuration.is_system_default
+            })
+          }
+
+          // Should either return null or a system default if one exists
+          if (activeResponse.data.view_configuration) {
+            expect(activeResponse.data.view_configuration.is_system_default).toBe(true)
+          } else {
+            expect(activeResponse.data.view_configuration).toBeNull()
+          }
+          expect(activeResponse.data.is_default_active).toBe(true)
+        })
       })
 
       describe("System Default Views", () => {
@@ -739,6 +802,43 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
           expect(activeView.data.view_configuration).toBeNull()
+        })
+
+        it("should return system default view when created and no user view is active", async () => {
+          // Step 1: Create a system default view
+          const systemDefaultView = await api.post(
+            "/admin/view-configurations",
+            {
+              entity: "orders",
+              name: "System Default Orders",
+              is_system_default: true,
+              configuration: {
+                visible_columns: ["id", "display_id", "created_at", "customer", "total"],
+                column_order: ["display_id", "customer", "total", "created_at", "id"],
+                filters: {},
+                sorting: { id: "created_at", desc: true },
+                search: "",
+              },
+            },
+            adminHeaders
+          )
+
+          expect(systemDefaultView.status).toEqual(201)
+          expect(systemDefaultView.data.view_configuration.is_system_default).toBe(true)
+
+          // Step 2: Retrieve active view - should return the system default
+          const activeView = await api.get(
+            "/admin/view-configurations/active?entity=orders",
+            { headers: nonAdminHeader }
+          )
+
+          expect(activeView.status).toEqual(200)
+          expect(activeView.data.view_configuration).toBeTruthy()
+          expect(activeView.data.view_configuration.id).toEqual(systemDefaultView.data.view_configuration.id)
+          expect(activeView.data.view_configuration.name).toEqual("System Default Orders")
+          expect(activeView.data.view_configuration.is_system_default).toBe(true)
+          expect(activeView.data.is_default_active).toBe(true)
+          expect(activeView.data.default_type).toEqual("system")
         })
       })
     })

@@ -15,6 +15,7 @@ interface DataTableFilterBarProps {
   alwaysShow?: boolean
   sortingTooltip?: string
   columnsTooltip?: string
+  children?: React.ReactNode
 }
 
 interface LocalFilter {
@@ -28,6 +29,7 @@ const DataTableFilterBar = ({
   alwaysShow = false,
   sortingTooltip,
   columnsTooltip,
+  children,
 }: DataTableFilterBarProps) => {
   const { instance, enableColumnVisibility } = useDataTableContext()
   
@@ -107,8 +109,8 @@ const DataTableFilterBar = ({
   const sortableColumns = instance.getAllColumns().filter((column) => column.getCanSort())
   const hasSorting = instance.enableSorting && sortableColumns.length > 0
 
-  // Always show the filter bar when there are available filters, sorting, or column visibility
-  if (filterCount === 0 && !hasAvailableFilters && !hasSorting && !enableColumnVisibility && !alwaysShow) {
+  // Always show the filter bar when there are available filters, sorting, column visibility, or when forced
+  if (filterCount === 0 && !hasAvailableFilters && !hasSorting && !enableColumnVisibility && !alwaysShow && !children) {
     return null
   }
 
@@ -147,6 +149,7 @@ const DataTableFilterBar = ({
       <div className="flex flex-shrink-0 items-center gap-2">
         {hasSorting && <DataTableSortingMenu tooltip={sortingTooltip} />}
         {enableColumnVisibility && <DataTableColumnVisibilityMenu tooltip={columnsTooltip} />}
+        {children}
       </div>
     </div>
   )

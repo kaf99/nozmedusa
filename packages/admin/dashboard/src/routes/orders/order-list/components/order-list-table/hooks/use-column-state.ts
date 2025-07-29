@@ -20,18 +20,29 @@ interface UseColumnStateReturn {
 }
 
 export function useColumnState(
-  apiColumns: HttpTypes.AdminViewColumn[] | undefined
+  apiColumns: HttpTypes.AdminViewColumn[] | undefined,
+  activeView?: ViewConfiguration | null
 ): UseColumnStateReturn {
   // Initialize state lazily to avoid unnecessary re-renders
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(() => {
-    if (apiColumns?.length) {
+    if (apiColumns?.length && activeView) {
+      // If there's an active view, initialize with its configuration
+      const visibility: Record<string, boolean> = {}
+      apiColumns.forEach(column => {
+        visibility[column.field] = activeView.configuration.visible_columns.includes(column.field)
+      })
+      return visibility
+    } else if (apiColumns?.length) {
       return getInitialColumnVisibility(apiColumns)
     }
     return {}
   })
 
   const [columnOrder, setColumnOrder] = useState<string[]>(() => {
-    if (apiColumns?.length) {
+    if (activeView) {
+      // If there's an active view, use its column order
+      return activeView.configuration.column_order || []
+    } else if (apiColumns?.length) {
       return getInitialColumnOrder(apiColumns)
     }
     return []
@@ -77,13 +88,14 @@ export function useColumnState(
   }, [])
 
   const initializeColumns = useCallback((apiColumns: HttpTypes.AdminViewColumn[]) => {
+    // Only initialize if we don't already have column state
     if (Object.keys(visibleColumns).length === 0) {
       setVisibleColumns(getInitialColumnVisibility(apiColumns))
     }
     if (columnOrder.length === 0) {
       setColumnOrder(getInitialColumnOrder(apiColumns))
     }
-  }, [visibleColumns, columnOrder])
+  }, [])
 
   return {
     visibleColumns,

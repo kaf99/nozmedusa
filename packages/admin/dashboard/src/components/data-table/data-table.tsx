@@ -96,6 +96,7 @@ interface DataTableProps<TData> {
     visible: string[]
     order: string[]
   }
+  filterBarContent?: React.ReactNode
 }
 
 export const DataTable = <TData,>({
@@ -128,6 +129,7 @@ export const DataTable = <TData,>({
   entity,
   onViewChange,
   currentColumns,
+  filterBarContent,
 }: DataTableProps<TData>) => {
   const { t } = useTranslation()
   const isViewConfigEnabled = useFeatureFlag("view_configurations")
@@ -357,6 +359,7 @@ export const DataTable = <TData,>({
       <UiDataTable.Toolbar
         className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center"
         translations={toolbarTranslations}
+        filterBarContent={filterBarContent}
       >
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex items-center gap-x-4">

@@ -57,5 +57,5 @@ export const AdminUpdateViewConfiguration = z.object({
 export type AdminSetActiveViewConfigurationType = z.infer<typeof AdminSetActiveViewConfiguration>
 export const AdminSetActiveViewConfiguration = z.object({
   entity: z.string(),
-  view_configuration_id: z.string(),
+  view_configuration_id: z.union([z.string(), z.null()]),
 })
