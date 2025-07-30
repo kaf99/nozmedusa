@@ -16,7 +16,11 @@ interface ToastProps extends BaseToastProps {
   action?: ToastAction
 }
 
-function create(variant: ToastVariant, title: React.ReactNode, props: ToastProps = {}) {
+function create(
+  variant: ToastVariant,
+  title: React.ReactNode,
+  props: ToastProps = {}
+) {
   const external: ExternalToast = {
     position: props.position,
     duration: props.duration,
@@ -50,13 +54,15 @@ function message(
   /**
    * The props of the toast.
    */
-  props: ToastProps = {}
+  props: ToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("message", title, props)
 }
 
 function custom() {
-  return create("message", "Custom",)
+  return create("message", "Custom")
 }
 
 interface VariantToastProps extends Omit<ToastProps, "icon"> {}
@@ -68,7 +74,9 @@ function info(
   /**
    * The props of the toast.
    */
-  props: VariantToastProps = {}
+  props: VariantToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("info", title, props)
 }
@@ -92,7 +100,9 @@ function success(
   /**
    * The props of the toast.
    */
-  props: VariantToastProps = { }
+  props: VariantToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("success", title, props)
 }
@@ -104,7 +114,9 @@ function warning(
   /**
    * The props of the toast.
    */
-  props: VariantToastProps = {}
+  props: VariantToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("warning", title, props)
 }
@@ -116,7 +128,9 @@ function loading(
   /**
    * The props of the toast.
    */
-  props: VariantToastProps = {}
+  props: VariantToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("loading", title, { ...props, dismissable: false })
 }
