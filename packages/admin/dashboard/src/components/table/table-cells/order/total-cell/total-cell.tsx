@@ -8,7 +8,7 @@ type TotalCellProps = {
 }
 
 export const TotalCell = ({ currencyCode, total }: TotalCellProps) => {
-  if (isNaN(total as number)) {
+  if (typeof total !== "number" || Number.isNaN(total)) {
     return <PlaceholderCell />
   }
 
