@@ -278,7 +278,6 @@ export class PricingRepository
     query
       .orderByRaw("price.price_list_id IS NOT NULL DESC")
       .orderByRaw("price.rules_count + COALESCE(pl.rules_count, 0) DESC")
-      .orderBy("pl.id", "asc")
       .orderBy("price.amount", "asc")
 
     return await query
