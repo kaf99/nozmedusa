@@ -1232,7 +1232,7 @@ moduleIntegrationTestRunner<IPricingModuleService>({
             ])
           })
 
-          it.only("should return cheapest price list price first when price list conditions match", async () => {
+          it("should return cheapest price list price first when price list conditions match", async () => {
             await createPriceLists(
               service,
               {
