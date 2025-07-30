@@ -34,6 +34,8 @@ import {
   TotalCell,
   TotalHeader,
 } from "../../../components/table/table-cells/order/total-cell"
+import { countries } from "../../../lib/data/countries"
+import { PlaceholderCell } from "../../../components/table/table-cells/common/placeholder-cell"
 
 // We have to use any here, as the type of Order is so complex that it lags the TS server
 const columnHelper = createColumnHelper<HttpTypes.AdminOrder>()
@@ -96,7 +98,11 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
         },
       }),
       columnHelper.accessor("total", {
-        header: () => <TotalHeader />,
+        header: () => (
+          <div className="flex items-center justify-end">
+            <TotalHeader />
+          </div>
+        ),
         cell: ({ getValue, row }) => {
           const total = getValue()
           const currencyCode = row.original.currency_code
@@ -107,9 +113,22 @@ export const useOrderTableColumns = (props: UseOrderTableColumnsProps) => {
       columnHelper.display({
         id: "actions",
         cell: ({ row }) => {
-          const country = row.original.shipping_address?.country
+          const countryCode = row.original.shipping_address?.country_code
 
-          return <CountryCell country={country} />
+          const country = countries.find(
+            (c) => c.iso_2 === countryCode?.toLowerCase()
+          )
+
+          if (!country) {
+            return <PlaceholderCell />
+          }
+
+          return (
+            <CountryCell
+              display_name={country.display_name!}
+              iso_2={country.iso_2!}
+            />
+          )
         },
       }),
     ],
