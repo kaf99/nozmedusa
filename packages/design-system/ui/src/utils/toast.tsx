@@ -88,7 +88,9 @@ function error(
   /**
    * The props of the toast.
    */
-  props: VariantToastProps = {}
+  props: VariantToastProps = {
+    position: "top-right",
+  }
 ) {
   return create("error", title, props)
 }
