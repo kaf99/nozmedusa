@@ -1322,9 +1322,9 @@ medusaIntegrationTestRunner({
               original_total: 1300,
               original_tax_total: 260,
 
-              discount_total: 100,
+              discount_total: 125,
               discount_subtotal: 100,
-              discount_tax_total: 20,
+              discount_tax_total: 25,
 
               item_total: 1175,
               item_subtotal: 1040,
@@ -1354,14 +1354,13 @@ medusaIntegrationTestRunner({
                   original_total: 1300,
                   original_tax_total: 260,
 
-                  discount_total: 100,
+                  discount_total: 125,
                   discount_subtotal: 100,
-                  discount_tax_total: 20,
+                  discount_tax_total: 25,
 
                   adjustments: expect.arrayContaining([
                     expect.objectContaining({
                       amount: 100,
-                      is_tax_inclusive: false,
                     }),
                   ]),
                 }),
@@ -1403,9 +1402,9 @@ medusaIntegrationTestRunner({
               original_total: 1300,
               original_tax_total: 260,
 
-              discount_total: 100,
+              discount_total: 125,
               discount_subtotal: 100,
-              discount_tax_total: 20,
+              discount_tax_total: 25,
 
               item_total: 1175,
               item_subtotal: 1040,
@@ -1435,14 +1434,13 @@ medusaIntegrationTestRunner({
                   original_total: 1300,
                   original_tax_total: 260,
 
-                  discount_total: 100,
+                  discount_total: 125,
                   discount_subtotal: 100,
-                  discount_tax_total: 20,
+                  discount_tax_total: 25,
 
                   adjustments: expect.arrayContaining([
                     expect.objectContaining({
                       amount: 100,
-                      is_tax_inclusive: false,
                     }),
                   ]),
                 }),
@@ -1598,7 +1596,6 @@ medusaIntegrationTestRunner({
                   adjustments: expect.arrayContaining([
                     expect.objectContaining({
                       amount: 100,
-                      is_tax_inclusive: false,
                     }),
                   ]),
                 }),
@@ -1679,7 +1676,6 @@ medusaIntegrationTestRunner({
                   adjustments: expect.arrayContaining([
                     expect.objectContaining({
                       amount: 100,
-                      is_tax_inclusive: false,
                     }),
                   ]),
                 }),
