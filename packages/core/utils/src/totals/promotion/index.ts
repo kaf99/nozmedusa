@@ -6,7 +6,10 @@ import {
 import { MathBN } from "../math"
 
 function getPromotionValueForPercentage(promotion, lineItemAmount) {
-  return MathBN.mult(MathBN.div(promotion.value, 100), lineItemAmount)
+  return MathBN.convert(
+    MathBN.mult(MathBN.div(promotion.value, 100), lineItemAmount),
+    2
+  )
 }
 
 function getPromotionValueForFixed(promotion, lineItemAmount, lineItemsAmount) {
@@ -25,10 +28,10 @@ function getPromotionValueForFixed(promotion, lineItemAmount, lineItemsAmount) {
       promotionValueForItem
     )
 
-    return MathBN.mult(
-      promotionValueForItem,
-      MathBN.div(percentage, 100)
-    ).precision(4)
+    return MathBN.convert(
+      MathBN.mult(promotionValueForItem, MathBN.div(percentage, 100)),
+      2
+    )
   }
   return promotion.value
 }
@@ -53,8 +56,8 @@ function getLineItemSubtotal(lineItem) {
   return MathBN.div(lineItem.subtotal, lineItem.quantity)
 }
 
-function getLineItemTotal(lineItem) {
-  return MathBN.div(lineItem.total, lineItem.quantity)
+function getLineItemOriginalTotal(lineItem) {
+  return MathBN.div(lineItem.original_total, lineItem.quantity)
 }
 
 export function calculateAdjustmentAmountFromPromotion(
@@ -95,7 +98,7 @@ export function calculateAdjustmentAmountFromPromotion(
 
     const lineItemAmount = MathBN.mult(
       promotion.is_tax_inclusive
-        ? getLineItemTotal(lineItem)
+        ? getLineItemOriginalTotal(lineItem)
         : getLineItemSubtotal(lineItem),
       quantity
     )
@@ -134,11 +137,11 @@ export function calculateAdjustmentAmountFromPromotion(
   */
 
   const remainingItemAmount = MathBN.sub(
-    promotion.is_tax_inclusive ? lineItem.total : lineItem.subtotal,
+    promotion.is_tax_inclusive ? lineItem.original_total : lineItem.subtotal,
     promotion.applied_value
   )
   const itemAmount = MathBN.div(
-    promotion.is_tax_inclusive ? lineItem.total : lineItem.subtotal,
+    promotion.is_tax_inclusive ? lineItem.original_total : lineItem.subtotal,
     lineItem.quantity
   )
   const maximumPromotionAmount = MathBN.mult(
