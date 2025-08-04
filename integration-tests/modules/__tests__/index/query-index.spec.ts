@@ -116,7 +116,7 @@ medusaIntegrationTestRunner({
         await createAdminUser(dbConnection, adminHeaders, appContainer)
       })
 
-      it.only("should use query.index to query the index module and hydrate the data", async () => {
+      it("should use query.index to query the index module and hydrate the data", async () => {
         await populateData(api)
 
         const query = appContainer.resolve(
