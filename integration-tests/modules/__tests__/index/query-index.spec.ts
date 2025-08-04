@@ -142,8 +142,12 @@ medusaIntegrationTestRunner({
                 "variants.inventory_items.inventory.description",
               ],
               filters: {
-                "variants.sku": { $like: "%-1" },
-                "variants.prices.amount": { $gt: 30 },
+                variants: {
+                  $and: [
+                    { sku: { $like: "%-1" } },
+                    { "prices.amount": { $gt: 30 } },
+                  ],
+                },
               },
               pagination: {
                 take: 10,
