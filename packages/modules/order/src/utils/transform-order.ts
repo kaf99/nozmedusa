@@ -99,14 +99,12 @@ export function formatOrder<T = any>(
       mainOrder.summary = mainOrder.summary?.[0]?.totals
     }
 
-    const returnOrder = options?.includeTotals
-      ? decorateCartTotals(order)
-      : order
-    createRawPropertiesFromBigNumber(returnOrder)
-    return returnOrder
+    return createRawPropertiesFromBigNumber(
+      options?.includeTotals ? decorateCartTotals(order) : order
+    )
   })
 
-  return isArray ? (orders as any) : orders[0]
+  return isArray ? orders : orders[0]
 }
 
 function cleanNestedRelations(obj) {
