@@ -116,7 +116,7 @@ medusaIntegrationTestRunner({
         await createAdminUser(dbConnection, adminHeaders, appContainer)
       })
 
-      it("should use query.index to query the index module and hydrate the data", async () => {
+      it.only("should use query.index to query the index module and hydrate the data", async () => {
         await populateData(api)
 
         const query = appContainer.resolve(
@@ -142,12 +142,23 @@ medusaIntegrationTestRunner({
                 "variants.inventory_items.inventory.description",
               ],
               filters: {
-                variants: {
-                  $and: [
-                    { sku: { $like: "%-1" } },
-                    { "prices.amount": { $gt: 30 } },
-                  ],
-                },
+                $and: [
+                  { status: "published" },
+                  {
+                    $or: [
+                      { title: { $ilike: "%duct%" } },
+                      { title: { $ilike: "%pro%" } },
+                    ],
+                  },
+                  {
+                    variants: {
+                      $and: [
+                        { sku: { $like: "%-1" } },
+                        { "prices.amount": { $gt: 30 } },
+                      ],
+                    },
+                  },
+                ],
               },
               pagination: {
                 take: 10,

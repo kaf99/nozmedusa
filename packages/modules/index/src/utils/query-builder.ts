@@ -219,6 +219,8 @@ export class QueryBuilder {
     builder: Knex.QueryBuilder,
     parentPath: string = ""
   ) {
+    console.log(JSON.stringify(obj, null, 2), "PARENT", parentPath)
+
     const keys = Object.keys(obj)
 
     const getPathAndField = (key: string) => {
@@ -250,7 +252,7 @@ export class QueryBuilder {
     }
 
     keys.forEach((key) => {
-      const pathAsArray = key.split(".")
+      const pathAsArray = (parentPath ? `${parentPath}.${key}` : key).split(".")
       const fieldOrLogicalOperator = pathAsArray.pop()
       let value = obj[key]
 
