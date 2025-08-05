@@ -32,13 +32,13 @@ function calculateDelayFromExpression(expression: CronExpression): number {
   const nextTime = expression.next().getTime()
   const now = Date.now()
   const delay = nextTime - now
-  
-  // If the calculated delay is negative or very small, get the next occurrence
+
+  // If the calculated delay is negative or zero, get the next occurrence
   if (delay <= 0) {
     const nextNextTime = expression.next().getTime()
     return Math.max(1, nextNextTime - now)
   }
-  
+
   return delay
 }
 
