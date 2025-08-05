@@ -219,8 +219,6 @@ export class QueryBuilder {
     builder: Knex.QueryBuilder,
     parentPath: string = ""
   ) {
-    console.log(JSON.stringify(obj, null, 2), "PARENT", parentPath)
-
     const keys = Object.keys(obj)
 
     const getPathAndField = (key: string) => {
