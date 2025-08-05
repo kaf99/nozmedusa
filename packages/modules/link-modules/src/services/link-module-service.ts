@@ -244,7 +244,7 @@ export default class LinkModuleService implements ILinkModule {
       )
     }
 
-    let links = await this.linkService_.dismiss(data, sharedContext)
+    const links = await this.linkService_.dismiss(data, sharedContext)
 
     moduleEventBuilderFactory({
       action: CommonEvents.DETACHED,
