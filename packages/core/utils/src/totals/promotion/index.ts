@@ -6,10 +6,7 @@ import {
 import { MathBN } from "../math"
 
 function getPromotionValueForPercentage(promotion, lineItemAmount) {
-  return MathBN.convert(
-    MathBN.mult(MathBN.div(promotion.value, 100), lineItemAmount),
-    2
-  )
+  return MathBN.mult(MathBN.div(promotion.value, 100), lineItemAmount)
 }
 
 function getPromotionValueForFixed(promotion, lineItemAmount, lineItemsAmount) {
@@ -28,10 +25,7 @@ function getPromotionValueForFixed(promotion, lineItemAmount, lineItemsAmount) {
       promotionValueForItem
     )
 
-    return MathBN.convert(
-      MathBN.mult(promotionValueForItem, MathBN.div(percentage, 100)),
-      2
-    )
+    return MathBN.mult(promotionValueForItem, MathBN.div(percentage, 100))
   }
   return promotion.value
 }
