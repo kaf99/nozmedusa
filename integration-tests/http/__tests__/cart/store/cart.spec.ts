@@ -2815,6 +2815,24 @@ medusaIntegrationTestRunner({
           )
         })
 
+        it("should throw an error when adding a promotion that does not exist", async () => {
+          const invalidPromoCode = "SOME_INVALID_PROMO_CODE"
+
+          const { response } = await api
+            .post(
+              `/store/carts/${cart.id}/promotions`,
+              { promo_codes: [invalidPromoCode] },
+              storeHeaders
+            )
+            .catch((e) => e)
+
+          expect(response.status).toEqual(400)
+          expect(response.data.type).toEqual("invalid_data")
+          expect(response.data.message).toEqual(
+            `The promotion code ${invalidPromoCode} is invalid`
+          )
+        })
+
         it("should remove promotion adjustments when promotion is deleted", async () => {
           let cartBeforeRemovingPromotion = (
             await api.get(`/store/carts/${cart.id}`, storeHeaders)
