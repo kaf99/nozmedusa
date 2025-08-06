@@ -105,7 +105,25 @@ export class QueryBuilder {
   }
 
   private getStructureKeys(structure) {
-    return Object.keys(structure ?? {}).filter((key) => key !== "entity")
+    const collectKeys = (obj: any, keys = new Set<string>()) => {
+      if (!isObject(obj)) {
+        return keys
+      }
+
+      Object.keys(obj).forEach((key) => {
+        if (key === AND_OPERATOR || key === OR_OPERATOR) {
+          if (Array.isArray(obj[key])) {
+            obj[key].forEach((item) => collectKeys(item, keys))
+          }
+        } else if (key !== "entity") {
+          keys.add(key)
+        }
+      })
+
+      return keys
+    }
+
+    return [...collectKeys(structure ?? {})]
   }
 
   private getEntity(
@@ -369,6 +387,7 @@ export class QueryBuilder {
               } else {
                 const potentialIdFields = field[field.length - 1]
                 const hasId = potentialIdFields === "id"
+
                 if (hasId) {
                   builder.whereRaw(`(${aliasMapping[attr]}.id) ${operator} ?`, [
                     ...val,
@@ -381,6 +400,7 @@ export class QueryBuilder {
                     operator,
                     val[0]
                   )
+
                   builder.whereRaw(`${aliasMapping[attr]}.data${nested} @@ ?`, [
                     jsonPath,
                   ])
@@ -710,7 +730,6 @@ export class QueryBuilder {
     selectParts[currentAliasPath + ".id"] = `${alias}.id`
 
     const children = this.getStructureKeys(structure)
-
     for (const child of children) {
       const childStructure = structure[child] as Select
 
@@ -902,6 +921,7 @@ export class QueryBuilder {
           )
         }),
       ]
+
       innerQueryBuilder.whereRaw(
         `(${searchWhereParts.join(" OR ")})`,
         Array(searchWhereParts.length).fill(textSearchQuery)
