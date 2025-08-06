@@ -332,10 +332,18 @@ export const ProductCreateVariantsSection = ({
                       )}
                       <ul className="flex flex-col gap-y-4">
                         {options.fields.map((option, index) => {
+                          const hasError =
+                            !!form.formState.errors.options?.[index]
                           return (
                             <li
                               key={option.id}
-                              className="bg-ui-bg-component shadow-elevation-card-rest grid grid-cols-[1fr_28px] items-center gap-1.5 rounded-xl p-1.5"
+                              className={clx(
+                                "bg-ui-bg-component shadow-elevation-card-rest grid grid-cols-[1fr_28px] items-center gap-1.5 rounded-xl p-1.5",
+                                {
+                                  "border-ui-border-error shadow-borders-error":
+                                    hasError,
+                                }
+                              )}
                             >
                               <div className="grid grid-cols-[min-content,1fr] items-center gap-1.5">
                                 <div className="flex items-center px-2 py-1.5">
