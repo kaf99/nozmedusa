@@ -4,7 +4,7 @@ import { isDefined } from "../common"
 import { BigNumber } from "./big-number"
 
 export const MEDUSA_EPSILON = new BigNumber(
-  process.env.MEDUSA_EPSILON || "0.000001"
+  process.env.MEDUSA_EPSILON || "0.0001"
 )
 
 type BNInput = BigNumberInput | BigNumber
