@@ -33,15 +33,26 @@ export interface ISettingsModuleService extends IModuleService {
   ): Promise<[ViewConfigurationDTO[], number]>
 
   createViewConfigurations(
-    data: CreateViewConfigurationDTO | CreateViewConfigurationDTO[],
+    data: CreateViewConfigurationDTO[],
     sharedContext?: Context
-  ): Promise<ViewConfigurationDTO | ViewConfigurationDTO[]>
+  ): Promise<ViewConfigurationDTO[]>
+
+  createViewConfigurations(
+    data: CreateViewConfigurationDTO,
+    sharedContext?: Context
+  ): Promise<ViewConfigurationDTO>
 
   updateViewConfigurations(
-    idOrSelector: string | FilterableViewConfigurationProps,
+    idOrSelector: string,
     data: UpdateViewConfigurationDTO,
     sharedContext?: Context
-  ): Promise<ViewConfigurationDTO | ViewConfigurationDTO[]>
+  ): Promise<ViewConfigurationDTO>
+
+  updateViewConfigurations(
+    idOrSelector: FilterableViewConfigurationProps,
+    data: UpdateViewConfigurationDTO,
+    sharedContext?: Context
+  ): Promise<ViewConfigurationDTO[]>
 
   deleteViewConfigurations(
     ids: string | string[],

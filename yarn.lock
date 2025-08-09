@@ -7168,6 +7168,8 @@ __metadata:
   dependencies:
     "@medusajs/framework": 2.8.6
     "@medusajs/test-utils": 2.8.6
+    "@medusajs/types": "workspace:^"
+    "@medusajs/utils": "workspace:^"
     "@mikro-orm/cli": 6.4.3
     "@mikro-orm/core": 6.4.3
     "@mikro-orm/migrations": 6.4.3

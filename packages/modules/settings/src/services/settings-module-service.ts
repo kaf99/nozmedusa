@@ -4,7 +4,6 @@ import {
   FindConfig,
   InferEntityType,
   InternalModuleDeclaration,
-  ModuleJoinerConfig,
   ModulesSdkTypes,
 } from "@medusajs/framework/types"
 import { SettingsTypes } from "@medusajs/types"
@@ -39,48 +38,18 @@ export default class SettingsModuleService
   >
 
   constructor(
-    { 
-      baseRepository, 
+    {
+      baseRepository,
       viewConfigurationService,
-      userPreferenceService 
+      userPreferenceService,
     }: InjectedDependencies,
     protected readonly moduleDeclaration: InternalModuleDeclaration
   ) {
-    // @ts-ignore
     super(...arguments)
     this.baseRepository_ = baseRepository
     this.viewConfigurationService_ = viewConfigurationService
     this.userPreferenceService_ = userPreferenceService
   }
-
-  __joinerConfig(): ModuleJoinerConfig {
-    return {
-      serviceName: "settings",
-      primaryKeys: ["id"],
-      linkableKeys: {
-        view_configuration_id: "ViewConfiguration",
-        user_preference_id: "UserPreference",
-      },
-      alias: [
-        {
-          name: ["view_configuration", "view_configurations"],
-          entity: "ViewConfiguration",
-          args: {
-            methodSuffix: "ViewConfigurations",
-          }
-        },
-        {
-          name: ["user_preference", "user_preferences"],
-          entity: "UserPreference",
-          args: {
-            methodSuffix: "UserPreferences",
-          }
-        },
-      ],
-    }
-  }
-
-  // View Configuration methods
 
   @InjectManager()
   // @ts-expect-error
@@ -114,10 +83,9 @@ export default class SettingsModuleService
       sharedContext
     )
 
-    return await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO[]>(
-      viewConfigs,
-      { populate: true }
-    )
+    return await this.baseRepository_.serialize<
+      SettingsTypes.ViewConfigurationDTO[]
+    >(viewConfigs, { populate: true })
   }
 
   @InjectManager()
@@ -127,16 +95,16 @@ export default class SettingsModuleService
     config?: FindConfig<InferEntityType<typeof ViewConfiguration>>,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<[SettingsTypes.ViewConfigurationDTO[], number]> {
-    const [viewConfigs, count] = await this.viewConfigurationService_.listAndCount(
-      filters,
-      config,
-      sharedContext
-    )
+    const [viewConfigs, count] =
+      await this.viewConfigurationService_.listAndCount(
+        filters,
+        config,
+        sharedContext
+      )
 
-    const serialized = await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO[]>(
-      viewConfigs,
-      { populate: true }
-    )
+    const serialized = await this.baseRepository_.serialize<
+      SettingsTypes.ViewConfigurationDTO[]
+    >(viewConfigs, { populate: true })
 
     return [serialized, count]
   }
@@ -144,9 +112,13 @@ export default class SettingsModuleService
   @InjectTransactionManager()
   // @ts-expect-error
   async createViewConfigurations(
-    data: SettingsTypes.CreateViewConfigurationDTO | SettingsTypes.CreateViewConfigurationDTO[],
+    data:
+      | SettingsTypes.CreateViewConfigurationDTO
+      | SettingsTypes.CreateViewConfigurationDTO[],
     @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.ViewConfigurationDTO | SettingsTypes.ViewConfigurationDTO[]> {
+  ): Promise<
+    SettingsTypes.ViewConfigurationDTO | SettingsTypes.ViewConfigurationDTO[]
+  > {
     const input = Array.isArray(data) ? data : [data]
 
     // Validate system defaults
@@ -183,10 +155,9 @@ export default class SettingsModuleService
       sharedContext
     )
 
-    const serialized = await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO[]>(
-      created,
-      { populate: true }
-    )
+    const serialized = await this.baseRepository_.serialize<
+      SettingsTypes.ViewConfigurationDTO[]
+    >(created, { populate: true })
 
     return Array.isArray(data) ? serialized : serialized[0]
   }
@@ -197,9 +168,11 @@ export default class SettingsModuleService
     idOrSelector: string | SettingsTypes.FilterableViewConfigurationProps,
     data: SettingsTypes.UpdateViewConfigurationDTO,
     @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.ViewConfigurationDTO | SettingsTypes.ViewConfigurationDTO[]> {
+  ): Promise<
+    SettingsTypes.ViewConfigurationDTO | SettingsTypes.ViewConfigurationDTO[]
+  > {
     let selector: SettingsTypes.FilterableViewConfigurationProps = {}
-    
+
     if (typeof idOrSelector === "string") {
       selector = { id: idOrSelector }
     } else {
@@ -214,36 +187,48 @@ export default class SettingsModuleService
         {},
         sharedContext
       )
-      
+
       if (entities.length === 0) {
         return typeof idOrSelector === "string" ? [] : []
       }
-      
+
       // Use upsertWithReplace to update the configuration field without merging
-      const updateDataArray = entities.map(entity => ({
+      const updateDataArray = entities.map((entity) => ({
         id: entity.id,
         ...data,
         configuration: {
           visible_columns: data.configuration?.visible_columns ?? [],
           column_order: data.configuration?.column_order ?? [],
-          column_widths: data.configuration?.column_widths !== undefined ? data.configuration.column_widths : {},
-          filters: data.configuration?.filters !== undefined ? data.configuration.filters : {},
-          sorting: data.configuration?.sorting !== undefined ? data.configuration.sorting : null,
-          search: data.configuration?.search !== undefined ? data.configuration.search : "",
-        }
+          column_widths:
+            data.configuration?.column_widths !== undefined
+              ? data.configuration.column_widths
+              : {},
+          filters:
+            data.configuration?.filters !== undefined
+              ? data.configuration.filters
+              : {},
+          sorting:
+            data.configuration?.sorting !== undefined
+              ? data.configuration.sorting
+              : null,
+          search:
+            data.configuration?.search !== undefined
+              ? data.configuration.search
+              : "",
+        },
       }))
-      
+
       // Use upsertWithReplace which uses nativeUpdateMany internally and doesn't merge JSON fields
-      const { entities: updatedEntities } = await this.viewConfigurationService_.upsertWithReplace(
-        updateDataArray,
-        { relations: [] },
-        sharedContext
-      )
-      
-      const serialized = await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO[]>(
-        updatedEntities,
-        { populate: true }
-      )
+      const { entities: updatedEntities } =
+        await this.viewConfigurationService_.upsertWithReplace(
+          updateDataArray,
+          { relations: [] },
+          sharedContext
+        )
+
+      const serialized = await this.baseRepository_.serialize<
+        SettingsTypes.ViewConfigurationDTO[]
+      >(updatedEntities, { populate: true })
 
       return typeof idOrSelector === "string" ? serialized[0] : serialized
     }
@@ -254,10 +239,9 @@ export default class SettingsModuleService
       sharedContext
     )
 
-    const serialized = await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO[]>(
-      updated,
-      { populate: true }
-    )
+    const serialized = await this.baseRepository_.serialize<
+      SettingsTypes.ViewConfigurationDTO[]
+    >(updated, { populate: true })
 
     return typeof idOrSelector === "string" ? serialized[0] : serialized
   }
@@ -306,10 +290,9 @@ export default class SettingsModuleService
       sharedContext
     )
 
-    return await this.baseRepository_.serialize<SettingsTypes.UserPreferenceDTO[]>(
-      prefs,
-      { populate: true }
-    )
+    return await this.baseRepository_.serialize<
+      SettingsTypes.UserPreferenceDTO[]
+    >(prefs, { populate: true })
   }
 
   @InjectManager()
@@ -395,7 +378,11 @@ export default class SettingsModuleService
     )
 
     // Check if we have a preference with a view configuration ID (not explicitly null)
-    if (activeViewPref && activeViewPref.value?.viewConfigurationId && activeViewPref.value.viewConfigurationId !== null) {
+    if (
+      activeViewPref &&
+      activeViewPref.value?.viewConfigurationId &&
+      activeViewPref.value.viewConfigurationId !== null
+    ) {
       try {
         return await this.retrieveViewConfiguration(
           activeViewPref.value.viewConfigurationId,
@@ -409,7 +396,7 @@ export default class SettingsModuleService
 
     // If we have an explicit null preference, or no preference, or a deleted view
     // We should check for defaults in this order:
-    
+
     // Check if user has any personal views (only if no explicit null preference)
     if (!activeViewPref || activeViewPref.value?.viewConfigurationId !== null) {
       const personalViews = await this.listViewConfigurations(
