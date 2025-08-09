@@ -1,8 +1,6 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import { adminHeaders, createAdminUser } from "../../helpers/create-admin-user"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import Scrypt from "scrypt-kdf"
-import jwt from "jsonwebtoken"
 
 jest.setTimeout(50000)
 
@@ -13,8 +11,8 @@ medusaIntegrationTestRunner({
   testSuite: ({ dbConnection, api, getContainer }) => {
     describe("View Configurations API", () => {
       let adminHeader
-      let nonAdminHeader
-      let nonAdminUserId
+      let secondAdminHeader
+      let secondAdminUserId
       let adminUserId
 
       beforeEach(async () => {
@@ -27,58 +25,16 @@ medusaIntegrationTestRunner({
         adminHeader = adminHeaders.headers
         adminUserId = adminUser.id
 
-        // Create a non-admin user
-        const userModule = container.resolve(Modules.USER)
-        const authModule = container.resolve(Modules.AUTH)
-
-        const nonAdminUser = await userModule.createUsers({
-          email: "regular@test.com",
-          first_name: "Regular",
-          last_name: "User",
-        })
-        nonAdminUserId = nonAdminUser.id
-
-        // Set password for non-admin user
-        const hashConfig = { logN: 15, r: 8, p: 1 }
-        const passwordHash = await Scrypt.kdf("password", hashConfig)
-
-        const authIdentity = await authModule.createAuthIdentities({
-          provider_identities: [
-            {
-              provider: "emailpass",
-              entity_id: "regular@test.com",
-              provider_metadata: {
-                password: passwordHash.toString("base64"),
-              },
-            },
-          ],
-          app_metadata: {
-            user_id: nonAdminUser.id,
-          },
-        })
-
-        // Create JWT token for non-admin user
-        const config = container.resolve(
-          ContainerRegistrationKeys.CONFIG_MODULE
+        // Create a second admin user
+        const secondAdminHeaders = { headers: {} }
+        const { user: secondAdminUser } = await createAdminUser(
+          dbConnection,
+          secondAdminHeaders,
+          container,
+          { email: "admin2@test.com" }
         )
-        const { projectConfig } = config
-        const { jwtSecret, jwtOptions } = projectConfig.http
-        const token = jwt.sign(
-          {
-            actor_id: nonAdminUser.id,
-            actor_type: "user",
-            auth_identity_id: authIdentity.id,
-          },
-          jwtSecret,
-          {
-            expiresIn: "1d",
-            ...jwtOptions,
-          }
-        )
-
-        nonAdminHeader = {
-          Authorization: `Bearer ${token}`,
-        }
+        secondAdminUserId = secondAdminUser.id
+        secondAdminHeader = secondAdminHeaders.headers
       })
 
       describe("POST /admin/view-configurations", () => {
@@ -96,7 +52,7 @@ medusaIntegrationTestRunner({
             "/admin/view-configurations",
             payload,
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -104,7 +60,7 @@ medusaIntegrationTestRunner({
           expect(response.data.view_configuration).toMatchObject({
             entity: "orders",
             name: "My Order View",
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: payload.configuration,
           })
           expect(response.data.view_configuration.is_system_default).toBeFalsy()
@@ -166,7 +122,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "My Personal View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id", "total"],
               column_order: ["total", "id"],
@@ -188,7 +144,7 @@ medusaIntegrationTestRunner({
 
         it("should list system defaults and personal views", async () => {
           const response = await api.get("/admin/view-configurations", {
-            headers: nonAdminHeader,
+            headers: secondAdminHeader,
           })
 
           expect(response.status).toBe(200)
@@ -211,7 +167,7 @@ medusaIntegrationTestRunner({
           const response = await api.get(
             "/admin/view-configurations?entity=products",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -231,7 +187,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "Test View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id"],
               column_order: ["id"],
@@ -243,7 +199,7 @@ medusaIntegrationTestRunner({
           const response = await api.get(
             `/admin/view-configurations/${viewConfig.id}`,
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -272,7 +228,7 @@ medusaIntegrationTestRunner({
 
           const response = await api
             .get(`/admin/view-configurations/${otherView.id}`, {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             })
             .catch((e) => e.response)
 
@@ -291,7 +247,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "Test View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id"],
               column_order: ["id"],
@@ -312,7 +268,7 @@ medusaIntegrationTestRunner({
             `/admin/view-configurations/${viewConfig.id}`,
             payload,
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -336,7 +292,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "Test View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id"],
               column_order: ["id"],
@@ -348,7 +304,7 @@ medusaIntegrationTestRunner({
           const response = await api.delete(
             `/admin/view-configurations/${viewConfig.id}`,
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -362,7 +318,7 @@ medusaIntegrationTestRunner({
           // Verify it's deleted
           const getResponse = await api
             .get(`/admin/view-configurations/${viewConfig.id}`, {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             })
             .catch((e) => e.response)
 
@@ -380,7 +336,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "Active View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id", "total"],
               column_order: ["total", "id"],
@@ -389,7 +345,7 @@ medusaIntegrationTestRunner({
 
           await settingsService.setActiveViewConfiguration(
             "orders",
-            nonAdminUserId,
+            secondAdminUserId,
             viewConfig.id
           )
         })
@@ -398,7 +354,7 @@ medusaIntegrationTestRunner({
           const response = await api.get(
             "/admin/view-configurations/active?entity=orders",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -406,7 +362,7 @@ medusaIntegrationTestRunner({
           expect(response.data.view_configuration).toMatchObject({
             entity: "orders",
             name: "Active View",
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
           })
         })
 
@@ -414,7 +370,7 @@ medusaIntegrationTestRunner({
           const response = await api.get(
             "/admin/view-configurations/active?entity=products",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -434,7 +390,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "Test View",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id"],
               column_order: ["id"],
@@ -450,7 +406,7 @@ medusaIntegrationTestRunner({
               view_configuration_id: viewConfig.id,
             },
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -461,7 +417,7 @@ medusaIntegrationTestRunner({
           const activeResponse = await api.get(
             "/admin/view-configurations/active?entity=orders",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -477,7 +433,7 @@ medusaIntegrationTestRunner({
               view_configuration_id: viewConfig.id,
             },
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -485,7 +441,7 @@ medusaIntegrationTestRunner({
           let activeResponse = await api.get(
             "/admin/view-configurations/active?entity=orders",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
           expect(activeResponse.data.view_configuration.id).toBe(viewConfig.id)
@@ -498,7 +454,7 @@ medusaIntegrationTestRunner({
               view_configuration_id: null,
             },
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -509,7 +465,7 @@ medusaIntegrationTestRunner({
           activeResponse = await api.get(
             "/admin/view-configurations/active?entity=orders",
             {
-              headers: nonAdminHeader,
+              headers: secondAdminHeader,
             }
           )
 
@@ -539,13 +495,13 @@ medusaIntegrationTestRunner({
         it("should make system default views available to all users", async () => {
           const container = getContainer()
           
-          // Create a second admin user
-          const secondAdminHeaders = { headers: {} }
-          const { user: secondAdminUser } = await createAdminUser(
+          // Create a third admin user
+          const thirdAdminHeaders = { headers: {} }
+          const { user: thirdAdminUser } = await createAdminUser(
             dbConnection,
-            secondAdminHeaders,
+            thirdAdminHeaders,
             container,
-            { email: "admin2@test.com" }
+            { email: "admin3@test.com" }
           )
 
           // Admin 1 creates a system default view
@@ -566,23 +522,23 @@ medusaIntegrationTestRunner({
           expect(systemDefaultView.status).toEqual(201)
           expect(systemDefaultView.data.view_configuration.user_id).toBeNull()
 
-          // Admin 2 should be able to see this view
-          const viewsForAdmin2 = await api.get(
+          // Admin 3 should be able to see this view
+          const viewsForAdmin3 = await api.get(
             "/admin/view-configurations?entity=orders",
-            secondAdminHeaders
+            thirdAdminHeaders
           )
 
-          expect(viewsForAdmin2.status).toEqual(200)
-          const systemDefaults = viewsForAdmin2.data.view_configurations.filter(
+          expect(viewsForAdmin3.status).toEqual(200)
+          const systemDefaults = viewsForAdmin3.data.view_configurations.filter(
             (v: any) => v.is_system_default
           )
           expect(systemDefaults).toHaveLength(1)
           expect(systemDefaults[0].name).toEqual("System Default View")
 
-          // Admin 2 should also be able to retrieve it directly
+          // Admin 3 should also be able to retrieve it directly
           const directRetrieve = await api.get(
             `/admin/view-configurations/${systemDefaultView.data.view_configuration.id}`,
-            secondAdminHeaders
+            thirdAdminHeaders
           )
 
           expect(directRetrieve.status).toEqual(200)
@@ -593,8 +549,6 @@ medusaIntegrationTestRunner({
 
         it("should allow converting personal view to system default", async () => {
           const container = getContainer()
-          const userModule = container.resolve(Modules.USER)
-          const authModule = container.resolve(Modules.AUTH)
 
           // Create a personal view first
           const personalView = await api.post(
@@ -631,46 +585,18 @@ medusaIntegrationTestRunner({
             true
           )
 
-          // Create another user and verify they can see it
-          const anotherUser = await userModule.createUsers({
-            email: "another@test.com",
-            first_name: "Another",
-            last_name: "User",
-          })
-
-          const anotherAuthIdentity = await authModule.createAuthIdentities({
-            provider_identities: [
-              {
-                provider: "store",
-                entity_id: anotherUser.id,
-              },
-            ],
-            app_metadata: {
-              user_id: anotherUser.id,
-            },
-          })
-
-          const config = container.resolve(
-            ContainerRegistrationKeys.CONFIG_MODULE
-          )
-          const { projectConfig } = config
-          const { jwtSecret, jwtOptions } = projectConfig.http
-          const anotherJWT = jwt.sign(
-            {
-              actor_id: anotherUser.id,
-              actor_type: "user",
-              auth_identity_id: anotherAuthIdentity.id,
-            },
-            jwtSecret,
-            {
-              expiresIn: "1d",
-              ...jwtOptions,
-            }
+          // Create another admin user and verify they can see it
+          const anotherAdminHeaders = { headers: {} }
+          await createAdminUser(
+            dbConnection,
+            anotherAdminHeaders,
+            container,
+            { email: "admin4@test.com" }
           )
 
           const viewsForAnother = await api.get(
             "/admin/view-configurations?entity=orders",
-            { headers: { authorization: `Bearer ${anotherJWT}` } }
+            anotherAdminHeaders
           )
 
           const foundView = viewsForAnother.data.view_configurations.find(
@@ -718,7 +644,7 @@ medusaIntegrationTestRunner({
               },
               set_active: true,
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(viewConfig.status).toEqual(201)
@@ -726,7 +652,7 @@ medusaIntegrationTestRunner({
           // Verify the view is now active
           const activeView = await api.get(
             "/admin/view-configurations/active?entity=orders",
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(activeView.status).toEqual(200)
@@ -748,7 +674,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "View 1",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id"],
               column_order: ["id"],
@@ -759,7 +685,7 @@ medusaIntegrationTestRunner({
             entity: "orders",
             name: "View 2",
             is_system_default: false,
-            user_id: nonAdminUserId,
+            user_id: secondAdminUserId,
             configuration: {
               visible_columns: ["id", "total"],
               column_order: ["total", "id"],
@@ -769,7 +695,7 @@ medusaIntegrationTestRunner({
           // Set view1 as active initially
           await settingsService.setActiveViewConfiguration(
             "orders",
-            nonAdminUserId,
+            secondAdminUserId,
             view1.id
           )
 
@@ -780,7 +706,7 @@ medusaIntegrationTestRunner({
               name: "Updated View 2",
               set_active: true,
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(updateResponse.status).toEqual(200)
@@ -788,7 +714,7 @@ medusaIntegrationTestRunner({
           // Verify view2 is now the active view
           const activeView = await api.get(
             "/admin/view-configurations/active?entity=orders",
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(activeView.status).toEqual(200)
@@ -931,7 +857,7 @@ medusaIntegrationTestRunner({
           // Step 2: Retrieve active view - should return the system default
           const activeView = await api.get(
             "/admin/view-configurations/active?entity=orders",
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(activeView.status).toEqual(200)
@@ -969,7 +895,7 @@ medusaIntegrationTestRunner({
                 search: "test search",
               },
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(viewConfig.status).toEqual(201)
@@ -992,7 +918,7 @@ medusaIntegrationTestRunner({
           // Retrieve the view and verify filters are preserved
           const getResponse = await api.get(
             `/admin/view-configurations/${viewConfig.data.view_configuration.id}`,
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(getResponse.status).toEqual(200)
@@ -1022,7 +948,7 @@ medusaIntegrationTestRunner({
                 search: "initial search",
               },
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(viewConfig.status).toEqual(201)
@@ -1040,7 +966,7 @@ medusaIntegrationTestRunner({
                 search: "", // Clear search
               },
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(updateResponse.status).toEqual(200)
@@ -1059,7 +985,7 @@ medusaIntegrationTestRunner({
           // Retrieve again to double-check persistence
           const getResponse = await api.get(
             `/admin/view-configurations/${viewId}`,
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(getResponse.status).toEqual(200)
@@ -1093,7 +1019,7 @@ medusaIntegrationTestRunner({
                 search: "customer",
               },
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(viewConfig.status).toEqual(201)
@@ -1115,7 +1041,7 @@ medusaIntegrationTestRunner({
                 search: "customer",
               },
             },
-            { headers: nonAdminHeader }
+            { headers: secondAdminHeader }
           )
 
           expect(updateResponse.status).toEqual(200)
