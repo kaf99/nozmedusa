@@ -70,45 +70,6 @@ export default class SettingsModuleService
     )
   }
 
-  @InjectManager()
-  // @ts-expect-error
-  async listViewConfigurations(
-    filters: SettingsTypes.FilterableViewConfigurationProps = {},
-    config?: FindConfig<InferEntityType<typeof ViewConfiguration>>,
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.ViewConfigurationDTO[]> {
-    const viewConfigs = await this.viewConfigurationService_.list(
-      filters,
-      config,
-      sharedContext
-    )
-
-    return await this.baseRepository_.serialize<
-      SettingsTypes.ViewConfigurationDTO[]
-    >(viewConfigs, { populate: true })
-  }
-
-  @InjectManager()
-  // @ts-expect-error
-  async listAndCountViewConfigurations(
-    filters: SettingsTypes.FilterableViewConfigurationProps = {},
-    config?: FindConfig<InferEntityType<typeof ViewConfiguration>>,
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<[SettingsTypes.ViewConfigurationDTO[], number]> {
-    const [viewConfigs, count] =
-      await this.viewConfigurationService_.listAndCount(
-        filters,
-        config,
-        sharedContext
-      )
-
-    const serialized = await this.baseRepository_.serialize<
-      SettingsTypes.ViewConfigurationDTO[]
-    >(viewConfigs, { populate: true })
-
-    return [serialized, count]
-  }
-
   @InjectTransactionManager()
   // @ts-expect-error
   async createViewConfigurations(
@@ -235,7 +196,7 @@ export default class SettingsModuleService
 
     // For non-configuration updates, use the standard update method
     const updated = await this.viewConfigurationService_.update(
-      [{ ...selector, ...data }],
+      { selector, data },
       sharedContext
     )
 
@@ -244,55 +205,6 @@ export default class SettingsModuleService
     >(updated, { populate: true })
 
     return typeof idOrSelector === "string" ? serialized[0] : serialized
-  }
-
-  @InjectTransactionManager()
-  // @ts-expect-error
-  async deleteViewConfigurations(
-    ids: string | string[],
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<void> {
-    const idsArray = Array.isArray(ids) ? ids : [ids]
-    await this.viewConfigurationService_.delete(idsArray, sharedContext)
-  }
-
-  // User Preference methods
-
-  @InjectManager()
-  // @ts-expect-error
-  async retrieveUserPreference(
-    id: string,
-    config?: FindConfig<InferEntityType<typeof UserPreference>>,
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.UserPreferenceDTO> {
-    const pref = await this.userPreferenceService_.retrieve(
-      id,
-      config,
-      sharedContext
-    )
-
-    return await this.baseRepository_.serialize<SettingsTypes.UserPreferenceDTO>(
-      pref,
-      { populate: true }
-    )
-  }
-
-  @InjectManager()
-  // @ts-expect-error
-  async listUserPreferences(
-    filters: SettingsTypes.FilterableUserPreferenceProps = {},
-    config?: FindConfig<InferEntityType<typeof UserPreference>>,
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.UserPreferenceDTO[]> {
-    const prefs = await this.userPreferenceService_.list(
-      filters,
-      config,
-      sharedContext
-    )
-
-    return await this.baseRepository_.serialize<
-      SettingsTypes.UserPreferenceDTO[]
-    >(prefs, { populate: true })
   }
 
   @InjectManager()
@@ -351,18 +263,6 @@ export default class SettingsModuleService
       { populate: true }
     )
   }
-
-  @InjectTransactionManager()
-  // @ts-expect-error
-  async deleteUserPreferences(
-    ids: string | string[],
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<void> {
-    const idsArray = Array.isArray(ids) ? ids : [ids]
-    await this.userPreferenceService_.delete(idsArray, sharedContext)
-  }
-
-  // Helper methods
 
   @InjectManager()
   async getActiveViewConfiguration(
