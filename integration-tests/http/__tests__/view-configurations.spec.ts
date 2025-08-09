@@ -1,12 +1,8 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
-import {
-  adminHeaders,
-  createAdminUser,
-} from "../../helpers/create-admin-user"
+import { adminHeaders, createAdminUser } from "../../helpers/create-admin-user"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import Scrypt from "scrypt-kdf"
 import jwt from "jsonwebtoken"
-import { resolve } from "path"
 
 jest.setTimeout(50000)
 
@@ -23,25 +19,29 @@ medusaIntegrationTestRunner({
 
       beforeEach(async () => {
         const container = getContainer()
-        const { user: adminUser } = await createAdminUser(dbConnection, adminHeaders, container)
+        const { user: adminUser } = await createAdminUser(
+          dbConnection,
+          adminHeaders,
+          container
+        )
         adminHeader = adminHeaders.headers
         adminUserId = adminUser.id
-        
+
         // Create a non-admin user
         const userModule = container.resolve(Modules.USER)
         const authModule = container.resolve(Modules.AUTH)
-        
+
         const nonAdminUser = await userModule.createUsers({
           email: "regular@test.com",
           first_name: "Regular",
           last_name: "User",
         })
         nonAdminUserId = nonAdminUser.id
-        
+
         // Set password for non-admin user
         const hashConfig = { logN: 15, r: 8, p: 1 }
         const passwordHash = await Scrypt.kdf("password", hashConfig)
-        
+
         const authIdentity = await authModule.createAuthIdentities({
           provider_identities: [
             {
@@ -56,9 +56,11 @@ medusaIntegrationTestRunner({
             user_id: nonAdminUser.id,
           },
         })
-        
+
         // Create JWT token for non-admin user
-        const config = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
+        const config = container.resolve(
+          ContainerRegistrationKeys.CONFIG_MODULE
+        )
         const { projectConfig } = config
         const { jwtSecret, jwtOptions } = projectConfig.http
         const token = jwt.sign(
@@ -73,7 +75,7 @@ medusaIntegrationTestRunner({
             ...jwtOptions,
           }
         )
-        
+
         nonAdminHeader = {
           Authorization: `Bearer ${token}`,
         }
@@ -136,7 +138,6 @@ medusaIntegrationTestRunner({
             configuration: payload.configuration,
           })
         })
-
       })
 
       describe("GET /admin/view-configurations", () => {
@@ -207,9 +208,12 @@ medusaIntegrationTestRunner({
         })
 
         it("should filter by entity", async () => {
-          const response = await api.get("/admin/view-configurations?entity=products", {
-            headers: nonAdminHeader,
-          })
+          const response = await api.get(
+            "/admin/view-configurations?entity=products",
+            {
+              headers: nonAdminHeader,
+            }
+          )
 
           expect(response.status).toBe(200)
           expect(response.data.view_configurations).toHaveLength(0)
@@ -266,12 +270,11 @@ medusaIntegrationTestRunner({
             },
           })
 
-          const response = await api.get(
-            `/admin/view-configurations/${otherView.id}`,
-            {
+          const response = await api
+            .get(`/admin/view-configurations/${otherView.id}`, {
               headers: nonAdminHeader,
-            }
-          ).catch(e => e.response)
+            })
+            .catch((e) => e.response)
 
           expect(response.status).toBe(400)
         })
@@ -320,7 +323,6 @@ medusaIntegrationTestRunner({
             configuration: payload.configuration,
           })
         })
-
       })
 
       describe("DELETE /admin/view-configurations/:id", () => {
@@ -358,12 +360,11 @@ medusaIntegrationTestRunner({
           })
 
           // Verify it's deleted
-          const getResponse = await api.get(
-            `/admin/view-configurations/${viewConfig.id}`,
-            {
+          const getResponse = await api
+            .get(`/admin/view-configurations/${viewConfig.id}`, {
               headers: nonAdminHeader,
-            }
-          ).catch(e => e.response)
+            })
+            .catch((e) => e.response)
 
           expect(getResponse.status).toBe(404)
         })
@@ -517,13 +518,16 @@ medusaIntegrationTestRunner({
             console.log("Active view after clearing:", {
               id: activeResponse.data.view_configuration.id,
               name: activeResponse.data.view_configuration.name,
-              is_system_default: activeResponse.data.view_configuration.is_system_default
+              is_system_default:
+                activeResponse.data.view_configuration.is_system_default,
             })
           }
 
           // Should either return null or a system default if one exists
           if (activeResponse.data.view_configuration) {
-            expect(activeResponse.data.view_configuration.is_system_default).toBe(true)
+            expect(
+              activeResponse.data.view_configuration.is_system_default
+            ).toBe(true)
           } else {
             expect(activeResponse.data.view_configuration).toBeNull()
           }
@@ -534,41 +538,14 @@ medusaIntegrationTestRunner({
       describe("System Default Views", () => {
         it("should make system default views available to all users", async () => {
           const container = getContainer()
-          const userModule = container.resolve(Modules.USER)
-          const authModule = container.resolve(Modules.AUTH)
           
           // Create a second admin user
-          const secondAdminUser = await userModule.createUsers({
-            email: "admin2@test.com",
-            first_name: "Admin",
-            last_name: "Two",
-          })
-
-          const secondAdminAuthIdentity = await authModule.createAuthIdentities({
-            provider_identities: [{
-              provider: "store",
-              entity_id: secondAdminUser.id,
-            }],
-            app_metadata: {
-              user_id: secondAdminUser.id,
-              admin: true,
-            },
-          })
-
-          const config = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
-          const { projectConfig } = config
-          const { jwtSecret, jwtOptions } = projectConfig.http
-          const secondAdminJWT = jwt.sign(
-            {
-              actor_id: secondAdminUser.id,
-              actor_type: "user",
-              auth_identity_id: secondAdminAuthIdentity.id,
-            },
-            jwtSecret,
-            {
-              expiresIn: "1d",
-              ...jwtOptions,
-            }
+          const secondAdminHeaders = { headers: {} }
+          const { user: secondAdminUser } = await createAdminUser(
+            dbConnection,
+            secondAdminHeaders,
+            container,
+            { email: "admin2@test.com" }
           )
 
           // Admin 1 creates a system default view
@@ -592,7 +569,7 @@ medusaIntegrationTestRunner({
           // Admin 2 should be able to see this view
           const viewsForAdmin2 = await api.get(
             "/admin/view-configurations?entity=orders",
-            { headers: { authorization: `Bearer ${secondAdminJWT}` } }
+            secondAdminHeaders
           )
 
           expect(viewsForAdmin2.status).toEqual(200)
@@ -605,18 +582,20 @@ medusaIntegrationTestRunner({
           // Admin 2 should also be able to retrieve it directly
           const directRetrieve = await api.get(
             `/admin/view-configurations/${systemDefaultView.data.view_configuration.id}`,
-            { headers: { authorization: `Bearer ${secondAdminJWT}` } }
+            secondAdminHeaders
           )
 
           expect(directRetrieve.status).toEqual(200)
-          expect(directRetrieve.data.view_configuration.name).toEqual("System Default View")
+          expect(directRetrieve.data.view_configuration.name).toEqual(
+            "System Default View"
+          )
         })
 
         it("should allow converting personal view to system default", async () => {
           const container = getContainer()
           const userModule = container.resolve(Modules.USER)
           const authModule = container.resolve(Modules.AUTH)
-          
+
           // Create a personal view first
           const personalView = await api.post(
             "/admin/view-configurations",
@@ -633,7 +612,9 @@ medusaIntegrationTestRunner({
           )
 
           expect(personalView.status).toEqual(201)
-          expect(personalView.data.view_configuration.user_id).toEqual(adminUserId)
+          expect(personalView.data.view_configuration.user_id).toEqual(
+            adminUserId
+          )
 
           // Update it to be a system default
           const updatedView = await api.post(
@@ -646,7 +627,9 @@ medusaIntegrationTestRunner({
 
           expect(updatedView.status).toEqual(200)
           expect(updatedView.data.view_configuration.user_id).toBeNull()
-          expect(updatedView.data.view_configuration.is_system_default).toBe(true)
+          expect(updatedView.data.view_configuration.is_system_default).toBe(
+            true
+          )
 
           // Create another user and verify they can see it
           const anotherUser = await userModule.createUsers({
@@ -656,16 +639,20 @@ medusaIntegrationTestRunner({
           })
 
           const anotherAuthIdentity = await authModule.createAuthIdentities({
-            provider_identities: [{
-              provider: "store",
-              entity_id: anotherUser.id,
-            }],
+            provider_identities: [
+              {
+                provider: "store",
+                entity_id: anotherUser.id,
+              },
+            ],
             app_metadata: {
               user_id: anotherUser.id,
             },
           })
 
-          const config = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
+          const config = container.resolve(
+            ContainerRegistrationKeys.CONFIG_MODULE
+          )
           const { projectConfig } = config
           const { jwtSecret, jwtOptions } = projectConfig.http
           const anotherJWT = jwt.sign(
@@ -711,7 +698,9 @@ medusaIntegrationTestRunner({
 
           expect(systemDefaultView.status).toEqual(201)
           expect(systemDefaultView.data.view_configuration.user_id).toBeNull()
-          expect(systemDefaultView.data.view_configuration.is_system_default).toBe(true)
+          expect(
+            systemDefaultView.data.view_configuration.is_system_default
+          ).toBe(true)
           // Name should be undefined/null when not provided
           expect(systemDefaultView.data.view_configuration.name).toBeFalsy()
         })
@@ -733,7 +722,7 @@ medusaIntegrationTestRunner({
           )
 
           expect(viewConfig.status).toEqual(201)
-          
+
           // Verify the view is now active
           const activeView = await api.get(
             "/admin/view-configurations/active?entity=orders",
@@ -742,8 +731,12 @@ medusaIntegrationTestRunner({
 
           expect(activeView.status).toEqual(200)
           expect(activeView.data.view_configuration).toBeTruthy()
-          expect(activeView.data.view_configuration.id).toEqual(viewConfig.data.view_configuration.id)
-          expect(activeView.data.view_configuration.name).toEqual("Auto-Active View")
+          expect(activeView.data.view_configuration.id).toEqual(
+            viewConfig.data.view_configuration.id
+          )
+          expect(activeView.data.view_configuration.name).toEqual(
+            "Auto-Active View"
+          )
         })
 
         it("should set view as active when updated with set_active flag", async () => {
@@ -800,7 +793,9 @@ medusaIntegrationTestRunner({
 
           expect(activeView.status).toEqual(200)
           expect(activeView.data.view_configuration.id).toEqual(view2.id)
-          expect(activeView.data.view_configuration.name).toEqual("Updated View 2")
+          expect(activeView.data.view_configuration.name).toEqual(
+            "Updated View 2"
+          )
         })
 
         it("should allow updating only the system default flag without name", async () => {
@@ -834,7 +829,9 @@ medusaIntegrationTestRunner({
 
           expect(updatedView.status).toEqual(200)
           expect(updatedView.data.view_configuration.user_id).toBeNull()
-          expect(updatedView.data.view_configuration.is_system_default).toBe(true)
+          expect(updatedView.data.view_configuration.is_system_default).toBe(
+            true
+          )
           expect(updatedView.data.view_configuration.name).toEqual(originalName)
           expect(updatedView.data.view_configuration.configuration).toEqual(
             personalView.data.view_configuration.configuration
@@ -865,7 +862,9 @@ medusaIntegrationTestRunner({
             "/admin/view-configurations?entity=orders",
             adminHeaders
           )
-          expect(viewsList.data.view_configurations.some((v: any) => v.id === viewId)).toBe(true)
+          expect(
+            viewsList.data.view_configurations.some((v: any) => v.id === viewId)
+          ).toBe(true)
 
           // Delete the system default view (reset to code defaults)
           const deleteResponse = await api.delete(
@@ -881,7 +880,9 @@ medusaIntegrationTestRunner({
             "/admin/view-configurations?entity=orders",
             adminHeaders
           )
-          expect(viewsList.data.view_configurations.some((v: any) => v.id === viewId)).toBe(false)
+          expect(
+            viewsList.data.view_configurations.some((v: any) => v.id === viewId)
+          ).toBe(false)
 
           // Getting active view should return null (falls back to code defaults)
           const activeView = await api.get(
@@ -900,8 +901,20 @@ medusaIntegrationTestRunner({
               name: "System Default Orders",
               is_system_default: true,
               configuration: {
-                visible_columns: ["id", "display_id", "created_at", "customer", "total"],
-                column_order: ["display_id", "customer", "total", "created_at", "id"],
+                visible_columns: [
+                  "id",
+                  "display_id",
+                  "created_at",
+                  "customer",
+                  "total",
+                ],
+                column_order: [
+                  "display_id",
+                  "customer",
+                  "total",
+                  "created_at",
+                  "id",
+                ],
                 filters: {},
                 sorting: { id: "created_at", desc: true },
                 search: "",
@@ -911,7 +924,9 @@ medusaIntegrationTestRunner({
           )
 
           expect(systemDefaultView.status).toEqual(201)
-          expect(systemDefaultView.data.view_configuration.is_system_default).toBe(true)
+          expect(
+            systemDefaultView.data.view_configuration.is_system_default
+          ).toBe(true)
 
           // Step 2: Retrieve active view - should return the system default
           const activeView = await api.get(
@@ -921,9 +936,15 @@ medusaIntegrationTestRunner({
 
           expect(activeView.status).toEqual(200)
           expect(activeView.data.view_configuration).toBeTruthy()
-          expect(activeView.data.view_configuration.id).toEqual(systemDefaultView.data.view_configuration.id)
-          expect(activeView.data.view_configuration.name).toEqual("System Default Orders")
-          expect(activeView.data.view_configuration.is_system_default).toBe(true)
+          expect(activeView.data.view_configuration.id).toEqual(
+            systemDefaultView.data.view_configuration.id
+          )
+          expect(activeView.data.view_configuration.name).toEqual(
+            "System Default Orders"
+          )
+          expect(activeView.data.view_configuration.is_system_default).toBe(
+            true
+          )
           expect(activeView.data.is_default_active).toBe(true)
           expect(activeView.data.default_type).toEqual("system")
         })
@@ -942,25 +963,31 @@ medusaIntegrationTestRunner({
                 column_order: ["status", "total", "created_at", "id"],
                 filters: {
                   status: ["pending", "completed"],
-                  total: { gte: 100 }
+                  total: { gte: 100 },
                 },
                 sorting: { id: "created_at", desc: true },
-                search: "test search"
+                search: "test search",
               },
             },
             { headers: nonAdminHeader }
           )
 
           expect(viewConfig.status).toEqual(201)
-          expect(viewConfig.data.view_configuration.configuration.filters).toEqual({
+          expect(
+            viewConfig.data.view_configuration.configuration.filters
+          ).toEqual({
             status: ["pending", "completed"],
-            total: { gte: 100 }
+            total: { gte: 100 },
           })
-          expect(viewConfig.data.view_configuration.configuration.sorting).toEqual({
+          expect(
+            viewConfig.data.view_configuration.configuration.sorting
+          ).toEqual({
             id: "created_at",
-            desc: true
+            desc: true,
           })
-          expect(viewConfig.data.view_configuration.configuration.search).toEqual("test search")
+          expect(
+            viewConfig.data.view_configuration.configuration.search
+          ).toEqual("test search")
 
           // Retrieve the view and verify filters are preserved
           const getResponse = await api.get(
@@ -969,9 +996,11 @@ medusaIntegrationTestRunner({
           )
 
           expect(getResponse.status).toEqual(200)
-          expect(getResponse.data.view_configuration.configuration.filters).toEqual({
+          expect(
+            getResponse.data.view_configuration.configuration.filters
+          ).toEqual({
             status: ["pending", "completed"],
-            total: { gte: 100 }
+            total: { gte: 100 },
           })
         })
 
@@ -987,10 +1016,10 @@ medusaIntegrationTestRunner({
                 column_order: ["status", "total", "id"],
                 filters: {
                   status: ["pending", "completed"],
-                  total: { gte: 100 }
+                  total: { gte: 100 },
                 },
                 sorting: { id: "total", desc: true },
-                search: "initial search"
+                search: "initial search",
               },
             },
             { headers: nonAdminHeader }
@@ -1008,18 +1037,24 @@ medusaIntegrationTestRunner({
                 column_order: ["status", "total", "id"],
                 filters: {}, // Empty filters object
                 sorting: null, // Remove sorting
-                search: "" // Clear search
+                search: "", // Clear search
               },
             },
             { headers: nonAdminHeader }
           )
 
           expect(updateResponse.status).toEqual(200)
-          
+
           // Verify filters were removed
-          expect(updateResponse.data.view_configuration.configuration.filters).toEqual({})
-          expect(updateResponse.data.view_configuration.configuration.sorting).toBeNull()
-          expect(updateResponse.data.view_configuration.configuration.search).toEqual("")
+          expect(
+            updateResponse.data.view_configuration.configuration.filters
+          ).toEqual({})
+          expect(
+            updateResponse.data.view_configuration.configuration.sorting
+          ).toBeNull()
+          expect(
+            updateResponse.data.view_configuration.configuration.search
+          ).toEqual("")
 
           // Retrieve again to double-check persistence
           const getResponse = await api.get(
@@ -1028,9 +1063,15 @@ medusaIntegrationTestRunner({
           )
 
           expect(getResponse.status).toEqual(200)
-          expect(getResponse.data.view_configuration.configuration.filters).toEqual({})
-          expect(getResponse.data.view_configuration.configuration.sorting).toBeNull()
-          expect(getResponse.data.view_configuration.configuration.search).toEqual("")
+          expect(
+            getResponse.data.view_configuration.configuration.filters
+          ).toEqual({})
+          expect(
+            getResponse.data.view_configuration.configuration.sorting
+          ).toBeNull()
+          expect(
+            getResponse.data.view_configuration.configuration.search
+          ).toEqual("")
         })
 
         it("should update only specific filters while keeping others", async () => {
@@ -1046,10 +1087,10 @@ medusaIntegrationTestRunner({
                 filters: {
                   status: ["pending", "completed"],
                   total: { gte: 100, lte: 1000 },
-                  created_at: { gte: "2024-01-01" }
+                  created_at: { gte: "2024-01-01" },
                 },
                 sorting: { id: "created_at", desc: true },
-                search: "customer"
+                search: "customer",
               },
             },
             { headers: nonAdminHeader }
@@ -1067,22 +1108,26 @@ medusaIntegrationTestRunner({
                 column_order: ["status", "total", "created_at", "id"],
                 filters: {
                   status: ["pending", "completed"],
-                  created_at: { gte: "2024-01-01" }
+                  created_at: { gte: "2024-01-01" },
                   // 'total' filter removed
                 },
                 sorting: { id: "created_at", desc: true },
-                search: "customer"
+                search: "customer",
               },
             },
             { headers: nonAdminHeader }
           )
 
           expect(updateResponse.status).toEqual(200)
-          expect(updateResponse.data.view_configuration.configuration.filters).toEqual({
+          expect(
+            updateResponse.data.view_configuration.configuration.filters
+          ).toEqual({
             status: ["pending", "completed"],
-            created_at: { gte: "2024-01-01" }
+            created_at: { gte: "2024-01-01" },
           })
-          expect(updateResponse.data.view_configuration.configuration.filters.total).toBeUndefined()
+          expect(
+            updateResponse.data.view_configuration.configuration.filters.total
+          ).toBeUndefined()
         })
       })
     })
