@@ -6732,6 +6732,7 @@ __metadata:
     "@medusajs/promotion": 2.8.8
     "@medusajs/region": 2.8.8
     "@medusajs/sales-channel": 2.8.8
+    "@medusajs/settings": "workspace:^"
     "@medusajs/stock-location": 2.8.8
     "@medusajs/store": 2.8.8
     "@medusajs/tax": 2.8.8
@@ -7161,13 +7162,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@medusajs/settings@workspace:packages/modules/settings":
+"@medusajs/settings@workspace:^, @medusajs/settings@workspace:packages/modules/settings":
   version: 0.0.0-use.local
   resolution: "@medusajs/settings@workspace:packages/modules/settings"
   dependencies:
     "@medusajs/framework": 2.8.6
     "@medusajs/test-utils": 2.8.6
     "@mikro-orm/cli": 6.4.3
+    "@mikro-orm/core": 6.4.3
+    "@mikro-orm/migrations": 6.4.3
+    "@mikro-orm/postgresql": 6.4.3
     "@swc/core": ^1.7.28
     "@swc/jest": ^0.2.36
     jest: ^29.7.0

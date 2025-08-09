@@ -68,7 +68,6 @@ moduleIntegrationTestRunner<SettingsTypes.ISettingsModuleService>({
               entity: "orders",
               name: "My Orders View",
               user_id: "user_123",
-              is_system_default: false,
             })
           )
         })
