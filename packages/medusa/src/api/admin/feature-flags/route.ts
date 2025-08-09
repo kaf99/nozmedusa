@@ -1,11 +1,13 @@
 import {
-  AuthenticatedMedusaRequest,
+  MedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
+export const AUTHENTICATE = false
+
 export const GET = async (
-  req: AuthenticatedMedusaRequest,
+  req: MedusaRequest,
   res: MedusaResponse<{ feature_flags: Record<string, boolean> }>
 ) => {
   const featureFlagRouter = req.scope.resolve(
