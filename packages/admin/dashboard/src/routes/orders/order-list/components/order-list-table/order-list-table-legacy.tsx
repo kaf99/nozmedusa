@@ -8,22 +8,13 @@ import { useOrderTableColumns } from "../../../../../hooks/table/columns/use-ord
 import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-order-table-filters"
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 import { useDataTable } from "../../../../../hooks/use-data-table"
-import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
-import { OrderListTableLegacy } from "./order-list-table-legacy"
 
 import { DEFAULT_FIELDS } from "../../const"
 
 const PAGE_SIZE = 20
 
-export const OrderListTable = () => {
+export const OrderListTableLegacy = () => {
   const { t } = useTranslation()
-  const isViewConfigEnabled = useFeatureFlag("view_configurations")
-
-  // If feature flag is disabled, use legacy table
-  if (!isViewConfigEnabled) {
-    return <OrderListTableLegacy />
-  }
-
   const { searchParams, raw } = useOrderTableQuery({
     pageSize: PAGE_SIZE,
   })
