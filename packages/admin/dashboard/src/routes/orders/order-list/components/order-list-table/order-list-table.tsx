@@ -9,7 +9,7 @@ import { useOrderTableFilters } from "../../../../../hooks/table/filters/use-ord
 import { useOrderTableQuery } from "../../../../../hooks/table/query/use-order-table-query"
 import { useDataTable } from "../../../../../hooks/use-data-table"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
-import { OrderListTableLegacy } from "./order-list-table-legacy"
+import { ConfigurableOrderListTable } from "./configurable-order-list-table"
 
 import { DEFAULT_FIELDS } from "../../const"
 
@@ -19,9 +19,9 @@ export const OrderListTable = () => {
   const { t } = useTranslation()
   const isViewConfigEnabled = useFeatureFlag("view_configurations")
 
-  // If feature flag is disabled, use legacy table
-  if (!isViewConfigEnabled) {
-    return <OrderListTableLegacy />
+  // If feature flag is enabled, use the new configurable table
+  if (isViewConfigEnabled) {
+    return <ConfigurableOrderListTable />
   }
 
   const { searchParams, raw } = useOrderTableQuery({
