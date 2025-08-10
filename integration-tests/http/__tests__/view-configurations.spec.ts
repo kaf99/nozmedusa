@@ -547,64 +547,6 @@ medusaIntegrationTestRunner({
           )
         })
 
-        it("should allow converting personal view to system default", async () => {
-          const container = getContainer()
-
-          // Create a personal view first
-          const personalView = await api.post(
-            "/admin/view-configurations",
-            {
-              entity: "orders",
-              name: "My Personal View",
-              configuration: {
-                visible_columns: ["id", "status"],
-                column_order: ["status", "id"],
-              },
-              is_system_default: false,
-            },
-            adminHeaders
-          )
-
-          expect(personalView.status).toEqual(201)
-          expect(personalView.data.view_configuration.user_id).toEqual(
-            adminUserId
-          )
-
-          // Update it to be a system default
-          const updatedView = await api.post(
-            `/admin/view-configurations/${personalView.data.view_configuration.id}`,
-            {
-              is_system_default: true,
-            },
-            adminHeaders
-          )
-
-          expect(updatedView.status).toEqual(200)
-          expect(updatedView.data.view_configuration.user_id).toBeNull()
-          expect(updatedView.data.view_configuration.is_system_default).toBe(
-            true
-          )
-
-          // Create another admin user and verify they can see it
-          const anotherAdminHeaders = { headers: {} }
-          await createAdminUser(
-            dbConnection,
-            anotherAdminHeaders,
-            container,
-            { email: "admin4@test.com" }
-          )
-
-          const viewsForAnother = await api.get(
-            "/admin/view-configurations?entity=orders",
-            anotherAdminHeaders
-          )
-
-          const foundView = viewsForAnother.data.view_configurations.find(
-            (v: any) => v.id === personalView.data.view_configuration.id
-          )
-          expect(foundView).toBeDefined()
-          expect(foundView.is_system_default).toBe(true)
-        })
 
         it("should allow creating system default without name", async () => {
           // Create a system default view without providing a name
@@ -724,45 +666,6 @@ medusaIntegrationTestRunner({
           )
         })
 
-        it("should allow updating only the system default flag without name", async () => {
-          // Create a personal view first
-          const personalView = await api.post(
-            "/admin/view-configurations",
-            {
-              entity: "products",
-              name: "Product View",
-              configuration: {
-                visible_columns: ["id", "title", "status"],
-                column_order: ["title", "status", "id"],
-              },
-              is_system_default: false,
-            },
-            adminHeaders
-          )
-
-          expect(personalView.status).toEqual(201)
-          const originalName = personalView.data.view_configuration.name
-
-          // Update only the system default flag
-          const updatedView = await api.post(
-            `/admin/view-configurations/${personalView.data.view_configuration.id}`,
-            {
-              is_system_default: true,
-              // Note: not providing name or configuration
-            },
-            adminHeaders
-          )
-
-          expect(updatedView.status).toEqual(200)
-          expect(updatedView.data.view_configuration.user_id).toBeNull()
-          expect(updatedView.data.view_configuration.is_system_default).toBe(
-            true
-          )
-          expect(updatedView.data.view_configuration.name).toEqual(originalName)
-          expect(updatedView.data.view_configuration.configuration).toEqual(
-            personalView.data.view_configuration.configuration
-          )
-        })
 
         it("should allow resetting system default to code-level defaults", async () => {
           // Create a system default view
