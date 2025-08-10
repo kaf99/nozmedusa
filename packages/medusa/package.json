@@ -108,7 +108,7 @@
     "@medusajs/promotion": "2.8.8",
     "@medusajs/region": "2.8.8",
     "@medusajs/sales-channel": "2.8.8",
-    "@medusajs/settings": "workspace:^",
+    "@medusajs/settings": "2.8.8",
     "@medusajs/stock-location": "2.8.8",
     "@medusajs/store": "2.8.8",
     "@medusajs/tax": "2.8.8",
