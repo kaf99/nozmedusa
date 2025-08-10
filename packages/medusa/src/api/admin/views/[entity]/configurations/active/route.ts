@@ -19,7 +19,7 @@ export const GET = async (
   const settingsService: any = req.scope.resolve(Modules.SETTINGS)
 
   const viewConfiguration = await settingsService.getActiveViewConfiguration(
-    req.query.entity,
+    req.params.entity,
     req.auth_context.actor_id
   )
 
@@ -34,7 +34,7 @@ export const GET = async (
     // Check if the user has an explicit preference
     const activeViewPref = await settingsService.getUserPreference(
       req.auth_context.actor_id,
-      `active_view.${req.query.entity}`
+      `active_view.${req.params.entity}`
     )
     
     // If there's no preference and the view is a system default, it means we're falling back to system default
@@ -57,13 +57,13 @@ export const POST = async (
   if (req.body.view_configuration_id === null) {
     // Clear the active view configuration
     await settingsService.clearActiveViewConfiguration(
-      req.body.entity,
+      req.params.entity,
       req.auth_context.actor_id
     )
   } else {
     // Set a specific view as active
     await settingsService.setActiveViewConfiguration(
-      req.body.entity,
+      req.params.entity,
       req.auth_context.actor_id,
       req.body.view_configuration_id
     )

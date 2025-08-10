@@ -14,6 +14,7 @@ export const GET = async (
 
   const filters = {
     ...req.filterableFields,
+    entity: req.params.entity,
     $or: [
       { user_id: req.auth_context.actor_id },
       { is_system_default: true },
@@ -51,6 +52,7 @@ export const POST = async (
 
   const input = {
     ...bodyWithoutSetActive,
+    entity: req.params.entity,
     user_id: req.body.is_system_default ? null : req.auth_context.actor_id,
   }
 

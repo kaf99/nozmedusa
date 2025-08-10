@@ -15,12 +15,12 @@ export const viewConfigurationRoutesMiddlewares: MiddlewareRoute[] = [
   // Apply feature flag check to all view configuration routes
   {
     method: ["GET", "POST", "DELETE"],
-    matcher: "/admin/view-configurations*",
+    matcher: "/admin/views/*/configurations*",
     middlewares: [ensureViewConfigurationsEnabled],
   },
   {
     method: ["GET"],
-    matcher: "/admin/view-configurations",
+    matcher: "/admin/views/:entity/configurations",
     middlewares: [
       validateAndTransformQuery(
         AdminGetViewConfigurationsParams,
@@ -30,14 +30,14 @@ export const viewConfigurationRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["POST"],
-    matcher: "/admin/view-configurations",
+    matcher: "/admin/views/:entity/configurations",
     middlewares: [
       validateAndTransformBody(AdminCreateViewConfiguration),
     ],
   },
   {
     method: ["GET"],
-    matcher: "/admin/view-configurations/:id",
+    matcher: "/admin/views/:entity/configurations/:id",
     middlewares: [
       validateAndTransformQuery(
         AdminGetViewConfigurationParams,
@@ -47,14 +47,14 @@ export const viewConfigurationRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["POST"],
-    matcher: "/admin/view-configurations/:id",
+    matcher: "/admin/views/:entity/configurations/:id",
     middlewares: [
       validateAndTransformBody(AdminUpdateViewConfiguration),
     ],
   },
   {
     method: ["GET"],
-    matcher: "/admin/view-configurations/active",
+    matcher: "/admin/views/:entity/configurations/active",
     middlewares: [
       validateAndTransformQuery(
         AdminGetActiveViewConfigurationParams,
@@ -64,7 +64,7 @@ export const viewConfigurationRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["POST"],
-    matcher: "/admin/view-configurations/active",
+    matcher: "/admin/views/:entity/configurations/active",
     middlewares: [
       validateAndTransformBody(AdminSetActiveViewConfiguration),
     ],

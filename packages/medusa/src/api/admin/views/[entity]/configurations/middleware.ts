@@ -4,7 +4,7 @@ import {
   MedusaNextFunction 
 } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import ViewConfigurationsFeatureFlag from "../../../loaders/feature-flags/view-configurations"
+import ViewConfigurationsFeatureFlag from "../../../../../loaders/feature-flags/view-configurations"
 
 export const ensureViewConfigurationsEnabled = async (
   req: MedusaRequest,

@@ -37,10 +37,9 @@ medusaIntegrationTestRunner({
         secondAdminHeader = secondAdminHeaders.headers
       })
 
-      describe("POST /admin/view-configurations", () => {
+      describe("POST /admin/views/{entity}/configurations", () => {
         it("should create a personal view configuration", async () => {
           const payload = {
-            entity: "orders",
             name: "My Order View",
             configuration: {
               visible_columns: ["id", "display_id", "created_at"],
@@ -49,7 +48,7 @@ medusaIntegrationTestRunner({
           }
 
           const response = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             payload,
             {
               headers: secondAdminHeader,
@@ -68,7 +67,6 @@ medusaIntegrationTestRunner({
 
         it("should create a system default view as admin", async () => {
           const payload = {
-            entity: "orders",
             name: "Default Order View",
             is_system_default: true,
             configuration: {
@@ -78,7 +76,7 @@ medusaIntegrationTestRunner({
           }
 
           const response = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             payload,
             {
               headers: adminHeader,
@@ -96,7 +94,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("GET /admin/view-configurations", () => {
+      describe("GET /admin/views/{entity}/configurations", () => {
         let systemView
         let personalView
         let otherUserView
@@ -143,7 +141,7 @@ medusaIntegrationTestRunner({
         })
 
         it("should list system defaults and personal views", async () => {
-          const response = await api.get("/admin/view-configurations", {
+          const response = await api.get("/admin/views/orders/configurations", {
             headers: secondAdminHeader,
           })
 
@@ -165,7 +163,7 @@ medusaIntegrationTestRunner({
 
         it("should filter by entity", async () => {
           const response = await api.get(
-            "/admin/view-configurations?entity=products",
+            "/admin/views/products/configurations",
             {
               headers: secondAdminHeader,
             }
@@ -176,7 +174,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("GET /admin/view-configurations/:id", () => {
+      describe("GET /admin/views/{entity}/configurations/:id", () => {
         let viewConfig
 
         beforeEach(async () => {
@@ -197,7 +195,7 @@ medusaIntegrationTestRunner({
 
         it("should retrieve own view configuration", async () => {
           const response = await api.get(
-            `/admin/view-configurations/${viewConfig.id}`,
+            `/admin/views/orders/configurations/${viewConfig.id}`,
             {
               headers: secondAdminHeader,
             }
@@ -227,7 +225,7 @@ medusaIntegrationTestRunner({
           })
 
           const response = await api
-            .get(`/admin/view-configurations/${otherView.id}`, {
+            .get(`/admin/views/orders/configurations/${otherView.id}`, {
               headers: secondAdminHeader,
             })
             .catch((e) => e.response)
@@ -236,7 +234,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("POST /admin/view-configurations/:id", () => {
+      describe("POST /admin/views/{entity}/configurations/:id", () => {
         let viewConfig
 
         beforeEach(async () => {
@@ -265,7 +263,7 @@ medusaIntegrationTestRunner({
           }
 
           const response = await api.post(
-            `/admin/view-configurations/${viewConfig.id}`,
+            `/admin/views/orders/configurations/${viewConfig.id}`,
             payload,
             {
               headers: secondAdminHeader,
@@ -281,7 +279,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("DELETE /admin/view-configurations/:id", () => {
+      describe("DELETE /admin/views/{entity}/configurations/:id", () => {
         let viewConfig
 
         beforeEach(async () => {
@@ -302,7 +300,7 @@ medusaIntegrationTestRunner({
 
         it("should delete own view configuration", async () => {
           const response = await api.delete(
-            `/admin/view-configurations/${viewConfig.id}`,
+            `/admin/views/orders/configurations/${viewConfig.id}`,
             {
               headers: secondAdminHeader,
             }
@@ -317,7 +315,7 @@ medusaIntegrationTestRunner({
 
           // Verify it's deleted
           const getResponse = await api
-            .get(`/admin/view-configurations/${viewConfig.id}`, {
+            .get(`/admin/views/orders/configurations/${viewConfig.id}`, {
               headers: secondAdminHeader,
             })
             .catch((e) => e.response)
@@ -326,7 +324,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("GET /admin/view-configurations/active", () => {
+      describe("GET /admin/views/{entity}/configurations/active", () => {
         beforeEach(async () => {
           const container = getContainer()
           const settingsService = container.resolve("settings")
@@ -352,7 +350,7 @@ medusaIntegrationTestRunner({
 
         it("should retrieve active view configuration", async () => {
           const response = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             {
               headers: secondAdminHeader,
             }
@@ -368,7 +366,7 @@ medusaIntegrationTestRunner({
 
         it("should return null when no active view", async () => {
           const response = await api.get(
-            "/admin/view-configurations/active?entity=products",
+            "/admin/views/products/configurations/active",
             {
               headers: secondAdminHeader,
             }
@@ -379,7 +377,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      describe("POST /admin/view-configurations/active", () => {
+      describe("POST /admin/views/{entity}/configurations/active", () => {
         let viewConfig
 
         beforeEach(async () => {
@@ -400,9 +398,8 @@ medusaIntegrationTestRunner({
 
         it("should set active view configuration", async () => {
           const response = await api.post(
-            "/admin/view-configurations/active",
+            "/admin/views/orders/configurations/active",
             {
-              entity: "orders",
               view_configuration_id: viewConfig.id,
             },
             {
@@ -415,7 +412,7 @@ medusaIntegrationTestRunner({
 
           // Verify it's active
           const activeResponse = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             {
               headers: secondAdminHeader,
             }
@@ -427,9 +424,8 @@ medusaIntegrationTestRunner({
         it("should clear active view and return to default when setting view_configuration_id to null", async () => {
           // First set an active view
           await api.post(
-            "/admin/view-configurations/active",
+            "/admin/views/orders/configurations/active",
             {
-              entity: "orders",
               view_configuration_id: viewConfig.id,
             },
             {
@@ -439,7 +435,7 @@ medusaIntegrationTestRunner({
 
           // Verify it's active
           let activeResponse = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             {
               headers: secondAdminHeader,
             }
@@ -448,9 +444,8 @@ medusaIntegrationTestRunner({
 
           // Now clear the active view
           const clearResponse = await api.post(
-            "/admin/view-configurations/active",
+            "/admin/views/orders/configurations/active",
             {
-              entity: "orders",
               view_configuration_id: null,
             },
             {
@@ -463,7 +458,7 @@ medusaIntegrationTestRunner({
 
           // Verify the active view is cleared
           activeResponse = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             {
               headers: secondAdminHeader,
             }
@@ -506,9 +501,8 @@ medusaIntegrationTestRunner({
 
           // Admin 1 creates a system default view
           const systemDefaultView = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "System Default View",
               configuration: {
                 visible_columns: ["id", "display_id", "created_at"],
@@ -524,7 +518,7 @@ medusaIntegrationTestRunner({
 
           // Admin 3 should be able to see this view
           const viewsForAdmin3 = await api.get(
-            "/admin/view-configurations?entity=orders",
+            "/admin/views/orders/configurations",
             thirdAdminHeaders
           )
 
@@ -537,7 +531,7 @@ medusaIntegrationTestRunner({
 
           // Admin 3 should also be able to retrieve it directly
           const directRetrieve = await api.get(
-            `/admin/view-configurations/${systemDefaultView.data.view_configuration.id}`,
+            `/admin/views/orders/configurations/${systemDefaultView.data.view_configuration.id}`,
             thirdAdminHeaders
           )
 
@@ -551,9 +545,8 @@ medusaIntegrationTestRunner({
         it("should allow creating system default without name", async () => {
           // Create a system default view without providing a name
           const systemDefaultView = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/customers/configurations",
             {
-              entity: "customers",
               is_system_default: true,
               configuration: {
                 visible_columns: ["id", "email", "first_name", "last_name"],
@@ -576,9 +569,8 @@ medusaIntegrationTestRunner({
         it("should set view as active when created with set_active flag", async () => {
           // Create a view with set_active = true
           const viewConfig = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "Auto-Active View",
               configuration: {
                 visible_columns: ["id", "display_id", "status"],
@@ -593,7 +585,7 @@ medusaIntegrationTestRunner({
 
           // Verify the view is now active
           const activeView = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             { headers: secondAdminHeader }
           )
 
@@ -643,7 +635,7 @@ medusaIntegrationTestRunner({
 
           // Update view2 with set_active flag
           const updateResponse = await api.post(
-            `/admin/view-configurations/${view2.id}`,
+            `/admin/views/orders/configurations/${view2.id}`,
             {
               name: "Updated View 2",
               set_active: true,
@@ -655,7 +647,7 @@ medusaIntegrationTestRunner({
 
           // Verify view2 is now the active view
           const activeView = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             { headers: secondAdminHeader }
           )
 
@@ -670,9 +662,8 @@ medusaIntegrationTestRunner({
         it("should allow resetting system default to code-level defaults", async () => {
           // Create a system default view
           const systemDefaultView = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "Custom System Default",
               is_system_default: true,
               configuration: {
@@ -688,7 +679,7 @@ medusaIntegrationTestRunner({
 
           // Verify it exists
           let viewsList = await api.get(
-            "/admin/view-configurations?entity=orders",
+            "/admin/views/orders/configurations",
             adminHeaders
           )
           expect(
@@ -697,7 +688,7 @@ medusaIntegrationTestRunner({
 
           // Delete the system default view (reset to code defaults)
           const deleteResponse = await api.delete(
-            `/admin/view-configurations/${viewId}`,
+            `/admin/views/orders/configurations/${viewId}`,
             adminHeaders
           )
 
@@ -706,7 +697,7 @@ medusaIntegrationTestRunner({
 
           // Verify it's gone
           viewsList = await api.get(
-            "/admin/view-configurations?entity=orders",
+            "/admin/views/orders/configurations",
             adminHeaders
           )
           expect(
@@ -715,7 +706,7 @@ medusaIntegrationTestRunner({
 
           // Getting active view should return null (falls back to code defaults)
           const activeView = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             adminHeaders
           )
           expect(activeView.data.view_configuration).toBeNull()
@@ -724,9 +715,8 @@ medusaIntegrationTestRunner({
         it("should return system default view when created and no user view is active", async () => {
           // Step 1: Create a system default view
           const systemDefaultView = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "System Default Orders",
               is_system_default: true,
               configuration: {
@@ -759,7 +749,7 @@ medusaIntegrationTestRunner({
 
           // Step 2: Retrieve active view - should return the system default
           const activeView = await api.get(
-            "/admin/view-configurations/active?entity=orders",
+            "/admin/views/orders/configurations/active",
             { headers: secondAdminHeader }
           )
 
@@ -783,9 +773,8 @@ medusaIntegrationTestRunner({
         it("should save and restore filters, sorting, and search configuration", async () => {
           // Create a view with filters, sorting, and search
           const viewConfig = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "Filtered View",
               configuration: {
                 visible_columns: ["id", "status", "total", "created_at"],
@@ -820,7 +809,7 @@ medusaIntegrationTestRunner({
 
           // Retrieve the view and verify filters are preserved
           const getResponse = await api.get(
-            `/admin/view-configurations/${viewConfig.data.view_configuration.id}`,
+            `/admin/views/orders/configurations/${viewConfig.data.view_configuration.id}`,
             { headers: secondAdminHeader }
           )
 
@@ -836,9 +825,8 @@ medusaIntegrationTestRunner({
         it("should remove filters when updating a view without filters", async () => {
           // Create a view with filters
           const viewConfig = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "View with Filters",
               configuration: {
                 visible_columns: ["id", "status", "total"],
@@ -859,7 +847,7 @@ medusaIntegrationTestRunner({
 
           // Update the view to remove filters
           const updateResponse = await api.post(
-            `/admin/view-configurations/${viewId}`,
+            `/admin/views/orders/configurations/${viewId}`,
             {
               configuration: {
                 visible_columns: ["id", "status", "total"],
@@ -887,7 +875,7 @@ medusaIntegrationTestRunner({
 
           // Retrieve again to double-check persistence
           const getResponse = await api.get(
-            `/admin/view-configurations/${viewId}`,
+            `/admin/views/orders/configurations/${viewId}`,
             { headers: secondAdminHeader }
           )
 
@@ -906,9 +894,8 @@ medusaIntegrationTestRunner({
         it("should update only specific filters while keeping others", async () => {
           // Create a view with multiple filters
           const viewConfig = await api.post(
-            "/admin/view-configurations",
+            "/admin/views/orders/configurations",
             {
-              entity: "orders",
               name: "Multi-Filter View",
               configuration: {
                 visible_columns: ["id", "status", "total", "created_at"],
@@ -930,7 +917,7 @@ medusaIntegrationTestRunner({
 
           // Update to remove only the 'total' filter
           const updateResponse = await api.post(
-            `/admin/view-configurations/${viewId}`,
+            `/admin/views/orders/configurations/${viewId}`,
             {
               configuration: {
                 visible_columns: ["id", "status", "total", "created_at"],

@@ -3,15 +3,13 @@ import {
   createFindParams,
   createOperatorMap,
   createSelectParams,
-} from "../../utils/validators"
-import { applyAndAndOrOperators } from "../../utils/common-validators"
+} from "../../../../utils/validators"
+import { applyAndAndOrOperators } from "../../../../utils/common-validators"
 
 export const AdminGetViewConfigurationParams = createSelectParams()
 
 export type AdminGetActiveViewConfigurationParamsType = z.infer<typeof AdminGetActiveViewConfigurationParams>
-export const AdminGetActiveViewConfigurationParams = createSelectParams().merge(z.object({
-  entity: z.string(),
-}))
+export const AdminGetActiveViewConfigurationParams = createSelectParams()
 
 export const AdminGetViewConfigurationsParamsFields = z.object({
   id: z.union([z.string(), z.array(z.string())]).optional(),
@@ -33,7 +31,6 @@ export const AdminGetViewConfigurationsParams = createFindParams({
 
 export type AdminCreateViewConfigurationType = z.infer<typeof AdminCreateViewConfiguration>
 export const AdminCreateViewConfiguration = z.object({
-  entity: z.string(),
   name: z.string().optional(),  // Make name optional
   is_system_default: z.boolean().optional().default(false),
   set_active: z.boolean().optional().default(false),
@@ -70,6 +67,5 @@ export const AdminUpdateViewConfiguration = z.object({
 
 export type AdminSetActiveViewConfigurationType = z.infer<typeof AdminSetActiveViewConfiguration>
 export const AdminSetActiveViewConfiguration = z.object({
-  entity: z.string(),
   view_configuration_id: z.union([z.string(), z.null()]),
 })
