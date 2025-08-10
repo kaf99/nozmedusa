@@ -7,7 +7,7 @@ import {
 import { OrderChangeDTO, OrderDTO } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
-  createOrUpdateOrderPaymentCollectionWorkflow,
+  createOrUpdateUnpaidOrderPaymentCollectionWorkflow,
   previewOrderChangeStep,
   updateOrderChangesStep,
 } from "../../order"
@@ -51,10 +51,10 @@ export type RequestDraftOrderEditWorkflowInput = {
 /**
  * This workflow requests a draft order edit. It's used by the
  * [Request Draft Order Edit Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersideditrequest).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * requesting a draft order edit.
- * 
+ *
  * @example
  * const { result } = await requestDraftOrderEditWorkflow(container)
  * .run({
@@ -63,9 +63,9 @@ export type RequestDraftOrderEditWorkflowInput = {
  *     requested_by: "user_123",
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Request a draft order edit.
  */
 export const requestDraftOrderEditWorkflow = createWorkflow(
@@ -99,7 +99,7 @@ export const requestDraftOrderEditWorkflow = createWorkflow(
     const updateOrderChangesData = getOrderChangesData({ input, orderChange })
     updateOrderChangesStep(updateOrderChangesData)
 
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
+    createOrUpdateUnpaidOrderPaymentCollectionWorkflow.runAsStep({
       input: {
         order_id: order.id,
       },

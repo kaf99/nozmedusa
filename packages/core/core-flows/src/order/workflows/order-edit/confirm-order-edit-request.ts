@@ -29,7 +29,7 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
-import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
+import { createOrUpdateUnpaidOrderPaymentCollectionWorkflow } from "../create-or-update-unpaid-order-payment-collection"
 
 /**
  * The data to validate that a requested order edit can be confirmed.
@@ -268,7 +268,7 @@ export const confirmOrderEditRequestWorkflow = createWorkflow(
     deleteReservationsByLineItemsStep(toRemoveReservationLineItemIds)
     reserveInventoryStep(formatedInventoryItems)
 
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
+    createOrUpdateUnpaidOrderPaymentCollectionWorkflow.runAsStep({
       input: {
         order_id: order.id,
       },

@@ -35,7 +35,7 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
-import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
+import { createOrUpdateUnpaidOrderPaymentCollectionWorkflow } from "../create-or-update-unpaid-order-payment-collection"
 
 /**
  * The data to validate that a return request can be confirmed.
@@ -368,7 +368,7 @@ export const confirmReturnRequestWorkflow = createWorkflow(
       })
     )
 
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
+    createOrUpdateUnpaidOrderPaymentCollectionWorkflow.runAsStep({
       input: {
         order_id: order.id,
       },

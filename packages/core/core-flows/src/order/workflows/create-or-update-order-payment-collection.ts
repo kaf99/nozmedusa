@@ -13,8 +13,8 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common"
 import { updatePaymentCollectionStep } from "../../payment-collection"
-import { createOrderPaymentCollectionWorkflow } from "./create-order-payment-collection"
 import { cancelPaymentCollectionWorkflow } from "../../payment-collection/workflows/cancel-payment-collection"
+import { createOrderPaymentCollectionWorkflow } from "./create-order-payment-collection"
 
 /**
  * The details of the order payment collection to create or update.

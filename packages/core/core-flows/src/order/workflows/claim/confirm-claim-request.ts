@@ -40,7 +40,7 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
-import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
+import { createOrUpdateUnpaidOrderPaymentCollectionWorkflow } from "../create-or-update-unpaid-order-payment-collection"
 
 function getUpdateReturnData({ returnId }: { returnId: string }) {
   return transform({ returnId }, ({ returnId }) => {
@@ -502,7 +502,7 @@ export const confirmClaimRequestWorkflow = createWorkflow(
       })
     })
 
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
+    createOrUpdateUnpaidOrderPaymentCollectionWorkflow.runAsStep({
       input: {
         order_id: order.id,
       },

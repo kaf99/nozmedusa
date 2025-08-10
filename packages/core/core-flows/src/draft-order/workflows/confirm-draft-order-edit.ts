@@ -16,8 +16,8 @@ import {
 } from "../../cart/utils/prepare-confirm-inventory-input"
 import { useRemoteQueryStep } from "../../common"
 import {
-  createOrUpdateOrderPaymentCollectionWorkflow,
-  previewOrderChangeStep,
+  createOrUpdateUnpaidOrderPaymentCollectionWorkflow,
+  previewOrderChangeStep
 } from "../../order"
 import { confirmOrderChanges } from "../../order/steps/confirm-order-changes"
 import { deleteReservationsByLineItemsStep } from "../../reservation"
@@ -211,7 +211,7 @@ export const confirmDraftOrderEditWorkflow = createWorkflow(
     deleteReservationsByLineItemsStep(toRemoveReservationLineItemIds)
     reserveInventoryStep(formatedInventoryItems)
 
-    createOrUpdateOrderPaymentCollectionWorkflow.runAsStep({
+    createOrUpdateUnpaidOrderPaymentCollectionWorkflow.runAsStep({
       input: {
         order_id: order.id,
       },
