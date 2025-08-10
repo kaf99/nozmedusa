@@ -55,7 +55,7 @@ medusaIntegrationTestRunner({
             }
           )
 
-          expect(response.status).toBe(201)
+          expect(response.status).toBe(200)
           expect(response.data.view_configuration).toMatchObject({
             entity: "orders",
             name: "My Order View",
@@ -83,7 +83,7 @@ medusaIntegrationTestRunner({
             }
           )
 
-          expect(response.status).toBe(201)
+          expect(response.status).toBe(200)
           expect(response.data.view_configuration).toMatchObject({
             entity: "orders",
             name: "Default Order View",
@@ -489,7 +489,7 @@ medusaIntegrationTestRunner({
       describe("System Default Views", () => {
         it("should make system default views available to all users", async () => {
           const container = getContainer()
-          
+
           // Create a third admin user
           const thirdAdminHeaders = { headers: {} }
           const { user: thirdAdminUser } = await createAdminUser(
@@ -513,7 +513,7 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
 
-          expect(systemDefaultView.status).toEqual(201)
+          expect(systemDefaultView.status).toEqual(200)
           expect(systemDefaultView.data.view_configuration.user_id).toBeNull()
 
           // Admin 3 should be able to see this view
@@ -541,7 +541,6 @@ medusaIntegrationTestRunner({
           )
         })
 
-
         it("should allow creating system default without name", async () => {
           // Create a system default view without providing a name
           const systemDefaultView = await api.post(
@@ -557,7 +556,7 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
 
-          expect(systemDefaultView.status).toEqual(201)
+          expect(systemDefaultView.status).toEqual(200)
           expect(systemDefaultView.data.view_configuration.user_id).toBeNull()
           expect(
             systemDefaultView.data.view_configuration.is_system_default
@@ -581,7 +580,7 @@ medusaIntegrationTestRunner({
             { headers: secondAdminHeader }
           )
 
-          expect(viewConfig.status).toEqual(201)
+          expect(viewConfig.status).toEqual(200)
 
           // Verify the view is now active
           const activeView = await api.get(
@@ -658,7 +657,6 @@ medusaIntegrationTestRunner({
           )
         })
 
-
         it("should allow resetting system default to code-level defaults", async () => {
           // Create a system default view
           const systemDefaultView = await api.post(
@@ -674,7 +672,7 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
 
-          expect(systemDefaultView.status).toEqual(201)
+          expect(systemDefaultView.status).toEqual(200)
           const viewId = systemDefaultView.data.view_configuration.id
 
           // Verify it exists
@@ -742,7 +740,7 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
 
-          expect(systemDefaultView.status).toEqual(201)
+          expect(systemDefaultView.status).toEqual(200)
           expect(
             systemDefaultView.data.view_configuration.is_system_default
           ).toBe(true)
@@ -790,7 +788,7 @@ medusaIntegrationTestRunner({
             { headers: secondAdminHeader }
           )
 
-          expect(viewConfig.status).toEqual(201)
+          expect(viewConfig.status).toEqual(200)
           expect(
             viewConfig.data.view_configuration.configuration.filters
           ).toEqual({
@@ -842,7 +840,7 @@ medusaIntegrationTestRunner({
             { headers: secondAdminHeader }
           )
 
-          expect(viewConfig.status).toEqual(201)
+          expect(viewConfig.status).toEqual(200)
           const viewId = viewConfig.data.view_configuration.id
 
           // Update the view to remove filters
@@ -912,7 +910,7 @@ medusaIntegrationTestRunner({
             { headers: secondAdminHeader }
           )
 
-          expect(viewConfig.status).toEqual(201)
+          expect(viewConfig.status).toEqual(200)
           const viewId = viewConfig.data.view_configuration.id
 
           // Update to remove only the 'total' filter

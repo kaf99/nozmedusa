@@ -15,16 +15,14 @@ export const GET = async (
   const filters = {
     ...req.filterableFields,
     entity: req.params.entity,
-    $or: [
-      { user_id: req.auth_context.actor_id },
-      { is_system_default: true },
-    ],
+    $or: [{ user_id: req.auth_context.actor_id }, { is_system_default: true }],
   }
 
-  const [viewConfigurations, count] = await settingsService.listAndCountViewConfigurations(
-    filters,
-    req.queryConfig
-  )
+  const [viewConfigurations, count] =
+    await settingsService.listAndCountViewConfigurations(
+      filters,
+      req.queryConfig
+    )
 
   res.json({
     view_configurations: viewConfigurations,
@@ -56,12 +54,10 @@ export const POST = async (
     user_id: req.body.is_system_default ? null : req.auth_context.actor_id,
   }
 
-  // For now, any authenticated user can create system defaults
-  // TODO: Add proper permission checks when permission system is implemented
+  const viewConfiguration = await settingsService.createViewConfigurations(
+    input
+  )
 
-  const viewConfiguration = await settingsService.createViewConfigurations(input)
-
-  // If set_active is true, set this view as the active one
   if (set_active) {
     await settingsService.setActiveViewConfiguration(
       viewConfiguration.entity,
@@ -70,5 +66,5 @@ export const POST = async (
     )
   }
 
-  return res.status(201).json({ view_configuration: viewConfiguration })
+  return res.json({ view_configuration: viewConfiguration })
 }
