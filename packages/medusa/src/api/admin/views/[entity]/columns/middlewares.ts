@@ -1,9 +1,6 @@
-import { validateAndTransformBody, validateAndTransformQuery } from "@medusajs/framework"
+import { validateAndTransformQuery } from "@medusajs/framework"
 import { MiddlewareRoute } from "@medusajs/framework/http"
-import {
-  AdminGetColumnsParams,
-  AdminUpdateColumnVisibility,
-} from "./validators"
+import { AdminGetColumnsParams } from "./validators"
 import { ensureViewConfigurationsEnabled } from "../configurations/middleware"
 
 export const columnRoutesMiddlewares: MiddlewareRoute[] = [
@@ -16,18 +13,6 @@ export const columnRoutesMiddlewares: MiddlewareRoute[] = [
   {
     method: ["GET"],
     matcher: "/admin/views/:entity/columns",
-    middlewares: [
-      validateAndTransformQuery(
-        AdminGetColumnsParams,
-        {}
-      ),
-    ],
-  },
-  {
-    method: ["POST"],
-    matcher: "/admin/views/:entity/columns",
-    middlewares: [
-      validateAndTransformBody(AdminUpdateColumnVisibility),
-    ],
+    middlewares: [validateAndTransformQuery(AdminGetColumnsParams, {})],
   },
 ]
