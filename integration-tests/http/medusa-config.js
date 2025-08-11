@@ -31,9 +31,6 @@ module.exports = defineConfig({
     },
   },
   modules: {
-    [Modules.SETTINGS]: {
-      resolve: "@medusajs/settings",
-    },
     [Modules.FULFILLMENT]: {
       /** @type {import('@medusajs/fulfillment').FulfillmentModuleOptions} */
       options: {
