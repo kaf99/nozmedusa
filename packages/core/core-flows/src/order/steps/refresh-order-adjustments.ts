@@ -11,14 +11,12 @@ import {
   getPromotionCodesToApply,
   prepareAdjustmentsFromPromotionActionsStep,
 } from "../../cart"
-import { createDraftOrderLineItemAdjustmentsStep } from "../steps/create-draft-order-line-item-adjustments"
-import { createDraftOrderShippingMethodAdjustmentsStep } from "../steps/create-draft-order-shipping-method-adjustments"
-import { removeDraftOrderLineItemAdjustmentsStep } from "../steps/remove-draft-order-line-item-adjustments"
-import { removeDraftOrderShippingMethodAdjustmentsStep } from "../steps/remove-draft-order-shipping-method-adjustments"
-import { updateDraftOrderPromotionsStep } from "../steps/update-draft-order-promotions"
+import { createDraftOrderLineItemAdjustmentsStep } from "../../draft-order/steps/create-draft-order-line-item-adjustments"
+import { createDraftOrderShippingMethodAdjustmentsStep } from "../../draft-order/steps/create-draft-order-shipping-method-adjustments"
+import { removeDraftOrderLineItemAdjustmentsStep } from "../../draft-order/steps/remove-draft-order-line-item-adjustments"
+import { removeDraftOrderShippingMethodAdjustmentsStep } from "../../draft-order/steps/remove-draft-order-shipping-method-adjustments"
 
-export const refreshDraftOrderAdjustmentsWorkflowId =
-  "refresh-draft-order-adjustments"
+export const refreshOrderAdjustmentsWorkflowId = "refresh-order-adjustments"
 
 /**
  * The details of the draft order to refresh the adjustments for.
@@ -45,14 +43,14 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
 
 /**
  * This workflow refreshes the adjustments or promotions for a draft order. It's used by other workflows
- * like {@link addDraftOrderItemsWorkflow} to refresh the promotions whenever changes
+ * like {@link addOrderItemsWorkflow} to refresh the promotions whenever changes
  * are made to the draft order.
  *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * refreshing the adjustments or promotions for a draft order.
  *
  * @example
- * const { result } = await refreshDraftOrderAdjustmentsWorkflow(container)
+ * const { result } = await refreshOrderAdjustmentsWorkflow(container)
  * .run({
  *   input: {
  *     order: order,
@@ -66,8 +64,8 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
  *
  * Refresh the promotions in a draft order.
  */
-export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
-  refreshDraftOrderAdjustmentsWorkflowId,
+export const refreshOrderAdjustmentsWorkflow = createWorkflow(
+  refreshOrderAdjustmentsWorkflowId,
   function (input: WorkflowData<RefreshDraftOrderAdjustmentsWorkflowInput>) {
     const promotionCodesToApply = getPromotionCodesToApply({
       cart: input.order,
@@ -101,12 +99,12 @@ export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
       }),
       createDraftOrderShippingMethodAdjustmentsStep({
         shippingMethodAdjustmentsToCreate: shippingMethodAdjustmentsToCreate,
-      }),
-      updateDraftOrderPromotionsStep({
-        id: input.order.id,
-        promo_codes: input.promo_codes,
-        action: input.action,
       })
+      // updateDraftOrderPromotionsStep({
+      //   id: input.order.id,
+      //   promo_codes: input.promo_codes,
+      //   action: input.action,
+      // })
     )
 
     return new WorkflowResponse(void 0)

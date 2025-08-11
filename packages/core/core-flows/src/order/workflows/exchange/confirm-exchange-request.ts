@@ -15,6 +15,7 @@ import {
   OrderChangeStatus,
   OrderWorkflowEvents,
   ReturnStatus,
+  PromotionActions,
 } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -41,6 +42,8 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
+import { refreshOrderAdjustmentsWorkflow } from "../../steps/refresh-order-adjustments"
+import { draftOrderFieldsForRefreshSteps } from "../../../draft-order/utils/fields"
 
 /**
  * The data to validate that a requested exchange can be confirmed.
@@ -295,20 +298,22 @@ export const confirmExchangeRequestWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     })
 
-    const order: OrderDTO = useRemoteQueryStep({
-      entry_point: "orders",
-      fields: [
-        "id",
-        "version",
-        "canceled_at",
-        "items.*",
-        "items.item.id",
-        "shipping_address.*",
-      ],
-      variables: { id: orderExchange.order_id },
-      list: false,
-      throw_if_key_not_found: true,
-    }).config({ name: "order-query" })
+    const order: OrderDTO & { promotions: { code: string }[] } =
+      useRemoteQueryStep({
+        entry_point: "orders",
+        fields: [
+          "id",
+          "version",
+          "canceled_at",
+          "items.*",
+          "items.item.id",
+          "shipping_address.*",
+          "promotions.code",
+        ],
+        variables: { id: orderExchange.order_id },
+        list: false,
+        throw_if_key_not_found: true,
+      }).config({ name: "order-query" })
 
     const orderChange: OrderChangeDTO = useRemoteQueryStep({
       entry_point: "order_change",
@@ -484,6 +489,35 @@ export const confirmExchangeRequestWorkflow = createWorkflow(
 
       createRemoteLinkStep(returnLink).config({
         name: "exchange-return-shipping-fulfillment-link",
+      })
+    })
+
+    const refetchedOrder: OrderDTO & { promotions: { code: string }[] } =
+      useRemoteQueryStep({
+        entry_point: "orders",
+        fields: draftOrderFieldsForRefreshSteps,
+        variables: { id: orderExchange.order_id },
+        list: false,
+        throw_if_key_not_found: true,
+      }).config({ name: "order-refetch-query" })
+
+    const appliedPromoCodes: string[] = transform(
+      refetchedOrder,
+      (refetchedOrder) =>
+        refetchedOrder.promotions?.map((promotion) => promotion.code) ?? []
+    )
+
+    // If any the order has any promo codes, then we need to refresh the adjustments.
+    when(
+      appliedPromoCodes,
+      (appliedPromoCodes) => appliedPromoCodes.length > 0
+    ).then(() => {
+      refreshOrderAdjustmentsWorkflow.runAsStep({
+        input: {
+          order: refetchedOrder,
+          promo_codes: appliedPromoCodes,
+          action: PromotionActions.REPLACE,
+        },
       })
     })
 
