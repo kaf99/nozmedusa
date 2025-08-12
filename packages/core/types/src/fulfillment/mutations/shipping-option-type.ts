@@ -16,11 +16,6 @@ export interface CreateShippingOptionTypeDTO {
    * The code of the shipping option type.
    */
   code: string
-
-  /**
-   * The associated shipping option's ID.
-   */
-  shipping_option_id: string
 }
 
 /**
@@ -31,5 +26,10 @@ export interface UpdateShippingOptionTypeDTO
   /**
    * The ID of the shipping option type.
    */
-  id: string
+  id?: string
 }
+
+/**
+ * A shipping option type to be created or updated.
+ */
+export interface UpsertShippingOptionTypeDTO extends UpdateShippingOptionTypeDTO {}
