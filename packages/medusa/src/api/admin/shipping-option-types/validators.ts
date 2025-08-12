@@ -16,6 +16,7 @@ export const AdminGetShippingOptionTypesParamsFields = z.object({
   id: z.union([z.string(), z.array(z.string())]).optional(),
   label: z.union([z.string(), z.array(z.string())]).optional(),
   code: z.union([z.string(), z.array(z.string())]).optional(),
+  description: z.union([z.string(), z.array(z.string())]).optional(),
   created_at: createOperatorMap().optional(),
   updated_at: createOperatorMap().optional(),
   deleted_at: createOperatorMap().optional(),
@@ -37,6 +38,8 @@ export type AdminCreateShippingOptionTypeType = z.infer<
 export const AdminCreateShippingOptionType = z
   .object({
     label: z.string(),
+    code: z.string(),
+    description: z.string(),
     metadata: z.record(z.unknown()).nullish(),
   })
   .strict()
@@ -47,6 +50,8 @@ export type AdminUpdateShippingOptionTypeType = z.infer<
 export const AdminUpdateShippingOptionType = z
   .object({
     label: z.string().optional(),
+    code: z.string().optional(),
+    description: z.string().optional(),
     metadata: z.record(z.unknown()).nullish(),
   })
   .strict()

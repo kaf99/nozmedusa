@@ -44,14 +44,14 @@ export const POST = async (
   const input = [req.validatedBody]
 
   const { result } = await createShippingOptionTypesWorkflow(req.scope).run({
-    input: { product_types: input },
+    input: { shipping_option_types: input },
   })
 
-  const productType = await refetchShippingOptionType(
+  const shippingOptionType = await refetchShippingOptionType(
     result[0].id,
     req.scope,
     req.queryConfig.fields
   )
 
-  res.status(200).json({ product_type: productType })
+  res.status(200).json({ shipping_option_type: shippingOptionType })
 }

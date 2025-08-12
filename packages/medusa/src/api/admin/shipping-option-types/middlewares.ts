@@ -14,7 +14,7 @@ import {
 export const adminShippingOptionTypeRoutesMiddlewares: MiddlewareRoute[] = [
   {
     method: ["GET"],
-    matcher: "/admin/product-types",
+    matcher: "/admin/shipping-option-types",
     middlewares: [
       validateAndTransformQuery(
         AdminGetShippingOptionTypesParams,
@@ -24,7 +24,7 @@ export const adminShippingOptionTypeRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["GET"],
-    matcher: "/admin/product-types/:id",
+    matcher: "/admin/shipping-option-types/:id",
     middlewares: [
       validateAndTransformQuery(
         AdminGetShippingOptionTypeParams,
@@ -32,10 +32,9 @@ export const adminShippingOptionTypeRoutesMiddlewares: MiddlewareRoute[] = [
       ),
     ],
   },
-  // Create/update/delete methods are new in v2
   {
     method: ["POST"],
-    matcher: "/admin/product-types",
+    matcher: "/admin/shipping-option-types",
     middlewares: [
       validateAndTransformBody(AdminCreateShippingOptionType),
       validateAndTransformQuery(
@@ -46,7 +45,7 @@ export const adminShippingOptionTypeRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["POST"],
-    matcher: "/admin/product-types/:id",
+    matcher: "/admin/shipping-option-types/:id",
     middlewares: [
       validateAndTransformBody(AdminUpdateShippingOptionType),
       validateAndTransformQuery(

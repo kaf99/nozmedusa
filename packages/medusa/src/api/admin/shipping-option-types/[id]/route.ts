@@ -1,79 +1,79 @@
 import {
-  deleteShippingOptionsWorkflow,
-  updateShippingOptionsWorkflow,
+  deleteShippingOptionTypesWorkflow,
+  updateShippingOptionTypesWorkflow,
 } from "@medusajs/core-flows"
-import { FulfillmentWorkflow, HttpTypes } from "@medusajs/framework/types"
 import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { refetchShippingOption } from "../helpers"
+
+import { refetchShippingOptionType } from "../helpers"
 import {
-  AdminGetShippingOptionParamsType,
-  AdminUpdateShippingOptionType,
+  AdminGetShippingOptionTypeParamsType,
+  AdminUpdateShippingOptionTypeType,
 } from "../validators"
+import { HttpTypes } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 
 export const GET = async (
-  req: AuthenticatedMedusaRequest<AdminGetShippingOptionParamsType>,
-  res: MedusaResponse<HttpTypes.AdminShippingOptionResponse>
+  req: AuthenticatedMedusaRequest<AdminGetShippingOptionTypeParamsType>,
+  res: MedusaResponse<HttpTypes.AdminShippingOptionTypeResponse>
 ) => {
-  const shippingOption = await refetchShippingOption(
+  const shippingOptionType = await refetchShippingOptionType(
     req.params.id,
     req.scope,
     req.queryConfig.fields
   )
 
-  if (!shippingOption) {
-    throw new MedusaError(
-      MedusaError.Types.NOT_FOUND,
-      `Shipping Option with id: ${req.params.id} not found`
-    )
-  }
-
-  res.json({ shipping_option: shippingOption })
+  res.status(200).json({ shipping_option_type: shippingOptionType })
 }
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest<AdminUpdateShippingOptionType>,
-  res: MedusaResponse<HttpTypes.AdminShippingOptionResponse>
+  req: AuthenticatedMedusaRequest<AdminUpdateShippingOptionTypeType>,
+  res: MedusaResponse<HttpTypes.AdminShippingOptionTypeResponse>
 ) => {
-  const shippingOptionPayload = req.validatedBody
+  const existingShippingOptionType = await refetchShippingOptionType(
+    req.params.id,
+    req.scope,
+    ["id"]
+  )
 
-  const workflow = updateShippingOptionsWorkflow(req.scope)
+  if (!existingShippingOptionType) {
+    throw new MedusaError(
+      MedusaError.Types.NOT_FOUND,
+      `Shipping option type with id "${req.params.id}" not found`
+    )
+  }
 
-  const workflowInput: FulfillmentWorkflow.UpdateShippingOptionsWorkflowInput =
-    {
-      id: req.params.id,
-      ...shippingOptionPayload,
-    }
-
-  const { result } = await workflow.run({
-    input: [workflowInput],
+  const { result } = await updateShippingOptionTypesWorkflow(req.scope).run({
+    input: {
+      selector: { id: req.params.id },
+      update: req.validatedBody,
+    },
   })
 
-  const shippingOption = await refetchShippingOption(
+  const shippingOptionType = await refetchShippingOptionType(
     result[0].id,
     req.scope,
     req.queryConfig.fields
   )
 
-  res.status(200).json({ shipping_option: shippingOption })
+  res.status(200).json({ shipping_option_type: shippingOptionType })
 }
 
 export const DELETE = async (
   req: AuthenticatedMedusaRequest,
-  res: MedusaResponse<HttpTypes.AdminShippingOptionDeleteResponse>
+  res: MedusaResponse<HttpTypes.AdminShippingOptionTypeDeleteResponse>
 ) => {
-  const shippingOptionId = req.params.id
+  const id = req.params.id
 
-  const workflow = deleteShippingOptionsWorkflow(req.scope)
-
-  await workflow.run({
-    input: { ids: [shippingOptionId] },
+  await deleteShippingOptionTypesWorkflow(req.scope).run({
+    input: { ids: [id] },
   })
 
-  res
-    .status(200)
-    .json({ id: shippingOptionId, object: "shipping_option", deleted: true })
+  res.status(200).json({
+    id,
+    object: "shipping_option_type",
+    deleted: true,
+  })
 }
