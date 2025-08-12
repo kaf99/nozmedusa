@@ -1,9 +1,6 @@
 import * as QueryConfig from "./query-config"
 import { MiddlewareRoute } from "@medusajs/framework/http"
-import {
-  validateAndTransformBody,
-  validateAndTransformQuery,
-} from "@medusajs/framework"
+import { validateAndTransformBody, validateAndTransformQuery, } from "@medusajs/framework"
 import {
   AdminCreateShippingOptionType,
   AdminGetShippingOptionTypeParams,
@@ -56,7 +53,7 @@ export const adminShippingOptionTypeRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     method: ["DELETE"],
-    matcher: "/admin/product-types/:id",
+    matcher: "/admin/shipping-option-types/:id",
     middlewares: [],
   },
 ]

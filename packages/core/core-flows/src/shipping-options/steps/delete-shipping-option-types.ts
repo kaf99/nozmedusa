@@ -3,13 +3,13 @@ import { Modules } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 
 /**
- * The IDs of the product types to delete.
+ * The IDs of the shipping option types to delete.
  */
 export type DeleteShippingOptionTypesStepInput = string[]
 
 export const deleteShippingOptionTypesStepId = "delete-shipping-option-types"
 /**
- * This step deletes one or more product types.
+ * This step deletes one or more shipping option types.
  */
 export const deleteShippingOptionTypesStep = createStep(
   deleteShippingOptionTypesStepId,
