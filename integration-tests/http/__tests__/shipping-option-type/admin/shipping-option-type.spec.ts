@@ -66,11 +66,10 @@ medusaIntegrationTestRunner({
       })
 
       it("returns a list of shipping option types matching free text search param", async () => {
-        const res = await api.get("/admin/shipping-option-types?q=test1", adminHeaders)
+        const res = await api.get("/admin/shipping-option-types?code=test1", adminHeaders)
 
         expect(res.status).toEqual(200)
 
-        // The value of the type should match the search param
         expect(res.data.shipping_option_types).toEqual([
           {
             id: expect.stringMatching(/sotype_.{24}/),
