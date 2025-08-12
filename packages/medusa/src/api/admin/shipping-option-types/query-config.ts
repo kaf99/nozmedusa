@@ -2,6 +2,7 @@ export const defaultAdminShippingOptionTypeFields = [
   "id",
   "label",
   "code",
+  "description",
   "created_at",
   "updated_at",
   "metadata",
