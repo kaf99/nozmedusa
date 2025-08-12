@@ -40,7 +40,6 @@ export const AdminCreateShippingOptionType = z
     label: z.string(),
     code: z.string(),
     description: z.string(),
-    metadata: z.record(z.unknown()).nullish(),
   })
   .strict()
 
@@ -52,6 +51,5 @@ export const AdminUpdateShippingOptionType = z
     label: z.string().optional(),
     code: z.string().optional(),
     description: z.string().optional(),
-    metadata: z.record(z.unknown()).nullish(),
   })
   .strict()

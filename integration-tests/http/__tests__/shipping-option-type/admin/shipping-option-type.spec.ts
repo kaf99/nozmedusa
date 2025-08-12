@@ -1,8 +1,5 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
-import {
-  adminHeaders,
-  createAdminUser,
-} from "../../../../helpers/create-admin-user"
+import { adminHeaders, createAdminUser, } from "../../../../helpers/create-admin-user"
 
 jest.setTimeout(30000)
 
@@ -55,7 +52,6 @@ medusaIntegrationTestRunner({
               description: "Test1 description",
               created_at: expect.any(String),
               updated_at: expect.any(String),
-              metadata: null,
             },
             {
               id: expect.stringMatching(/sotype_.{24}/),
@@ -64,7 +60,6 @@ medusaIntegrationTestRunner({
               description: "Test2 description",
               created_at: expect.any(String),
               updated_at: expect.any(String),
-              metadata: null,
             },
           ])
         )
@@ -84,7 +79,6 @@ medusaIntegrationTestRunner({
             description: "Test1 description",
             created_at: expect.any(String),
             updated_at: expect.any(String),
-            metadata: null,
           },
         ])
       })
@@ -105,7 +99,6 @@ medusaIntegrationTestRunner({
           description: "Test1 description",
           created_at: expect.any(String),
           updated_at: expect.any(String),
-          metadata: null,
         })
       })
     })
