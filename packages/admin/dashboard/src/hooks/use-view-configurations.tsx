@@ -121,9 +121,3 @@ export const useViewConfiguration = (entity: string, viewId: string) => {
     deleteView,
   }
 }
-
-// Convenience hooks for specific entities
-export const useOrderViewConfigurations = () => useViewConfigurations("orders")
-export const useProductViewConfigurations = () => useViewConfigurations("products")
-export const useCustomerViewConfigurations = () => useViewConfigurations("customers")
-export const useUserViewConfigurations = () => useViewConfigurations("users")
