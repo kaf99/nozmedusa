@@ -1,8 +1,11 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
+import { IOrderModuleService, IPromotionModuleService } from "@medusajs/types"
 import {
   ContainerRegistrationKeys,
   Modules,
   OrderChangeStatus,
+  PromotionStatus,
+  PromotionType,
   RuleOperator,
 } from "@medusajs/utils"
 import {
@@ -27,13 +30,16 @@ medusaIntegrationTestRunner({
     let location
     let locationTwo
     let productExtra
+    let container
+    let region
+    let salesChannel
     const shippingProviderId = "manual_test-provider"
 
     beforeEach(async () => {
-      const container = getContainer()
+      container = getContainer()
       await createAdminUser(dbConnection, adminHeaders, container)
 
-      const region = (
+      region = (
         await api.post(
           "/admin/regions",
           {
@@ -80,7 +86,7 @@ medusaIntegrationTestRunner({
         )
       ).data.tax_rate
 
-      const salesChannel = (
+      salesChannel = (
         await api.post(
           "/admin/sales-channels",
           {
@@ -1143,6 +1149,261 @@ medusaIntegrationTestRunner({
             }),
           ])
         )
+      })
+    })
+
+    describe("Order Edits promotions", () => {
+      beforeEach(async () => {
+        const promotionModule: IPromotionModuleService = container.resolve(
+          Modules.PROMOTION
+        )
+
+        const appliedPromotion = await promotionModule.createPromotions({
+          code: "PROMOTION_APPLIED",
+          type: PromotionType.STANDARD,
+          status: PromotionStatus.ACTIVE,
+          application_method: {
+            type: "percentage",
+            target_type: "order",
+            allocation: "across",
+            value: 10,
+            currency_code: "usd",
+            target_rules: [],
+          },
+        })
+
+        const orderModule: IOrderModuleService = container.resolve(
+          Modules.ORDER
+        )
+
+        order = await orderModule.createOrders({
+          email: "foo@bar.com",
+          region_id: region.id,
+          sales_channel_id: salesChannel.id,
+          items: [
+            {
+              // @ts-ignore
+              id: "item-1",
+              title: "Custom Item",
+              quantity: 1,
+              unit_price: 10,
+            },
+          ],
+          shipping_address: {
+            first_name: "Test",
+            last_name: "Test",
+            address_1: "Test",
+            city: "Test",
+            country_code: "US",
+            postal_code: "12345",
+            phone: "12345",
+          },
+          billing_address: {
+            first_name: "Test",
+            last_name: "Test",
+            address_1: "Test",
+            city: "Test",
+            country_code: "US",
+            postal_code: "12345",
+          },
+          currency_code: "usd",
+        })
+
+        await orderModule.createOrderLineItemAdjustments([
+          {
+            code: appliedPromotion.code!,
+            amount: 1,
+            item_id: "item-1",
+            promotion_id: appliedPromotion.id,
+          },
+        ])
+
+        const remoteLink = container.resolve(ContainerRegistrationKeys.LINK)
+
+        await remoteLink.create({
+          [Modules.ORDER]: { order_id: order.id },
+          [Modules.PROMOTION]: { promotion_id: appliedPromotion.id },
+        })
+      })
+
+      it("should update adjustments when adding a new item", async () => {
+        let result = await api.post(
+          "/admin/order-edits",
+          {
+            order_id: order.id,
+            description: "Test",
+          },
+          adminHeaders
+        )
+
+        const orderId = result.data.order_change.order_id
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
+
+        // Add item with price $12 + $1.2 in taxes
+        result = (
+          await api.post(
+            `/admin/order-edits/${orderId}/items`,
+            {
+              items: [
+                {
+                  variant_id: productExtra.variants[0].id,
+                  quantity: 1,
+                },
+              ],
+            },
+            adminHeaders
+          )
+        ).data.order_preview
+
+        // 10% discount on two items of $12 and $10 = $2.2
+        // Aside from this there is a tax rate of 10%, which adds ($1.2 - $0.12 (discount tax)) of taxes on the item of $12.
+        expect(result.total).toEqual(20.88)
+        expect(result.original_total).toEqual(23.2)
+      })
+
+      it("should update adjustments when updating an item", async () => {
+        let result = await api.post(
+          "/admin/order-edits",
+          {
+            order_id: order.id,
+            description: "Test",
+          },
+          adminHeaders
+        )
+
+        const orderId = result.data.order_change.order_id
+
+        const item = order.items[0]
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
+
+        let adjustments = result.items[0].adjustments
+
+        expect(adjustments).toEqual([
+          expect.objectContaining({
+            amount: 1,
+            item_id: item.id,
+          }),
+        ])
+
+        // Update item quantity
+        result = (
+          await api.post(
+            `/admin/order-edits/${orderId}/items/item/${item.id}`,
+            {
+              quantity: 2,
+            },
+            adminHeaders
+          )
+        ).data.order_preview
+
+        expect(result.total).toEqual(18)
+        expect(result.original_total).toEqual(20)
+
+        adjustments = result.items[0].adjustments
+
+        expect(adjustments).toEqual([
+          expect.objectContaining({
+            amount: 2,
+            item_id: item.id,
+          }),
+        ])
+      })
+
+      it("should update adjustments when removing an item", async () => {
+        let result = await api.post(
+          "/admin/order-edits",
+          {
+            order_id: order.id,
+            description: "Test",
+          },
+          adminHeaders
+        )
+
+        const orderId = result.data.order_change.order_id
+
+        const item = order.items[0]
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
+
+        let adjustments = result.items[0].adjustments
+
+        expect(adjustments).toEqual([
+          expect.objectContaining({
+            amount: 1,
+            item_id: item.id,
+          }),
+        ])
+
+        result = (
+          await api.post(
+            `/admin/order-edits/${orderId}/items`,
+            {
+              items: [
+                {
+                  variant_id: productExtra.variants[0].id,
+                  quantity: 1,
+                },
+              ],
+            },
+            adminHeaders
+          )
+        ).data.order_preview
+
+        const orderItems = result.items
+
+        expect(orderItems).toEqual([
+          expect.objectContaining({
+            adjustments: [
+              expect.objectContaining({
+                amount: 1,
+                item_id: item.id,
+              }),
+            ],
+          }),
+          expect.objectContaining({
+            adjustments: [
+              expect.objectContaining({
+                amount: 1.2,
+              }),
+            ],
+          }),
+        ])
+
+        const newItem = result.items.find(
+          (item) => item.variant_id === productExtra.variants[0].id
+        )
+
+        const actionId = newItem.actions[0].id
+
+        result = (
+          await api.delete(
+            `/admin/order-edits/${orderId}/items/${actionId}`,
+            adminHeaders
+          )
+        ).data.order_preview
+
+        adjustments = result.items[0].adjustments
+
+        expect(adjustments).toEqual([
+          expect.objectContaining({
+            amount: 1,
+            item_id: item.id,
+          }),
+        ])
       })
     })
   },

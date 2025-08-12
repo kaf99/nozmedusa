@@ -6,8 +6,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   ChangeActionType,
-  OrderChangeStatus,
-  PromotionActions,
+  OrderChangeStatus
 } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -179,7 +178,6 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
     refreshOrderEditAdjustmentsWorkflow.runAsStep({
       input: {
         order: order,
-        action: PromotionActions.REPLACE,
       },
     })
 

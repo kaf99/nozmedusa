@@ -5,11 +5,7 @@ import {
   OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import {
-  ChangeActionType,
-  OrderChangeStatus,
-  PromotionActions,
-} from "@medusajs/framework/utils"
+import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -184,7 +180,6 @@ export const updateOrderEditItemQuantityWorkflow = createWorkflow(
     refreshOrderEditAdjustmentsWorkflow.runAsStep({
       input: {
         order: order,
-        action: PromotionActions.REPLACE,
       },
     })
 

@@ -1,9 +1,9 @@
 import { PromotionActions } from "@medusajs/framework/utils"
 import {
-    createWorkflow,
-    transform,
-    WorkflowData,
-    WorkflowResponse,
+  createWorkflow,
+  transform,
+  WorkflowData,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { OrderDTO, OrderStatus, PromotionDTO } from "@medusajs/types"
 import { refreshDraftOrderAdjustmentsWorkflow } from "../../../draft-order/workflows/refresh-draft-order-adjustments"
@@ -17,7 +17,7 @@ export const refreshOrderEditAdjustmentsWorkflowId =
  */
 export interface RefreshOrderEditAdjustmentsWorkflowInput {
   /**
-   * The draft order to refresh the adjustments for.
+   * The order edit to refresh the adjustments for.
    */
   order: {
     id: string
@@ -27,15 +27,6 @@ export interface RefreshOrderEditAdjustmentsWorkflowInput {
     items: OrderDTO["items"]
     promotions: PromotionDTO[]
   }
-  /**
-   * The action to apply with the promo codes. You can
-   * either:
-   *
-   * - Add the promo codes to the draft order.
-   * - Remove the promo codes from the draft order.
-   * - Replace the existing promo codes with the new ones.
-   */
-  action: PromotionActions
 }
 
 export const refreshOrderEditAdjustmentsWorkflow = createWorkflow(

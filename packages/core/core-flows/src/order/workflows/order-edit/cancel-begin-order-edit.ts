@@ -3,7 +3,6 @@ import {
   ChangeActionType,
   OrderChangeStatus,
   OrderEditWorkflowEvents,
-  PromotionActions,
 } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -157,7 +156,6 @@ export const cancelBeginOrderEditWorkflow = createWorkflow(
     refreshOrderEditAdjustmentsWorkflow.runAsStep({
       input: {
         order: order,
-        action: PromotionActions.REPLACE,
       },
     })
   }
