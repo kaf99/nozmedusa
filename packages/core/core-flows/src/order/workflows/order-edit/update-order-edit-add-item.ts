@@ -5,7 +5,11 @@ import {
   OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
+import {
+  ChangeActionType,
+  OrderChangeStatus,
+  PromotionActions,
+} from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -22,6 +26,8 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
+import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 /**
  * The data to validate that a new item can be updated in an order edit.
@@ -43,17 +49,17 @@ export type UpdateOrderEditAddItemValidationStepInput = {
 
 /**
  * This step validates that a new item can be updated in an order edit.
- * If the order is canceled, the order change is not active, 
+ * If the order is canceled, the order change is not active,
  * the item isn't in the order edit, or the action isn't adding an item,
  * the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateOrderEditAddItemValidationStep({
  *   order: {
@@ -76,11 +82,7 @@ export type UpdateOrderEditAddItemValidationStepInput = {
 export const updateOrderEditAddItemValidationStep = createStep(
   "update-order-edit-add-item-validation",
   async function (
-    {
-      order,
-      orderChange,
-      input,
-    }: UpdateOrderEditAddItemValidationStepInput,
+    { order, orderChange, input }: UpdateOrderEditAddItemValidationStepInput,
     context
   ) {
     throwIfIsCancelled(order, "Order")
@@ -104,10 +106,10 @@ export const updateOrderEditAddItemWorkflowId = "update-order-edit-add-item"
 /**
  * This workflow updates a new item in an order edit. It's used by the
  * [Update Item Admin API Route](https://docs.medusajs.com/api/admin#order-edits_postordereditsiditemsaction_id).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to update a new item in an order edit
  * in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateOrderEditAddItemWorkflow(container)
  * .run({
@@ -119,9 +121,9 @@ export const updateOrderEditAddItemWorkflowId = "update-order-edit-add-item"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update a new item in an order edit.
  */
 export const updateOrderEditAddItemWorkflow = createWorkflow(
@@ -129,9 +131,9 @@ export const updateOrderEditAddItemWorkflow = createWorkflow(
   function (
     input: WorkflowData<OrderWorkflow.UpdateOrderEditAddNewItemWorkflowInput>
   ): WorkflowResponse<OrderPreviewDTO> {
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
-      fields: ["id", "status", "canceled_at", "items.*"],
+      fields: fieldsToRefreshOrderEdit,
       variables: { id: input.order_id },
       list: false,
       throw_if_key_not_found: true,
@@ -178,6 +180,13 @@ export const updateOrderEditAddItemWorkflow = createWorkflow(
     )
 
     updateOrderChangeActionsStep([updateData])
+
+    refreshOrderEditAdjustmentsWorkflow.runAsStep({
+      input: {
+        order: order,
+        action: PromotionActions.REPLACE,
+      },
+    })
 
     return new WorkflowResponse(previewOrderChangeStep(order.id))
   }

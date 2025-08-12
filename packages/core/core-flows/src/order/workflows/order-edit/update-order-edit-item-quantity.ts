@@ -5,7 +5,11 @@ import {
   OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
+import {
+  ChangeActionType,
+  OrderChangeStatus,
+  PromotionActions,
+} from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -22,6 +26,8 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
+import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 /**
  * The data to validate that an existing order item can be updated in an order edit.
@@ -46,14 +52,14 @@ export type UpdateOrderEditItemQuantityValidationStepInput = {
  * If the order is canceled, the order change is not active,
  * the item isn't in the order edit, or the action isn't updating an existing item,
  * the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateOrderEditItemQuantityValidationStep({
  *   order: {
@@ -104,10 +110,10 @@ export const updateOrderEditItemQuantityWorkflowId =
   "update-order-edit-update-quantity"
 /**
  * This workflow updates an existing order item that was previously added to the order edit.
- * 
- * You can use this workflow within your customizations or your own custom workflows, allowing you to update the quantity 
+ *
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to update the quantity
  * of an existing item in an order edit in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateOrderEditItemQuantityWorkflow(container)
  * .run({
@@ -119,9 +125,9 @@ export const updateOrderEditItemQuantityWorkflowId =
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update an existing order item previously added to an order edit.
  */
 export const updateOrderEditItemQuantityWorkflow = createWorkflow(
@@ -129,9 +135,9 @@ export const updateOrderEditItemQuantityWorkflow = createWorkflow(
   function (
     input: WorkflowData<OrderWorkflow.UpdateOrderEditItemQuantityWorkflowInput>
   ): WorkflowResponse<OrderPreviewDTO> {
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
-      fields: ["id", "status", "canceled_at", "items.*"],
+      fields: fieldsToRefreshOrderEdit,
       variables: { id: input.order_id },
       list: false,
       throw_if_key_not_found: true,
@@ -174,6 +180,13 @@ export const updateOrderEditItemQuantityWorkflow = createWorkflow(
     )
 
     updateOrderChangeActionsStep([updateData])
+
+    refreshOrderEditAdjustmentsWorkflow.runAsStep({
+      input: {
+        order: order,
+        action: PromotionActions.REPLACE,
+      },
+    })
 
     return new WorkflowResponse(previewOrderChangeStep(order.id))
   }

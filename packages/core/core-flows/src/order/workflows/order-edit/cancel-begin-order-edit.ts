@@ -3,6 +3,7 @@ import {
   ChangeActionType,
   OrderChangeStatus,
   OrderEditWorkflowEvents,
+  PromotionActions,
 } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -17,6 +18,8 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
+import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 /**
  * The data to validate that a requested order edit can be canceled.
@@ -101,9 +104,9 @@ export const cancelBeginOrderEditWorkflow = createWorkflow(
   function (
     input: WorkflowData<CancelBeginOrderEditWorkflowInput>
   ): WorkflowData<void> {
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
-      fields: ["id", "version", "canceled_at"],
+      fields: fieldsToRefreshOrderEdit,
       variables: { id: input.order_id },
       list: false,
       throw_if_key_not_found: true,
@@ -150,5 +153,12 @@ export const cancelBeginOrderEditWorkflow = createWorkflow(
         data: eventData,
       })
     )
+
+    refreshOrderEditAdjustmentsWorkflow.runAsStep({
+      input: {
+        order: order,
+        action: PromotionActions.REPLACE,
+      },
+    })
   }
 )
