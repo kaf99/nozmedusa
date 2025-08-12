@@ -34,31 +34,6 @@ export const useEntityColumns = (entity: string, options?: Omit<
   return { ...data, ...rest }
 }
 
-// Specific entity hooks for convenience
-export const useOrderColumns = () => {
-  return useEntityColumns("orders")
-}
-
-export const useProductColumns = () => {
-  return useEntityColumns("products")
-}
-
-export const useCustomerColumns = () => {
-  return useEntityColumns("customers")
-}
-
-export const useUserColumns = () => {
-  return useEntityColumns("users")
-}
-
-export const useRegionColumns = () => {
-  return useEntityColumns("regions")
-}
-
-export const useSalesChannelColumns = () => {
-  return useEntityColumns("sales-channels")
-}
-
 // View Configuration hooks
 
 // List view configurations for an entity
