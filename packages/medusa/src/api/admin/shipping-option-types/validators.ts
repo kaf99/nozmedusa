@@ -39,7 +39,7 @@ export const AdminCreateShippingOptionType = z
   .object({
     label: z.string(),
     code: z.string(),
-    description: z.string(),
+    description: z.string().optional(),
   })
   .strict()
 
