@@ -156,6 +156,13 @@ export default class FulfillmentModuleService
     this.fulfillmentProviderService_ = fulfillmentProviderService
     this.fulfillmentService_ = fulfillmentService
   }
+  __hooks?:
+    | {
+        onApplicationStart?: () => Promise<void>
+        onApplicationShutdown?: () => Promise<void>
+        onApplicationPrepareShutdown?: () => Promise<void>
+      }
+    | undefined
 
   __joinerConfig(): ModuleJoinerConfig {
     return joinerConfig
@@ -1657,27 +1664,21 @@ export default class FulfillmentModuleService
       | FulfillmentTypes.UpsertShippingOptionTypeDTO[]
       | FulfillmentTypes.UpsertShippingOptionTypeDTO,
     @MedusaContext() sharedContext: Context = {}
-  ): Promise<FulfillmentTypes.ShippingOptionTypeDTO[] | FulfillmentTypes.ShippingOptionTypeDTO> {
+  ): Promise<
+    | FulfillmentTypes.ShippingOptionTypeDTO[]
+    | FulfillmentTypes.ShippingOptionTypeDTO
+  > {
     const input = Array.isArray(data) ? data : [data]
-    const forUpdate = input.filter((type): type is FulfillmentTypes.UpdateShippingOptionTypeDTO => !!type.id)
-    const forCreate = input.filter(
-      (type): type is FulfillmentTypes.CreateShippingOptionTypeDTO => !type.id
+
+    const results = await this.shippingOptionTypeService_.upsert(
+      input,
+      sharedContext
     )
 
-    let created: InferEntityType<typeof ShippingOptionType>[] = []
-    let updated: InferEntityType<typeof ShippingOptionType>[] = []
-
-    if (forCreate.length) {
-      created = await this.shippingOptionTypeService_.create(forCreate, sharedContext)
-    }
-    if (forUpdate.length) {
-      updated = await this.shippingOptionTypeService_.update(forUpdate, sharedContext)
-    }
-
-    const result = [...created, ...updated]
     const allTypes = await this.baseRepository_.serialize<
-      FulfillmentTypes.ShippingOptionTypeDTO[] | FulfillmentTypes.ShippingOptionTypeDTO
-    >(result)
+      | FulfillmentTypes.ShippingOptionTypeDTO[]
+      | FulfillmentTypes.ShippingOptionTypeDTO
+    >(results)
 
     return Array.isArray(data) ? allTypes : allTypes[0]
   }
