@@ -11,6 +11,7 @@ import {
   InferEntityType,
   InternalModuleDeclaration,
   Logger,
+  ModuleJoinerConfig,
   ModulesSdkTypes,
   ShippingOptionDTO,
   SoftDeleteReturn,
@@ -54,6 +55,7 @@ import {
   Rule,
   validateAndNormalizeRules,
 } from "@utils"
+import { joinerConfig } from "../joiner-config"
 import { UpdateShippingOptionsInput } from "../types/service"
 import { buildCreatedShippingOptionEvents } from "../utils/events"
 import FulfillmentProviderService from "./fulfillment-provider"
@@ -153,6 +155,10 @@ export default class FulfillmentModuleService
     this.shippingOptionTypeService_ = shippingOptionTypeService
     this.fulfillmentProviderService_ = fulfillmentProviderService
     this.fulfillmentService_ = fulfillmentService
+  }
+
+  __joinerConfig(): ModuleJoinerConfig {
+    return joinerConfig
   }
 
   @InjectManager()
