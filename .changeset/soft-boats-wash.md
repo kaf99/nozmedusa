@@ -1,9 +1,9 @@
 ---
-"@medusajs/fulfillment": minor
-"@medusajs/core-flows": minor
-"@medusajs/types": minor
-"@medusajs/utils": minor
-"@medusajs/medusa": minor
+"@medusajs/fulfillment": patch
+"@medusajs/core-flows": patch
+"@medusajs/types": patch
+"@medusajs/utils": patch
+"@medusajs/medusa": patch
 ---
 
 chore(types, api): support shipping option type api endpoints
