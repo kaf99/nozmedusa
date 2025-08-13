@@ -156,13 +156,6 @@ export default class FulfillmentModuleService
     this.fulfillmentProviderService_ = fulfillmentProviderService
     this.fulfillmentService_ = fulfillmentService
   }
-  __hooks?:
-    | {
-        onApplicationStart?: () => Promise<void>
-        onApplicationShutdown?: () => Promise<void>
-        onApplicationPrepareShutdown?: () => Promise<void>
-      }
-    | undefined
 
   __joinerConfig(): ModuleJoinerConfig {
     return joinerConfig
