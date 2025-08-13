@@ -6,7 +6,7 @@ import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { _DataTable } from "../../../../../components/table/data-table"
-import { useShippingOptionTypes } from "../../../../../hooks/api/shipping-option-types"
+import { useShippingOptionTypes } from "../../../../../hooks/api"
 import { useShippingOptionTypeTableColumns } from "../../../../../hooks/table/columns/use-shipping-option-type-table-columns"
 import { useShippingOptionTypeTableFilters } from "../../../../../hooks/table/filters/use-shipping-option-type-table-filters"
 import { useShippingOptionTypeTableQuery } from "../../../../../hooks/table/query/use-shipping-option-type-table-query"
@@ -62,7 +62,9 @@ export const ShippingOptionTypeListTable = () => {
         pageSize={PAGE_SIZE}
         count={count}
         orderBy={[
-          { key: "label", label: t("fields.value") },
+          { key: "label", label: t("fields.label") },
+          { key: "code", label: t("fields.code") },
+          { key: "description", label: t("fields.description") },
           { key: "created_at", label: t("fields.createdAt") },
           { key: "updated_at", label: t("fields.updatedAt") },
         ]}

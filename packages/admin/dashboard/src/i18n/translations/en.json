@@ -1583,6 +1583,7 @@
       }
     },
     "shippingOptions": {
+      "domain": "Shipping Options",
       "create": {
         "shipping": {
           "header": "Create Shipping Option for {{zone}}",

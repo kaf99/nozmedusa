@@ -5965,6 +5965,9 @@
         "shippingOptions": {
           "type": "object",
           "properties": {
+            "domain": {
+              "type": "string"
+            },
             "create": {
               "type": "object",
               "properties": {
@@ -6324,6 +6327,7 @@
             }
           },
           "required": [
+            "domain",
             "create",
             "delete",
             "edit",
