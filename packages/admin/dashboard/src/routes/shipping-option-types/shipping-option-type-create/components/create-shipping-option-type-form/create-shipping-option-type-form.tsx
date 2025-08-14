@@ -4,10 +4,7 @@ import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Form } from "../../../../../components/common/form"
-import {
-  RouteFocusModal,
-  useRouteModal,
-} from "../../../../../components/modals"
+import { RouteFocusModal, useRouteModal, } from "../../../../../components/modals"
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useCreateShippingOptionType } from "../../../../../hooks/api"
 
@@ -29,6 +26,14 @@ export const CreateShippingOptionTypeForm = () => {
     },
     resolver: zodResolver(CreateShippingOptionTypeSchema),
   })
+
+  const generateCodeFromLabel = (label: string) => {
+    return label
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_|_$/g, "")
+  }
 
   const { mutateAsync, isPending } = useCreateShippingOptionType()
 
@@ -75,7 +80,21 @@ export const CreateShippingOptionTypeForm = () => {
                         {t("shippingOptionTypes.fields.label")}
                       </Form.Label>
                       <Form.Control>
-                        <Input {...field} />
+                        <Input
+                          {...field}
+                          onChange={(e) => {
+                            if (
+                              !form.getFieldState("code").isTouched ||
+                              !form.getValues("code")
+                            ) {
+                              form.setValue(
+                                "code",
+                                generateCodeFromLabel(e.target.value)
+                              )
+                            }
+                            field.onChange(e)
+                          }}
+                        />
                       </Form.Control>
                       <Form.ErrorMessage />
                     </Form.Item>
