@@ -1418,13 +1418,6 @@ export function getRouteMap({
                           "../../routes/shipping-option-types/shipping-option-type-edit"
                         ),
                     },
-                    {
-                      path: "metadata/edit",
-                      lazy: () =>
-                        import(
-                          "../../routes/shipping-option-types/shipping-option-type-metadata"
-                        ),
-                    },
                   ],
                 },
               ],
