@@ -6,7 +6,6 @@ import { useShippingOptionType } from "../../../hooks/api"
 import { useExtension } from "../../../providers/extension-provider"
 import { ShippingOptionTypeGeneralSection } from "./components/shipping-option-type-general-section"
 import { shippingOptionTypeLoader } from "./loader"
-import { ShippingOptionTypeShippingOptionSection } from "./components/shipping-option-type-shipping-option-section"
 
 export const ShippingOptionTypeDetail = () => {
   const { id } = useParams()
@@ -40,9 +39,6 @@ export const ShippingOptionTypeDetail = () => {
       data={shipping_option_type}
     >
       <ShippingOptionTypeGeneralSection
-        shippingOptionType={shipping_option_type}
-      />
-      <ShippingOptionTypeShippingOptionSection
         shippingOptionType={shipping_option_type}
       />
     </SingleColumnPage>
