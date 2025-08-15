@@ -51,25 +51,6 @@ export default class SettingsModuleService
     this.userPreferenceService_ = userPreferenceService
   }
 
-  @InjectManager()
-  // @ts-expect-error
-  async retrieveViewConfiguration(
-    id: string,
-    config?: FindConfig<InferEntityType<typeof ViewConfiguration>>,
-    @MedusaContext() sharedContext: Context = {}
-  ): Promise<SettingsTypes.ViewConfigurationDTO> {
-    const viewConfig = await this.viewConfigurationService_.retrieve(
-      id,
-      config,
-      sharedContext
-    )
-
-    return await this.baseRepository_.serialize<SettingsTypes.ViewConfigurationDTO>(
-      viewConfig,
-      { populate: true }
-    )
-  }
-
   @InjectTransactionManager()
   // @ts-expect-error
   async createViewConfigurations(
@@ -111,16 +92,7 @@ export default class SettingsModuleService
       }
     }
 
-    const created = await this.viewConfigurationService_.create(
-      input,
-      sharedContext
-    )
-
-    const serialized = await this.baseRepository_.serialize<
-      SettingsTypes.ViewConfigurationDTO[]
-    >(created, { populate: true })
-
-    return Array.isArray(data) ? serialized : serialized[0]
+    return await super.createViewConfigurations(input, sharedContext)
   }
 
   @InjectTransactionManager()
@@ -299,14 +271,14 @@ export default class SettingsModuleService
 
     // Check if user has any personal views (only if no explicit null preference)
     if (!activeViewPref || activeViewPref.value?.viewConfigurationId !== null) {
-      const personalViews = await this.listViewConfigurations(
+      const [personalView] = await this.listViewConfigurations(
         { entity, user_id: userId },
-        { order: { created_at: "ASC" } },
+        { take: 1, order: { created_at: "ASC" } },
         sharedContext
       )
 
-      if (personalViews.length > 0) {
-        return personalViews[0]
+      if (personalView) {
+        return personalView
       }
     }
 
