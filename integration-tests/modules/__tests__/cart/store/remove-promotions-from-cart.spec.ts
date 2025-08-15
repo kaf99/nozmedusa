@@ -117,7 +117,7 @@ medusaIntegrationTestRunner({
                 code: appliedPromotion.code!,
                 amount: 300,
                 item_id: "item-2",
-                promotion_id: appliedPromotionToRemove.id,
+                promotion_id: appliedPromotion.id,
               },
               {
                 code: appliedPromotionToRemove.code!,
@@ -268,11 +268,13 @@ medusaIntegrationTestRunner({
               shipping_method_id: express.id,
               amount: 100,
               code: appliedPromotion.code!,
+              promotion_id: appliedPromotion.id,
             },
             {
               shipping_method_id: express.id,
               amount: 100,
               code: appliedPromotionToRemove.code!,
+              promotion_id: appliedPromotionToRemove.id,
             },
           ])
 
