@@ -31,7 +31,7 @@ export const AdminGetViewConfigurationsParams = createFindParams({
 
 export type AdminCreateViewConfigurationType = z.infer<typeof AdminCreateViewConfiguration>
 export const AdminCreateViewConfiguration = z.object({
-  name: z.string().optional(),  // Make name optional
+  name: z.string().optional(),
   is_system_default: z.boolean().optional().default(false),
   set_active: z.boolean().optional().default(false),
   configuration: z.object({

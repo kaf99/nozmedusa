@@ -8,14 +8,14 @@ export interface CreateViewConfigurationDTO {
   entity: string
 
   /**
-   * The name of the configuration.
+   * The name of the configuration. Required unless creating a system default.
    */
-  name: string
+  name?: string
 
   /**
-   * The user ID this configuration belongs to.
+   * The user ID this configuration belongs to. Can be null for system defaults.
    */
-  user_id?: string
+  user_id?: string | null
 
   /**
    * Whether this is a system default configuration.

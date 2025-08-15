@@ -11,12 +11,14 @@ import { Modules } from "@medusajs/framework/utils"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<AdminGetActiveViewConfigurationParamsType>,
-  res: MedusaResponse<HttpTypes.AdminViewConfigurationResponse & {
-    is_default_active?: boolean
-    default_type?: "system" | "code"
-  }>
+  res: MedusaResponse<
+    HttpTypes.AdminViewConfigurationResponse & {
+      is_default_active?: boolean
+      default_type?: "system" | "code"
+    }
+  >
 ) => {
-  const settingsService: any = req.scope.resolve(Modules.SETTINGS)
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   const viewConfiguration = await settingsService.getActiveViewConfiguration(
     req.params.entity,
@@ -28,7 +30,7 @@ export const GET = async (
     res.json({
       view_configuration: null,
       is_default_active: true,
-      default_type: "code"
+      default_type: "code",
     })
   } else {
     // Check if the user has an explicit preference
@@ -36,14 +38,18 @@ export const GET = async (
       req.auth_context.actor_id,
       `active_view.${req.params.entity}`
     )
-    
+
     // If there's no preference and the view is a system default, it means we're falling back to system default
-    const isDefaultActive = !activeViewPref && viewConfiguration.is_system_default
-    
-    res.json({ 
+    const isDefaultActive =
+      !activeViewPref && viewConfiguration.is_system_default
+
+    res.json({
       view_configuration: viewConfiguration,
       is_default_active: isDefaultActive,
-      default_type: isDefaultActive && viewConfiguration.is_system_default ? "system" : undefined
+      default_type:
+        isDefaultActive && viewConfiguration.is_system_default
+          ? "system"
+          : undefined,
     })
   }
 }
@@ -52,7 +58,7 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<AdminSetActiveViewConfigurationType>,
   res: MedusaResponse<{ success: boolean }>
 ) => {
-  const settingsService: any = req.scope.resolve(Modules.SETTINGS)
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   if (req.body.view_configuration_id === null) {
     // Clear the active view configuration

@@ -10,7 +10,7 @@ export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminGetViewConfigurationsParams>,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationListResponse>
 ) => {
-  const settingsService: any = req.scope.resolve(Modules.SETTINGS)
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   const filters = {
     ...req.filterableFields,
@@ -36,10 +36,10 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<AdminCreateViewConfigurationType>,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationResponse>
 ) => {
-  const settingsService: any = req.scope.resolve(Modules.SETTINGS)
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   // Validate: name is required unless creating a system default
-  if (!req.body.name && !req.body.is_system_default) {
+  if (!req.body.is_system_default && !req.body.name) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,
       "Name is required unless creating a system default view"

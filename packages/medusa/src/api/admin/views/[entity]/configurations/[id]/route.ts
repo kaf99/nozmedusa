@@ -3,16 +3,14 @@ import {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { AdminUpdateViewConfigurationType } from "../validators"
-import { HttpTypes, ISettingsModuleService } from "@medusajs/framework/types"
+import { HttpTypes } from "@medusajs/framework/types"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminGetViewConfigurationParams>,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationResponse>
 ) => {
-  const settingsService: ISettingsModuleService = req.scope.resolve(
-    Modules.SETTINGS
-  )
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   const viewConfiguration = await settingsService.retrieveViewConfiguration(
     req.params.id,
@@ -37,9 +35,7 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<AdminUpdateViewConfigurationType>,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationResponse>
 ) => {
-  const settingsService: ISettingsModuleService = req.scope.resolve(
-    Modules.SETTINGS
-  )
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   // Single retrieval for permission check and entity info
   const existing = await settingsService.retrieveViewConfiguration(
@@ -78,9 +74,7 @@ export const DELETE = async (
   req: AuthenticatedMedusaRequest,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationDeleteResponse>
 ) => {
-  const settingsService: ISettingsModuleService = req.scope.resolve(
-    Modules.SETTINGS
-  )
+  const settingsService = req.scope.resolve(Modules.SETTINGS)
 
   // Retrieve existing to check permissions
   const existing = await settingsService.retrieveViewConfiguration(

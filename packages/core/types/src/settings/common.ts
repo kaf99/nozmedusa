@@ -111,9 +111,9 @@ export interface UserPreferenceDTO {
 }
 
 /**
- * The filters to apply on the retrieved view configurations.
+ * Partial filters for view configuration fields.
  */
-export interface FilterableViewConfigurationProps extends BaseFilterable<ViewConfigurationDTO> {
+export interface ViewConfigurationFilterableFields {
   /**
    * The IDs to filter by.
    */
@@ -138,6 +138,21 @@ export interface FilterableViewConfigurationProps extends BaseFilterable<ViewCon
    * Filter by name.
    */
   name?: string | string[]
+}
+
+/**
+ * The filters to apply on the retrieved view configurations.
+ */
+export interface FilterableViewConfigurationProps extends ViewConfigurationFilterableFields {
+  /**
+   * An array of filters to apply on the entity, where each item in the array is joined with an "and" condition.
+   */
+  $and?: (ViewConfigurationFilterableFields | FilterableViewConfigurationProps)[]
+
+  /**
+   * An array of filters to apply on the entity, where each item in the array is joined with an "or" condition.
+   */
+  $or?: (ViewConfigurationFilterableFields | FilterableViewConfigurationProps)[]
 }
 
 /**
