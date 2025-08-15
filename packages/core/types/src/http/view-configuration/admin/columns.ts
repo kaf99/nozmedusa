@@ -30,7 +30,14 @@ export interface AdminColumn {
   /**
    * The data type of the column.
    */
-  data_type: "string" | "number" | "boolean" | "date" | "currency" | "enum" | "object"
+  data_type:
+    | "string"
+    | "number"
+    | "boolean"
+    | "date"
+    | "currency"
+    | "enum"
+    | "object"
   /**
    * The semantic type provides additional context about the data.
    */
@@ -61,30 +68,18 @@ export interface AdminColumn {
   /**
    * Category for grouping columns.
    */
-  category?: "identifier" | "timestamp" | "status" | "metric" | "relationship" | "metadata"
+  category?:
+    | "identifier"
+    | "timestamp"
+    | "status"
+    | "metric"
+    | "relationship"
+    | "metadata"
 }
 
-export interface AdminOrderColumn extends AdminColumn {
-  // Order-specific column properties can be added here if needed
-}
-
-export interface AdminOrderColumnsResponse {
+export interface AdminViewsEntityColumnsResponse {
   /**
    * The list of available columns for the entity.
    */
-  columns: AdminOrderColumn[]
-}
-
-export interface AdminUpdateColumnVisibilityPayload {
-  /**
-   * The list of visible column IDs.
-   */
-  visible_columns: string[]
-}
-
-export interface AdminColumnVisibilityResponse {
-  /**
-   * Whether the update was successful.
-   */
-  success: boolean
+  columns: AdminColumn[]
 }

@@ -128,7 +128,7 @@ export const getTypeInfoFromGraphQLType = (
   type: any,
   fieldName: string
 ): {
-  data_type: HttpTypes.AdminOrderColumn["data_type"]
+  data_type: HttpTypes.AdminColumn["data_type"]
   semantic_type: string
   context?: string
 } => {

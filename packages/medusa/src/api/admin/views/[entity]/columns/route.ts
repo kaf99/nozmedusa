@@ -38,7 +38,7 @@ export const DEFAULT_COLUMN_ORDERS: Record<string, number> = {
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,
-  res: MedusaResponse<HttpTypes.AdminOrderColumnsResponse>
+  res: MedusaResponse<HttpTypes.AdminViewsEntityColumnsResponse>
 ) => {
   const entity = req.params.entity
 
@@ -200,7 +200,7 @@ export const GET = async (
           }
         })
 
-        const relationshipColumns: HttpTypes.AdminOrderColumn[] = []
+        const relationshipColumns: HttpTypes.AdminColumn[] = []
 
         if (finalRelations.size > 0) {
           for (const [relationName, relatedTypeName] of finalRelations) {
@@ -293,7 +293,7 @@ export const GET = async (
         }
 
         // Generate computed columns
-        const computedColumns: HttpTypes.AdminOrderColumn[] = []
+        const computedColumns: HttpTypes.AdminColumn[] = []
 
         if (entityMapping.computedColumns) {
           for (const [columnId, columnConfig] of Object.entries(
