@@ -60,10 +60,12 @@ export default class SettingsModuleService
   ): Promise<
     SettingsTypes.ViewConfigurationDTO | SettingsTypes.ViewConfigurationDTO[]
   > {
-    const input = Array.isArray(data) ? data : [data]
+    // Convert to array for validation only
+    const isArrayInput = Array.isArray(data)
+    const dataArray = isArrayInput ? data : [data]
 
     // Validate system defaults
-    for (const config of input) {
+    for (const config of dataArray) {
       if (config.is_system_default && config.user_id) {
         throw new MedusaError(
           MedusaError.Types.INVALID_DATA,
@@ -91,7 +93,11 @@ export default class SettingsModuleService
       }
     }
 
-    return await super.createViewConfigurations(input, sharedContext)
+    const result = await super.createViewConfigurations(
+      dataArray,
+      sharedContext
+    )
+    return isArrayInput ? result : result[0]
   }
 
   @InjectTransactionManager()
