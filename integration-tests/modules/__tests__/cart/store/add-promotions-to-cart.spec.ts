@@ -151,7 +151,7 @@ medusaIntegrationTestRunner({
                 expect.objectContaining({
                   adjustments: expect.arrayContaining([
                     expect.objectContaining({
-                      id: expect.not.stringContaining(lineItemAdjustment.id),
+                      id: expect.stringContaining(lineItemAdjustment.id),
                       code: appliedPromotion.code,
                       amount: 300,
                     }),

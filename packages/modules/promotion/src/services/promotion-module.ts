@@ -433,25 +433,16 @@ export default class PromotionModuleService
 
     const methodIdPromoValueMap = new Map<string, number>()
 
-    const automaticPromotions = preventAutoPromotions
-      ? []
-      : await this.listActivePromotions(
-          { is_automatic: true },
-          { select: ["code"] },
-          sharedContext
-        )
-
-    const automaticPromotionCodes = automaticPromotions.map((p) => p.code!)
-    const promotionCodesToApply = [
-      ...promotionCodes,
-      ...automaticPromotionCodes,
-      ...appliedCodes,
-    ]
+    const promotionCodesToApply = [...promotionCodes, ...appliedCodes]
 
     const uniquePromotionCodes = Array.from(new Set(promotionCodesToApply))
 
+    const filterPromo = preventAutoPromotions
+      ? { code: uniquePromotionCodes }
+      : { $or: [{ code: uniquePromotionCodes }, { is_automatic: true }] }
+
     const promotions = await this.listActivePromotions(
-      { code: uniquePromotionCodes },
+      filterPromo,
       {
         take: null,
         order: { application_method: { value: "DESC" } },
@@ -474,9 +465,10 @@ export default class PromotionModuleService
       promotions.map((promotion) => [promotion.code!, promotion])
     )
 
+    const removeActions: PromotionTypes.ComputeActions[] = []
     for (const [code, adjustments] of codeAdjustmentMap.entries()) {
       for (const adjustment of adjustments.items) {
-        computedActions.push({
+        removeActions.push({
           action: ComputedActions.REMOVE_ITEM_ADJUSTMENT,
           adjustment_id: adjustment.id,
           code,
@@ -484,7 +476,7 @@ export default class PromotionModuleService
       }
 
       for (const adjustment of adjustments.shipping) {
-        computedActions.push({
+        removeActions.push({
           action: ComputedActions.REMOVE_SHIPPING_METHOD_ADJUSTMENT,
           adjustment_id: adjustment.id,
           code,
@@ -492,6 +484,10 @@ export default class PromotionModuleService
       }
     }
 
+    const addActions: PromotionTypes.ComputeActions[] = []
+    const automaticPromotionCodes = promotions
+      .filter((p) => p.is_automatic)
+      .map((p) => p.code!)
     const sortedPromotionsToApply = promotions
       .filter(
         (p) =>
@@ -544,7 +540,7 @@ export default class PromotionModuleService
             eligibleTargetItemMap
           )
 
-        computedActions.push(...computedActionsForItems)
+        addActions.push(...computedActionsForItems)
       } else if (promotion.type === PromotionType.STANDARD) {
         const isTargetOrder =
           applicationMethod.target_type === ApplicationMethodTargetType.ORDER
@@ -566,7 +562,7 @@ export default class PromotionModuleService
               allocationOverride
             )
 
-          computedActions.push(...computedActionsForItems)
+          addActions.push(...computedActionsForItems)
         }
 
         if (isTargetShipping) {
@@ -577,10 +573,18 @@ export default class PromotionModuleService
               methodIdPromoValueMap
             )
 
-          computedActions.push(...computedActionsForShippingMethods)
+          addActions.push(...computedActionsForShippingMethods)
         }
       }
     }
+
+    // Filter out REMOVE action that have corresponding ADD action
+    const addActionCodes = new Set(addActions.map((action) => action.code))
+    const filteredRemoveActions = removeActions.filter(
+      (removeAction) => !addActionCodes.has(removeAction.code)
+    )
+
+    computedActions.push(...filteredRemoveActions, ...addActions)
 
     transformPropertiesToBigNumber(computedActions, { include: ["amount"] })
 

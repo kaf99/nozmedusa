@@ -139,9 +139,8 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
     for (const item of cart?.items ?? []) {
       for (const adjustment of item?.adjustments ?? []) {
         if (adjustment.promotion_id) {
-          existingLineItemAdjustments.add(
-            `${adjustment.promotion_id}-${item.id}`
-          )
+          const key = `${adjustment.promotion_id}-${item.id}-${adjustment.amount}`
+          existingLineItemAdjustments.add(key)
         }
       }
     }
@@ -149,23 +148,23 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
     for (const shippingMethod of cart?.shipping_methods ?? []) {
       for (const adjustment of shippingMethod?.adjustments ?? []) {
         if (adjustment.promotion_id) {
-          existingShippingMethodAdjustments.add(
-            `${adjustment.promotion_id}-${shippingMethod.id}`
-          )
+          const key = `${adjustment.promotion_id}-${shippingMethod.id}-${adjustment.amount}`
+          existingShippingMethodAdjustments.add(key)
         }
       }
     }
 
     const lineItemAdjustmentsToCreate = actions
       .filter((a) => {
-        const promoId = promotionsMap.get(a.code)?.id
-        const itemId = (a as AddItemAdjustmentAction).item_id
-        const key = `${promoId}-${itemId}`
+        if (a.action !== ComputedActions.ADD_ITEM_ADJUSTMENT) {
+          return false
+        }
 
-        return (
-          a.action === ComputedActions.ADD_ITEM_ADJUSTMENT &&
-          !existingLineItemAdjustments.has(key)
-        )
+        const action = a as AddItemAdjustmentAction
+        const promoId = promotionsMap.get(action.code)?.id
+        const key = `${promoId}-${action.item_id}-${action.amount}`
+
+        return !existingLineItemAdjustments.has(key)
       })
       .map((action) => ({
         code: action.code,
@@ -181,15 +180,15 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
 
     const shippingMethodAdjustmentsToCreate = actions
       .filter((a) => {
-        const promoId = promotionsMap.get(a.code)?.id
-        const shippingMethodId = (a as AddShippingMethodAdjustment)
-          .shipping_method_id
-        const key = `${promoId}-${shippingMethodId}`
+        if (a.action !== ComputedActions.ADD_SHIPPING_METHOD_ADJUSTMENT) {
+          return false
+        }
 
-        return (
-          a.action === ComputedActions.ADD_SHIPPING_METHOD_ADJUSTMENT &&
-          !existingShippingMethodAdjustments.has(key)
-        )
+        const action = a as AddShippingMethodAdjustment
+        const promoId = promotionsMap.get(action.code)?.id
+        const key = `${promoId}-${action.shipping_method_id}-${action.amount}`
+
+        return !existingShippingMethodAdjustments.has(key)
       })
       .map((action) => ({
         code: action.code,
