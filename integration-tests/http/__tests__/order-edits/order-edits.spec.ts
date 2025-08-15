@@ -1153,12 +1153,14 @@ medusaIntegrationTestRunner({
     })
 
     describe("Order Edits promotions", () => {
+      let appliedPromotion
+
       beforeEach(async () => {
         const promotionModule: IPromotionModuleService = container.resolve(
           Modules.PROMOTION
         )
 
-        const appliedPromotion = await promotionModule.createPromotions({
+        appliedPromotion = await promotionModule.createPromotions({
           code: "PROMOTION_APPLIED",
           type: PromotionType.STANDARD,
           status: PromotionStatus.ACTIVE,
@@ -1404,6 +1406,98 @@ medusaIntegrationTestRunner({
             item_id: item.id,
           }),
         ])
+      })
+
+      it("should not create adjustments when adding a new item if promotion is disabled", async () => {
+        let result = await api.post(
+          "/admin/order-edits",
+          {
+            order_id: order.id,
+            description: "Test",
+          },
+          adminHeaders
+        )
+
+        const orderId = result.data.order_change.order_id
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
+
+        await api.post(
+          `/admin/promotions/${appliedPromotion.id}`,
+          {
+            status: "draft",
+          },
+          adminHeaders
+        )
+
+        // Add item with price $12 + $1.2 in taxes
+        result = (
+          await api.post(
+            `/admin/order-edits/${orderId}/items`,
+            {
+              items: [
+                {
+                  variant_id: productExtra.variants[0].id,
+                  quantity: 1,
+                },
+              ],
+            },
+            adminHeaders
+          )
+        ).data.order_preview
+
+        expect(result.total).toEqual(23.2)
+        expect(result.original_total).toEqual(23.2)
+      })
+
+      it("should not change adjustments if order edit is canceled", async () => {
+        let result = await api.post(
+          "/admin/order-edits",
+          {
+            order_id: order.id,
+            description: "Test",
+          },
+          adminHeaders
+        )
+
+        const orderId = result.data.order_change.order_id
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
+
+        // Add item with price $12 + $1.2 in taxes
+        result = (
+          await api.post(
+            `/admin/order-edits/${orderId}/items`,
+            {
+              items: [
+                {
+                  variant_id: productExtra.variants[0].id,
+                  quantity: 1,
+                },
+              ],
+            },
+            adminHeaders
+          )
+        ).data.order_preview
+
+        expect(result.total).toEqual(20.88)
+        expect(result.original_total).toEqual(23.2)
+
+        await api.delete(`/admin/order-edits/${orderId}`, adminHeaders)
+
+        result = (await api.get(`/admin/orders/${orderId}`, adminHeaders)).data
+          .order
+
+        expect(result.original_total).toEqual(10)
+        expect(result.total).toEqual(9)
       })
     })
   },
