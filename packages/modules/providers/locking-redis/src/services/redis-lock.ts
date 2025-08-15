@@ -115,12 +115,13 @@ export class RedisLockingProvider implements ILockingProvider {
       promises.push(this.getTimeout(timeoutSeconds, cancellationToken))
     }
 
+    const ONE_MINUTE = 60
     promises.push(
       this.acquire_(
         keys,
         {
           awaitQueue: true,
-          expire: args?.timeout ? timeoutSeconds : 0,
+          expire: args?.timeout ? timeoutSeconds : ONE_MINUTE,
         },
         cancellationToken
       )
@@ -155,7 +156,6 @@ export class RedisLockingProvider implements ILockingProvider {
     },
     cancellationToken?: { cancelled: boolean }
   ): Promise<void> {
-    const ONE_MINUTE = 60
     keys = Array.isArray(keys) ? keys : [keys]
 
     const timeout = Math.max(args?.expire ?? this.waitLockingTimeout, 1)
@@ -178,7 +178,7 @@ export class RedisLockingProvider implements ILockingProvider {
           const result = await this.redisClient.acquireLock(
             keyName,
             ownerId,
-            args?.expire ? timeoutSeconds : ONE_MINUTE,
+            args?.expire ? timeoutSeconds : 0,
             awaitQueue
           )
 
