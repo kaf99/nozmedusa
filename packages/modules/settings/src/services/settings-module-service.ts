@@ -1,7 +1,6 @@
 import {
   Context,
   DAL,
-  FindConfig,
   InferEntityType,
   InternalModuleDeclaration,
   ModulesSdkTypes,
