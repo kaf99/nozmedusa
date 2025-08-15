@@ -1534,7 +1534,7 @@ export default class FulfillmentModuleService
     const createdOptionTypeIds = updatedShippingOptions
       .filter((so) => {
         const updateData = shippingOptionsData.find((sod) => sod.id === so.id)
-        return updateData?.type && !("id" in updateData.type)
+        return updateData?.type && typeof updateData.type === 'object' && !("id" in updateData.type)
       })
       .map((so) => so.type.id)
 

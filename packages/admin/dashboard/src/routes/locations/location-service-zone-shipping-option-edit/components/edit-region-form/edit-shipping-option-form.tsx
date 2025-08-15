@@ -15,7 +15,10 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../lib/client"
 import { pick } from "../../../../../lib/common"
 import { isOptionEnabledInStore } from "../../../../../lib/shipping-options"
-import { FulfillmentSetType, ShippingOptionPriceType, } from "../../../common/constants"
+import {
+  FulfillmentSetType,
+  ShippingOptionPriceType,
+} from "../../../common/constants"
 
 type EditShippingOptionFormProps = {
   locationId: string
