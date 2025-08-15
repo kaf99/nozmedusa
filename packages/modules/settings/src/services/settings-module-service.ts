@@ -4,8 +4,8 @@ import {
   InferEntityType,
   InternalModuleDeclaration,
   ModulesSdkTypes,
+  SettingsTypes,
 } from "@medusajs/framework/types"
-import { SettingsTypes } from "@medusajs/types"
 import {
   InjectManager,
   InjectTransactionManager,
@@ -13,7 +13,7 @@ import {
   MedusaError,
   MedusaService,
 } from "@medusajs/framework/utils"
-import { ViewConfiguration, UserPreference } from "@models"
+import { ViewConfiguration, UserPreference } from "@/models"
 
 type InjectedDependencies = {
   baseRepository: DAL.RepositoryService
