@@ -138,7 +138,8 @@ export const AdminCreateShippingOption = z
     data: z.record(z.unknown()).optional(),
     price_type: z.nativeEnum(ShippingOptionPriceTypeEnum),
     provider_id: z.string(),
-    type: AdminCreateShippingOptionTypeObject,
+    type: AdminCreateShippingOptionTypeObject.optional(),
+    type_id: z.string().optional(),
     prices: AdminCreateShippingOptionPriceWithCurrency.or(
       AdminCreateShippingOptionPriceWithRegion
     ).array(),
@@ -157,6 +158,7 @@ export const AdminUpdateShippingOption = z
     provider_id: z.string().optional(),
     shipping_profile_id: z.string().optional(),
     type: AdminCreateShippingOptionTypeObject.optional(),
+    type_id: z.string().optional(),
     prices: AdminUpdateShippingOptionPriceWithCurrency.or(
       AdminUpdateShippingOptionPriceWithRegion
     )

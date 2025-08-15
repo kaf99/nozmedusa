@@ -15,10 +15,7 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../lib/client"
 import { pick } from "../../../../../lib/common"
 import { isOptionEnabledInStore } from "../../../../../lib/shipping-options"
-import {
-  FulfillmentSetType,
-  ShippingOptionPriceType,
-} from "../../../common/constants"
+import { FulfillmentSetType, ShippingOptionPriceType, } from "../../../common/constants"
 
 type EditShippingOptionFormProps = {
   locationId: string
@@ -31,6 +28,7 @@ const EditShippingOptionSchema = zod.object({
   price_type: zod.nativeEnum(ShippingOptionPriceType),
   enabled_in_store: zod.boolean().optional(),
   shipping_profile_id: zod.string(),
+  shipping_option_type_id: zod.string(),
 })
 
 export const EditShippingOptionForm = ({
@@ -54,12 +52,23 @@ export const EditShippingOptionForm = ({
     defaultValue: shippingOption.shipping_profile_id,
   })
 
+  const shippingOptionTypes = useComboboxData({
+    queryFn: (params) => sdk.admin.shippingOptionType.list(params),
+    queryKey: ["shipping_option_types"],
+    getOptions: (data) =>
+      data.shipping_option_types.map((type) => ({
+        label: type.label,
+        value: type.id,
+      })),
+  })
+
   const form = useForm<zod.infer<typeof EditShippingOptionSchema>>({
     defaultValues: {
       name: shippingOption.name,
       price_type: shippingOption.price_type as ShippingOptionPriceType,
       enabled_in_store: isOptionEnabledInStore(shippingOption),
       shipping_profile_id: shippingOption.shipping_profile_id,
+      shipping_option_type_id: shippingOption.type.id,
     },
     resolver: zodResolver(EditShippingOptionSchema),
   })
@@ -92,6 +101,7 @@ export const EditShippingOptionForm = ({
         price_type: values.price_type,
         shipping_profile_id: values.shipping_profile_id,
         rules,
+        type_id: values.shipping_option_type_id,
       },
       {
         onSuccess: ({ shipping_option }) => {
@@ -111,7 +121,10 @@ export const EditShippingOptionForm = ({
 
   return (
     <RouteDrawer.Form form={form}>
-      <KeyboundForm onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
+      <KeyboundForm
+        onSubmit={handleSubmit}
+        className="flex flex-1 flex-col overflow-hidden"
+      >
         <RouteDrawer.Body className="overflow-y-auto">
           <div className="flex flex-col gap-y-8">
             <div className="flex flex-col gap-y-8">
@@ -193,6 +206,32 @@ export const EditShippingOptionForm = ({
                               shippingProfiles.onSearchValueChange
                             }
                             disabled={shippingProfiles.disabled}
+                          />
+                        </Form.Control>
+                        <Form.ErrorMessage />
+                      </Form.Item>
+                    )
+                  }}
+                />
+
+                <Form.Field
+                  control={form.control}
+                  name="shipping_option_type_id"
+                  render={({ field }) => {
+                    return (
+                      <Form.Item>
+                        <Form.Label>
+                          {t("stockLocations.shippingOptions.fields.type")}
+                        </Form.Label>
+                        <Form.Control>
+                          <Combobox
+                            {...field}
+                            options={shippingOptionTypes.options}
+                            searchValue={shippingOptionTypes.searchValue}
+                            onSearchValueChange={
+                              shippingOptionTypes.onSearchValueChange
+                            }
+                            disabled={shippingOptionTypes.disabled}
                           />
                         </Form.Control>
                         <Form.ErrorMessage />

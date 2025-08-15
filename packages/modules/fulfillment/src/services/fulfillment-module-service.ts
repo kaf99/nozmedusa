@@ -1410,7 +1410,7 @@ export default class FulfillmentModuleService
         shippingOption.id
       )! // Garuantueed to exist since the validation above have been performed
 
-      if (shippingOption.type && !("id" in shippingOption.type)) {
+      if (shippingOption.type && typeof shippingOption.type === 'object' &&  !("id" in shippingOption.type)) {
         optionTypeDeletedIds.push(existingShippingOption.type.id)
       }
 

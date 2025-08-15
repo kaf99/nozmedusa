@@ -6308,6 +6308,9 @@
                 "profile": {
                   "type": "string"
                 },
+                "type": {
+                  "type": "string"
+                },
                 "fulfillmentOption": {
                   "type": "string"
                 }
@@ -6318,6 +6321,7 @@
                 "enableInStore",
                 "provider",
                 "profile",
+                "type"
                 "fulfillmentOption"
               ],
               "additionalProperties": false
