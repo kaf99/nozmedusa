@@ -88,16 +88,6 @@ export const updateCartPromotionsStep = createStep(
       }
     }
 
-    if (action === PromotionActions.REPLACE) {
-      for (const link of existingCartPromotionLinks) {
-        linksToDismiss.push({
-          [Modules.CART]: { cart_id: link.cart_id },
-          [Modules.PROMOTION]: { promotion_id: link.promotion_id },
-        })
-        promotionIdsToDismiss.add(link.promotion_id)
-      }
-    }
-
     const promotionIdsInBoth = new Set(
       [...promotionIdsToCreate].filter((id) => promotionIdsToDismiss.has(id))
     )
