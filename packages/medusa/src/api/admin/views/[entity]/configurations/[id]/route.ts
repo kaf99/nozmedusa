@@ -5,6 +5,7 @@ import {
 import { AdminUpdateViewConfigurationType } from "../validators"
 import { HttpTypes } from "@medusajs/framework/types"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
+import { updateViewConfigurationWorkflow } from "@medusajs/core-flows"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminGetViewConfigurationParams>,
@@ -37,10 +38,10 @@ export const POST = async (
 ) => {
   const settingsService = req.scope.resolve(Modules.SETTINGS)
 
-  // Single retrieval for permission check and entity info
+  // Single retrieval for permission check
   const existing = await settingsService.retrieveViewConfiguration(
     req.params.id,
-    { select: ["id", "user_id", "is_system_default", "entity"] }
+    { select: ["id", "user_id", "is_system_default"] }
   )
 
   if (existing.user_id && existing.user_id !== req.auth_context.actor_id) {
@@ -50,24 +51,16 @@ export const POST = async (
     )
   }
 
-  const { set_active, ...payload } = req.validatedBody
-
-  // Let the service handle the update (it already handles configuration properly)
-  const viewConfiguration = await settingsService.updateViewConfigurations(
-    req.params.id,
-    payload
-  )
-
-  // Handle set_active if requested
-  if (set_active) {
-    await settingsService.setActiveViewConfiguration(
-      existing.entity,
-      req.auth_context.actor_id,
-      req.params.id
-    )
+  const input = {
+    id: req.params.id,
+    ...req.validatedBody,
   }
 
-  res.json({ view_configuration: viewConfiguration })
+  const { result } = await updateViewConfigurationWorkflow(req.scope).run({
+    input,
+  })
+
+  res.json({ view_configuration: result })
 }
 
 export const DELETE = async (

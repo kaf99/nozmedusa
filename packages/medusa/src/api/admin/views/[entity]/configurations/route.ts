@@ -5,6 +5,7 @@ import {
 import { AdminCreateViewConfigurationType } from "./validators"
 import { HttpTypes } from "@medusajs/framework/types"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
+import { createViewConfigurationWorkflow } from "@medusajs/core-flows"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<HttpTypes.AdminGetViewConfigurationsParams>,
@@ -36,8 +37,6 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<AdminCreateViewConfigurationType>,
   res: MedusaResponse<HttpTypes.AdminViewConfigurationResponse>
 ) => {
-  const settingsService = req.scope.resolve(Modules.SETTINGS)
-
   // Validate: name is required unless creating a system default
   if (!req.body.is_system_default && !req.body.name) {
     throw new MedusaError(
@@ -46,25 +45,15 @@ export const POST = async (
     )
   }
 
-  const { set_active, ...bodyWithoutSetActive } = req.body
-
   const input = {
-    ...bodyWithoutSetActive,
+    ...req.body,
     entity: req.params.entity,
     user_id: req.body.is_system_default ? null : req.auth_context.actor_id,
   }
 
-  const viewConfiguration = await settingsService.createViewConfigurations(
-    input
-  )
+  const { result } = await createViewConfigurationWorkflow(req.scope).run({
+    input,
+  })
 
-  if (set_active) {
-    await settingsService.setActiveViewConfiguration(
-      viewConfiguration.entity,
-      req.auth_context.actor_id,
-      viewConfiguration.id
-    )
-  }
-
-  return res.json({ view_configuration: viewConfiguration })
+  return res.json({ view_configuration: result })
 }
