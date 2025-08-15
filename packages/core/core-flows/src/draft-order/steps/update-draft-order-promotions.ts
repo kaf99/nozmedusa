@@ -22,7 +22,7 @@ export interface UpdateDraftOrderPromotionsStepInput {
   promo_codes: string[]
   /**
    * The action to perform on the promotions. You can either:
-   * 
+   *
    * - Add the promotions to the draft order.
    * - Replace the existing promotions with the new ones.
    * - Remove the promotions from the draft order.
@@ -32,7 +32,7 @@ export interface UpdateDraftOrderPromotionsStepInput {
 
 /**
  * This step updates the promotions of a draft order.
- * 
+ *
  * @example
  * const data = updateDraftOrderPromotionsStep({
  *   id: "order_123",
@@ -67,6 +67,9 @@ export const updateDraftOrderPromotionsStep = createStep(
     const linksToCreate: any[] = []
     const linksToDismiss: any[] = []
 
+    const promotionIdsToCreate = new Set()
+    const promotionIdsToDismiss = new Set()
+
     if (promo_codes?.length) {
       const promotions = await promotionService.listPromotions(
         { code: promo_codes },
@@ -81,13 +84,13 @@ export const updateDraftOrderPromotionsStep = createStep(
 
         if ([PromotionActions.ADD, PromotionActions.REPLACE].includes(action)) {
           linksToCreate.push(linkObject)
-        }
-
-        if (action === PromotionActions.REMOVE) {
+          promotionIdsToCreate.add(promotion.id)
+        } else if (action === PromotionActions.REMOVE) {
           const link = promotionLinkMap.get(promotion.id)
 
           if (link) {
             linksToDismiss.push(linkObject)
+            promotionIdsToDismiss.add(promotion.id)
           }
         }
       }
@@ -99,21 +102,33 @@ export const updateDraftOrderPromotionsStep = createStep(
           [Modules.ORDER]: { order_id: link.order_id },
           [Modules.PROMOTION]: { promotion_id: link.promotion_id },
         })
+        promotionIdsToDismiss.add(link.promotion_id)
       }
     }
 
-    if (linksToDismiss.length) {
-      await remoteLink.dismiss(linksToDismiss)
+    const promotionIdsInBoth = new Set(
+      [...promotionIdsToCreate].filter((id) => promotionIdsToDismiss.has(id))
+    )
+
+    const filteredLinksToCreate = linksToCreate.filter(
+      (link) => !promotionIdsInBoth.has(link[Modules.PROMOTION].promotion_id)
+    )
+    const filteredLinksToDismiss = linksToDismiss.filter(
+      (link) => !promotionIdsInBoth.has(link[Modules.PROMOTION].promotion_id)
+    )
+
+    if (filteredLinksToDismiss.length) {
+      await remoteLink.dismiss(filteredLinksToDismiss)
     }
 
-    const createdLinks = linksToCreate.length
-      ? await remoteLink.create(linksToCreate)
+    const createdLinks = filteredLinksToCreate.length
+      ? await remoteLink.create(filteredLinksToCreate)
       : []
 
     return new StepResponse(null, {
       // @ts-expect-error
       createdLinkIds: createdLinks.map((link) => link.id),
-      dismissedLinks: linksToDismiss,
+      dismissedLinks: filteredLinksToDismiss,
     })
   },
   async function (revertData, { container }) {

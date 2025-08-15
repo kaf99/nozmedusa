@@ -35,7 +35,7 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
   /**
    * The action to apply with the promo codes. You can
    * either:
-   * 
+   *
    * - Add the promo codes to the draft order.
    * - Remove the promo codes from the draft order.
    * - Replace the existing promo codes with the new ones.
@@ -47,10 +47,10 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
  * This workflow refreshes the adjustments or promotions for a draft order. It's used by other workflows
  * like {@link addDraftOrderItemsWorkflow} to refresh the promotions whenever changes
  * are made to the draft order.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * refreshing the adjustments or promotions for a draft order.
- * 
+ *
  * @example
  * const { result } = await refreshDraftOrderAdjustmentsWorkflow(container)
  * .run({
@@ -61,9 +61,9 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
  *     action: PromotionActions.ADD,
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Refresh the promotions in a draft order.
  */
 export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
@@ -85,7 +85,10 @@ export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
       lineItemAdjustmentIdsToRemove,
       shippingMethodAdjustmentsToCreate,
       shippingMethodAdjustmentIdsToRemove,
-    } = prepareAdjustmentsFromPromotionActionsStep({ actions })
+    } = prepareAdjustmentsFromPromotionActionsStep({
+      actions,
+      cart: input.order,
+    })
 
     parallelize(
       removeDraftOrderLineItemAdjustmentsStep({

@@ -120,7 +120,7 @@ export const updateCartPromotionsWorkflow = createWorkflow(
       shippingMethodAdjustmentsToCreate,
       shippingMethodAdjustmentIdsToRemove,
       computedPromotionCodes,
-    } = prepareAdjustmentsFromPromotionActionsStep({ actions })
+    } = prepareAdjustmentsFromPromotionActionsStep({ actions, cart })
 
     parallelize(
       removeLineItemAdjustmentsStep({ lineItemAdjustmentIdsToRemove }),

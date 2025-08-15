@@ -59,6 +59,9 @@ export const updateCartPromotionsStep = createStep(
     const linksToCreate: any[] = []
     const linksToDismiss: any[] = []
 
+    const promotionIdsToCreate = new Set()
+    const promotionIdsToDismiss = new Set()
+
     if (promo_codes?.length) {
       const promotions = await promotionService.listPromotions(
         { code: promo_codes },
@@ -73,13 +76,13 @@ export const updateCartPromotionsStep = createStep(
 
         if ([PromotionActions.ADD, PromotionActions.REPLACE].includes(action)) {
           linksToCreate.push(linkObject)
-        }
-
-        if (action === PromotionActions.REMOVE) {
+          promotionIdsToCreate.add(promotion.id)
+        } else if (action === PromotionActions.REMOVE) {
           const link = promotionLinkMap.get(promotion.id)
 
           if (link) {
             linksToDismiss.push(linkObject)
+            promotionIdsToDismiss.add(promotion.id)
           }
         }
       }
@@ -91,21 +94,33 @@ export const updateCartPromotionsStep = createStep(
           [Modules.CART]: { cart_id: link.cart_id },
           [Modules.PROMOTION]: { promotion_id: link.promotion_id },
         })
+        promotionIdsToDismiss.add(link.promotion_id)
       }
     }
 
-    if (linksToDismiss.length) {
-      await remoteLink.dismiss(linksToDismiss)
+    const promotionIdsInBoth = new Set(
+      [...promotionIdsToCreate].filter((id) => promotionIdsToDismiss.has(id))
+    )
+
+    const filteredLinksToCreate = linksToCreate.filter(
+      (link) => !promotionIdsInBoth.has(link[Modules.PROMOTION].promotion_id)
+    )
+    const filteredLinksToDismiss = linksToDismiss.filter(
+      (link) => !promotionIdsInBoth.has(link[Modules.PROMOTION].promotion_id)
+    )
+
+    if (filteredLinksToDismiss.length) {
+      await remoteLink.dismiss(filteredLinksToDismiss)
     }
 
-    const createdLinks = linksToCreate.length
-      ? await remoteLink.create(linksToCreate)
+    const createdLinks = filteredLinksToCreate.length
+      ? await remoteLink.create(filteredLinksToCreate)
       : []
 
     return new StepResponse(null, {
       // @ts-expect-error
       createdLinkIds: createdLinks.map((link) => link.id),
-      dismissedLinks: linksToDismiss,
+      dismissedLinks: filteredLinksToDismiss,
     })
   },
   async (revertData, { container }) => {
