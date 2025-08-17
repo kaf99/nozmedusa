@@ -49,6 +49,12 @@ export const refreshOrderEditAdjustmentsWorkflow = createWorkflow(
       ({ input, orderPreview }) => {
         return {
           ...orderPreview,
+          items: orderPreview.items.map((item) => ({
+            ...item,
+            // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
+            // TODO: Ideally, this is returned by the previewOrderChange step; let's look into this before merging
+            product: { id: item.product_id },
+          })),
           currency_code: input.order.currency_code,
           promotions: input.order.promotions,
         }

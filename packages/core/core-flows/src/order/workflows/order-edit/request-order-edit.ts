@@ -20,6 +20,8 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
+import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 function getOrderChangesData({
   input,
@@ -127,9 +129,9 @@ export const requestOrderEditRequestWorkflow = createWorkflow(
   function (
     input: OrderEditRequestWorkflowInput
   ): WorkflowResponse<OrderPreviewDTO> {
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
-      fields: ["id", "version", "canceled_at"],
+      fields: fieldsToRefreshOrderEdit,
       variables: { id: input.order_id },
       list: false,
       throw_if_key_not_found: true,
@@ -164,6 +166,12 @@ export const requestOrderEditRequestWorkflow = createWorkflow(
         }
       }
     )
+
+    refreshOrderEditAdjustmentsWorkflow.runAsStep({
+      input: {
+        order: order,
+      },
+    })
 
     emitEventStep({
       eventName: OrderEditWorkflowEvents.REQUESTED,
