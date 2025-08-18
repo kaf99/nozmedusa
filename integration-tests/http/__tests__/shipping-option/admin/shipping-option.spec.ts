@@ -413,6 +413,103 @@ medusaIntegrationTestRunner({
           )
         })
 
+        it("should create a shipping option successfully with the provided shipping option type", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            price_type: "flat",
+            type_id: type.id,
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+              {
+                region_id: region.id,
+                amount: 1000,
+              },
+              {
+                region_id: region.id,
+                amount: 500,
+                rules: [
+                  {
+                    attribute: "item_total",
+                    operator: "gt",
+                    value: 200,
+                  },
+                ],
+              },
+            ],
+            rules: [shippingOptionRule],
+          }
+
+          const response = await api.post(
+            `/admin/shipping-options`,
+            shippingOptionPayload,
+            adminHeaders
+          )
+
+          expect(response.status).toEqual(200)
+          expect(response.data.shipping_option).toEqual(
+            expect.objectContaining({
+              id: expect.any(String),
+              name: shippingOptionPayload.name,
+              provider: expect.objectContaining({
+                id: shippingOptionPayload.provider_id,
+              }),
+              price_type: shippingOptionPayload.price_type,
+              type: expect.objectContaining({
+                id: type.id,
+                label: type.label,
+                description: type.description,
+                code: type.code,
+              }),
+              service_zone_id: fulfillmentSet.service_zones[0].id,
+              shipping_profile_id: shippingProfile.id,
+              prices: expect.arrayContaining([
+                expect.objectContaining({
+                  id: expect.any(String),
+                  currency_code: "usd",
+                  amount: 1000,
+                }),
+                expect.objectContaining({
+                  id: expect.any(String),
+                  currency_code: "eur",
+                  amount: 1000,
+                }),
+                expect.objectContaining({
+                  id: expect.any(String),
+                  currency_code: "eur",
+                  amount: 500,
+                  rules_count: 2,
+                  price_rules: expect.arrayContaining([
+                    expect.objectContaining({
+                      attribute: "item_total",
+                      operator: "gt",
+                      value: "200",
+                    }),
+                    expect.objectContaining({
+                      attribute: "region_id",
+                      operator: "eq",
+                      value: region.id,
+                    }),
+                  ]),
+                }),
+              ]),
+              rules: expect.arrayContaining([
+                expect.objectContaining({
+                  id: expect.any(String),
+                  operator: "eq",
+                  attribute: "old_attr",
+                  value: "old value",
+                }),
+              ]),
+            })
+          )
+        })
+
         it("should throw error when creating a price rule with a non white listed attribute", async () => {
           const shippingOptionPayload = {
             name: "Test shipping option",
