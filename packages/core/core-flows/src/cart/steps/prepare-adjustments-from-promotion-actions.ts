@@ -1,13 +1,13 @@
 import {
   AddItemAdjustmentAction,
   AddShippingMethodAdjustment,
+  BigNumberInput,
+  BigNumberValue,
   CartDTO,
   ComputeActions,
   IPromotionModuleService,
   OrderDTO,
   PromotionDTO,
-  RemoveItemAdjustmentAction,
-  RemoveShippingMethodAdjustment,
 } from "@medusajs/framework/types"
 import { ComputedActions, Modules } from "@medusajs/framework/utils"
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk"
@@ -86,6 +86,14 @@ export interface PrepareAdjustmentsFromPromotionActionsStepOutput {
   computedPromotionCodes: string[]
 }
 
+function buildAdjustmentKey(
+  promotionId: string,
+  itemId: string,
+  amount: number | BigNumberValue | BigNumberInput
+) {
+  return `${promotionId}-${itemId}-${amount}`
+}
+
 export const prepareAdjustmentsFromPromotionActionsStepId =
   "prepare-adjustments-from-promotion-actions"
 /**
@@ -121,7 +129,7 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
         shippingMethodAdjustmentsToCreate: [],
         shippingMethodAdjustmentIdsToRemove: [],
         computedPromotionCodes: [],
-      } as PrepareAdjustmentsFromPromotionActionsStepOutput)
+      })
     }
 
     const promotions = await promotionModuleService.listPromotions(
@@ -135,86 +143,118 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
 
     const existingLineItemAdjustments = new Set<string>()
     const existingShippingMethodAdjustments = new Set<string>()
+    const computedPromotionCodes = new Set<string>()
 
     for (const item of cart?.items ?? []) {
       for (const adjustment of item?.adjustments ?? []) {
-        if (adjustment.promotion_id) {
-          const key = `${adjustment.promotion_id}-${item.id}-${adjustment.amount}`
-          existingLineItemAdjustments.add(key)
+        if (!adjustment.promotion_id) {
+          continue
         }
+
+        existingLineItemAdjustments.add(
+          buildAdjustmentKey(
+            adjustment.promotion_id,
+            item.id,
+            adjustment.amount
+          )
+        )
       }
     }
 
     for (const shippingMethod of cart?.shipping_methods ?? []) {
       for (const adjustment of shippingMethod?.adjustments ?? []) {
-        if (adjustment.promotion_id) {
-          const key = `${adjustment.promotion_id}-${shippingMethod.id}-${adjustment.amount}`
-          existingShippingMethodAdjustments.add(key)
+        if (!adjustment.promotion_id) {
+          continue
         }
+
+        existingShippingMethodAdjustments.add(
+          buildAdjustmentKey(
+            adjustment.promotion_id,
+            shippingMethod.id,
+            adjustment.amount
+          )
+        )
       }
     }
 
     const lineItemAdjustmentsToCreate = actions
-      .filter((a) => {
-        if (a.action !== ComputedActions.ADD_ITEM_ADJUSTMENT) {
-          return false
+      .map((computeAction) => {
+        if (computeAction.action !== ComputedActions.ADD_ITEM_ADJUSTMENT) {
+          return null
         }
 
-        const action = a as AddItemAdjustmentAction
-        const promoId = promotionsMap.get(action.code)?.id
-        const key = `${promoId}-${action.item_id}-${action.amount}`
+        const action = computeAction as AddItemAdjustmentAction
+        const promoId = promotionsMap.get(action.code)?.id!
+        const key = buildAdjustmentKey(promoId, action.item_id, action.amount)
 
-        return !existingLineItemAdjustments.has(key)
+        if (existingLineItemAdjustments.has(key)) {
+          return null
+        }
+
+        computedPromotionCodes.add(action.code)
+
+        return {
+          code: action.code,
+          amount: action.amount,
+          is_tax_inclusive: action.is_tax_inclusive,
+          item_id: action.item_id,
+          promotion_id: promotionsMap.get(action.code)?.id,
+        }
       })
-      .map((action) => ({
-        code: action.code,
-        amount: (action as AddItemAdjustmentAction).amount,
-        is_tax_inclusive: (action as AddItemAdjustmentAction).is_tax_inclusive,
-        item_id: (action as AddItemAdjustmentAction).item_id,
-        promotion_id: promotionsMap.get(action.code)?.id,
-      }))
+      .filter((adjustment) => {
+        return adjustment !== null
+      })
 
     const lineItemAdjustmentIdsToRemove = actions
       .filter((a) => a.action === ComputedActions.REMOVE_ITEM_ADJUSTMENT)
-      .map((a) => (a as RemoveItemAdjustmentAction).adjustment_id)
+      .map((a) => a.adjustment_id)
 
     const shippingMethodAdjustmentsToCreate = actions
-      .filter((a) => {
-        if (a.action !== ComputedActions.ADD_SHIPPING_METHOD_ADJUSTMENT) {
-          return false
+      .map((computeAction) => {
+        if (
+          computeAction.action !==
+          ComputedActions.ADD_SHIPPING_METHOD_ADJUSTMENT
+        ) {
+          return null
         }
 
-        const action = a as AddShippingMethodAdjustment
-        const promoId = promotionsMap.get(action.code)?.id
-        const key = `${promoId}-${action.shipping_method_id}-${action.amount}`
+        const action = computeAction as AddShippingMethodAdjustment
+        const promoId = promotionsMap.get(action.code)?.id!
+        const key = buildAdjustmentKey(
+          promoId,
+          action.shipping_method_id,
+          action.amount
+        )
 
-        return !existingShippingMethodAdjustments.has(key)
+        if (existingShippingMethodAdjustments.has(key)) {
+          return null
+        }
+
+        computedPromotionCodes.add(action.code)
+
+        return {
+          code: action.code,
+          amount: action.amount,
+          shipping_method_id: action.shipping_method_id,
+          promotion_id: promotionsMap.get(action.code)?.id,
+        }
       })
-      .map((action) => ({
-        code: action.code,
-        amount: (action as AddShippingMethodAdjustment).amount,
-        shipping_method_id: (action as AddShippingMethodAdjustment)
-          .shipping_method_id,
-        promotion_id: promotionsMap.get(action.code)?.id,
-      }))
+      .filter((adjustment) => {
+        return adjustment !== null
+      })
 
     const shippingMethodAdjustmentIdsToRemove = actions
       .filter(
         (a) => a.action === ComputedActions.REMOVE_SHIPPING_METHOD_ADJUSTMENT
       )
-      .map((a) => (a as RemoveShippingMethodAdjustment).adjustment_id)
-
-    const computedPromotionCodes = [
-      ...lineItemAdjustmentsToCreate,
-      ...shippingMethodAdjustmentsToCreate,
-    ].map((adjustment) => adjustment.code)
+      .map((a) => a.adjustment_id)
 
     return new StepResponse({
       lineItemAdjustmentsToCreate,
       lineItemAdjustmentIdsToRemove,
       shippingMethodAdjustmentsToCreate,
       shippingMethodAdjustmentIdsToRemove,
-      computedPromotionCodes,
-    } as PrepareAdjustmentsFromPromotionActionsStepOutput)
+      computedPromotionCodes: Array.from(computedPromotionCodes),
+    })
   }
 )

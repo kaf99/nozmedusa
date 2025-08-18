@@ -1,4 +1,7 @@
-import { IPromotionModuleService } from "@medusajs/framework/types"
+import {
+  IPromotionModuleService,
+  LinkDefinition,
+} from "@medusajs/framework/types"
 import {
   ContainerRegistrationKeys,
   Modules,
@@ -37,35 +40,37 @@ export const updateCartPromotionsStep = createStep(
     const { promo_codes = [], id, action = PromotionActions.ADD } = data
 
     const remoteLink = container.resolve(ContainerRegistrationKeys.LINK)
-    const remoteQuery = container.resolve(
-      ContainerRegistrationKeys.REMOTE_QUERY
-    )
+    const query = container.resolve(ContainerRegistrationKeys.QUERY)
     const promotionService = container.resolve<IPromotionModuleService>(
       Modules.PROMOTION
     )
 
-    const existingCartPromotionLinks = await remoteQuery({
-      entryPoint: "cart_promotion",
+    const { data: existingCartPromotionLinks } = (await query.graph({
+      entity: "cart_promotion",
       fields: ["cart_id", "promotion_id"],
-      variables: {
+      filters: {
         cart_id: [id],
       },
-    })
+      pagination: {
+        take: null,
+      },
+    })) as { data: { cart_id: string; promotion_id: string }[] }
 
-    const promotionLinkMap = new Map<string, any>(
-      existingCartPromotionLinks.map((link) => [link.promotion_id, link])
-    )
+    const promotionLinkMap = new Map<
+      string,
+      (typeof existingCartPromotionLinks)[number]
+    >(existingCartPromotionLinks.map((link) => [link.promotion_id, link]))
 
-    const linksToCreate: any[] = []
-    const linksToDismiss: any[] = []
+    const linksToCreate: LinkDefinition[] = []
+    const linksToDismiss: LinkDefinition[] = []
 
-    const promotionIdsToCreate = new Set()
-    const promotionIdsToDismiss = new Set()
+    const promotionIdsToCreate = new Set<string>()
+    const promotionIdsToDismiss = new Set<string>()
 
     if (promo_codes?.length) {
       const promotions = await promotionService.listPromotions(
         { code: promo_codes },
-        { select: ["id"] }
+        { select: ["id"], take: null }
       )
 
       for (const promotion of promotions) {
@@ -103,13 +108,14 @@ export const updateCartPromotionsStep = createStep(
       await remoteLink.dismiss(filteredLinksToDismiss)
     }
 
-    const createdLinks = filteredLinksToCreate.length
-      ? await remoteLink.create(filteredLinksToCreate)
-      : []
+    const createdLinks = (
+      filteredLinksToCreate.length
+        ? await remoteLink.create(filteredLinksToCreate)
+        : []
+    ) as { id: string; cart_id: string; promotion_id: string }[]
 
     return new StepResponse(null, {
-      // @ts-expect-error
-      createdLinkIds: createdLinks.map((link) => link.id),
+      createdLink: createdLinks,
       dismissedLinks: filteredLinksToDismiss,
     })
   },
@@ -120,9 +126,13 @@ export const updateCartPromotionsStep = createStep(
       await remoteLink.create(revertData.dismissedLinks)
     }
 
-    if (revertData?.createdLinkIds?.length) {
-      // @ts-expect-error
-      await remoteLink.delete(revertData.createdLinkIds)
+    if (revertData?.createdLink?.length) {
+      const toDismiss = revertData?.createdLink.map((link) => ({
+        [Modules.CART]: { cart_id: link.cart_id },
+        [Modules.PROMOTION]: { promotion_id: link.promotion_id },
+      }))
+
+      await remoteLink.dismiss(toDismiss)
     }
   }
 )
