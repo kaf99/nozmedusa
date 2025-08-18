@@ -122,16 +122,6 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
 
     const { actions = [], cart } = data
 
-    if (!actions.length) {
-      return new StepResponse({
-        lineItemAdjustmentsToCreate: [],
-        lineItemAdjustmentIdsToRemove: [],
-        shippingMethodAdjustmentsToCreate: [],
-        shippingMethodAdjustmentIdsToRemove: [],
-        computedPromotionCodes: [],
-      })
-    }
-
     const promotions = await promotionModuleService.listPromotions(
       { code: actions.map((a) => a.code) },
       { select: ["id", "code"] }
@@ -141,7 +131,9 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
       promotions.map((promotion) => [promotion.code!, promotion])
     )
 
+    const existingAdjustmentIds = new Set<string>()
     const existingLineItemAdjustments = new Set<string>()
+    const existingShippingMethodAdjustmentIds = new Set<string>()
     const existingShippingMethodAdjustments = new Set<string>()
     const computedPromotionCodes = new Set<string>()
 
@@ -151,6 +143,7 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
           continue
         }
 
+        existingAdjustmentIds.add(adjustment.id)
         existingLineItemAdjustments.add(
           buildAdjustmentKey(
             adjustment.promotion_id,
@@ -167,6 +160,7 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
           continue
         }
 
+        existingAdjustmentIds.add(adjustment.id)
         existingShippingMethodAdjustments.add(
           buildAdjustmentKey(
             adjustment.promotion_id,
@@ -175,6 +169,18 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
           )
         )
       }
+    }
+
+    if (!actions.length) {
+      return new StepResponse({
+        lineItemAdjustmentsToCreate: [],
+        lineItemAdjustmentIdsToRemove: Array.from(existingAdjustmentIds),
+        shippingMethodAdjustmentsToCreate: [],
+        shippingMethodAdjustmentIdsToRemove: Array.from(
+          existingShippingMethodAdjustmentIds
+        ),
+        computedPromotionCodes: [],
+      })
     }
 
     const lineItemAdjustmentsToCreate = actions
