@@ -61,7 +61,13 @@ export const upsertShippingOptionsStep = createStep(
 
     const upsertedShippingOptions: ShippingOptionDTO[] =
       await fulfillmentService.upsertShippingOptions(
-        input.map(i => ({...i, type: i.type_id ? i.type_id: i.type})) as UpsertShippingOptionDTO[]
+        input.map(i => {
+          const upsertShippingOption = i as UpsertShippingOptionDTO
+          if (i.type_id) {
+            upsertShippingOption.type = i.type_id
+          }
+          return upsertShippingOption;
+        })
       )
 
     const upsertedShippingOptionIds = upsertedShippingOptions.map((s) => s.id)

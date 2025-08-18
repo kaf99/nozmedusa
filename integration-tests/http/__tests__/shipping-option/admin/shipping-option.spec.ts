@@ -1,9 +1,6 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import { RuleOperator } from "@medusajs/utils"
-import {
-  adminHeaders,
-  createAdminUser,
-} from "../../../../helpers/create-admin-user"
+import { adminHeaders, createAdminUser, } from "../../../../helpers/create-admin-user"
 
 jest.setTimeout(50000)
 
@@ -637,7 +634,7 @@ medusaIntegrationTestRunner({
             ],
             rules: [
               {
-                // Un touched
+                // Untouched
                 id: oldAttrRule.id,
                 operator: RuleOperator.EQ,
                 attribute: "old_attr",
