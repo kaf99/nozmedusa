@@ -11,7 +11,7 @@ export class Views {
     entity: string,
     query?: SelectParams,
     headers?: ClientHeaders
-  ): Promise<HttpTypes.AdminOrderColumnsResponse> {
+  ): Promise<HttpTypes.AdminViewsEntityColumnsResponse> {
     return await this.client.fetch(`/admin/views/${entity}/columns`, {
       method: "GET",
       headers,
@@ -19,18 +19,6 @@ export class Views {
     })
   }
 
-  // Update column visibility
-  async updateColumnVisibility(
-    entity: string,
-    body: HttpTypes.AdminUpdateColumnVisibilityPayload,
-    headers?: ClientHeaders
-  ): Promise<HttpTypes.AdminColumnVisibilityResponse> {
-    return await this.client.fetch(`/admin/views/${entity}/columns`, {
-      method: "POST",
-      headers,
-      body,
-    })
-  }
 
   // View configurations
   async listConfigurations(
