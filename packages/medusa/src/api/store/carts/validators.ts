@@ -39,7 +39,8 @@ export type StoreRemoveCartPromotionsType = z.infer<
 >
 export const StoreRemoveCartPromotions = z
   .object({
-    promo_codes: z.array(z.string()),
+    promo_codes: z.union([z.array(z.string()), z.string()]),
+    ...createSelectParams().shape,
   })
   .strict()
 

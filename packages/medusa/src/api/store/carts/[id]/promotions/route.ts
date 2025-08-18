@@ -29,17 +29,20 @@ export const POST = async (
 }
 
 export const DELETE = async (
-  req: MedusaRequest<HttpTypes.StoreCartRemovePromotion>,
+  req: MedusaRequest<any, HttpTypes.StoreCartRemovePromotion>,
   res: MedusaResponse<{
     cart: HttpTypes.StoreCart
   }>
 ) => {
   const workflow = updateCartPromotionsWorkflow(req.scope)
-  const payload = req.validatedBody
+  let promoCodes = req.validatedQuery.promo_codes
+  if (!Array.isArray(promoCodes)) {
+    promoCodes = [promoCodes]
+  }
 
   await workflow.run({
     input: {
-      promo_codes: payload.promo_codes,
+      promo_codes: promoCodes,
       cart_id: req.params.id,
       action: PromotionActions.REMOVE,
     },

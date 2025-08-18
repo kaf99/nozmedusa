@@ -137,9 +137,8 @@ export const storeCartRoutesMiddlewares: MiddlewareRoute[] = [
     method: ["DELETE"],
     matcher: "/store/carts/:id/promotions",
     middlewares: [
-      validateAndTransformBody(StoreRemoveCartPromotions),
       validateAndTransformQuery(
-        StoreGetCartsCart,
+        StoreRemoveCartPromotions,
         QueryConfig.retrieveTransformQueryConfig
       ),
     ],

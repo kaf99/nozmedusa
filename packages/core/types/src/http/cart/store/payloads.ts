@@ -179,7 +179,7 @@ export interface StoreCartRemovePromotion {
   /**
    * The promotion codes to remove from the cart.
    */
-  promo_codes: string[]
+  promo_codes: string[] | string
 }
 
 export interface StoreCartAddPromotion {
