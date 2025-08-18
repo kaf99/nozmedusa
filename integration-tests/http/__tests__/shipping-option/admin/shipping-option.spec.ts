@@ -14,6 +14,7 @@ medusaIntegrationTestRunner({
       let appContainer
       let location
       let location2
+      let type
 
       const shippingOptionRule = {
         operator: RuleOperator.EQ,
@@ -89,6 +90,17 @@ medusaIntegrationTestRunner({
             adminHeaders
           )
         ).data.region
+
+        type = (
+          await api.post(
+            `/admin/shipping-option-types`,
+            {
+              label: "Test",
+              code: 'test',
+            },
+            adminHeaders
+          )
+        ).data.shipping_option_type
       })
 
       describe("GET /admin/shipping-options", () => {
@@ -728,6 +740,74 @@ medusaIntegrationTestRunner({
                   value: "true",
                 }),
               ]),
+            })
+          )
+        })
+
+        it("should update a shipping option with a provided shipping option type successfully", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            price_type: "flat",
+            type: {
+              label: "Test type",
+              description: "Test description",
+              code: "test-code",
+            },
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+              {
+                region_id: region.id,
+                amount: 1000,
+              },
+            ],
+            rules: [
+              {
+                operator: RuleOperator.EQ,
+                attribute: "old_attr",
+                value: "old value",
+              },
+              {
+                operator: RuleOperator.EQ,
+                attribute: "old_attr_2",
+                value: "true",
+              },
+            ],
+          }
+
+          const response = await api.post(
+            `/admin/shipping-options`,
+            shippingOptionPayload,
+            adminHeaders
+          )
+
+          const shippingOptionId = response.data.shipping_option.id
+
+          const updateResponse = await api.post(
+            `/admin/shipping-options/${shippingOptionId}`,
+            {
+              name: "Updated shipping option",
+              type_id: type.id,
+            },
+            adminHeaders
+          )
+
+          expect(updateResponse.status).toEqual(200)
+          expect(updateResponse.data.shipping_option).toEqual(
+            expect.objectContaining({
+              id: expect.any(String),
+              name: "Updated shipping option",
+              type: expect.objectContaining({
+                id: type.id,
+                label: type.label,
+                description: type.description,
+                code: type.code,
+              }),
             })
           )
         })
