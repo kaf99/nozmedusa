@@ -65,7 +65,11 @@ export const updateCartPromotionsStep = createStep(
     const linksToDismiss: LinkDefinition[] = []
 
     const promotionIdsToCreate = new Set<string>()
-    const promotionIdsToDismiss = new Set<string>()
+
+    // Start by making everything to dismiss and then remove if they are not to dismiss. Cover edge cases where promo are not dimissed in some scenarios
+    const promotionIdsToDismiss = new Set<string>(
+      existingCartPromotionLinks.map((link) => link.promotion_id)
+    )
 
     if (promo_codes?.length) {
       const promotions = await promotionService.listPromotions(
@@ -82,6 +86,7 @@ export const updateCartPromotionsStep = createStep(
         if ([PromotionActions.ADD, PromotionActions.REPLACE].includes(action)) {
           linksToCreate.push(linkObject)
           promotionIdsToCreate.add(promotion.id)
+          promotionIdsToDismiss.delete(promotion.id)
         } else if (action === PromotionActions.REMOVE) {
           const link = promotionLinkMap.get(promotion.id)
 
@@ -91,6 +96,15 @@ export const updateCartPromotionsStep = createStep(
           }
         }
       }
+    }
+
+    if (promotionIdsToDismiss.size) {
+      linksToDismiss.push(
+        ...[...promotionIdsToDismiss].map((promoId) => ({
+          [Modules.CART]: { cart_id: id },
+          [Modules.PROMOTION]: { promotion_id: promoId },
+        }))
+      )
     }
 
     const promotionIdsInBoth = new Set(
