@@ -433,9 +433,9 @@ export default class PromotionModuleService
 
     const methodIdPromoValueMap = new Map<string, number>()
 
-    const promotionCodesToApply = new Set(...promotionCodes, ...appliedCodes)
+    const promotionCodesToApply = [...promotionCodes, ...appliedCodes]
 
-    const uniquePromotionCodes = Array.from(promotionCodesToApply)
+    const uniquePromotionCodes = Array.from(new Set(promotionCodesToApply))
 
     const filterPromo = preventAutoPromotions
       ? { code: uniquePromotionCodes }
