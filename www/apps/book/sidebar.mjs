@@ -276,6 +276,11 @@ export const sidebars = [
               },
               {
                 type: "link",
+                path: "/learn/fundamentals/data-models/json-properties",
+                title: "JSON Properties",
+              },
+              {
+                type: "link",
                 path: "/learn/fundamentals/data-models/relationships",
                 title: "Relationships",
               },
@@ -436,7 +441,7 @@ export const sidebars = [
               {
                 type: "link",
                 path: "/learn/fundamentals/workflows/execute-another-workflow",
-                title: "Execute Another Workflow",
+                title: "Execute Nested Workflows",
               },
               {
                 type: "link",
