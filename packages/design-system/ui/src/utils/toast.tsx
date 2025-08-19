@@ -3,6 +3,8 @@ import { ToastAction, ToastVariant, ToasterPosition } from "@/types"
 import * as React from "react"
 import { ExternalToast, toast as toastFn } from "sonner"
 
+const DEFAULT_TOAST_POSITION = "top-right"
+
 interface BaseToastProps {
   id?: string | number
   position?: ToasterPosition
@@ -55,7 +57,7 @@ function message(
    * The props of the toast.
    */
   props: ToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("message", title, props)
@@ -75,7 +77,7 @@ function info(
    * The props of the toast.
    */
   props: VariantToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("info", title, props)
@@ -89,7 +91,7 @@ function error(
    * The props of the toast.
    */
   props: VariantToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("error", title, props)
@@ -103,7 +105,7 @@ function success(
    * The props of the toast.
    */
   props: VariantToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("success", title, props)
@@ -117,7 +119,7 @@ function warning(
    * The props of the toast.
    */
   props: VariantToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("warning", title, props)
@@ -131,7 +133,7 @@ function loading(
    * The props of the toast.
    */
   props: VariantToastProps = {
-    position: "top-right",
+    position: DEFAULT_TOAST_POSITION,
   }
 ) {
   return create("loading", title, { ...props, dismissable: false })
