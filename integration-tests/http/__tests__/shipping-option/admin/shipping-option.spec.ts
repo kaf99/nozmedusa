@@ -658,6 +658,72 @@ medusaIntegrationTestRunner({
             "Providers (does-not-exist) are not enabled for the service location"
           )
         })
+
+        it("should throw error if both type and type_id are missing", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            price_type: "flat",
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+            ],
+            rules: [shippingOptionRule],
+          }
+
+          const error = await api
+            .post(
+              `/admin/shipping-options`,
+              shippingOptionPayload,
+              adminHeaders
+            )
+            .catch((e) => e)
+
+          expect(error.response.status).toEqual(400)
+          expect(error.response.data.message).toEqual(
+            "Invalid request: Exactly one of 'type' or 'type_id' must be provided, but not both"
+          )
+        })
+
+        it("should throw error if both type and type_id are defined", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            type: {
+              label: "Test type",
+              description: "Test description",
+              code: "test-code",
+            },
+            type_id: "test_type_id",
+            price_type: "flat",
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+            ],
+            rules: [shippingOptionRule],
+          }
+
+          const error = await api
+            .post(
+              `/admin/shipping-options`,
+              shippingOptionPayload,
+              adminHeaders
+            )
+            .catch((e) => e)
+
+          expect(error.response.status).toEqual(400)
+          expect(error.response.data.message).toEqual(
+            "Invalid request: Exactly one of 'type' or 'type_id' must be provided, but not both"
+          )
+        })
       })
 
       describe("POST /admin/shipping-options/:id", () => {
@@ -909,6 +975,67 @@ medusaIntegrationTestRunner({
           )
         })
 
+        it("should update a shipping option without providing shipping option type successfully", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            price_type: "flat",
+            type: {
+              label: "Test type",
+              description: "Test description",
+              code: "test-code",
+            },
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+              {
+                region_id: region.id,
+                amount: 1000,
+              },
+            ],
+            rules: [
+              {
+                operator: RuleOperator.EQ,
+                attribute: "old_attr",
+                value: "old value",
+              },
+              {
+                operator: RuleOperator.EQ,
+                attribute: "old_attr_2",
+                value: "true",
+              },
+            ],
+          }
+
+          const response = await api.post(
+            `/admin/shipping-options`,
+            shippingOptionPayload,
+            adminHeaders
+          )
+
+          const shippingOptionId = response.data.shipping_option.id
+
+          const updateResponse = await api.post(
+            `/admin/shipping-options/${shippingOptionId}`,
+            {
+              name: "Updated shipping option"
+            },
+            adminHeaders
+          )
+
+          expect(updateResponse.status).toEqual(200)
+          expect(updateResponse.data.shipping_option).toEqual(
+            expect.objectContaining({
+              id: expect.any(String),
+              name: "Updated shipping option"
+            })
+          )
+        })
+
         it("should throw an error when provider does not belong to service location", async () => {
           const shippingOptionPayload = {
             name: "Test shipping option",
@@ -958,6 +1085,60 @@ medusaIntegrationTestRunner({
           expect(error.response.data.message).toEqual(
             "Providers (another_test-provider) are not enabled for the service location"
           )
+        })
+
+        it("should throw an error when type and type_id are both defined", async () => {
+          const shippingOptionPayload = {
+            name: "Test shipping option",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            provider_id: "manual_test-provider",
+            price_type: "flat",
+            type: {
+              label: "Test type",
+              description: "Test description",
+              code: "test-code",
+            },
+            prices: [
+              {
+                currency_code: "usd",
+                amount: 1000,
+              },
+              {
+                region_id: region.id,
+                amount: 1000,
+              },
+            ],
+            rules: [shippingOptionRule],
+          }
+
+          const response = await api.post(
+            `/admin/shipping-options`,
+            shippingOptionPayload,
+            adminHeaders
+          )
+
+          const shippingOptionId = response.data.shipping_option.id
+
+          const updateShippingOptionPayload = {
+            type: {
+              label: "Test type",
+              description: "Test description",
+              code: "test-code",
+            },
+            type_id: "test_type_id"
+          }
+
+          const error = await api
+            .post(
+              `/admin/shipping-options/${shippingOptionId}`,
+              updateShippingOptionPayload,
+              adminHeaders
+            )
+            .catch((e) => e)
+
+          expect(error.response.status).toEqual(400)
+          expect(error.response.data.message).toEqual("Invalid request: Only one of 'type' or 'type_id' can be provided")
         })
       })
 
