@@ -1,4 +1,5 @@
 import {
+  isDefined,
   PricingRuleOperator,
   RuleOperator,
   ShippingOptionPriceType as ShippingOptionPriceTypeEnum,
@@ -9,6 +10,7 @@ import {
   createFindParams,
   createOperatorMap,
   createSelectParams,
+  WithAdditionalData,
 } from "../../utils/validators"
 
 export type AdminGetShippingOptionParamsType = z.infer<
@@ -127,45 +129,66 @@ export const AdminUpdateShippingOptionPriceWithRegion = z
   })
   .strict()
 
-export type AdminCreateShippingOptionType = z.infer<
-  typeof AdminCreateShippingOption
->
-export const AdminCreateShippingOption = z
-  .object({
-    name: z.string(),
-    service_zone_id: z.string(),
-    shipping_profile_id: z.string(),
-    data: z.record(z.unknown()).optional(),
-    price_type: z.nativeEnum(ShippingOptionPriceTypeEnum),
-    provider_id: z.string(),
-    type: AdminCreateShippingOptionTypeObject.optional(),
-    type_id: z.string().optional(),
-    prices: AdminCreateShippingOptionPriceWithCurrency.or(
-      AdminCreateShippingOptionPriceWithRegion
-    ).array(),
-    rules: AdminCreateShippingOptionRule.array().optional(),
-  })
-  .strict()
+export const AdminCreateShippingOption = WithAdditionalData(
+  z
+    .object({
+      name: z.string(),
+      service_zone_id: z.string(),
+      shipping_profile_id: z.string(),
+      data: z.record(z.unknown()).optional(),
+      price_type: z.nativeEnum(ShippingOptionPriceTypeEnum),
+      provider_id: z.string(),
+      type: AdminCreateShippingOptionTypeObject.optional(),
+      type_id: z.string().optional(),
+      prices: AdminCreateShippingOptionPriceWithCurrency.or(
+        AdminCreateShippingOptionPriceWithRegion
+      ).array(),
+      rules: AdminCreateShippingOptionRule.array().optional(),
+    })
+    .strict(),
+  (schema) =>
+    schema.refine((data) => isDefined(data.type) !== isDefined(data.type_id), {
+      message:
+        "Exactly one of 'type' or 'type_id' must be provided, but not both",
+      path: ["type", "type_id"],
+    })
+)
 
-export type AdminUpdateShippingOptionType = z.infer<
-  typeof AdminUpdateShippingOption
->
-export const AdminUpdateShippingOption = z
-  .object({
-    name: z.string().optional(),
-    data: z.record(z.unknown()).optional(),
-    price_type: z.nativeEnum(ShippingOptionPriceTypeEnum).optional(),
-    provider_id: z.string().optional(),
-    shipping_profile_id: z.string().optional(),
-    type: AdminCreateShippingOptionTypeObject.optional(),
-    type_id: z.string().optional(),
-    prices: AdminUpdateShippingOptionPriceWithCurrency.or(
-      AdminUpdateShippingOptionPriceWithRegion
+export const AdminUpdateShippingOption = WithAdditionalData(
+  z
+    .object({
+      name: z.string().optional(),
+      data: z.record(z.unknown()).optional(),
+      price_type: z.nativeEnum(ShippingOptionPriceTypeEnum).optional(),
+      provider_id: z.string().optional(),
+      shipping_profile_id: z.string().optional(),
+      type: AdminCreateShippingOptionTypeObject.optional(),
+      type_id: z.string().optional(),
+      prices: AdminUpdateShippingOptionPriceWithCurrency.or(
+        AdminUpdateShippingOptionPriceWithRegion
+      )
+        .array()
+        .optional(),
+      rules: AdminUpdateShippingOptionRule.or(AdminCreateShippingOptionRule)
+        .array()
+        .optional(),
+    })
+    .strict(),
+  (schema) =>
+    schema.refine(
+      (data) => {
+        const hasType = isDefined(data.type)
+        const hasTypeId = isDefined(data.type_id)
+
+        if (!hasType && !hasTypeId) {
+          return true
+        }
+
+        return hasType !== hasTypeId
+      },
+      {
+        message: "Only one of 'type' or 'type_id' can be provided",
+        path: ["type", "type_id"],
+      }
     )
-      .array()
-      .optional(),
-    rules: AdminUpdateShippingOptionRule.or(AdminCreateShippingOptionRule)
-      .array()
-      .optional(),
-  })
-  .strict()
+)
