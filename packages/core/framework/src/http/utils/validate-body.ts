@@ -1,15 +1,22 @@
 import * as z3 from "zod/v3"
+import * as z4 from "zod/v4"
 import { NextFunction } from "express"
 import { MedusaRequest, MedusaResponse } from "../types"
 import { zodValidator } from "../../zod"
 
+// Type unions to accept both v3 and v4 schemas
+type AnyZodObject = z3.ZodObject<any, any> | z4.ZodObject<any, any>
+type AnyZodEffects = z3.ZodEffects<any, any> | z4.ZodEffects<any, any>
+type AnyZodOptional<T = any> = z3.ZodOptional<T> | z4.ZodOptional<T>
+type AnyZodNullable<T = any> = z3.ZodNullable<T> | z4.ZodNullable<T>
+
 export function validateAndTransformBody(
   zodSchema:
-    | z3.ZodObject<any, any>
-    | z3.ZodEffects<any, any>
+    | AnyZodObject
+    | AnyZodEffects
     | ((
-        customSchema?: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
-      ) => z3.ZodObject<any, any> | z3.ZodEffects<any, any>)
+        customSchema?: AnyZodOptional<AnyZodNullable<AnyZodObject>>
+      ) => AnyZodObject | AnyZodEffects)
 ): (
   req: MedusaRequest,
   res: MedusaResponse,
@@ -21,7 +28,7 @@ export function validateAndTransformBody(
     next: NextFunction
   ) {
     try {
-      let schema: z3.ZodObject<any, any> | z3.ZodEffects<any, any>
+      let schema: AnyZodObject | AnyZodEffects
       if (typeof zodSchema === "function") {
         schema = zodSchema(req.additionalDataValidator)
       } else {

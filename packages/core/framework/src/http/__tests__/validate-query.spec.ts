@@ -1,17 +1,24 @@
-import z from "zod"
+import * as z3 from "zod/v3"
+import * as z4 from "zod/v4"
 import { MedusaError } from "@medusajs/utils"
 import { validateAndTransformQuery } from "../utils/validate-query"
 import { MedusaNextFunction, MedusaRequest, MedusaResponse } from "../types"
 import { RestrictedFields } from "../utils/restricted-fields"
 import { QueryConfig } from "@medusajs/types"
 
-export const createSelectParams = () => {
+// We'll test with both v3 and v4
+const testVersions = [
+  ["v3", z3.z],
+  ["v4", z4.z]
+] as const
+
+export const createSelectParams = (z: typeof z3.z | typeof z4.z) => {
   return z.object({
     fields: z.string().optional(),
   })
 }
 
-const createFindParams = ({
+const createFindParams = (z: typeof z3.z | typeof z4.z, {
   offset,
   limit,
   order,
@@ -20,7 +27,7 @@ const createFindParams = ({
   limit?: number
   order?: string
 } = {}) => {
-  const selectParams = createSelectParams()
+  const selectParams = createSelectParams(z)
 
   return selectParams.merge(
     z.object({
@@ -55,7 +62,7 @@ const createFindParams = ({
   )
 }
 
-describe("validateAndTransformQuery", () => {
+describe.each(testVersions)("validateAndTransformQuery with Zod %s", (version, z) => {
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -140,7 +147,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    let middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    let middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -159,7 +166,7 @@ describe("validateAndTransformQuery", () => {
       },
     } as unknown as MedusaRequest
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -193,7 +200,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -229,7 +236,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    let middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    let middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -261,7 +268,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -302,7 +309,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -361,7 +368,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    let middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    let middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -437,7 +444,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -488,7 +495,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    let middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    let middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -530,7 +537,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -574,7 +581,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -616,7 +623,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -659,7 +666,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -702,7 +709,7 @@ describe("validateAndTransformQuery", () => {
       isList: true,
     }
 
-    middleware = validateAndTransformQuery(createFindParams(), queryConfig)
+    middleware = validateAndTransformQuery(createFindParams(z), queryConfig)
 
     await middleware(mockRequest, mockResponse, nextFunction)
 
@@ -743,7 +750,7 @@ describe("validateAndTransformQuery", () => {
     }
 
     const middleware = validateAndTransformQuery(
-      createFindParams(),
+      createFindParams(z),
       queryConfig
     )
 

@@ -3,6 +3,7 @@ import { MedusaError, removeUndefinedProperties } from "@medusajs/utils"
 import { NextFunction } from "express"
 import { omit } from "lodash"
 import * as z3 from "zod/v3"
+import * as z4 from "zod/v4"
 
 import { zodValidator } from "../../zod/zod-helpers"
 import { MedusaRequest, MedusaResponse } from "../types"
@@ -55,7 +56,7 @@ const getFilterableFields = <T extends RequestQueryFields>(obj: T): T => {
 }
 
 export function validateAndTransformQuery<TEntity extends BaseEntity>(
-  zodSchema: z3.ZodObject<any, any> | z3.ZodEffects<any, any>,
+  zodSchema: z3.ZodObject<any, any> | z3.ZodEffects<any, any> | z4.ZodObject<any, any> | z4.ZodEffects<any, any>,
   queryConfig: QueryConfig<TEntity>
 ): (
   req: MedusaRequest,

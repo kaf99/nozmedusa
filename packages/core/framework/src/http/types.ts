@@ -1,5 +1,13 @@
 import type { NextFunction, Request, Response } from "express"
 import type * as z3 from "zod/v3"
+import type * as z4 from "zod/v4"
+
+// Type unions to support both Zod v3 and v4
+export type ZodObject = z3.ZodObject<any, any> | z4.ZodObject<any, any>
+export type ZodEffects = z3.ZodEffects<any, any> | z4.ZodEffects<any, any>
+export type ZodOptional<T = any> = z3.ZodOptional<T> | z4.ZodOptional<T>
+export type ZodNullable<T = any> = z3.ZodNullable<T> | z4.ZodNullable<T>
+export type ZodRawShape = z3.ZodRawShape | z4.ZodRawShape
 
 import {
   FindConfig,
@@ -60,7 +68,7 @@ export type MiddlewareRoute = {
   methods?: MiddlewareVerb[]
   matcher: string | RegExp
   bodyParser?: ParserConfig
-  additionalDataValidator?: z3.ZodRawShape
+  additionalDataValidator?: ZodRawShape
   middlewares?: MiddlewareFunction[]
 }
 
@@ -106,8 +114,8 @@ export type BodyParserConfigRoute = {
 export type AdditionalDataValidatorRoute = {
   matcher: string
   methods: MiddlewareVerb | MiddlewareVerb[]
-  schema: z3.ZodRawShape
-  validator: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
+  schema: ZodRawShape
+  validator: ZodOptional<ZodNullable<ZodObject>>
 }
 
 export type GlobalMiddlewareDescriptor = {
@@ -182,7 +190,7 @@ export interface MedusaRequest<
    * Custom validator to validate the `additional_data` property in
    * requests that allows for additional_data
    */
-  additionalDataValidator?: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
+  additionalDataValidator?: ZodOptional<ZodNullable<ZodObject>>
 }
 
 export interface AuthContext {
