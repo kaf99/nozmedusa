@@ -1,17 +1,11 @@
 import { MedusaError } from "../utils"
-import {
-  z,
-  ZodError,
-  ZodInvalidTypeIssue,
-  ZodInvalidUnionIssue,
-  ZodIssue,
-} from "zod"
+import * as z3 from "zod/v3"
 
-const formatPath = (issue: ZodIssue) => {
+const formatPath = (issue: z3.ZodIssue) => {
   return issue.path.join(", ")
 }
 
-const formatInvalidType = (issues: ZodIssue[]) => {
+const formatInvalidType = (issues: z3.ZodIssue[]) => {
   const expected = issues
     .map((i) => {
       // Unforutnately the zod library doesn't distinguish between a wrong type and a required field, which we want to handle differently
@@ -26,14 +20,14 @@ const formatInvalidType = (issues: ZodIssue[]) => {
     return
   }
 
-  const received = (issues?.[0] as ZodInvalidTypeIssue)?.received
+  const received = (issues?.[0] as z3.ZodInvalidTypeIssue)?.received
 
   return `Expected type: '${expected.join(", ")}' for field '${formatPath(
     issues[0]
   )}', got: '${received}'`
 }
 
-const formatRequiredField = (issues: ZodIssue[]) => {
+const formatRequiredField = (issues: z3.ZodIssue[]) => {
   const expected = issues
     .map((i) => {
       if (i.code === "invalid_type" && i.message === "Required") {
@@ -50,14 +44,14 @@ const formatRequiredField = (issues: ZodIssue[]) => {
   return `Field '${formatPath(issues[0])}' is required`
 }
 
-const formatUnionError = (issue: ZodInvalidUnionIssue) => {
+const formatUnionError = (issue: z3.ZodInvalidUnionIssue) => {
   const issues = issue.unionErrors.flatMap((e) => e.issues)
   return (
     formatInvalidType(issues) || formatRequiredField(issues) || issue.message
   )
 }
 
-const formatError = (err: ZodError) => {
+const formatError = (err: z3.ZodError) => {
   const issueMessages = err.issues.slice(0, 3).map((issue) => {
     switch (issue.code) {
       case "invalid_type":
@@ -110,9 +104,9 @@ const formatError = (err: ZodError) => {
 }
 
 export async function zodValidator<T>(
-  zodSchema: z.ZodObject<any, any> | z.ZodEffects<any, any>,
+  zodSchema: z3.ZodObject<any, any> | z3.ZodEffects<any, any>,
   body: T
-): Promise<z.ZodRawShape> {
+): Promise<z3.ZodRawShape> {
   let strictSchema = zodSchema
   // ZodEffects doesn't support setting as strict, for all other schemas we want to enforce strictness.
   if ("strict" in zodSchema) {
@@ -122,7 +116,7 @@ export async function zodValidator<T>(
   try {
     return await strictSchema.parseAsync(body)
   } catch (err) {
-    if (err instanceof ZodError) {
+    if (err instanceof z3.ZodError) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
         `Invalid request: ${formatError(err)}`

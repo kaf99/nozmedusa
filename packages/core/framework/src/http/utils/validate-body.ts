@@ -1,15 +1,15 @@
-import { z } from "zod"
+import * as z3 from "zod/v3"
 import { NextFunction } from "express"
 import { MedusaRequest, MedusaResponse } from "../types"
 import { zodValidator } from "../../zod"
 
 export function validateAndTransformBody(
   zodSchema:
-    | z.ZodObject<any, any>
-    | z.ZodEffects<any, any>
+    | z3.ZodObject<any, any>
+    | z3.ZodEffects<any, any>
     | ((
-        customSchema?: z.ZodOptional<z.ZodNullable<z.ZodObject<any, any>>>
-      ) => z.ZodObject<any, any> | z.ZodEffects<any, any>)
+        customSchema?: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
+      ) => z3.ZodObject<any, any> | z3.ZodEffects<any, any>)
 ): (
   req: MedusaRequest,
   res: MedusaResponse,
@@ -21,7 +21,7 @@ export function validateAndTransformBody(
     next: NextFunction
   ) {
     try {
-      let schema: z.ZodObject<any, any> | z.ZodEffects<any, any>
+      let schema: z3.ZodObject<any, any> | z3.ZodEffects<any, any>
       if (typeof zodSchema === "function") {
         schema = zodSchema(req.additionalDataValidator)
       } else {

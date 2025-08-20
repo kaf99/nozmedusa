@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express"
-import type { ZodNullable, ZodObject, ZodOptional, ZodRawShape } from "zod"
+import type * as z3 from "zod/v3"
 
 import {
   FindConfig,
@@ -60,7 +60,7 @@ export type MiddlewareRoute = {
   methods?: MiddlewareVerb[]
   matcher: string | RegExp
   bodyParser?: ParserConfig
-  additionalDataValidator?: ZodRawShape
+  additionalDataValidator?: z3.ZodRawShape
   middlewares?: MiddlewareFunction[]
 }
 
@@ -106,8 +106,8 @@ export type BodyParserConfigRoute = {
 export type AdditionalDataValidatorRoute = {
   matcher: string
   methods: MiddlewareVerb | MiddlewareVerb[]
-  schema: ZodRawShape
-  validator: ZodOptional<ZodNullable<ZodObject<any, any>>>
+  schema: z3.ZodRawShape
+  validator: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
 }
 
 export type GlobalMiddlewareDescriptor = {
@@ -182,7 +182,7 @@ export interface MedusaRequest<
    * Custom validator to validate the `additional_data` property in
    * requests that allows for additional_data
    */
-  additionalDataValidator?: ZodOptional<ZodNullable<ZodObject<any, any>>>
+  additionalDataValidator?: z3.ZodOptional<z3.ZodNullable<z3.ZodObject<any, any>>>
 }
 
 export interface AuthContext {

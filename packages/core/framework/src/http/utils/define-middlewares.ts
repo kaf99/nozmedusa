@@ -6,7 +6,7 @@ import {
   MiddlewareVerb,
   ParserConfig,
 } from "../types"
-import { ZodRawShape } from "zod"
+import type * as z3 from "zod/v3"
 
 /**
  * A helper function to configure the routes by defining custom middleware,
@@ -22,7 +22,7 @@ export function defineMiddlewares<
     methods?: MiddlewareVerb[]
     matcher: string | RegExp
     bodyParser?: ParserConfig
-    additionalDataValidator?: ZodRawShape
+    additionalDataValidator?: z3.ZodRawShape
     // eslint-disable-next-line space-before-function-paren
     middlewares?: (<Req extends MedusaRequest>(
       req: Req,
