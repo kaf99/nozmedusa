@@ -10,7 +10,7 @@ export * from "./medusa-app-loader"
 export * from "./subscribers"
 export * from "./workflows"
 export * from "./telemetry"
-export * from "./zod"
+export * from "./zod" // Backward compatibility for zodValidator
 export * from "./migrations"
 
 export const MEDUSA_CLI_PATH = require.resolve("@medusajs/cli")

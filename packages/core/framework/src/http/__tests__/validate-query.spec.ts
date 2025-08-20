@@ -12,13 +12,13 @@ const testVersions = [
   ["v4", z4.z]
 ] as const
 
-export const createSelectParams = (z: typeof z3.z | typeof z4.z) => {
+export const createSelectParams = (z: any) => {
   return z.object({
     fields: z.string().optional(),
   })
 }
 
-const createFindParams = (z: typeof z3.z | typeof z4.z, {
+const createFindParams = (z: any, {
   offset,
   limit,
   order,

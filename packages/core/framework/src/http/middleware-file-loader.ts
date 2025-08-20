@@ -1,4 +1,4 @@
-import zod from "zod"
+import { createObjectSchema, nullable } from "../standard-schema"
 import { join } from "path"
 import { dynamicImport, FileSystem } from "@medusajs/utils"
 
@@ -116,7 +116,7 @@ export class MiddlewareFileLoader {
             matcher: matcher,
             methods,
             schema: route.additionalDataValidator,
-            validator: zod.object(route.additionalDataValidator).nullish(),
+            validator: nullable(createObjectSchema(route.additionalDataValidator)),
           })
         }
 

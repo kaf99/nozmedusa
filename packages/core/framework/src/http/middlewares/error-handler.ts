@@ -1,5 +1,4 @@
 import { ErrorRequestHandler, NextFunction, Response } from "express"
-import { fromZodIssue } from "zod-validation-error"
 
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/utils"
 import { MedusaRequest } from "../types"
@@ -88,7 +87,11 @@ export function errorHandler() {
     }
 
     if ("issues" in err && Array.isArray(err.issues)) {
-      const messages = err.issues.map((issue) => fromZodIssue(issue).toString())
+      // Format Standard Schema validation issues
+      const messages = err.issues.map((issue) => {
+        const path = issue.path?.join(", ")
+        return path ? `${path}: ${issue.message}` : issue.message
+      })
       res.status(statusCode).json({
         type: MedusaError.Types.INVALID_DATA,
         message: messages.join("\n"),

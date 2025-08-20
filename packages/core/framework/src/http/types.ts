@@ -1,13 +1,18 @@
 import type { NextFunction, Request, Response } from "express"
-import type * as z3 from "zod/v3"
-import type * as z4 from "zod/v4"
+import type { 
+  StandardSchemaV1, 
+  StandardSchemaV1Optional, 
+  StandardSchemaV1Nullable,
+  StandardSchemaV1RawShape 
+} from "../standard-schema"
 
-// Type unions to support both Zod v3 and v4
-export type ZodObject = z3.ZodObject<any, any> | z4.ZodObject<any, any>
-export type ZodEffects = z3.ZodEffects<any, any> | z4.ZodEffects<any, any>
-export type ZodOptional<T = any> = z3.ZodOptional<T> | z4.ZodOptional<T>
-export type ZodNullable<T = any> = z3.ZodNullable<T> | z4.ZodNullable<T>
-export type ZodRawShape = z3.ZodRawShape | z4.ZodRawShape
+// Backward compatibility - export Standard Schema types with Zod-like names
+// These are aliases to Standard Schema but maintain the same shape for type compatibility
+export type ZodObject = StandardSchemaV1
+export type ZodEffects = StandardSchemaV1
+export type ZodOptional<T extends StandardSchemaV1 = StandardSchemaV1> = StandardSchemaV1Optional<T>
+export type ZodNullable<T extends StandardSchemaV1 = StandardSchemaV1> = StandardSchemaV1Nullable<T>
+export type ZodRawShape = StandardSchemaV1RawShape
 
 import {
   FindConfig,
