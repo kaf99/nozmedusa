@@ -1,11 +1,11 @@
 import { MedusaError } from "../utils"
-import {
-  z,
-  ZodError,
-  ZodInvalidTypeIssue,
-  ZodInvalidUnionIssue,
-  ZodIssue,
-} from "zod"
+import { ZodError } from "zod"
+import type * as z3 from "zod/v3"
+import type * as z4 from "zod/v4/core"
+import { ZodSchemaCompat } from "./zod-compat"
+
+// Issue type that works with both v3 and v4
+type ZodIssue = z3.ZodIssue | z4.$ZodIssue
 
 const formatPath = (issue: ZodIssue) => {
   return issue.path.join(", ")
@@ -26,7 +26,7 @@ const formatInvalidType = (issues: ZodIssue[]) => {
     return
   }
 
-  const received = (issues?.[0] as ZodInvalidTypeIssue)?.received
+  const received = issues?.[0]?.code === "invalid_type" ? (issues[0] as any)?.received : undefined
 
   return `Expected type: '${expected.join(", ")}' for field '${formatPath(
     issues[0]
@@ -50,8 +50,9 @@ const formatRequiredField = (issues: ZodIssue[]) => {
   return `Field '${formatPath(issues[0])}' is required`
 }
 
-const formatUnionError = (issue: ZodInvalidUnionIssue) => {
-  const issues = issue.unionErrors.flatMap((e) => e.issues)
+const formatUnionError = (issue: ZodIssue) => {
+  if (issue.code !== "invalid_union") return issue.message
+  const issues = (issue as any).unionErrors?.flatMap((e: any) => e.issues) || []
   return (
     formatInvalidType(issues) || formatRequiredField(issues) || issue.message
   )
@@ -66,41 +67,27 @@ const formatError = (err: ZodError) => {
           formatRequiredField([issue]) ||
           issue.message
         )
-      case "invalid_literal":
-        return `Expected literal: '${issue.expected}' for field '${formatPath(
-          issue
-        )}', but got: '${issue.received}'`
       case "invalid_union":
         return formatUnionError(issue)
-      case "invalid_enum_value":
-        return `Expected: '${issue.options.join(", ")}' for field '${formatPath(
-          issue
-        )}', but got: '${issue.received}'`
       case "unrecognized_keys":
-        return `Unrecognized fields: '${issue.keys.join(", ")}'`
-      case "invalid_arguments":
-        return `Invalid arguments for '${issue.path.join(", ")}'`
+        return `Unrecognized fields: '${(issue as any).keys?.join(", ")}'`
       case "too_small":
         return `Value for field '${formatPath(
           issue
-        )}' too small, expected at least: '${issue.minimum}'`
+        )}' too small, expected at least: '${(issue as any).minimum}'`
       case "too_big":
         return `Value for field '${formatPath(
           issue
-        )}' too big, expected at most: '${issue.maximum}'`
+        )}' too big, expected at most: '${(issue as any).maximum}'`
       case "not_multiple_of":
         return `Value for field '${formatPath(issue)}' not multiple of: '${
-          issue.multipleOf
+          (issue as any).divisor || (issue as any).multipleOf
         }'`
-      case "not_finite":
-        return `Value for field '${formatPath(issue)}' not finite: '${
-          issue.message
-        }'`
-      case "invalid_union_discriminator":
-      case "invalid_return_type":
-      case "invalid_date":
-      case "invalid_string":
-      case "invalid_intersection_types":
+      case "invalid_value":
+        return `Expected: '${(issue as any).values?.join(", ")}' for field '${formatPath(
+          issue
+        )}', but got: '${(issue as any).input}'`
+      case "custom":
       default:
         return issue.message
     }
@@ -110,17 +97,18 @@ const formatError = (err: ZodError) => {
 }
 
 export async function zodValidator<T>(
-  zodSchema: z.ZodObject<any, any> | z.ZodEffects<any, any>,
+  zodSchema: ZodSchemaCompat,
   body: T
-): Promise<z.ZodRawShape> {
+): Promise<any> {
   let strictSchema = zodSchema
-  // ZodEffects doesn't support setting as strict, for all other schemas we want to enforce strictness.
-  if ("strict" in zodSchema) {
-    strictSchema = zodSchema.strict()
+  // ZodTransform/ZodPipe doesn't support setting as strict, for all other schemas we want to enforce strictness.
+  if ("strict" in zodSchema && typeof (zodSchema as any).strict === "function") {
+    strictSchema = (zodSchema as any).strict()
   }
 
   try {
-    return await strictSchema.parseAsync(body)
+    // Both v3 and v4 schemas have parseAsync method
+    return await (strictSchema as any).parseAsync(body)
   } catch (err) {
     if (err instanceof ZodError) {
       throw new MedusaError(

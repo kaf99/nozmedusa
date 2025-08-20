@@ -16,6 +16,7 @@ import {
 } from "@medusajs/utils"
 import { ulid } from "ulid"
 import { exportWorkflow, WorkflowResult } from "../../helper"
+import { ZodSchemaCompat, ZodInferOutput } from "../zod-compat"
 import { createStep } from "./create-step"
 import { proxify } from "./helpers/proxy"
 import { StepResponse } from "./helpers/step-response"
@@ -27,6 +28,15 @@ import {
   StepFunction,
   WorkflowData,
 } from "./type"
+
+/**
+ * Configuration for workflows with schema validation
+ */
+export type WorkflowConfigWithSchema<TInputSchema = any, TOutputSchema = any> = {
+  name: string
+  inputSchema?: TInputSchema
+  outputSchema?: TOutputSchema
+} & TransactionModelOptions
 
 global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext] = null
 
@@ -85,11 +95,69 @@ global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext] = null
  * }
  */
 
+// Overload for createWorkflow with both inputSchema and outputSchema
+export function createWorkflow<
+  TInputSchema extends ZodSchemaCompat,
+  TOutputSchema extends ZodSchemaCompat,
+  THooks extends any[]
+>(
+  config: WorkflowConfigWithSchema<TInputSchema, TOutputSchema> & {
+    inputSchema: TInputSchema
+    outputSchema: TOutputSchema
+  },
+  composer: (
+    input: WorkflowData<ZodInferOutput<TInputSchema>>
+  ) => void | WorkflowResponse<ZodInferOutput<TOutputSchema>, THooks>
+): ReturnWorkflow<ZodInferOutput<TInputSchema>, ZodInferOutput<TOutputSchema>, THooks>
+
+// Overload for createWorkflow with only inputSchema
+export function createWorkflow<
+  TInputSchema extends ZodSchemaCompat,
+  TResult,
+  THooks extends any[]
+>(
+  config: WorkflowConfigWithSchema<TInputSchema> & { inputSchema: TInputSchema },
+  composer: (
+    input: WorkflowData<ZodInferOutput<TInputSchema>>
+  ) => void | WorkflowResponse<TResult, THooks>
+): ReturnWorkflow<ZodInferOutput<TInputSchema>, TResult, THooks>
+
+// Overload for createWorkflow with only outputSchema
+export function createWorkflow<
+  TData,
+  TOutputSchema extends ZodSchemaCompat,
+  THooks extends any[]
+>(
+  config: WorkflowConfigWithSchema<any, TOutputSchema> & {
+    outputSchema: TOutputSchema
+  },
+  composer: (
+    input: WorkflowData<TData>
+  ) => void | WorkflowResponse<ZodInferOutput<TOutputSchema>, THooks>
+): ReturnWorkflow<TData, ZodInferOutput<TOutputSchema>, THooks>
+
+// Original overload for backward compatibility - string name
+export function createWorkflow<TData, TResult, THooks extends any[]>(
+  name: string,
+  composer: (
+    input: WorkflowData<TData>
+  ) => void | WorkflowResponse<TResult, THooks>
+): ReturnWorkflow<TData, TResult, THooks>
+
+// Original overload for backward compatibility - config without schema
+export function createWorkflow<TData, TResult, THooks extends any[]>(
+  config: { name: string } & TransactionModelOptions,
+  composer: (
+    input: WorkflowData<TData>
+  ) => void | WorkflowResponse<TResult, THooks>
+): ReturnWorkflow<TData, TResult, THooks>
+
+// Implementation
 export function createWorkflow<TData, TResult, THooks extends any[]>(
   /**
    * The name of the workflow or its configuration.
    */
-  nameOrConfig: string | ({ name: string } & TransactionModelOptions),
+  nameOrConfig: string | ({ name: string } & TransactionModelOptions) | WorkflowConfigWithSchema<any, any>,
   /**
    * The constructor function that is executed when the `run` method in {@link ReturnWorkflow} is used.
    * The function can't be an arrow function or an asynchronus function. It also can't directly manipulate data.

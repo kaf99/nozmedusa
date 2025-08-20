@@ -1,24 +1,30 @@
-import { z, ZodEffects, ZodNullable, ZodObject, ZodOptional } from "zod"
+import { z } from "zod"
+import type {
+  ZodSchemaCompat,
+  ZodObjectCompat,
+  ZodOptionalCompat,
+  ZodNullableCompat
+} from "./zod-compat"
 
 /**
  * Wraps the original schema to a function to accept and merge
  * additional_data schema
  */
-export const WithAdditionalData = <T extends ZodObject<any, any>>(
+export const WithAdditionalData = <T extends ZodObjectCompat>(
   originalSchema: T,
-  modifyCallback?: (schema: T) => ZodObject<any, any> | ZodEffects<any, any>
+  modifyCallback?: (schema: T) => ZodObjectCompat | ZodSchemaCompat
 ) => {
   return (
-    additionalDataValidator?: ZodOptional<ZodNullable<ZodObject<any, any>>>
+    additionalDataValidator?: ZodOptionalCompat<ZodNullableCompat<ZodObjectCompat>>
   ) => {
-    let schema: ZodObject<any, any>
+    let schema: ZodObjectCompat
 
     if (!additionalDataValidator) {
-      schema = originalSchema.extend({
-        additional_data: z.record(z.unknown()).nullish(),
+      schema = (originalSchema as any).extend({
+        additional_data: z.record(z.string(), z.unknown()).nullish(),
       })
     } else {
-      schema = originalSchema.extend({
+      schema = (originalSchema as any).extend({
         additional_data: additionalDataValidator,
       })
     }
@@ -28,14 +34,14 @@ export const WithAdditionalData = <T extends ZodObject<any, any>>(
 }
 
 export const createBatchBody = (
-  createValidator: z.ZodType,
-  updateValidator: z.ZodType,
-  deleteValidator: z.ZodType = z.string()
+  createValidator: ZodSchemaCompat,
+  updateValidator: ZodSchemaCompat,
+  deleteValidator: ZodSchemaCompat = z.string()
 ) => {
   return z.object({
-    create: z.array(createValidator).optional(),
-    update: z.array(updateValidator).optional(),
-    delete: z.array(deleteValidator).optional(),
+    create: z.array(createValidator as any).optional(),
+    update: z.array(updateValidator as any).optional(),
+    delete: z.array(deleteValidator as any).optional(),
   })
 }
 
@@ -103,19 +109,19 @@ export const createFindParams = ({
 }
 
 export const createOperatorMap = (
-  type?: z.ZodType,
+  type?: ZodSchemaCompat,
   valueParser?: (val: any) => any
 ) => {
   if (!type) {
     type = z.string()
   }
 
-  let simpleType: any = type.optional()
+  let simpleType: any = (type as any).optional()
   if (valueParser) {
-    simpleType = z.preprocess(valueParser, type).optional()
+    simpleType = z.preprocess(valueParser, type as any).optional()
   }
 
-  const arrayType: any = z.array(type).optional()
+  const arrayType: any = z.array(type as any).optional()
   const unionType: any = z.union([simpleType, arrayType]).optional()
 
   return z.union([

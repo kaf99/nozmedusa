@@ -8,7 +8,7 @@ export const StoreGetCartsCart = createSelectParams()
 const ItemSchema = z.object({
   variant_id: z.string(),
   quantity: z.number(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export type StoreCreateCartType = z.infer<typeof CreateCart>
@@ -22,7 +22,7 @@ export const CreateCart = z
     items: z.array(ItemSchema).optional(),
     sales_channel_id: z.string().nullish(),
     promo_codes: z.array(z.string()).optional(),
-    metadata: z.record(z.unknown()).nullish(),
+    metadata: z.record(z.string(), z.unknown()).nullish(),
   })
   .strict()
 export const StoreCreateCart = WithAdditionalData(CreateCart)
@@ -51,7 +51,7 @@ export const UpdateCart = z
     billing_address: z.union([AddressPayload, z.string()]).optional(),
     shipping_address: z.union([AddressPayload, z.string()]).optional(),
     sales_channel_id: z.string().nullish(),
-    metadata: z.record(z.unknown()).nullish(),
+    metadata: z.record(z.string(), z.unknown()).nullish(),
     promo_codes: z.array(z.string()).optional(),
   })
   .strict()
@@ -66,7 +66,7 @@ export type StoreAddCartLineItemType = z.infer<typeof StoreAddCartLineItem>
 export const StoreAddCartLineItem = z.object({
   variant_id: z.string(),
   quantity: z.number(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export type StoreUpdateCartLineItemType = z.infer<
@@ -74,7 +74,7 @@ export type StoreUpdateCartLineItemType = z.infer<
 >
 export const StoreUpdateCartLineItem = z.object({
   quantity: z.number(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export type StoreAddCartShippingMethodsType = z.infer<
@@ -83,7 +83,7 @@ export type StoreAddCartShippingMethodsType = z.infer<
 export const StoreAddCartShippingMethods = z
   .object({
     option_id: z.string(),
-    data: z.record(z.unknown()).optional(),
+    data: z.record(z.string(), z.unknown()).optional(),
   })
   .strict()
 

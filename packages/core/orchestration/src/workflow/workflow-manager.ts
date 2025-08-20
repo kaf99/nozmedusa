@@ -27,6 +27,8 @@ export interface WorkflowDefinition {
   options: TransactionModelOptions
   requiredModules?: Set<string>
   optionalModules?: Set<string>
+  inputSchema?: any
+  outputSchema?: any
 }
 
 export type WorkflowHandler = Map<
@@ -93,7 +95,7 @@ class WorkflowManager {
     workflowId: string,
     flow: TransactionStepsDefinition | OrchestratorBuilder | undefined,
     handlers: WorkflowHandler,
-    options: TransactionModelOptions = {},
+    options: TransactionModelOptions & { inputSchema?: any; outputSchema?: any } = {},
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -119,19 +121,23 @@ class WorkflowManager {
       }
     }
 
+    const { inputSchema, outputSchema, ...transactionOptions } = options
+    
     const workflow = {
       id: workflowId,
       flow_: finalFlow!,
       orchestrator: new TransactionOrchestrator({
         id: workflowId,
         definition: finalFlow ?? {},
-        options,
+        options: transactionOptions,
       }),
       handler: WorkflowManager.buildHandlers(handlers),
       handlers_: handlers,
-      options,
+      options: transactionOptions,
       requiredModules,
       optionalModules,
+      inputSchema,
+      outputSchema,
     }
 
     WorkflowManager.workflows.set(workflowId, workflow)
@@ -147,7 +153,7 @@ class WorkflowManager {
       string,
       { invoke: WorkflowStepHandler; compensate?: WorkflowStepHandler }
     >,
-    options: TransactionModelOptions = {},
+    options: TransactionModelOptions & { inputSchema?: any; outputSchema?: any } = {},
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -162,7 +168,8 @@ class WorkflowManager {
     }
 
     const finalFlow = flow instanceof OrchestratorBuilder ? flow.build() : flow
-    const updatedOptions = { ...workflow.options, ...options }
+    const { inputSchema, outputSchema, ...transactionOptions } = options
+    const updatedOptions = { ...workflow.options, ...transactionOptions }
 
     WorkflowManager.workflows.set(workflowId, {
       id: workflowId,
@@ -170,13 +177,15 @@ class WorkflowManager {
       orchestrator: new TransactionOrchestrator({
         id: workflowId,
         definition: finalFlow,
-        options,
+        options: updatedOptions,
       }),
       handler: WorkflowManager.buildHandlers(workflow.handlers_),
       handlers_: workflow.handlers_,
       options: updatedOptions,
       requiredModules,
       optionalModules,
+      inputSchema: inputSchema ?? workflow.inputSchema,
+      outputSchema: outputSchema ?? workflow.outputSchema,
     })
   }
 

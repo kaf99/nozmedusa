@@ -5783,7 +5783,7 @@ __metadata:
     "@types/react": ^18.3.2
     tsup: ^8.0.1
     typescript: ^5.3.3
-    zod: 3.25.76
+    zod: 4.0.16
   languageName: unknown
   linkType: soft
 
@@ -6093,7 +6093,7 @@ __metadata:
     pg: ^8.13.0
     rimraf: ^5.0.1
     typescript: ^5.6.2
-    zod: 3.25.76
+    zod: 4.0.16
   peerDependencies:
     "@medusajs/framework": 2.9.0
     awilix: ^8.0.1
@@ -6205,7 +6205,7 @@ __metadata:
     vite: ^5.4.14
     vite-plugin-inspect: ^0.8.7
     vitest: ^3.0.5
-    zod: 3.25.76
+    zod: 4.0.16
   languageName: unknown
   linkType: soft
 
@@ -6324,7 +6324,7 @@ __metadata:
     "@types/jsonwebtoken": ^8.5.9
     awilix: ^8.0.1
     chokidar: ^3.4.2
-    compression: 1.7.4
+    compression: 1.8.0
     connect-dynamodb: ^3.0.5
     connect-redis: 5.2.0
     cookie-parser: ^1.4.6
@@ -6344,7 +6344,7 @@ __metadata:
     tsconfig-paths: ^4.2.0
     typescript: ^5.6.2
     vite: ^5.4.14
-    zod: 3.25.76
+    zod: 4.0.16
     zod-validation-error: 3.5.1
   peerDependencies:
     "@aws-sdk/client-dynamodb": ^3.218.0
@@ -6714,7 +6714,7 @@ __metadata:
     typescript: ^5.6.2
     uuid: ^9.0.0
     yalc: 1.0.0-pre.53
-    zod: 3.25.76
+    zod: 4.0.16
   peerDependencies:
     "@medusajs/framework": 2.9.0
     "@mikro-orm/core": 6.4.3
@@ -7404,7 +7404,7 @@ __metadata:
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
-    zod: 3.25.76
+    zod: 4.0.16
   peerDependencies:
     "@mikro-orm/core": 6.4.3
     "@mikro-orm/knex": 6.4.3
@@ -7492,7 +7492,7 @@ __metadata:
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
-    zod: 3.25.76
+    zod: 4.0.16
   peerDependencies:
     "@mikro-orm/core": 6.4.3
     "@mikro-orm/knex": 6.4.3
@@ -18610,7 +18610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compression@npm:^1.7.5":
+"compression@npm:1.8.0, compression@npm:^1.7.5":
   version: 1.8.0
   resolution: "compression@npm:1.8.0"
   dependencies:
@@ -35682,9 +35682,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.25.76":
-  version: 3.25.76
-  resolution: "zod@npm:3.25.76"
-  checksum: 5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
+"zod@npm:4.0.16":
+  version: 4.0.16
+  resolution: "zod@npm:4.0.16"
+  checksum: b42bbad1547d57cc1e319e18bb6667836d3c653802752395618e4002e6afeb53f09971e0717aa26098703f8e47268d8331e4ec5b1e76d5b8c98d1af66c4ede42
   languageName: node
   linkType: hard

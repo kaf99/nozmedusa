@@ -75,7 +75,7 @@ export const OrderCreateFulfillment = z.object({
   location_id: z.string().nullish(),
   shipping_option_id: z.string().optional(),
   no_notification: z.boolean().optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 export const AdminOrderCreateFulfillment = WithAdditionalData(
   OrderCreateFulfillment
@@ -92,7 +92,7 @@ export const OrderCreateShipment = z.object({
   items: z.array(Item),
   labels: z.array(Label).optional(),
   no_notification: z.boolean().optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 export const AdminOrderCreateShipment = WithAdditionalData(OrderCreateShipment)
 
@@ -142,7 +142,7 @@ export const AdminUpdateOrder = z.object({
   email: z.string().optional(),
   shipping_address: AddressPayload.optional(),
   billing_address: AddressPayload.optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export type AdminCreateOrderCreditLinesType = z.infer<
@@ -152,5 +152,5 @@ export const AdminCreateOrderCreditLines = z.object({
   amount: z.number(),
   reference: z.string(),
   reference_id: z.string(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })

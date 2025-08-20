@@ -57,7 +57,7 @@
     "pg-connection-string": "^2.7.0",
     "pluralize": "^8.0.0",
     "ulid": "^2.3.0",
-    "zod": "3.25.76"
+    "zod": "4.0.16"
   },
   "peerDependencies": {
     "@mikro-orm/core": "6.4.3",

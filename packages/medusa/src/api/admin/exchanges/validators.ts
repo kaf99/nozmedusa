@@ -42,7 +42,7 @@ export const AdminPostOrderExchangesReqSchema = z.object({
   order_id: z.string(),
   description: z.string().optional(),
   internal_note: z.string().optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 export type AdminPostOrderExchangesReqSchemaType = z.infer<
   typeof AdminPostOrderExchangesReqSchema
@@ -51,7 +51,7 @@ export type AdminPostOrderExchangesReqSchemaType = z.infer<
 export const AdminPostReceiveExchangesReqSchema = z.object({
   internal_note: z.string().optional(),
   description: z.string().optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 export type AdminPostReceiveExchangesReqSchemaType = z.infer<
   typeof AdminPostReceiveExchangesReqSchema
@@ -80,7 +80,7 @@ export const AdminPostExchangesRequestItemsReturnActionReqSchema = z.object({
   quantity: z.number().optional(),
   internal_note: z.string().nullish().optional(),
   reason_id: z.string().nullish().optional(),
-  metadata: z.record(z.unknown()).nullish().optional(),
+  metadata: z.record(z.string(), z.unknown()).nullish().optional(),
 })
 
 export type AdminPostExchangesRequestItemsReturnActionReqSchemaType = z.infer<
@@ -92,7 +92,7 @@ export const AdminPostExchangesShippingReqSchema = z.object({
   custom_amount: z.number().optional(),
   description: z.string().optional(),
   internal_note: z.string().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export type AdminPostExchangesShippingReqSchemaType = z.infer<
@@ -102,7 +102,7 @@ export type AdminPostExchangesShippingReqSchemaType = z.infer<
 export const AdminPostExchangesShippingActionReqSchema = z.object({
   custom_amount: z.number().nullish().optional(),
   internal_note: z.string().nullish().optional(),
-  metadata: z.record(z.unknown()).nullish().optional(),
+  metadata: z.record(z.string(), z.unknown()).nullish().optional(),
 })
 
 export type AdminPostExchangesShippingActionReqSchemaType = z.infer<
@@ -117,7 +117,7 @@ export const AdminPostExchangesAddItemsReqSchema = z.object({
       unit_price: z.number().optional(),
       internal_note: z.string().optional(),
       allow_backorder: z.boolean().optional(),
-      metadata: z.record(z.unknown()).optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ),
 })
@@ -134,7 +134,7 @@ export const AdminPostExchangesReturnRequestItemsReqSchema = z.object({
       description: z.string().optional(),
       internal_note: z.string().optional(),
       reason_id: z.string().optional(),
-      metadata: z.record(z.unknown()).optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ),
 })

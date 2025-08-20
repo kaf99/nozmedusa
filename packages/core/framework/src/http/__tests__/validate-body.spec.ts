@@ -1,7 +1,12 @@
 import { MedusaError } from "@medusajs/utils"
-import zod, { ZodNullable, ZodObject, ZodOptional } from "zod"
+import zod from "zod"
 import { MedusaRequest, MedusaResponse } from "../types"
 import { validateAndTransformBody } from "../utils/validate-body"
+import type { 
+  ZodOptionalCompat, 
+  ZodNullableCompat, 
+  ZodObjectCompat 
+} from "../../zod/zod-compat"
 
 const createLinkBody = () => {
   return zod.object({
@@ -33,7 +38,7 @@ describe("validateAndTransformBody", () => {
       .nullish()
 
     const validatorFactory = (
-      schema?: ZodOptional<ZodNullable<ZodObject<any, any>>>
+      schema?: ZodOptionalCompat<ZodNullableCompat<ZodObjectCompat>>
     ) => {
       return schema
         ? createLinkBody().extend({
@@ -69,7 +74,7 @@ describe("validateAndTransformBody", () => {
       .nullish()
 
     const validatorFactory = (
-      schema?: ZodOptional<ZodNullable<ZodObject<any, any>>>
+      schema?: ZodOptionalCompat<ZodNullableCompat<ZodObjectCompat>>
     ) => {
       return schema
         ? createLinkBody().extend({
@@ -102,7 +107,7 @@ describe("validateAndTransformBody", () => {
       .nullish()
 
     const validatorFactory = (
-      schema?: ZodOptional<ZodNullable<ZodObject<any, any>>>
+      schema?: ZodOptionalCompat<ZodNullableCompat<ZodObjectCompat>>
     ) => {
       return schema
         ? createLinkBody().extend({
