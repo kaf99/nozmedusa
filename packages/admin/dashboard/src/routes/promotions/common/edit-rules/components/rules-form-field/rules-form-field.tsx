@@ -2,18 +2,10 @@ import { XMarkMini } from "@medusajs/icons"
 import { PromotionDTO } from "@medusajs/types"
 import { Badge, Button, Heading, IconButton, Select, Text } from "@medusajs/ui"
 import { forwardRef, Fragment, useEffect } from "react"
-import {
-  ControllerRenderProps,
-  useFieldArray,
-  UseFormReturn,
-  useWatch,
-} from "react-hook-form"
+import { ControllerRenderProps, useFieldArray, UseFormReturn, useWatch, } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Form } from "../../../../../../components/common/form"
-import {
-  usePromotionRuleAttributes,
-  usePromotionRules,
-} from "../../../../../../hooks/api/promotions"
+import { usePromotionRuleAttributes, usePromotionRules, } from "../../../../../../hooks/api/promotions"
 import { CreatePromotionSchemaType } from "../../../../promotion-create/components/create-promotion-form/form-schema"
 import { generateRuleAttributes } from "../edit-rules-form/utils"
 import { RuleValueFormField } from "../rule-value-form-field"
@@ -40,10 +32,11 @@ export const RulesFormField = ({
   promotion,
 }: RulesFormFieldType) => {
   const { t } = useTranslation()
+  const formData = form.getValues()
   const { attributes } = usePromotionRuleAttributes(
     ruleType,
-    promotion?.type,
-    promotion?.application_method?.target_type
+    formData.type,
+    formData.application_method?.target_type
   )
 
   const { fields, append, remove, update, replace } = useFieldArray({
