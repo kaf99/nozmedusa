@@ -10,7 +10,7 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { useRemoteQueryStep } from "../../../common"
+import { useQueryGraphStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps/create-order-change"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
 import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
@@ -80,12 +80,17 @@ export const beginOrderEditOrderWorkflow = createWorkflow(
   function (
     input: WorkflowData<OrderWorkflow.BeginorderEditWorkflowInput>
   ): WorkflowResponse<OrderChangeDTO> {
-    const order = useRemoteQueryStep({
-      entry_point: "orders",
+    const orderResult = useQueryGraphStep({
+      entity: "order",
       fields: fieldsToRefreshOrderEdit,
-      variables: { id: input.order_id },
-      list: false,
-      throw_if_key_not_found: true,
+      filters: { id: input.order_id },
+      options: {
+        throwIfKeyNotFound: true,
+      },
+    })
+
+    const order = transform({ orderResult }, ({ orderResult }) => {
+      return orderResult.data[0]
     })
 
     beginOrderEditValidationStep({ order })

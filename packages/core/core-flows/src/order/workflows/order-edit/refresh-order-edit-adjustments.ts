@@ -5,8 +5,14 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderDTO, OrderStatus, PromotionDTO } from "@medusajs/types"
-import { refreshDraftOrderAdjustmentsWorkflow } from "../../../draft-order/workflows/refresh-draft-order-adjustments"
+import {
+  ComputeActionItemLine,
+  OrderStatus,
+  PromotionDTO,
+} from "@medusajs/types"
+import {
+  refreshDraftOrderAdjustmentsWorkflow
+} from "../../../draft-order/workflows/refresh-draft-order-adjustments"
 import { previewOrderChangeStep } from "../../steps"
 
 export const refreshOrderEditAdjustmentsWorkflowId =
@@ -24,7 +30,7 @@ export interface RefreshOrderEditAdjustmentsWorkflowInput {
     status: OrderStatus
     currency_code: string
     canceled_at?: string | Date
-    items: OrderDTO["items"]
+    items: ComputeActionItemLine[]
     promotions: PromotionDTO[]
   }
 }
@@ -52,7 +58,6 @@ export const refreshOrderEditAdjustmentsWorkflow = createWorkflow(
           items: orderPreview.items.map((item) => ({
             ...item,
             // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
-            // TODO: Ideally, this is returned by the previewOrderChange step; let's look into this before merging
             product: { id: item.product_id },
           })),
           currency_code: input.order.currency_code,

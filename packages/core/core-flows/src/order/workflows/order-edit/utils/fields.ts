@@ -7,4 +7,5 @@ export const fieldsToRefreshOrderEdit = [
   "items.*",
   "items.product.id",
   "promotions.*",
+  "shipping_address.*",
 ]

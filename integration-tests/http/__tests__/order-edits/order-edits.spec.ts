@@ -1524,7 +1524,7 @@ medusaIntegrationTestRunner({
         expect(result.total).toEqual(9)
       })
 
-      it.only("should add, remove, and add buy-get adjustment depending on the quantity of the buy rule product", async () => {
+      it("should add, remove, and add buy-get adjustment depending on the quantity of the buy rule product", async () => {
         promotionModule = container.resolve(Modules.PROMOTION)
 
         appliedPromotion = await promotionModule.createPromotions({

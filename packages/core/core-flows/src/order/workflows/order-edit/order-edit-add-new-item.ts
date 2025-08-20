@@ -15,7 +15,7 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { useRemoteQueryStep } from "../../../common"
+import { useQueryGraphStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
 import {
   throwIfIsCancelled,
@@ -106,25 +106,34 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
   function (
     input: WorkflowData<OrderWorkflow.OrderEditAddNewItemWorkflowInput>
   ): WorkflowResponse<OrderPreviewDTO> {
-    const order = useRemoteQueryStep({
-      entry_point: "orders",
+    const orderResult = useQueryGraphStep({
+      entity: "order",
       fields: fieldsToRefreshOrderEdit,
-      variables: { id: input.order_id },
-      list: false,
-      throw_if_key_not_found: true,
+      filters: { id: input.order_id },
+      options: {
+        throwIfKeyNotFound: true,
+      },
     }).config({ name: "order-query" })
 
-    const orderChange: OrderChangeDTO = useRemoteQueryStep({
-      entry_point: "order_change",
-      fields: ["id", "status"],
-      variables: {
-        filters: {
-          order_id: input.order_id,
-          status: [OrderChangeStatus.PENDING, OrderChangeStatus.REQUESTED],
-        },
+    const order = transform({ orderResult }, ({ orderResult }) => {
+      return orderResult.data[0]
+    })
+
+    const orderChangeResult = useQueryGraphStep({
+      entity: "order_change",
+      fields: ["id", "status", "version", "actions.*"],
+      filters: {
+        order_id: input.order_id,
+        status: [OrderChangeStatus.PENDING, OrderChangeStatus.REQUESTED],
       },
-      list: false,
     }).config({ name: "order-change-query" })
+
+    const orderChange = transform(
+      { orderChangeResult },
+      ({ orderChangeResult }) => {
+        return orderChangeResult.data[0]
+      }
+    )
 
     orderEditAddNewItemValidationStep({
       order,
