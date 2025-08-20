@@ -22,6 +22,7 @@ import {
   useProductTypes,
   useProducts,
   useShippingOptions,
+  useStockLocations,
 } from "../../../../../hooks/api"
 import {
   useCollectionTableColumns,
@@ -726,7 +727,11 @@ const ShippingOptionTable = ({
     setRowSelection(state)
   }
 
-  const filters = useShippingOptionTableFilters()
+  const { stock_locations } = useStockLocations({
+    limit: 1000,
+  })
+
+  const filters = useShippingOptionTableFilters(stock_locations || [])
   const columns = useShippingOptionColumns()
 
   const { table } = useDataTable({
