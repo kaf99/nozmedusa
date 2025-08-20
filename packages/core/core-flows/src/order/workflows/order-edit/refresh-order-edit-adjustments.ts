@@ -19,7 +19,7 @@ export const refreshOrderEditAdjustmentsWorkflowId =
   "refresh-order-edit-adjustments"
 
 /**
- * The details of the draft order to refresh the adjustments for.
+ * The details of the order to refresh the adjustments for.
  */
 export interface RefreshOrderEditAdjustmentsWorkflowInput {
   /**
