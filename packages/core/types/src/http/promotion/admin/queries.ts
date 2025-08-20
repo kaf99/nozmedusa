@@ -82,5 +82,5 @@ export interface AdminGetPromotionsRuleValueParams extends FindParams {
    * Filter by rule value.
    */
   value?: string | string[]
-  application_method_target_type?: string
+  application_method_target_type?: ApplicationMethodTargetTypeValues
 }
