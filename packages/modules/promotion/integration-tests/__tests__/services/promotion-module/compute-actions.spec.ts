@@ -3860,7 +3860,7 @@ moduleIntegrationTestRunner({
             ])
           })
 
-          it.only("should compute the correct item amendments when there are multiple promotions to apply", async () => {
+          it("should compute the correct item amendments when there are multiple promotions to apply", async () => {
             await createDefaultPromotion(service, {
               rules: [
                 {
