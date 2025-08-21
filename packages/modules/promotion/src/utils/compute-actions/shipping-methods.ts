@@ -112,6 +112,7 @@ export function applyPromotionToShippingMethods(
         MathBN.sub(method.subtotal ?? 0, appliedPromoValue)
       )
     }, MathBN.convert(0))
+    console.log('totalApplicableValue', totalApplicableValue.toNumber())
 
     if (MathBN.lte(totalApplicableValue, 0)) {
       return computedActions
@@ -123,20 +124,14 @@ export function applyPromotionToShippingMethods(
       }
 
       const promotionValue = applicationMethod?.value ?? 0
-      const applicableTotal = method.subtotal
       const appliedPromoValue = methodIdPromoValueMap.get(method.id) ?? 0
+      const applicableTotal = MathBN.sub(method.subtotal, appliedPromoValue)
 
       const div = MathBN.eq(totalApplicableValue, 0) ? 1 : totalApplicableValue
-      let applicablePromotionValue = MathBN.sub(
-        MathBN.mult(MathBN.div(applicableTotal, div), promotionValue),
-        appliedPromoValue
-      )
+      let applicablePromotionValue = MathBN.mult(MathBN.div(applicableTotal, div), promotionValue)
 
       if (applicationMethod?.type === ApplicationMethodType.PERCENTAGE) {
-        applicablePromotionValue = MathBN.sub(
-          MathBN.mult(MathBN.div(promotionValue, 100), applicableTotal),
-          appliedPromoValue
-        )
+        applicablePromotionValue = MathBN.mult(MathBN.div(promotionValue, 100), applicableTotal)
       }
 
       const amount = MathBN.min(applicablePromotionValue, applicableTotal)
