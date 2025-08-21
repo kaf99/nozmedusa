@@ -112,7 +112,6 @@ export function applyPromotionToShippingMethods(
         MathBN.sub(method.subtotal ?? 0, appliedPromoValue)
       )
     }, MathBN.convert(0))
-    console.log('totalApplicableValue', totalApplicableValue.toNumber())
 
     if (MathBN.lte(totalApplicableValue, 0)) {
       return computedActions
