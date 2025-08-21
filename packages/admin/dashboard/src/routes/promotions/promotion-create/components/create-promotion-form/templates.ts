@@ -120,7 +120,7 @@ export const templates = [
       is_automatic: "false",
       type: "standard",
       application_method: {
-        allocation: "across",
+        allocation: "each",
         target_type: "shipping_methods",
         type: "percentage",
         value: 100,
