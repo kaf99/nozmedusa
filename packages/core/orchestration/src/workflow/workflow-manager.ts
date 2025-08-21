@@ -11,6 +11,7 @@ import {
   TransactionStepsDefinition,
 } from "../transaction"
 import { WorkflowScheduler } from "./scheduler"
+import type { StandardSchemaV1 } from "@standard-schema/spec"
 
 export interface WorkflowDefinition {
   id: string
@@ -27,6 +28,8 @@ export interface WorkflowDefinition {
   options: TransactionModelOptions
   requiredModules?: Set<string>
   optionalModules?: Set<string>
+  inputSchema?: StandardSchemaV1<unknown, unknown>
+  outputSchema?: StandardSchemaV1<unknown, unknown>
 }
 
 export type WorkflowHandler = Map<
@@ -49,6 +52,11 @@ export type WorkflowStepHandlerArguments = {
 export type WorkflowStepHandler = (
   args: WorkflowStepHandlerArguments
 ) => Promise<unknown>
+
+export interface WorkflowSchemas {
+  inputSchema?: StandardSchemaV1<unknown, unknown>
+  outputSchema?: StandardSchemaV1<unknown, unknown>
+}
 
 class WorkflowManager {
   protected static workflows: Map<string, WorkflowDefinition> = new Map()
@@ -76,6 +84,17 @@ class WorkflowManager {
     return WorkflowManager.workflows.get(workflowId)
   }
 
+  static getWorkflowSchemas(workflowId: string): WorkflowSchemas | undefined {
+    const workflow = WorkflowManager.workflows.get(workflowId)
+    if (!workflow) {
+      return undefined
+    }
+    return {
+      inputSchema: workflow.inputSchema,
+      outputSchema: workflow.outputSchema,
+    }
+  }
+
   static getTransactionDefinition(workflowId): OrchestratorBuilder {
     if (!WorkflowManager.workflows.has(workflowId)) {
       throw new Error(`Workflow with id "${workflowId}" not found.`)
@@ -94,6 +113,7 @@ class WorkflowManager {
     flow: TransactionStepsDefinition | OrchestratorBuilder | undefined,
     handlers: WorkflowHandler,
     options: TransactionModelOptions = {},
+    schemas?: WorkflowSchemas,
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -132,6 +152,8 @@ class WorkflowManager {
       options,
       requiredModules,
       optionalModules,
+      inputSchema: schemas?.inputSchema,
+      outputSchema: schemas?.outputSchema,
     }
 
     WorkflowManager.workflows.set(workflowId, workflow)
@@ -148,6 +170,7 @@ class WorkflowManager {
       { invoke: WorkflowStepHandler; compensate?: WorkflowStepHandler }
     >,
     options: TransactionModelOptions = {},
+    schemas?: WorkflowSchemas,
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -177,6 +200,8 @@ class WorkflowManager {
       options: updatedOptions,
       requiredModules,
       optionalModules,
+      inputSchema: schemas?.inputSchema ?? workflow.inputSchema,
+      outputSchema: schemas?.outputSchema ?? workflow.outputSchema,
     })
   }
 

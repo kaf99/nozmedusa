@@ -27,8 +27,27 @@ import {
   StepFunction,
   WorkflowData,
 } from "./type"
+import type { StandardSchemaV1 } from "@standard-schema/spec"
 
 global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext] = null
+
+/**
+ * Options for creating a workflow with schema validation
+ */
+export interface CreateWorkflowOptions<TInput = unknown, TOutput = unknown> extends TransactionModelOptions {
+  /**
+   * The name of the workflow
+   */
+  name: string
+  /**
+   * Optional input schema for validating workflow input
+   */
+  inputSchema?: StandardSchemaV1<unknown, TInput>
+  /**
+   * Optional output schema for validating workflow output
+   */
+  outputSchema?: StandardSchemaV1<unknown, TOutput>
+}
 
 /**
  * This function creates a workflow with the provided name and a constructor function.
@@ -85,6 +104,37 @@ global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext] = null
  * }
  */
 
+// Overload 1: With schema options (infers types from schemas)
+export function createWorkflow<
+  TInputSchema extends StandardSchemaV1 = StandardSchemaV1,
+  TOutputSchema extends StandardSchemaV1 = StandardSchemaV1,
+  THooks extends any[] = any[]
+>(
+  options: CreateWorkflowOptions<
+    StandardSchemaV1.InferOutput<TInputSchema>,
+    StandardSchemaV1.InferOutput<TOutputSchema>
+  > & {
+    inputSchema: TInputSchema
+    outputSchema: TOutputSchema
+  },
+  composer: (
+    input: WorkflowData<StandardSchemaV1.InferOutput<TInputSchema>>
+  ) => void | WorkflowResponse<StandardSchemaV1.InferOutput<TOutputSchema>, THooks>
+): ReturnWorkflow<
+  StandardSchemaV1.InferOutput<TInputSchema>,
+  StandardSchemaV1.InferOutput<TOutputSchema>,
+  THooks
+>
+
+// Overload 2: With partial schema options
+export function createWorkflow<TData, TResult, THooks extends any[]>(
+  options: CreateWorkflowOptions<TData, TResult>,
+  composer: (
+    input: WorkflowData<TData>
+  ) => void | WorkflowResponse<TResult, THooks>
+): ReturnWorkflow<TData, TResult, THooks>
+
+// Overload 3: Original signature (backward compatibility)
 export function createWorkflow<TData, TResult, THooks extends any[]>(
   /**
    * The name of the workflow or its configuration.
@@ -98,17 +148,32 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   composer: (
     input: WorkflowData<TData>
   ) => void | WorkflowResponse<TResult, THooks>
+): ReturnWorkflow<TData, TResult, THooks>
+
+// Implementation
+export function createWorkflow<TData, TResult, THooks extends any[]>(
+  nameOrConfig: string | ({ name: string } & TransactionModelOptions) | CreateWorkflowOptions<any, any>,
+  composer: (
+    input: WorkflowData<TData>
+  ) => void | WorkflowResponse<TResult, THooks>
 ): ReturnWorkflow<TData, TResult, THooks> {
   const fileSourcePath = getCallerFilePath() as string
   const name = isString(nameOrConfig) ? nameOrConfig : nameOrConfig.name
   const options = isString(nameOrConfig) ? {} : nameOrConfig
+  
+  // Extract schemas if provided
+  const inputSchema = (options as CreateWorkflowOptions<any, any>).inputSchema
+  const outputSchema = (options as CreateWorkflowOptions<any, any>).outputSchema
 
   const handlers: WorkflowHandler = new Map()
 
   let newWorkflow = false
   if (!WorkflowManager.getWorkflow(name)) {
     newWorkflow = true
-    WorkflowManager.register(name, undefined, handlers, options)
+    WorkflowManager.register(name, undefined, handlers, options, {
+      inputSchema,
+      outputSchema
+    })
   }
 
   const context: CreateWorkflowComposerContext = {
@@ -152,9 +217,15 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   delete global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext]
 
   if (newWorkflow) {
-    WorkflowManager.update(name, context.flow, handlers, options)
+    WorkflowManager.update(name, context.flow, handlers, options, {
+      inputSchema,
+      outputSchema
+    })
   } else {
-    WorkflowManager.register(name, context.flow, handlers, options)
+    WorkflowManager.register(name, context.flow, handlers, options, {
+      inputSchema,
+      outputSchema
+    })
   }
 
   const workflow = exportWorkflow<TData, TResult>(name, returnedStep, {
