@@ -2,10 +2,18 @@ import { XMarkMini } from "@medusajs/icons"
 import { PromotionDTO } from "@medusajs/types"
 import { Badge, Button, Heading, IconButton, Select, Text } from "@medusajs/ui"
 import { forwardRef, Fragment, useEffect } from "react"
-import { ControllerRenderProps, useFieldArray, UseFormReturn, useWatch, } from "react-hook-form"
+import {
+  ControllerRenderProps,
+  useFieldArray,
+  UseFormReturn,
+  useWatch,
+} from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Form } from "../../../../../../components/common/form"
-import { usePromotionRuleAttributes, usePromotionRules, } from "../../../../../../hooks/api/promotions"
+import {
+  usePromotionRuleAttributes,
+  usePromotionRules,
+} from "../../../../../../hooks/api/promotions"
 import { CreatePromotionSchemaType } from "../../../../promotion-create/components/create-promotion-form/form-schema"
 import { generateRuleAttributes } from "../edit-rules-form/utils"
 import { RuleValueFormField } from "../rule-value-form-field"
@@ -124,11 +132,19 @@ export const RulesFormField = ({
   return (
     <div className="flex flex-col">
       <Heading level="h2" className="mb-2">
-        {t(`promotions.fields.conditions.${ruleType}.title`)}
+        {t(
+          ruleType === "target-rules"
+            ? `promotions.fields.conditions.${ruleType}.${applicationMethodTargetType}.title`
+            : `promotions.fields.conditions.${ruleType}.title`
+        )}
       </Heading>
 
       <Text className="text-ui-fg-subtle txt-small mb-6">
-        {t(`promotions.fields.conditions.${ruleType}.description`)}
+        {t(
+          ruleType === "target-rules"
+            ? `promotions.fields.conditions.${ruleType}.${applicationMethodTargetType}.description`
+            : `promotions.fields.conditions.${ruleType}.description`
+        )}
       </Text>
 
       {fields.map((fieldRule, index) => {
