@@ -372,7 +372,7 @@ medusaIntegrationTestRunner({
         expect(errorResponse.status).toEqual(400)
 
         expect(errorResponse.data.message).toEqual(
-          "Invalid request: Unrecognized fields: 'foo'"
+          "Invalid request: Unrecognized key(s) in object: 'foo'"
         )
       })
     })

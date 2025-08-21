@@ -321,7 +321,7 @@ medusaIntegrationTestRunner({
 
           expect(response.data).toEqual({
             type: "invalid_data",
-            message: "Invalid request: Field 'cart_id' is required",
+            message: "Invalid request: Field 'cart_id': Required",
           })
         })
       })

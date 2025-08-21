@@ -663,7 +663,7 @@ medusaIntegrationTestRunner({
         expect(response.data).toEqual({
           type: "invalid_data",
           message:
-            "Invalid request: Field 'required_quantity' is required; Field 'inventory_item_id' is required",
+            "Invalid request: Field 'required_quantity': Required; Field 'inventory_item_id': Required",
         })
       })
 
@@ -732,7 +732,7 @@ medusaIntegrationTestRunner({
         expect(response.status).toEqual(400)
         expect(response.data).toEqual({
           type: "invalid_data",
-          message: "Invalid request: Field 'required_quantity' is required",
+          message: "Invalid request: Field 'required_quantity': Required",
         })
       })
 

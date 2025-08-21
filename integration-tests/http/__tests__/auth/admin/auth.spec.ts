@@ -151,7 +151,7 @@ medusaIntegrationTestRunner({
           .catch((e) => e)
 
         expect(errResponse.response.data.message).toEqual(
-          "Invalid request: Field 'identifier' is required"
+          "Invalid request: Field 'identifier': Required"
         )
         expect(errResponse.response.status).toEqual(400)
       })

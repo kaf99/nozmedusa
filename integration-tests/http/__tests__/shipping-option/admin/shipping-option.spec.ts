@@ -311,7 +311,7 @@ medusaIntegrationTestRunner({
           expect(err.status).toEqual(400)
           expect(err.data).toEqual({
             type: "invalid_data",
-            message: `Invalid request: Field 'service_zone_id' is required; Field 'shipping_profile_id' is required; Field 'price_type' is required`,
+            message: `Invalid request: Field 'service_zone_id': Required; Field 'shipping_profile_id': Required; Field 'price_type': Required`,
           })
         })
 
@@ -688,7 +688,7 @@ medusaIntegrationTestRunner({
 
           expect(error.response.status).toEqual(400)
           expect(error.response.data.message).toEqual(
-            "Invalid request: Exactly one of 'type' or 'type_id' must be provided, but not both"
+            "Invalid request: Field 'type_id, type': Exactly one of 'type' or 'type_id' must be provided, but not both"
           )
         })
 
@@ -724,7 +724,7 @@ medusaIntegrationTestRunner({
 
           expect(error.response.status).toEqual(400)
           expect(error.response.data.message).toEqual(
-            "Invalid request: Exactly one of 'type' or 'type_id' must be provided, but not both"
+            "Invalid request: Field 'type_id, type': Exactly one of 'type' or 'type_id' must be provided, but not both"
           )
         })
       })
@@ -1141,7 +1141,7 @@ medusaIntegrationTestRunner({
             .catch((e) => e)
 
           expect(error.response.status).toEqual(400)
-          expect(error.response.data.message).toEqual("Invalid request: Only one of 'type' or 'type_id' can be provided")
+          expect(error.response.data.message).toEqual("Invalid request: Field 'type_id, type': Only one of 'type' or 'type_id' can be provided")
         })
       })
 

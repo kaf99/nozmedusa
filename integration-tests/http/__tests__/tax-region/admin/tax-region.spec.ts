@@ -131,7 +131,7 @@ medusaIntegrationTestRunner({
           expect(status).toEqual(400)
           expect(data).toEqual({
             message:
-              "Invalid request: Provider is required when creating a non-province tax region.",
+              "Invalid request: Field 'provider_id': Provider is required when creating a non-province tax region.",
             type: "invalid_data",
           })
         })

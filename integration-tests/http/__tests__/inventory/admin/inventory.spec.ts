@@ -523,7 +523,7 @@ medusaIntegrationTestRunner({
           expect(res.response.data).toEqual({
             type: "invalid_data",
             message:
-              "Invalid request: Value for field 'stocked_quantity' too small, expected at least: '0'; Value for field 'incoming_quantity' too small, expected at least: '0'",
+              "Invalid request: Field 'stocked_quantity': Number must be greater than or equal to 0; Field 'incoming_quantity': Number must be greater than or equal to 0",
           })
         })
       })

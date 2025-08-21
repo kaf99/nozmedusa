@@ -232,7 +232,7 @@ medusaIntegrationTestRunner({
 
           expect(response.status).toEqual(400)
           expect(response.data.message).toEqual(
-            "Invalid request: Field 'code' is required; Field 'application_method' is required"
+            "Invalid request: Field 'code': Required; Field 'application_method': Required"
           )
         })
 
@@ -249,7 +249,7 @@ medusaIntegrationTestRunner({
           expect(response.data).toEqual({
             type: "invalid_data",
             message:
-              "Invalid request: Expected: 'draft, active, inactive' for field 'status', but got: 'does-not-exist'",
+              "Invalid request: Field 'status': Invalid enum value. Expected 'draft' | 'active' | 'inactive', received 'does-not-exist'",
           })
         })
 
