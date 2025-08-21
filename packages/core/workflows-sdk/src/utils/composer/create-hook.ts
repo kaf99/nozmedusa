@@ -8,28 +8,14 @@ import {
 import { StepResponse } from "./helpers"
 import { createStepHandler } from "./helpers/create-step-handler"
 import type { CreateWorkflowComposerContext } from "./type"
+import type { StandardSchemaV1 } from "@standard-schema/spec"
 
-/**
- * Standard Schema v1 interface
- * @see https://github.com/standard-schema/standard-schema
- */
-export interface StandardSchemaV1<Input = unknown, Output = Input> {
-  readonly "~standard": {
-    readonly version: 1
-    readonly vendor?: string
-    readonly validate: (
-      value: unknown
-    ) => Promise<
-      | { readonly value: Output; readonly issues?: undefined }
-      | { readonly issues: ReadonlyArray<StandardSchemaV1Issue> }
-    >
-  }
-}
+// Re-export StandardSchemaV1 for backwards compatibility
+export type { StandardSchemaV1 } from "@standard-schema/spec"
 
-export interface StandardSchemaV1Issue {
-  readonly message: string
-  readonly path?: ReadonlyArray<PropertyKey | { readonly key: PropertyKey }>
-}
+// Export StandardSchemaV1Issue type for test compatibility
+export type StandardSchemaV1Issue = StandardSchemaV1.Issue
+
 
 const NOOP_RESULT = Symbol.for("NOOP")
 
@@ -109,7 +95,7 @@ export function createHook<Name extends string, TInvokeInput, TInvokeOutput>(
         return new StepResponse(undefined)
       }
       if (options.resultValidator) {
-        const validationResult = await options.resultValidator["~standard"].validate(result)
+        const validationResult = await Promise.resolve(options.resultValidator["~standard"].validate(result))
         if (validationResult.issues) {
           // Throw an error object that matches Zod's format for compatibility
           const error = new Error(`Validation failed`) as any
