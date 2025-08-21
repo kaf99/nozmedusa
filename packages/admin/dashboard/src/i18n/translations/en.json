@@ -2964,6 +2964,7 @@
     "minutes": "Minutes",
     "totalRedemptions": "Total Redemptions",
     "countries": "Countries",
+    "serviceZone": "Service Zone",
     "paymentProviders": "Payment Providers",
     "refundReason": "Refund Reason",
     "fulfillmentProviders": "Fulfillment Providers",

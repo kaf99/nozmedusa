@@ -23,7 +23,17 @@ export const useShippingOptionTableColumns = () => {
           <TextCell text={row.original.shipping_profile?.name || "N/A"} />
         ),
       }),
-      columnHelper.accessor("enabled_in_store", {
+      columnHelper.display({
+        id: "service_zone",
+        header: () => t("fields.serviceZone"),
+        cell: ({ row }) => {
+          const serviceZoneName = row.original.service_zone?.name
+
+          return <TextCell text={serviceZoneName || "N/A"} />
+        },
+      }),
+      columnHelper.display({
+        id: "enabled_in_store",
         header: () => t("fields.enabledInStore"),
         cell: ({ row }) => {
           let text = "N/A"
@@ -38,7 +48,8 @@ export const useShippingOptionTableColumns = () => {
           return <TextCell text={text} />
         },
       }),
-      columnHelper.accessor("is_return", {
+      columnHelper.display({
+        id: "is_return",
         header: () => t("fields.isReturn"),
         cell: ({ row }) => {
           let text = "N/A"

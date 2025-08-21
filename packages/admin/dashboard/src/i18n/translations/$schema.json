@@ -10977,6 +10977,9 @@
         "countries": {
           "type": "string"
         },
+        "serviceZone": {
+          "type": "string"
+        },
         "paymentProviders": {
           "type": "string"
         },
@@ -11338,6 +11341,7 @@
         "minutes",
         "totalRedemptions",
         "countries",
+        "serviceZone",
         "paymentProviders",
         "refundReason",
         "fulfillmentProviders",
