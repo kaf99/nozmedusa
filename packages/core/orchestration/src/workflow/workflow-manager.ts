@@ -15,6 +15,7 @@ import type { StandardSchemaV1 } from "@standard-schema/spec"
 
 export interface WorkflowDefinition {
   id: string
+  description?: string
   handler: (
     container: MedusaContainer,
     context?: Context
@@ -95,6 +96,11 @@ class WorkflowManager {
     }
   }
 
+  static getWorkflowDescription(workflowId: string): string | undefined {
+    const workflow = WorkflowManager.workflows.get(workflowId)
+    return workflow?.description
+  }
+
   static getTransactionDefinition(workflowId): OrchestratorBuilder {
     if (!WorkflowManager.workflows.has(workflowId)) {
       throw new Error(`Workflow with id "${workflowId}" not found.`)
@@ -113,7 +119,7 @@ class WorkflowManager {
     flow: TransactionStepsDefinition | OrchestratorBuilder | undefined,
     handlers: WorkflowHandler,
     options: TransactionModelOptions = {},
-    schemas?: WorkflowSchemas,
+    schemas?: WorkflowSchemas & { description?: string },
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -141,6 +147,7 @@ class WorkflowManager {
 
     const workflow = {
       id: workflowId,
+      description: schemas?.description,
       flow_: finalFlow!,
       orchestrator: new TransactionOrchestrator({
         id: workflowId,
@@ -170,7 +177,7 @@ class WorkflowManager {
       { invoke: WorkflowStepHandler; compensate?: WorkflowStepHandler }
     >,
     options: TransactionModelOptions = {},
-    schemas?: WorkflowSchemas,
+    schemas?: WorkflowSchemas & { description?: string },
     requiredModules?: Set<string>,
     optionalModules?: Set<string>
   ) {
@@ -189,6 +196,7 @@ class WorkflowManager {
 
     WorkflowManager.workflows.set(workflowId, {
       id: workflowId,
+      description: schemas?.description ?? workflow.description,
       flow_: finalFlow,
       orchestrator: new TransactionOrchestrator({
         id: workflowId,

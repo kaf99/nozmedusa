@@ -40,6 +40,10 @@ export interface CreateWorkflowOptions<TInput = unknown, TOutput = unknown> exte
    */
   name: string
   /**
+   * Optional description of the workflow
+   */
+  description?: string
+  /**
    * Optional input schema for validating workflow input
    */
   inputSchema?: StandardSchemaV1<unknown, TInput>
@@ -161,9 +165,10 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   const name = isString(nameOrConfig) ? nameOrConfig : nameOrConfig.name
   const options = isString(nameOrConfig) ? {} : nameOrConfig
   
-  // Extract schemas if provided
+  // Extract schemas and description if provided
   const inputSchema = (options as CreateWorkflowOptions<any, any>).inputSchema
   const outputSchema = (options as CreateWorkflowOptions<any, any>).outputSchema
+  const description = (options as CreateWorkflowOptions<any, any>).description
 
   const handlers: WorkflowHandler = new Map()
 
@@ -172,7 +177,8 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
     newWorkflow = true
     WorkflowManager.register(name, undefined, handlers, options, {
       inputSchema,
-      outputSchema
+      outputSchema,
+      description
     })
   }
 
@@ -219,12 +225,14 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   if (newWorkflow) {
     WorkflowManager.update(name, context.flow, handlers, options, {
       inputSchema,
-      outputSchema
+      outputSchema,
+      description
     })
   } else {
     WorkflowManager.register(name, context.flow, handlers, options, {
       inputSchema,
-      outputSchema
+      outputSchema,
+      description
     })
   }
 
