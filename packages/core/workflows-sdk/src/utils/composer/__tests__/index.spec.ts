@@ -1,4 +1,3 @@
-import z from "zod"
 import { expectTypeOf } from "expect-type"
 import { TransactionState } from "@medusajs/utils"
 import { createStep } from "../create-step"
@@ -8,8 +7,63 @@ import { WorkflowResponse } from "../helpers/workflow-response"
 import { transform } from "../transform"
 import { WorkflowData } from "../type"
 import { when } from "../when"
-import { createHook } from "../create-hook"
+import { createHook, StandardSchemaV1, StandardSchemaV1Issue } from "../create-hook"
 import { TransactionStepsDefinition } from "@medusajs/orchestration"
+
+// Helper to create Standard Schema validators for tests
+function createObjectSchema<T extends Record<string, any>>(shape: {
+  [K in keyof T]: { validate: (value: unknown) => T[K] | undefined }
+}): StandardSchemaV1<unknown, T> {
+  return {
+    "~standard": {
+      version: 1,
+      vendor: "test",
+      validate: async (value: unknown) => {
+        if (typeof value !== "object" || value === null) {
+          return {
+            issues: [{
+              message: "Expected object",
+              path: []
+            }]
+          }
+        }
+        
+        const result = {} as T
+        const errors: StandardSchemaV1Issue[] = []
+        
+        for (const [key, validator] of Object.entries(shape)) {
+          try {
+            result[key as keyof T] = validator.validate((value as any)[key])
+          } catch (error) {
+            errors.push({
+              message: error instanceof Error ? error.message : String(error),
+              path: [key]
+            })
+          }
+        }
+        
+        if (errors.length > 0) {
+          return { issues: errors }
+        }
+        
+        return { value: result }
+      }
+    }
+  }
+}
+
+// Simple number validator for tests
+const numberValidator = {
+  validate: (value: unknown) => {
+    if (value === undefined) {
+      throw new Error("Required")
+    }
+    if (typeof value !== "number") {
+      throw new Error("Expected number")
+    }
+    return value
+  }
+}
 
 let count = 1
 const getNewWorkflowId = () => `workflow-${count++}`
@@ -643,8 +697,8 @@ describe("Workflow composer", () => {
             step1Result,
           },
           {
-            resultValidator: z.object({
-              id: z.number(),
+            resultValidator: createObjectSchema({
+              id: numberValidator,
             }),
           }
         )
@@ -699,8 +753,8 @@ describe("Workflow composer", () => {
             step1Result,
           },
           {
-            resultValidator: z.object({
-              id: z.number(),
+            resultValidator: createObjectSchema({
+              id: numberValidator,
             }),
           }
         )
@@ -760,8 +814,8 @@ describe("Workflow composer", () => {
             step1Result,
           },
           {
-            resultValidator: z.object({
-              id: z.number(),
+            resultValidator: createObjectSchema({
+              id: numberValidator,
             }),
           }
         )
@@ -808,8 +862,8 @@ describe("Workflow composer", () => {
             step1Result,
           },
           {
-            resultValidator: z.object({
-              id: z.number(),
+            resultValidator: createObjectSchema({
+              id: numberValidator,
             }),
           }
         )
