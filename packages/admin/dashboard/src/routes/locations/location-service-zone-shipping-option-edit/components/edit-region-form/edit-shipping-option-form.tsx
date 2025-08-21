@@ -33,7 +33,7 @@ const EditShippingOptionSchema = zod.object({
   enabled_in_store: zod.boolean().optional(),
   shipping_profile_id: zod.string(),
   shipping_option_type_id: zod.string(),
-  provider_id: zod.string().min(1),
+  provider_id: zod.string().optional(), // just for UI purposes
 })
 
 export const EditShippingOptionForm = ({
