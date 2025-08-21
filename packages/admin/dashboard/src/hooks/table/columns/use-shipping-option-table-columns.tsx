@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 
 import { DateCell } from "../../../components/table/table-cells/common/date-cell"
 import { TextCell } from "../../../components/table/table-cells/common/text-cell"
+import { getFormattedShippingOptionLocationName } from "../../../lib/shipping-options"
 
 const columnHelper = createColumnHelper<HttpTypes.AdminShippingOption>()
 
@@ -22,6 +23,17 @@ export const useShippingOptionTableColumns = () => {
         cell: ({ row }) => (
           <TextCell text={row.original.shipping_profile?.name || "N/A"} />
         ),
+      }),
+      columnHelper.display({
+        id: "location",
+        header: () => t("fields.location"),
+        cell: ({ row }) => {
+          const locationName = getFormattedShippingOptionLocationName(
+            row.original
+          )
+
+          return <TextCell text={locationName} />
+        },
       }),
       columnHelper.display({
         id: "service_zone",

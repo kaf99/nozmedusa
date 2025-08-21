@@ -698,9 +698,15 @@ const ShippingOptionTable = ({
   })
 
   const { shipping_options, count, isLoading, isError, error } =
-    useShippingOptions(searchParams, {
-      placeholderData: keepPreviousData,
-    })
+    useShippingOptions(
+      {
+        ...searchParams,
+        fields: "+service_zone.fulfillment_set.location.*",
+      },
+      {
+        placeholderData: keepPreviousData,
+      }
+    )
 
   const updater: OnChangeFn<RowSelectionState> = (value) => {
     const state = typeof value === "function" ? value(rowSelection) : value
