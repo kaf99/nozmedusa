@@ -7,4 +7,4 @@
 "@medusajs/types": patch
 ---
 
-feat(dashboard,core,modules): free shipping promotion in dashboard
+feat(dashboard,core-flows,js-sdk,link-modules,promotion): free shipping promotion in dashboard
