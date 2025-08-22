@@ -7517,6 +7517,7 @@
                   "type": "object",
                   "properties": {
                     "order": {
+                      "type": "object",
                       "properties": {
                         "title": {
                           "type": "string"
@@ -7529,6 +7530,7 @@
                       "additionalProperties": false
                     },
                     "shipping_methods": {
+                      "type": "object",
                       "properties": {
                         "title": {
                           "type": "string"
@@ -7541,6 +7543,7 @@
                       "additionalProperties": false
                     },
                     "items": {
+                      "type": "object",
                       "properties": {
                         "title": {
                           "type": "string"
