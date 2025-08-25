@@ -6,11 +6,11 @@ import {
 import {
   ApplicationMethodAllocation,
   ApplicationMethodTargetType,
-  ApplicationMethodTargetType as TargetType,
   calculateAdjustmentAmountFromPromotion,
   ComputedActions,
   MathBN,
   MedusaError,
+  ApplicationMethodTargetType as TargetType,
 } from "@medusajs/framework/utils"
 import { areRulesValidForContext } from "../validations"
 import { computeActionForBudgetExceeded } from "./usage"
@@ -196,6 +196,7 @@ function getValidItemsForPromotion(
       return false
     }
 
+    // TODO: THIS IS THE CULPRIT
     if (!("subtotal" in item) || MathBN.lte(item.subtotal, 0)) {
       return false
     }

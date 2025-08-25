@@ -85,7 +85,7 @@ export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
     })
 
     const actions = getActionsToComputeFromPromotionsStep({
-      cart: input.order as any,
+      computeActionContext: input.order as any,
       promotionCodesToApply,
     })
 

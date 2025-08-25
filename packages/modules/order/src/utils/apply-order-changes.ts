@@ -95,6 +95,10 @@ export async function applyChangesToOrder(
         metadata: orderItem.metadata,
       } as any
 
+      if (orderItem.adjustments) {
+        itemToUpsert.adjustments = orderItem.adjustments
+      }
+
       itemsToUpsert.push(itemToUpsert)
     }
 

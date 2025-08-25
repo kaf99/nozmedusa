@@ -1,6 +1,7 @@
 import {
   BigNumberInput,
   CreateOrderCreditLineDTO,
+  LineItemAdjustmentDTO,
   OrderCreditLineDTO,
 } from "@medusajs/framework/types"
 
@@ -17,6 +18,7 @@ export type VirtualOrder = {
     unit_price: BigNumberInput
     compare_at_unit_price: BigNumberInput | null
     quantity: BigNumberInput
+    adjustments?: LineItemAdjustmentDTO[]
 
     detail: {
       id?: string
@@ -24,7 +26,6 @@ export type VirtualOrder = {
       return_id?: string
       claim_id?: string
       exchange_id?: string
-
       item_id?: string
       unit_price?: BigNumberInput
       compare_at_unit_price?: BigNumberInput | null

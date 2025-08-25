@@ -13,7 +13,6 @@ import {
 import { useQueryGraphStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps/create-order-change"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
-import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
 import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 /**
@@ -105,11 +104,11 @@ export const beginOrderEditOrderWorkflow = createWorkflow(
       }
     })
 
-    refreshOrderEditAdjustmentsWorkflow.runAsStep({
-      input: {
-        order: order,
-      },
-    })
+    // refreshOrderEditAdjustmentsWorkflow.runAsStep({
+    //   input: {
+    //     order: order,
+    //   },
+    // })
 
     return new WorkflowResponse(createOrderChangeStep(orderChangeInput))
   }

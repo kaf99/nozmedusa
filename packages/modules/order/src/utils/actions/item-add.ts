@@ -17,6 +17,7 @@ OrderChangeProcessing.registerActionType(ChangeActionType.ITEM_ADD, {
 
     if (existing) {
       existing.detail.quantity ??= 0
+      existing.adjustments = action.details.adjustments ?? []
 
       existing.quantity = MathBN.add(existing.quantity, action.details.quantity)
 
@@ -31,7 +32,7 @@ OrderChangeProcessing.registerActionType(ChangeActionType.ITEM_ADD, {
         return_id: action.return_id,
         claim_id: action.claim_id,
         exchange_id: action.exchange_id,
-
+        adjustments: action.details.adjustments,
         unit_price: action.details.unit_price,
         compare_at_unit_price: action.details.compare_at_unit_price,
         quantity: action.details.quantity,

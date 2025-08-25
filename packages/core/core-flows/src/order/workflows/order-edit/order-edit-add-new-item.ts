@@ -4,11 +4,7 @@ import {
   OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import {
-  ChangeActionType,
-  OrderChangeStatus,
-  PromotionActions,
-} from "@medusajs/framework/utils"
+import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -18,7 +14,6 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import {
   getActionsToComputeFromPromotionsStep,
-  getPromotionCodesToApply,
   prepareAdjustmentsFromPromotionActionsStep,
 } from "../../../cart"
 import { useQueryGraphStep } from "../../../common"
@@ -167,39 +162,46 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       return order.promotions.map((p) => p.code)
     })
 
-    const orderToRefresh = transform(
-      { order },
-      ({ order }) => {
+    const allOrderItems = transform(
+      { order, lineItems },
+      ({ order, lineItems }) => {
+        return [...order.items, ...lineItems]
+      }
+    )
+
+    const testOrder = useQueryGraphStep({
+      entity: "order",
+      fields: fieldsToRefreshOrderEdit,
+      filters: { id: input.order_id },
+      options: {
+        throwIfKeyNotFound: true,
+      },
+    }).config({ name: "order-query-test" })
+
+    const actionsToComputeItemsInput = transform(
+      { allOrderItems, testOrder },
+      ({ allOrderItems }) => {
         return {
-          ...orderPreview,
-          items: orderPreview.items.map((item) => ({
+          currency_code: order.currency_code,
+          items: allOrderItems.map((item) => ({
             ...item,
             // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
             product: { id: item.product_id },
+            // TODO: replace with actual subtotal and quantity
+            subtotal: 10,
+            quantity: 1,
           })),
-          currency_code: order.currency_code,
-          promotions: order.promotions,
         }
       }
     )
 
-    const promotionCodesToApply = getPromotionCodesToApply({
-      cart: orderToRefresh as any,
-      promo_codes: promotions,
-      action: PromotionActions.REPLACE,
-    })
-
     const actions = getActionsToComputeFromPromotionsStep({
-      cart: orderToRefresh as any,
-      promotionCodesToApply,
+      computeActionContext: actionsToComputeItemsInput,
+      promotionCodesToApply: promotions,
     })
 
-    const {
-      lineItemAdjustmentsToCreate,
-      // lineItemAdjustmentIdsToRemove,
-      // shippingMethodAdjustmentsToCreate,
-      // shippingMethodAdjustmentIdsToRemove,
-    } = prepareAdjustmentsFromPromotionActionsStep({ actions })
+    const { lineItemAdjustmentsToCreate } =
+      prepareAdjustmentsFromPromotionActionsStep({ actions })
 
     const orderChangeActionInput = transform(
       {
@@ -216,10 +218,6 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
         lineItems,
         lineItemAdjustmentsToCreate,
       }) => {
-        console.log(
-          "lineItemAdjustmentsToCreate",
-          JSON.stringify(lineItemAdjustmentsToCreate, null, 2)
-        )
         return items.map((item, index) => {
           const itemAdjustments = lineItemAdjustmentsToCreate.filter(
             (adjustment) => adjustment.item_id === lineItems[index].id
@@ -249,12 +247,6 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
     createOrderChangeActionsWorkflow.runAsStep({
       input: orderChangeActionInput,
     })
-
-    // refreshOrderEditAdjustmentsWorkflow.runAsStep({
-    //   input: {
-    //     order: orderToRefresh,
-    //   },
-    // })
 
     return new WorkflowResponse(previewOrderChangeStep(input.order_id))
   }

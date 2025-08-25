@@ -2403,6 +2403,7 @@ export default class OrderModuleService
           quantity: newItem.quantity,
           unit_price: unitPrice,
           compare_at_unit_price: compareAtUnitPrice || null,
+          adjustments: newItem.adjustments,
           detail: {
             ...newItem,
             ...item,

@@ -110,7 +110,7 @@ export const updateCartPromotionsWorkflow = createWorkflow(
     })
 
     const actions = getActionsToComputeFromPromotionsStep({
-      cart,
+      computeActionContext: cart,
       promotionCodesToApply,
     })
 
