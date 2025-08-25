@@ -1,8 +1,9 @@
 import { Migration } from "@mikro-orm/migrations"
+import { ulid } from "ulid"
 
 export class Migration20250825132614 extends Migration {
   override async up(): Promise<void> {
-    const defaultTypeId = "sotype_01JZ4YMF72C3V2E56A7PR8K9QW"
+    const defaultTypeId = `sotype_${ulid()}`
 
     // 1. Create default shipping option type
     await this.execute(`
