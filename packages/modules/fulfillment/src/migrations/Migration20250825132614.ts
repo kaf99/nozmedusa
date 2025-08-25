@@ -11,14 +11,14 @@ export class Migration20250825132614 extends Migration {
       VALUES ('${defaultTypeId}', 'Default', 'Default shipping option type', 'default');
     `)
 
-    // 2. Find all test-code shipping option types
-    const testCodeTypeIds = await this.execute(`
+    // 2. Find all type-code shipping option types
+    const typeCodeTypeIds = await this.execute(`
       SELECT id FROM "shipping_option_type"
-      WHERE code = 'test-code' AND deleted_at IS NULL
+      WHERE code = 'type-code' AND deleted_at IS NULL
     `)
 
-    if (testCodeTypeIds.length > 0) {
-      const typeIdsString = testCodeTypeIds
+    if (typeCodeTypeIds.length > 0) {
+      const typeIdsString = typeCodeTypeIds
         .map((row) => `'${row.id}'`)
         .join(",")
 
@@ -29,7 +29,7 @@ export class Migration20250825132614 extends Migration {
         WHERE shipping_option_type_id IN (${typeIdsString}) AND deleted_at IS NULL;
       `)
 
-      // 4. Soft delete the old test-code types
+      // 4. Soft delete the old type-code types
       await this.execute(`
         UPDATE "shipping_option_type" 
         SET deleted_at = now()
@@ -39,6 +39,6 @@ export class Migration20250825132614 extends Migration {
   }
 
   override async down(): Promise<void> {
-    // Not reversible: would require restoring old test-code types + reassignment
+    // Not reversible: would require restoring old type-code types + reassignment
   }
 }
