@@ -196,7 +196,6 @@ function getValidItemsForPromotion(
       return false
     }
 
-    // TODO: THIS IS THE CULPRIT
     if (!("subtotal" in item) || MathBN.lte(item.subtotal, 0)) {
       return false
     }
