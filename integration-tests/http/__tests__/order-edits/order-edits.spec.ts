@@ -1252,7 +1252,7 @@ medusaIntegrationTestRunner({
         })
       })
 
-      it("should update adjustments when adding a new item", async () => {
+      it.only("should update adjustments when adding a new item", async () => {
         let result = await api.post(
           "/admin/order-edits",
           {

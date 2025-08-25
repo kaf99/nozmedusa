@@ -6,7 +6,8 @@ import {
 } from "@medusajs/framework/types"
 import {
   ChangeActionType,
-  OrderChangeStatus
+  OrderChangeStatus,
+  PromotionActions,
 } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -15,6 +16,11 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  getActionsToComputeFromPromotionsStep,
+  getPromotionCodesToApply,
+  prepareAdjustmentsFromPromotionActionsStep,
+} from "../../../cart"
 import { useQueryGraphStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
 import {
@@ -24,7 +30,6 @@ import {
 import { addOrderLineItemsWorkflow } from "../add-line-items"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { updateOrderTaxLinesWorkflow } from "../update-tax-lines"
-import { refreshOrderEditAdjustmentsWorkflow } from "./refresh-order-edit-adjustments"
 import { fieldsToRefreshOrderEdit } from "./utils/fields"
 
 /**
@@ -158,25 +163,86 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       },
     })
 
+    const promotions = transform({ order }, ({ order }) => {
+      return order.promotions.map((p) => p.code)
+    })
+
+    const orderToRefresh = transform(
+      { order },
+      ({ order }) => {
+        return {
+          ...orderPreview,
+          items: orderPreview.items.map((item) => ({
+            ...item,
+            // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
+            product: { id: item.product_id },
+          })),
+          currency_code: order.currency_code,
+          promotions: order.promotions,
+        }
+      }
+    )
+
+    const promotionCodesToApply = getPromotionCodesToApply({
+      cart: orderToRefresh as any,
+      promo_codes: promotions,
+      action: PromotionActions.REPLACE,
+    })
+
+    const actions = getActionsToComputeFromPromotionsStep({
+      cart: orderToRefresh as any,
+      promotionCodesToApply,
+    })
+
+    const {
+      lineItemAdjustmentsToCreate,
+      // lineItemAdjustmentIdsToRemove,
+      // shippingMethodAdjustmentsToCreate,
+      // shippingMethodAdjustmentIdsToRemove,
+    } = prepareAdjustmentsFromPromotionActionsStep({ actions })
+
     const orderChangeActionInput = transform(
-      { order, orderChange, items: input.items, lineItems },
-      ({ order, orderChange, items, lineItems }) => {
-        return items.map((item, index) => ({
-          order_change_id: orderChange.id,
-          order_id: order.id,
-          version: orderChange.version,
-          action: ChangeActionType.ITEM_ADD,
-          internal_note: item.internal_note,
-          details: {
-            reference_id: lineItems[index].id,
-            quantity: item.quantity,
-            unit_price: item.unit_price ?? lineItems[index].unit_price,
-            compare_at_unit_price:
-              item.compare_at_unit_price ??
-              lineItems[index].compare_at_unit_price,
-            metadata: item.metadata,
-          },
-        }))
+      {
+        order,
+        orderChange,
+        items: input.items,
+        lineItems,
+        lineItemAdjustmentsToCreate,
+      },
+      ({
+        order,
+        orderChange,
+        items,
+        lineItems,
+        lineItemAdjustmentsToCreate,
+      }) => {
+        console.log(
+          "lineItemAdjustmentsToCreate",
+          JSON.stringify(lineItemAdjustmentsToCreate, null, 2)
+        )
+        return items.map((item, index) => {
+          const itemAdjustments = lineItemAdjustmentsToCreate.filter(
+            (adjustment) => adjustment.item_id === lineItems[index].id
+          )
+
+          return {
+            order_change_id: orderChange.id,
+            order_id: order.id,
+            version: orderChange.version,
+            action: ChangeActionType.ITEM_ADD,
+            internal_note: item.internal_note,
+            details: {
+              reference_id: lineItems[index].id,
+              quantity: item.quantity,
+              unit_price: item.unit_price ?? lineItems[index].unit_price,
+              compare_at_unit_price:
+                item.compare_at_unit_price ??
+                lineItems[index].compare_at_unit_price,
+              metadata: item.metadata,
+              adjustments: itemAdjustments,
+            },
+          }
+        })
       }
     )
 
@@ -184,11 +250,11 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       input: orderChangeActionInput,
     })
 
-    refreshOrderEditAdjustmentsWorkflow.runAsStep({
-      input: {
-        order: order,
-      },
-    })
+    // refreshOrderEditAdjustmentsWorkflow.runAsStep({
+    //   input: {
+    //     order: orderToRefresh,
+    //   },
+    // })
 
     return new WorkflowResponse(previewOrderChangeStep(input.order_id))
   }

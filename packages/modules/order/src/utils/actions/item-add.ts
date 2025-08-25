@@ -13,6 +13,8 @@ OrderChangeProcessing.registerActionType(ChangeActionType.ITEM_ADD, {
       (item) => item.id === action.details.reference_id
     )
 
+    console.log("action", action)
+
     if (existing) {
       existing.detail.quantity ??= 0
 

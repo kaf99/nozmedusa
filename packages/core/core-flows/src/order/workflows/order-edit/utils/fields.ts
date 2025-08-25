@@ -5,6 +5,7 @@ export const fieldsToRefreshOrderEdit = [
   "currency_code",
   "canceled_at",
   "items.*",
+  "promotions.*",
   "items.product.id",
   "promotions.*",
   "shipping_address.*",
