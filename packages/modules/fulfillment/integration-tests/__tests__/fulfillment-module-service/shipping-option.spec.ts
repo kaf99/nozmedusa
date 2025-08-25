@@ -1,23 +1,9 @@
-import {
-  CreateShippingOptionDTO,
-  IFulfillmentModuleService,
-  UpdateShippingOptionDTO,
-} from "@medusajs/framework/types"
-import {
-  FulfillmentEvents,
-  GeoZoneType,
-  Modules,
-} from "@medusajs/framework/utils"
-import {
-  MockEventBusService,
-  moduleIntegrationTestRunner,
-} from "@medusajs/test-utils"
+import { CreateShippingOptionDTO, IFulfillmentModuleService, UpdateShippingOptionDTO, } from "@medusajs/framework/types"
+import { FulfillmentEvents, GeoZoneType, Modules, } from "@medusajs/framework/utils"
+import { MockEventBusService, moduleIntegrationTestRunner, } from "@medusajs/test-utils"
 import { FulfillmentProviderService } from "@services"
 import { resolve } from "path"
-import {
-  buildExpectedEventMessageShape,
-  generateCreateShippingOptionsData,
-} from "../../__fixtures__"
+import { buildExpectedEventMessageShape, generateCreateShippingOptionsData, } from "../../__fixtures__"
 import { FulfillmentProviderServiceFixtures } from "../../__fixtures__/providers"
 
 jest.setTimeout(1000000)
@@ -812,7 +798,7 @@ moduleIntegrationTestRunner<IFulfillmentModuleService>({
             )
 
             const types = await service.listShippingOptionTypes()
-            expect(types).toHaveLength(2)
+            expect(types).toHaveLength(3)
             expect(types).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
@@ -944,13 +930,15 @@ moduleIntegrationTestRunner<IFulfillmentModuleService>({
             )
 
             const types = await service.listShippingOptionTypes()
-            expect(types).toHaveLength(1)
-            expect(types[0]).toEqual(
-              expect.objectContaining({
-                code: shippingOptionData.type.code,
-                description: shippingOptionData.type.description,
-                label: shippingOptionData.type.label,
-              })
+            expect(types).toHaveLength(2)
+            expect(types).toEqual(
+              expect.arrayContaining([
+                expect.objectContaining({
+                  code: shippingOptionData.type.code,
+                  description: shippingOptionData.type.description,
+                  label: shippingOptionData.type.label,
+                })
+              ])
             )
           })
 
@@ -1084,7 +1072,7 @@ moduleIntegrationTestRunner<IFulfillmentModuleService>({
             )
 
             const types = await service.listShippingOptionTypes()
-            expect(types).toHaveLength(4)
+            expect(types).toHaveLength(5)
             expect(types).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
