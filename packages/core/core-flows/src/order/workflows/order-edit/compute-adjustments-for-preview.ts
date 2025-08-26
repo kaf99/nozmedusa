@@ -1,4 +1,5 @@
 import {
+  ComputeActionContext,
   OrderChangeDTO,
   OrderDTO,
   PromotionDTO,
@@ -7,6 +8,7 @@ import { ChangeActionType } from "@medusajs/framework/utils"
 import {
   createWorkflow,
   transform,
+  when,
   WorkflowData,
 } from "@medusajs/framework/workflows-sdk"
 import {
@@ -67,57 +69,66 @@ export const computeAdjustmentsForPreviewWorkflow = createWorkflow(
       return order.promotions.map((p) => p.code).filter((p) => p !== undefined)
     })
 
-    const actionsToComputeItemsInput = transform(
-      { previewedOrder },
-      ({ previewedOrder }) => {
-        return {
-          currency_code: input.order.currency_code,
-          items: previewedOrder.items.map((item) => ({
-            ...item,
-            // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
-            product: { id: item.product_id },
-          })),
-        }
-      }
-    )
-
-    const actions = getActionsToComputeFromPromotionsStep({
-      computeActionContext: actionsToComputeItemsInput,
-      promotionCodesToApply: promotions,
-    })
-
-    const { lineItemAdjustmentsToCreate } =
-      prepareAdjustmentsFromPromotionActionsStep({ actions })
-
-    const orderChangeActionAdjustmentsInput = transform(
-      {
-        order: input.order,
-        previewedOrder,
-        orderChange: input.orderChange,
-        lineItemAdjustmentsToCreate,
-      },
-      ({ order, previewedOrder, orderChange, lineItemAdjustmentsToCreate }) => {
-        return previewedOrder.items.map((item) => {
-          const itemAdjustments = lineItemAdjustmentsToCreate.filter(
-            (adjustment) => adjustment.item_id === item.id
-          )
-
-          return {
-            order_change_id: orderChange.id,
-            order_id: order.id,
-            version: orderChange.version,
-            action: ChangeActionType.ITEM_ADJUSTMENTS_REPLACE,
-            details: {
-              reference_id: item.id,
-              adjustments: itemAdjustments,
-            },
+    when({ order: input.order }, ({ order }) => !!order.promotions.length).then(
+      () => {
+        const actionsToComputeItemsInput = transform(
+          { previewedOrder },
+          ({ previewedOrder }) => {
+            return {
+              currency_code: input.order.currency_code,
+              items: previewedOrder.items.map((item) => ({
+                ...item,
+                // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
+                product: { id: item.product_id },
+              })),
+            } as ComputeActionContext
           }
+        )
+
+        const actions = getActionsToComputeFromPromotionsStep({
+          computeActionContext: actionsToComputeItemsInput,
+          promotionCodesToApply: promotions,
         })
+
+        const { lineItemAdjustmentsToCreate } =
+          prepareAdjustmentsFromPromotionActionsStep({ actions })
+
+        const orderChangeActionAdjustmentsInput = transform(
+          {
+            order: input.order,
+            previewedOrder,
+            orderChange: input.orderChange,
+            lineItemAdjustmentsToCreate,
+          },
+          ({
+            order,
+            previewedOrder,
+            orderChange,
+            lineItemAdjustmentsToCreate,
+          }) => {
+            return previewedOrder.items.map((item) => {
+              const itemAdjustments = lineItemAdjustmentsToCreate.filter(
+                (adjustment) => adjustment.item_id === item.id
+              )
+
+              return {
+                order_change_id: orderChange.id,
+                order_id: order.id,
+                version: orderChange.version,
+                action: ChangeActionType.ITEM_ADJUSTMENTS_REPLACE,
+                details: {
+                  reference_id: item.id,
+                  adjustments: itemAdjustments,
+                },
+              }
+            })
+          }
+        )
+
+        createOrderChangeActionsWorkflow
+          .runAsStep({ input: orderChangeActionAdjustmentsInput })
+          .config({ name: "order-change-action-adjustments-input" })
       }
     )
-
-    createOrderChangeActionsWorkflow
-      .runAsStep({ input: orderChangeActionAdjustmentsInput })
-      .config({ name: "order-change-action-adjustments-input" })
   }
 )
