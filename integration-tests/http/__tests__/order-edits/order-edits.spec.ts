@@ -1290,6 +1290,14 @@ medusaIntegrationTestRunner({
         // Aside from this there is a tax rate of 10%, which adds ($1.2 - $0.12 (discount tax)) of taxes on the item of $12.
         expect(result.total).toEqual(20.88)
         expect(result.original_total).toEqual(23.2)
+
+        const orderResult = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        // confirm original order is not updated
+        expect(orderResult.total).toEqual(9)
+        expect(orderResult.original_total).toEqual(10)
       })
 
       it("should update adjustments when updating an item", async () => {

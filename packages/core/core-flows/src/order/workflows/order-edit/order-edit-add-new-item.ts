@@ -4,13 +4,17 @@ import {
   OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
-  WorkflowResponse,
+  ChangeActionType,
+  MathBN,
+  OrderChangeStatus,
+} from "@medusajs/framework/utils"
+import {
   createStep,
   createWorkflow,
   transform,
+  WorkflowData,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   getActionsToComputeFromPromotionsStep,
@@ -151,7 +155,7 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       return lineItems.map((item) => item.id)
     })
 
-    updateOrderTaxLinesWorkflow.runAsStep({
+    const taxLines = updateOrderTaxLinesWorkflow.runAsStep({
       input: {
         order_id: order.id,
         item_ids: lineItemIds,
@@ -162,40 +166,44 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       return order.promotions.map((p) => p.code)
     })
 
-    const allOrderItems = transform(
-      { order, lineItems },
-      ({ order, lineItems }) => {
-        return [...order.items, ...lineItems]
-      }
-    )
-
-    const testOrder = useQueryGraphStep({
-      entity: "order",
-      fields: fieldsToRefreshOrderEdit,
-      filters: { id: input.order_id },
-      options: {
-        throwIfKeyNotFound: true,
-      },
-    }).config({ name: "order-query-test" })
-
     const actionsToComputeItemsInput = transform(
-      { allOrderItems, testOrder },
-      ({ allOrderItems }) => {
+      { items: input.items, lineItems, itemTaxLines: taxLines.itemTaxLines },
+      ({ items, lineItems, itemTaxLines }) => {
+        const itemsInput = items.map((item, index) => {
+          const lineItem = lineItems[index]
+
+          const taxLines = itemTaxLines.filter(
+            (taxLine) => taxLine.line_item_id === lineItem.id
+          )
+
+          const sumTax = MathBN.sum(
+            ...((taxLines ?? []).map((taxLine) => taxLine.rate) ?? [])
+          )
+
+          const sumTaxRate = MathBN.div(sumTax, 100)
+
+          const itemPrice = MathBN.mult(lineItem.unit_price, item.quantity)
+          const subtotal = lineItem.is_tax_inclusive
+            ? MathBN.div(itemPrice, MathBN.add(1, sumTaxRate))
+            : itemPrice
+
+          return {
+            ...lineItem,
+            product: { id: lineItem.product_id },
+            subtotal: subtotal,
+            quantity: item.quantity,
+          }
+        })
+
         return {
           currency_code: order.currency_code,
-          items: allOrderItems.map((item) => ({
-            ...item,
-            // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
-            product: { id: item.product_id },
-            // TODO: replace with actual subtotal and quantity
-            subtotal: 10,
-            quantity: 1,
-          })),
+          items: itemsInput,
         }
       }
     )
 
     const actions = getActionsToComputeFromPromotionsStep({
+      // @ts-ignore
       computeActionContext: actionsToComputeItemsInput,
       promotionCodesToApply: promotions,
     })
@@ -219,10 +227,6 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
         lineItemAdjustmentsToCreate,
       }) => {
         return items.map((item, index) => {
-          const itemAdjustments = lineItemAdjustmentsToCreate.filter(
-            (adjustment) => adjustment.item_id === lineItems[index].id
-          )
-
           return {
             order_change_id: orderChange.id,
             order_id: order.id,
@@ -237,7 +241,9 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
                 item.compare_at_unit_price ??
                 lineItems[index].compare_at_unit_price,
               metadata: item.metadata,
-              adjustments: itemAdjustments,
+              adjustments: lineItemAdjustmentsToCreate.filter(
+                (adjustment) => adjustment.item_id === lineItems[index].id
+              ),
             },
           }
         })
@@ -245,9 +251,80 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
     )
 
     createOrderChangeActionsWorkflow.runAsStep({
+      // @ts-ignore
       input: orderChangeActionInput,
     })
 
-    return new WorkflowResponse(previewOrderChangeStep(input.order_id))
+    // const previewedOrder = previewOrderChangeStep(input.order_id)
+
+    // const actionsToComputeItemsInput = transform(
+    //   { previewedOrder },
+    //   ({ previewedOrder }) => {
+    //     return {
+    //       currency_code: order.currency_code,
+    //       items: previewedOrder.items.map((item) => ({
+    //         ...item,
+    //         // Buy-Get promotions rely on the product ID, so we need to manually set it before refreshing adjustments
+    //         product: { id: item.product_id },
+    //       })),
+    //     }
+    //   }
+    // )
+
+    // const actions = getActionsToComputeFromPromotionsStep({
+    //   // @ts-ignore
+    //   computeActionContext: actionsToComputeItemsInput,
+    //   promotionCodesToApply: promotions,
+    // })
+
+    // const { lineItemAdjustmentsToCreate } =
+    //   prepareAdjustmentsFromPromotionActionsStep({ actions })
+
+    // const orderChangeActionAdjustmentsInput = transform(
+    //   {
+    //     order,
+    //     orderChange,
+    //     items: input.items,
+    //     lineItems,
+    //     lineItemAdjustmentsToCreate,
+    //   },
+    //   ({
+    //     order,
+    //     orderChange,
+    //     items,
+    //     lineItems,
+    //     lineItemAdjustmentsToCreate,
+    //   }) => {
+    //     return items.map((item, index) => {
+    //       const itemAdjustments = lineItemAdjustmentsToCreate.filter(
+    //         (adjustment) => adjustment.item_id === lineItems[index].id
+    //       )
+
+    //       return {
+    //         order_change_id: orderChange.id,
+    //         order_id: order.id,
+    //         version: orderChange.version,
+    //         action: ChangeActionType.ITEM_ADJUSTMENTS_REPLACE,
+    //         details: {
+    //           reference_id: lineItems[index].id,
+    //           adjustments: itemAdjustments,
+    //         },
+    //       }
+    //     })
+    //   }
+    // )
+
+    // createOrderChangeActionsWorkflow
+    //   .runAsStep({
+    //     // @ts-ignore
+    //     input: orderChangeActionAdjustmentsInput,
+    //   })
+    //   .config({ name: "order-change-action-adjustments-input" })
+
+    return new WorkflowResponse(
+      previewOrderChangeStep(input.order_id).config({
+        name: "preview-order-result",
+      })
+    )
   }
 )

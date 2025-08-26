@@ -23,6 +23,8 @@ OrderChangeProcessing.registerActionType(ChangeActionType.ITEM_ADD, {
         existing.detail.quantity,
         action.details.quantity
       )
+
+      existing.adjustments = action.details.adjustments ?? []
     } else {
       existing = {
         id: action.details.reference_id!,

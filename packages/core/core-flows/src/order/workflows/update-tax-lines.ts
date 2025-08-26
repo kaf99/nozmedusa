@@ -1,6 +1,7 @@
 import { OrderWorkflowDTO } from "@medusajs/framework/types"
 import {
   WorkflowData,
+  WorkflowResponse,
   createWorkflow,
   transform,
   when,
@@ -181,7 +182,7 @@ export const updateOrderTaxLinesWorkflow = createWorkflow(
   updateOrderTaxLinesWorkflowId,
   (
     input: WorkflowData<UpdateOrderTaxLinesWorkflowInput>
-  ): WorkflowData<void> => {
+  ) => {
     const isFullOrder = transform(input, (data) => {
       return !data.item_ids && !data.shipping_method_ids
     })
@@ -245,6 +246,11 @@ export const updateOrderTaxLinesWorkflow = createWorkflow(
       order,
       item_tax_lines: taxLineItems.lineItemTaxLines,
       shipping_tax_lines: taxLineItems.shippingMethodsTaxLines,
+    })
+
+    return new WorkflowResponse({
+      itemTaxLines: taxLineItems.lineItemTaxLines,
+      shippingTaxLines: taxLineItems.shippingMethodsTaxLines,
     })
   }
 )
