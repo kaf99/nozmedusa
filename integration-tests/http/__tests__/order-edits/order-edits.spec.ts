@@ -1178,7 +1178,7 @@ medusaIntegrationTestRunner({
       })
     })
 
-    describe.only("Order Edits promotions", () => {
+    describe("Order Edits promotions", () => {
       let appliedPromotion
       let promotionModule: IPromotionModuleService
       let orderModule: IOrderModuleService

@@ -163,29 +163,26 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
         lineItems,
       },
       ({ order, orderChange, items, lineItems }) => {
-        return items.map((item, index) => {
-          return {
-            order_change_id: orderChange.id,
-            order_id: order.id,
-            version: orderChange.version,
-            action: ChangeActionType.ITEM_ADD,
-            internal_note: item.internal_note,
-            details: {
-              reference_id: lineItems[index].id,
-              quantity: item.quantity,
-              unit_price: item.unit_price ?? lineItems[index].unit_price,
-              compare_at_unit_price:
-                item.compare_at_unit_price ??
-                lineItems[index].compare_at_unit_price,
-              metadata: item.metadata,
-            },
-          }
-        })
+        return items.map((item, index) => ({
+          order_change_id: orderChange.id,
+          order_id: order.id,
+          version: orderChange.version,
+          action: ChangeActionType.ITEM_ADD,
+          internal_note: item.internal_note,
+          details: {
+            reference_id: lineItems[index].id,
+            quantity: item.quantity,
+            unit_price: item.unit_price ?? lineItems[index].unit_price,
+            compare_at_unit_price:
+              item.compare_at_unit_price ??
+              lineItems[index].compare_at_unit_price,
+            metadata: item.metadata,
+          },
+        }))
       }
     )
 
     createOrderChangeActionsWorkflow.runAsStep({
-      // @ts-ignore
       input: orderChangeActionInput,
     })
 
@@ -196,10 +193,6 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
       },
     })
 
-    return new WorkflowResponse(
-      previewOrderChangeStep(input.order_id).config({
-        name: "preview-order-result",
-      })
-    )
+    return new WorkflowResponse(previewOrderChangeStep(input.order_id))
   }
 )

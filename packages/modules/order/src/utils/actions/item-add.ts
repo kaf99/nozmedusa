@@ -15,7 +15,6 @@ OrderChangeProcessing.registerActionType(ChangeActionType.ITEM_ADD, {
 
     if (existing) {
       existing.detail.quantity ??= 0
-      existing.adjustments = action.details.adjustments ?? []
 
       existing.quantity = MathBN.add(existing.quantity, action.details.quantity)
 
