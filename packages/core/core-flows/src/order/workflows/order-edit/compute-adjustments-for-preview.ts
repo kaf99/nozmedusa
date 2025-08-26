@@ -1,17 +1,17 @@
 import {
-    OrderChangeDTO,
-    OrderDTO,
-    PromotionDTO,
+  OrderChangeDTO,
+  OrderDTO,
+  PromotionDTO,
 } from "@medusajs/framework/types"
 import { ChangeActionType } from "@medusajs/framework/utils"
 import {
-    createWorkflow,
-    transform,
-    WorkflowData,
+  createWorkflow,
+  transform,
+  WorkflowData,
 } from "@medusajs/framework/workflows-sdk"
 import {
-    getActionsToComputeFromPromotionsStep,
-    prepareAdjustmentsFromPromotionActionsStep,
+  getActionsToComputeFromPromotionsStep,
+  prepareAdjustmentsFromPromotionActionsStep,
 } from "../../../cart"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
@@ -33,29 +33,30 @@ export type ComputeAdjustmentsForPreviewWorkflowInput = {
 export const computeAdjustmentsForPreviewWorkflowId =
   "compute-adjustments-for-preview"
 /**
- * This workflow adds new items to an order edit. It's used by the
+ * This workflow computes adjustments for an order edit. It's used by the
  * [Add Items to Order Edit Admin API Route](https://docs.medusajs.com/api/admin#order-edits_postordereditsiditems).
  *
- * You can use this workflow within your customizations or your own custom workflows, allowing you to add new items to an order edit
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to compute adjustments for an order edit
  * in your custom flows.
  *
  * @example
- * const { result } = await orderEditAddNewItemWorkflow(container)
+ * const { result } = await computeAdjustmentsForPreviewWorkflow(container)
  * .run({
  *   input: {
- *     order_id: "order_123",
- *     items: [
- *       {
- *         variant_id: "variant_123",
- *         quantity: 1,
- *       }
- *     ]
+ *     order: {
+ *       id: "order_123",
+ *       // other order details...
+ *     },
+ *     orderChange: {
+ *       id: "orch_123",
+ *       // other order change details...
+ *     }
  *   }
  * })
  *
  * @summary
  *
- * Add new items to an order edit.
+ * Compute adjustments for an order edit.
  */
 export const computeAdjustmentsForPreviewWorkflow = createWorkflow(
   computeAdjustmentsForPreviewWorkflowId,
@@ -81,7 +82,6 @@ export const computeAdjustmentsForPreviewWorkflow = createWorkflow(
     )
 
     const actions = getActionsToComputeFromPromotionsStep({
-      // @ts-ignore
       computeActionContext: actionsToComputeItemsInput,
       promotionCodesToApply: promotions,
     })
@@ -97,7 +97,7 @@ export const computeAdjustmentsForPreviewWorkflow = createWorkflow(
         lineItemAdjustmentsToCreate,
       },
       ({ order, previewedOrder, orderChange, lineItemAdjustmentsToCreate }) => {
-        return previewedOrder.items.map((item, index) => {
+        return previewedOrder.items.map((item) => {
           const itemAdjustments = lineItemAdjustmentsToCreate.filter(
             (adjustment) => adjustment.item_id === item.id
           )
@@ -117,10 +117,7 @@ export const computeAdjustmentsForPreviewWorkflow = createWorkflow(
     )
 
     createOrderChangeActionsWorkflow
-      .runAsStep({
-        // @ts-ignore
-        input: orderChangeActionAdjustmentsInput,
-      })
+      .runAsStep({ input: orderChangeActionAdjustmentsInput })
       .config({ name: "order-change-action-adjustments-input" })
   }
 )
