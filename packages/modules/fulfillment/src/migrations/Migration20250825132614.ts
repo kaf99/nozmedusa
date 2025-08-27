@@ -3,21 +3,20 @@ import { ulid } from "ulid"
 
 export class Migration20250825132614 extends Migration {
   override async up(): Promise<void> {
-    const defaultTypeId = `sotype_${ulid()}`
-
-    // 1. Create default shipping option type
-    await this.execute(`
-      INSERT INTO "shipping_option_type" (id, label, description, code) 
-      VALUES ('${defaultTypeId}', 'Default', 'Default shipping option type', 'default');
-    `)
-
-    // 2. Find all type-code shipping option types
+    // 1. Find all type-code shipping option types
     const typeCodeTypeIds = await this.execute(`
       SELECT id FROM "shipping_option_type"
       WHERE code = 'type-code' AND deleted_at IS NULL
     `)
 
     if (typeCodeTypeIds.length > 0) {
+      const defaultTypeId = `sotype_${ulid()}`
+      // 2. Create default shipping option type
+      await this.execute(`
+        INSERT INTO "shipping_option_type" (id, label, description, code)
+        VALUES ('${defaultTypeId}', 'Default', 'Default shipping option type', 'default');
+      `)
+
       const typeIdsString = typeCodeTypeIds
         .map((row) => `'${row.id}'`)
         .join(",")
