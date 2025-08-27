@@ -168,6 +168,7 @@ medusaIntegrationTestRunner({
             variants: [
               {
                 title: "buy rule variant",
+                manage_inventory: false,
                 sku: "buy-rule-variant-sku",
                 options: { size: "large" },
                 prices: [
@@ -1182,9 +1183,11 @@ medusaIntegrationTestRunner({
       let appliedPromotion
       let promotionModule: IPromotionModuleService
       let orderModule: IOrderModuleService
+      let remoteLink
 
       beforeEach(async () => {
         promotionModule = container.resolve(Modules.PROMOTION)
+        remoteLink = container.resolve(ContainerRegistrationKeys.LINK)
 
         appliedPromotion = await promotionModule.createPromotions({
           code: "PROMOTION_APPLIED",
@@ -1199,6 +1202,17 @@ medusaIntegrationTestRunner({
             target_rules: [],
           },
         })
+
+        await remoteLink.create([
+          {
+            [Modules.SALES_CHANNEL]: {
+              sales_channel_id: salesChannel.id,
+            },
+            [Modules.STOCK_LOCATION]: {
+              stock_location_id: location.id,
+            },
+          },
+        ])
 
         orderModule = container.resolve(Modules.ORDER)
 
@@ -1243,8 +1257,6 @@ medusaIntegrationTestRunner({
             promotion_id: appliedPromotion.id,
           },
         ])
-
-        const remoteLink = container.resolve(ContainerRegistrationKeys.LINK)
 
         await remoteLink.create({
           [Modules.ORDER]: { order_id: order.id },
@@ -1312,6 +1324,19 @@ medusaIntegrationTestRunner({
         // confirm original order is not updated
         expect(orderResult.total).toEqual(9)
         expect(orderResult.original_total).toEqual(10)
+
+        await api.post(
+          `/admin/order-edits/${orderId}/confirm`,
+          {},
+          adminHeaders
+        )
+
+        const orderResult2 = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        expect(orderResult2.total).toEqual(20.88)
+        expect(orderResult2.original_total).toEqual(23.2)
       })
 
       it("should update adjustments when updating an item", async () => {
@@ -1373,6 +1398,19 @@ medusaIntegrationTestRunner({
         // confirm original order is not updated
         expect(orderResult.total).toEqual(9)
         expect(orderResult.original_total).toEqual(10)
+
+        await api.post(
+          `/admin/order-edits/${orderId}/confirm`,
+          {},
+          adminHeaders
+        )
+
+        const orderResult2 = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        expect(orderResult2.total).toEqual(18)
+        expect(orderResult2.original_total).toEqual(20)
       })
 
       it("should update adjustments when removing an item", async () => {
@@ -1468,6 +1506,19 @@ medusaIntegrationTestRunner({
         // confirm original order is not updated
         expect(orderResult.total).toEqual(9)
         expect(orderResult.original_total).toEqual(10)
+
+        await api.post(
+          `/admin/order-edits/${orderId}/confirm`,
+          {},
+          adminHeaders
+        )
+
+        const orderResult2 = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        expect(orderResult2.total).toEqual(9)
+        expect(orderResult2.original_total).toEqual(10)
       })
 
       it("should not create adjustments when adding a new item if promotion is disabled", async () => {
@@ -1528,9 +1579,23 @@ medusaIntegrationTestRunner({
         // confirm original order is not updated
         expect(orderResult.total).toEqual(9)
         expect(orderResult.original_total).toEqual(10)
+
+        await api.post(
+          `/admin/order-edits/${orderId}/confirm`,
+          {},
+          adminHeaders
+        )
+
+        const orderResult2 = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        // The promotion is disabled, so what happens is that promotions that were initially applied are removed
+        expect(orderResult2.total).toEqual(23.2)
+        expect(orderResult2.original_total).toEqual(23.2)
       })
 
-      it("should add, remove, and add buy-get adjustment depending on the quantity of the buy rule product", async () => {
+      it.only("should add, remove, and add buy-get adjustment depending on the quantity of the buy rule product", async () => {
         promotionModule = container.resolve(Modules.PROMOTION)
 
         appliedPromotion = await promotionModule.createPromotions({
@@ -1665,6 +1730,8 @@ medusaIntegrationTestRunner({
           )
         ).data.order_preview
 
+        // console.log("result", JSON.stringify(result, null, 2))
+
         expect(result.total).toEqual(20)
         expect(result.original_total).toEqual(20)
 
@@ -1674,6 +1741,19 @@ medusaIntegrationTestRunner({
 
         expect(result.original_total).toEqual(30)
         expect(result.total).toEqual(20)
+
+        await api.post(
+          `/admin/order-edits/${orderId}/confirm`,
+          {},
+          adminHeaders
+        )
+
+        const orderResult2 = (
+          await api.get(`/admin/orders/${orderId}`, adminHeaders)
+        ).data.order
+
+        expect(orderResult2.total).toEqual(20)
+        expect(orderResult2.original_total).toEqual(20)
       })
     })
   },

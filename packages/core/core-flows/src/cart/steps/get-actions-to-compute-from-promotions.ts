@@ -44,10 +44,11 @@ export const getActionsToComputeFromPromotionsStep = createStep(
   async (data: GetActionsToComputeFromPromotionsStepInput, { container }) => {
     const { computeActionContext, promotionCodesToApply = [] } = data
 
+    
     const promotionService = container.resolve<IPromotionModuleService>(
       Modules.PROMOTION
     )
-
+    
     const actionsToCompute = await promotionService.computeActions(
       promotionCodesToApply,
       computeActionContext

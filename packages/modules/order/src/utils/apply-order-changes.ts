@@ -76,7 +76,7 @@ export async function applyChangesToOrder(
       const orderItem = isExistingItem ? (item.detail as any) : item
       const itemId = isExistingItem ? orderItem.item_id : item.id
 
-      const itemToUpsert = {
+      let itemToUpsert = {
         id: orderItem.version === version ? orderItem.id : undefined,
         item_id: itemId,
         order_id: order.id,
@@ -95,8 +95,8 @@ export async function applyChangesToOrder(
         metadata: orderItem.metadata,
       } as any
 
-      if (orderItem.adjustments) {
-        itemToUpsert.adjustments = orderItem.adjustments
+      if (isDefined(item.adjustments)) {
+        itemToUpsert.adjustments = item.adjustments
       }
 
       itemsToUpsert.push(itemToUpsert)
