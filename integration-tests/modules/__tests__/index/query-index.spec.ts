@@ -30,6 +30,34 @@ async function populateData(api: any) {
 
   const payload = [
     {
+      title: "Draft Product",
+      status: "draft",
+      description: "test-draft",
+      origin_country: "USA",
+      shipping_profile_id: shippingProfile.id,
+      options: [{ title: "Size", values: ["X"] }],
+      material: "cotton",
+      variants: [
+        {
+          title: `Test variant cotton`,
+          sku: `test-variant-cotton`,
+          prices: [
+            {
+              currency_code: Object.values(defaultCurrencies)[0].code,
+              amount: 30,
+            },
+            {
+              currency_code: Object.values(defaultCurrencies)[2].code,
+              amount: 50,
+            },
+          ],
+          options: {
+            Size: "X",
+          },
+        },
+      ],
+    },
+    {
       title: "Test Product",
       status: "published",
       description: "test-product-description",
@@ -126,7 +154,7 @@ medusaIntegrationTestRunner({
         await createAdminUser(dbConnection, adminHeaders, appContainer)
       })
 
-      it("should use query.index to query the index module and hydrate the data", async () => {
+      it.only("should use query.index to query the index module and hydrate the data", async () => {
         const products = await populateData(api)
 
         const brandModule = appContainer.resolve("brand")
@@ -356,6 +384,7 @@ medusaIntegrationTestRunner({
                 "variants.prices.currency_code",
               ],
               filters: {
+                status: "published",
                 "variants.prices.currency_code": "USD",
               },
               pagination: {
@@ -406,6 +435,7 @@ medusaIntegrationTestRunner({
                 "variants.prices.currency_code",
               ],
               filters: {
+                status: "published",
                 variants: {
                   prices: {
                     currency_code: "USD",
@@ -499,8 +529,9 @@ medusaIntegrationTestRunner({
           async () =>
             await query.index({
               entity: "product",
-              fields: ["id", "origin_country"],
+              fields: ["id", "title", "origin_country"],
               filters: {
+                status: "draft",
                 origin_country: ["USA"],
               },
             }),
@@ -512,6 +543,7 @@ medusaIntegrationTestRunner({
         )
 
         expect(resultset.data.length).toEqual(1)
+        expect(resultset.data[0].title).toEqual("Draft Product")
         expect(resultset.data[0].origin_country).toEqual("USA")
       })
     })

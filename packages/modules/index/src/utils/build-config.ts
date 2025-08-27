@@ -1112,7 +1112,8 @@ function buildAliasMap(
 
 function buildSchemaFromFilterableLinks(
   moduleJoinerConfigs: ModuleJoinerConfig[],
-  servicesEntityMap: Record<string, any>
+  servicesEntityMap: Record<string, any>,
+  executableSchema: GraphQLUtils.GraphQLSchema
 ): string {
   const allFilterable = moduleJoinerConfigs.flatMap((config) => {
     const entities: any[] = []
@@ -1206,14 +1207,19 @@ function buildSchemaFromFilterableLinks(
         })
         .join("\n")
 
-      return `
-      type ${entity} ${events} {
-        id: ID!
-      }
-        
+      const typeExists = !!executableSchema.getType(entity)
+      let finalSchema = !typeExists
+        ? `type ${entity} ${events} {
+          id: ID!
+        }`
+        : ""
+
+      finalSchema += `
       extend type ${entity} {
 ${fieldDefinitions}
 }`
+
+      return finalSchema
     })
     .join("\n\n")
 
@@ -1237,18 +1243,17 @@ export function buildSchemaObjectRepresentation(schema: string): {
 } {
   const moduleJoinerConfigs = MedusaModule.getAllJoinerConfigs()
 
+  let augmentedSchema = CustomDirectives.Listeners.definition + "\n" + schema
+
+  const defaultExecutableSchema = makeSchemaExecutable(augmentedSchema)
   const servicesEntityMap = getServicesEntityMap(moduleJoinerConfigs)
   const filterableEntities = buildSchemaFromFilterableLinks(
     moduleJoinerConfigs,
-    servicesEntityMap
+    servicesEntityMap,
+    defaultExecutableSchema!
   )
 
-  const augmentedSchema =
-    CustomDirectives.Listeners.definition +
-    "\n" +
-    schema +
-    "\n" +
-    filterableEntities
+  augmentedSchema += "\n" + filterableEntities
 
   const executableSchema = makeSchemaExecutable(augmentedSchema)!
   const entitiesMap = executableSchema.getTypeMap()
