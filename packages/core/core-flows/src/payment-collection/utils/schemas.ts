@@ -96,7 +96,7 @@ const paymentSessionDTOSchema = z.object({
   authorized_at: z.date().optional(),
   created_at: z.union([z.string(), z.date()]),
   updated_at: z.union([z.string(), z.date()]),
-  metadata: z.record(z.unknown()).nullable().optional(),
+  metadata: z.record(z.unknown()).optional(),
   payment_collection: z.any().optional(), // Expandable field
   payment: z.any().optional(), // Expandable field
 })
@@ -159,15 +159,15 @@ const paymentDTOSchema = z.object({
   amount: bigNumberValueSchema,
   currency_code: z.string(),
   provider_id: z.string(),
-  data: z.record(z.unknown()).nullable().optional(),
+  data: z.record(z.unknown()).optional(),
   cart_id: z.string().nullable().optional(),
   order_id: z.string().nullable().optional(),
   order_edit_id: z.string().nullable().optional(),
   customer_id: z.string().nullable().optional(),
-  payment_collection_id: z.string().nullable().optional(),
+  payment_collection_id: z.string(),
   payment_session_id: z.string().nullable().optional(),
-  captured_at: z.union([z.string(), z.date()]).nullable().optional(),
-  canceled_at: z.union([z.string(), z.date()]).nullable().optional(),
+  captured_at: z.union([z.string(), z.date()]).optional(),
+  canceled_at: z.union([z.string(), z.date()]).optional(),
   authorized_at: z.union([z.string(), z.date()]).nullable().optional(),
   created_at: z.union([z.string(), z.date()]).optional(),
   updated_at: z.union([z.string(), z.date()]).optional(),
@@ -177,7 +177,7 @@ const paymentDTOSchema = z.object({
 /**
  * Schema for PaymentCollectionDTO
  */
-const paymentCollectionDTOSchema = z.object({
+export const paymentCollectionDTOSchema = z.object({
   id: z.string(),
   currency_code: z.string(),
   amount: bigNumberValueSchema,
@@ -187,7 +187,6 @@ const paymentCollectionDTOSchema = z.object({
   completed_at: z.union([z.string(), z.date()]).optional(),
   created_at: z.union([z.string(), z.date()]).optional(),
   updated_at: z.union([z.string(), z.date()]).optional(),
-  metadata: z.record(z.unknown()).nullable().optional(),
   status: z.enum([
     "not_paid",
     "awaiting",
@@ -201,6 +200,7 @@ const paymentCollectionDTOSchema = z.object({
   payment_providers: z.array(paymentProviderDTOSchema),
   payment_sessions: z.array(paymentSessionDTOSchema).optional(),
   payments: z.array(paymentDTOSchema).optional(),
+  metadata: z.record(z.unknown()).optional(),
 })
 
 /**

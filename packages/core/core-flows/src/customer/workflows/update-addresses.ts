@@ -5,14 +5,12 @@ import {
   CustomerAddressDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
   parallelize,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-// import { expectTypeOf } from "expect-type"
 import {
   maybeUnsetDefaultBillingAddressesStep,
   maybeUnsetDefaultShippingAddressesStep,
@@ -21,8 +19,8 @@ import {
 import {
   updateAddressesWorkflowInputSchema,
   updateAddressesWorkflowOutputSchema,
-  // type UpdateAddressesWorkflowInput as SchemaInput,
-  // type UpdateAddressesWorkflowOutput as SchemaOutput,
+  type UpdateAddressesWorkflowInput as SchemaInput,
+  type UpdateAddressesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 /**
@@ -42,20 +40,22 @@ export type UpdateCustomerAddressesWorkflowInput = {
 export type UpdateCustomerAddressesWorkflowOutput = CustomerAddressDTO[]
 
 // Type verification
-// TODO: Fix FilterableCustomerAddressProps type issue
-// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateCustomerAddressesWorkflowInput>()
-// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateCustomerAddressesWorkflowOutput>()
+const _in: SchemaInput = {} as UpdateCustomerAddressesWorkflowInput
+const _inRev: UpdateCustomerAddressesWorkflowInput = {} as SchemaInput
+const _out: SchemaOutput = {} as UpdateCustomerAddressesWorkflowOutput
+const _outRev: SchemaOutput = {} as UpdateCustomerAddressesWorkflowOutput
+void _in, _out, _outRev, _inRev
 
 export const updateCustomerAddressesWorkflowId = "update-customer-addresses"
 /**
  * This workflow updates one or more addresses for customers. It's used by the [Update Customer Address Admin API Route](https://docs.medusajs.com/api/admin#customers_postcustomersidaddressesaddress_id)
  * and the [Update Customer Address Store API Route](https://docs.medusajs.com/api/store#customers_postcustomersmeaddressesaddress_id).
- * 
+ *
  * This workflow has a hook that allows you to perform custom actions on the updated customer addresses. For example, you can pass under `additional_data` custom data that
  * allows you to update custom data models linked to the addresses.
- * 
+ *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around updating customer addresses.
- * 
+ *
  * @example
  * const { result } = await updateCustomerAddressesWorkflow(container)
  * .run({
@@ -71,11 +71,11 @@ export const updateCustomerAddressesWorkflowId = "update-customer-addresses"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update one or more customer addresses.
- * 
+ *
  * @property hooks.addressesUpdated - This hook is executed after the addresses are updated. You can consume this hook to perform custom actions on the updated addresses.
  */
 export const updateCustomerAddressesWorkflow = createWorkflow(
@@ -85,7 +85,7 @@ export const updateCustomerAddressesWorkflow = createWorkflow(
     inputSchema: updateAddressesWorkflowInputSchema,
     outputSchema: updateAddressesWorkflowOutputSchema,
   },
-  (input: WorkflowData<UpdateCustomerAddressesWorkflowInput>) => {
+  (input) => {
     const unsetInput = transform(input, (data) => ({
       update: data,
     }))

@@ -1,3 +1,8 @@
+import {
+  FilterableSalesChannelProps,
+  SalesChannelDTO,
+  UpdateSalesChannelDTO,
+} from "@medusajs/framework/types"
 import { SalesChannelWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -13,52 +18,38 @@ import {
   type UpdateSalesChannelsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Re-export workflow types from schemas
-export type UpdateSalesChannelsWorkflowInput = SchemaInput
-export type UpdateSalesChannelsWorkflowOutput = SchemaOutput
+/**
+ * The data to update sales channels.
+ */
+export type UpdateSalesChannelsWorkflowInput = {
+  /**
+   * The filters to select the sales channels to update.
+   */
+  selector: FilterableSalesChannelProps
+  /**
+   * The data to update the sales channels.
+   */
+  update: UpdateSalesChannelDTO
+}
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
+/**
+ * The updated sales channels.
+ */
+export type UpdateSalesChannelsWorkflowOutput = SalesChannelDTO[]
 
 // Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  selector: {
-    q?: string
-    id?: string | string[]
-    name?: string | string[]
-    is_disabled?: boolean
-    $and?: any
-    $or?: any
-  }
-  update: {
-    name?: string
-    description?: string | null
-    is_disabled?: boolean
-    metadata?: Record<string, unknown>
-  }
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as Array<{
-  id: string
-  name: string
-  description: string | null
-  is_disabled: boolean
-  metadata: Record<string, unknown> | null
-  locations?: any
-}>
-
-console.log(existingInput, existingOutput, schemaOutput)
+const _in: SchemaInput = {} as UpdateSalesChannelsWorkflowInput
+const _out: SchemaOutput = {} as UpdateSalesChannelsWorkflowOutput
+void _in, _out
 
 export const updateSalesChannelsWorkflowId = "update-sales-channels"
 /**
  * This workflow updates sales channels matching the specified conditions. It's used by the
  * [Update Sales Channel Admin API Route](https://docs.medusajs.com/api/admin#sales-channels_postsaleschannelsid).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * update sales channels within your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateSalesChannelsWorkflow(container)
  * .run({
@@ -71,9 +62,9 @@ export const updateSalesChannelsWorkflowId = "update-sales-channels"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update sales channels.
  */
 export const updateSalesChannelsWorkflow = createWorkflow(

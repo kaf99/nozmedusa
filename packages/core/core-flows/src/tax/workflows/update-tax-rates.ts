@@ -31,19 +31,12 @@ export {
 } from "../utils/schemas"
 
 // Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
+const _in: SchemaInput = {} as {
   selector: FilterableTaxRateProps
   update: UpdateTaxRateDTO
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as TaxRateDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
+}
+const _out: SchemaOutput = {} as TaxRateDTO[]
+void _in, _out
 
 /**
  * The data to retrieve the IDs of tax rate rules.
@@ -94,7 +87,7 @@ export type MaybeListTaxRateRuleIdsStepInput = {
 const maybeListTaxRateRuleIdsStepId = "maybe-list-tax-rate-rule-ids"
 /**
  * This step lists the rules to update in a tax rate update object.
- * 
+ *
  * @example
  * const data = maybeListTaxRateRuleIdsStep({
  *   tax_rate_ids: ["txr_123"],
@@ -127,10 +120,10 @@ export const updateTaxRatesWorkflowId = "update-tax-rates"
 /**
  * This workflow updates tax rates matching specified filters. It's used by the
  * [Update Tax Rates Admin API Route](https://docs.medusajs.com/api/admin#tax-rates_posttaxratesid).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to update tax rates in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateTaxRatesWorkflow(container)
  * .run({
@@ -143,9 +136,9 @@ export const updateTaxRatesWorkflowId = "update-tax-rates"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update tax rates.
  */
 export const updateTaxRatesWorkflow = createWorkflow(

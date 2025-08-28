@@ -3,9 +3,11 @@ import { z } from "zod"
 /**
  * Schema for LinkDefinition
  */
-export const linkDefinitionSchema = z.object({
-  data: z.record(z.unknown()).optional(),
-}).catchall(z.record(z.any())) // Allow any module names with any field names
+export const linkDefinitionSchema = z
+  .object({
+    data: z.record(z.unknown()).optional(),
+  })
+  .catchall(z.record(z.any())) // Allow any module names with any field names
 
 /**
  * Schema for BatchLinksWorkflowInput
@@ -52,7 +54,7 @@ export const dismissLinksWorkflowInputSchema = z.array(linkDefinitionSchema)
 /**
  * Schema for DismissLinksWorkflowOutput
  */
-export const dismissLinksWorkflowOutputSchema = z.void()
+export const dismissLinksWorkflowOutputSchema = z.array(linkDefinitionSchema)
 
 /**
  * Schema for UpdateLinksWorkflowInput
@@ -65,11 +67,27 @@ export const updateLinksWorkflowInputSchema = z.array(linkDefinitionSchema)
 export const updateLinksWorkflowOutputSchema = z.array(z.any())
 
 // Type exports for workflow input/output types
-export type BatchLinksWorkflowInput = z.infer<typeof batchLinksWorkflowInputSchema>
-export type BatchLinksWorkflowOutput = z.infer<typeof batchLinksWorkflowOutputSchema>
-export type CreateLinksWorkflowInput = z.infer<typeof createLinksWorkflowInputSchema>
-export type CreateLinksWorkflowOutput = z.infer<typeof createLinksWorkflowOutputSchema>
-export type DismissLinksWorkflowInput = z.infer<typeof dismissLinksWorkflowInputSchema>
-export type DismissLinksWorkflowOutput = z.infer<typeof dismissLinksWorkflowOutputSchema>
-export type UpdateLinksWorkflowInput = z.infer<typeof updateLinksWorkflowInputSchema>
-export type UpdateLinksWorkflowOutput = z.infer<typeof updateLinksWorkflowOutputSchema>
+export type BatchLinksWorkflowInput = z.infer<
+  typeof batchLinksWorkflowInputSchema
+>
+export type BatchLinksWorkflowOutput = z.infer<
+  typeof batchLinksWorkflowOutputSchema
+>
+export type CreateLinksWorkflowInput = z.infer<
+  typeof createLinksWorkflowInputSchema
+>
+export type CreateLinksWorkflowOutput = z.infer<
+  typeof createLinksWorkflowOutputSchema
+>
+export type DismissLinksWorkflowInput = z.infer<
+  typeof dismissLinksWorkflowInputSchema
+>
+export type DismissLinksWorkflowOutput = z.infer<
+  typeof dismissLinksWorkflowOutputSchema
+>
+export type UpdateLinksWorkflowInput = z.infer<
+  typeof updateLinksWorkflowInputSchema
+>
+export type UpdateLinksWorkflowOutput = z.infer<
+  typeof updateLinksWorkflowOutputSchema
+>

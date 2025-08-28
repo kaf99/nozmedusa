@@ -8,10 +8,13 @@ const viewConfigurationConfigSchema = z.object({
   column_order: z.array(z.string()),
   column_widths: z.record(z.number()).optional(),
   filters: z.record(z.any()).optional(),
-  sorting: z.object({
-    id: z.string(),
-    desc: z.boolean(),
-  }).nullable().optional(),
+  sorting: z
+    .object({
+      id: z.string(),
+      desc: z.boolean(),
+    })
+    .nullable()
+    .optional(),
   search: z.string().optional(),
 })
 
@@ -31,17 +34,22 @@ const createViewConfigurationDTOSchema = z.object({
  */
 const updateViewConfigurationDTOSchema = z.object({
   name: z.string().nullable().optional(),
-  configuration: z.object({
-    visible_columns: z.array(z.string()).optional(),
-    column_order: z.array(z.string()).optional(),
-    column_widths: z.record(z.number()).optional(),
-    filters: z.record(z.any()).optional(),
-    sorting: z.object({
-      id: z.string(),
-      desc: z.boolean(),
-    }).nullable().optional(),
-    search: z.string().optional(),
-  }).optional(),
+  configuration: z
+    .object({
+      visible_columns: z.array(z.string()).optional(),
+      column_order: z.array(z.string()).optional(),
+      column_widths: z.record(z.number()).optional(),
+      filters: z.record(z.any()).optional(),
+      sorting: z
+        .object({
+          id: z.string(),
+          desc: z.boolean(),
+        })
+        .nullable()
+        .optional(),
+      search: z.string().optional(),
+    })
+    .optional(),
 })
 
 /**
@@ -54,22 +62,23 @@ const viewConfigurationDTOSchema = z.object({
   user_id: z.string().nullable(),
   is_system_default: z.boolean(),
   configuration: viewConfigurationConfigSchema,
-  created_at: z.union([z.string(), z.date()]),
-  updated_at: z.union([z.string(), z.date()]),
-  deleted_at: z.union([z.string(), z.date()]).nullable().optional(),
+  created_at: z.date(),
+  updated_at: z.date(),
 })
 
 /**
  * Schema for CreateViewConfigurationWorkflowInput
  */
-export const createViewConfigurationWorkflowInputSchema = createViewConfigurationDTOSchema.extend({
-  set_active: z.boolean().optional(),
-})
+export const createViewConfigurationWorkflowInputSchema =
+  createViewConfigurationDTOSchema.extend({
+    set_active: z.boolean().optional(),
+  })
 
 /**
  * Schema for CreateViewConfigurationWorkflowOutput
  */
-export const createViewConfigurationWorkflowOutputSchema = viewConfigurationDTOSchema
+export const createViewConfigurationWorkflowOutputSchema =
+  viewConfigurationDTOSchema
 
 export type CreateViewConfigurationWorkflowInput = z.infer<
   typeof createViewConfigurationWorkflowInputSchema
@@ -81,15 +90,18 @@ export type CreateViewConfigurationWorkflowOutput = z.infer<
 /**
  * Schema for UpdateViewConfigurationWorkflowInput
  */
-export const updateViewConfigurationWorkflowInputSchema = z.object({
-  id: z.string(),
-  set_active: z.boolean().optional(),
-}).merge(updateViewConfigurationDTOSchema)
+export const updateViewConfigurationWorkflowInputSchema = z
+  .object({
+    id: z.string(),
+    set_active: z.boolean().optional(),
+  })
+  .merge(updateViewConfigurationDTOSchema)
 
 /**
  * Schema for UpdateViewConfigurationWorkflowOutput
  */
-export const updateViewConfigurationWorkflowOutputSchema = viewConfigurationDTOSchema
+export const updateViewConfigurationWorkflowOutputSchema =
+  viewConfigurationDTOSchema
 
 export type UpdateViewConfigurationWorkflowInput = z.infer<
   typeof updateViewConfigurationWorkflowInputSchema

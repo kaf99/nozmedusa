@@ -24,7 +24,7 @@ export type GetOrderDetailWorkflowInput = {
   /**
    * Additional filters to apply on the retrieved order.
    */
-  filters?: { 
+  filters?: {
     /**
      * Whether to retrieve a draft order.
      */
@@ -52,29 +52,20 @@ export type GetOrderDetailWorkflowInput = {
 }
 
 // Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: GetOrderDetailWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderDetailDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
+const _in: SchemaInput = {} as GetOrderDetailWorkflowInput
+const _out: SchemaOutput = {} as OrderDetailDTO
+const _outRev: OrderDetailDTO = {} as SchemaOutput
+void _in, _out, _outRev
 
 export const getOrderDetailWorkflowId = "get-order-detail"
 /**
  * This workflow retrieves an order's details. It's used by many API routes, including
  * [Get an Order Admin API Route](https://docs.medusajs.com/api/admin#orders_getordersid), and
  * [Get an Order Store API Route](https://docs.medusajs.com/api/store#orders_getordersid).
- * 
- * You can use this workflow within your customizations or your own custom workflows, allowing you to retrieve an 
+ *
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to retrieve an
  * order's details in your custom flows.
- * 
+ *
  * @example
  * const { result } = await getOrderDetailWorkflow(container)
  * .run({
@@ -83,9 +74,9 @@ export const getOrderDetailWorkflowId = "get-order-detail"
  *     fields: ["id", "status", "items"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Retrieve an order's details.
  */
 export const getOrderDetailWorkflow = createWorkflow(
@@ -94,7 +85,7 @@ export const getOrderDetailWorkflow = createWorkflow(
     inputSchema: getOrderDetailWorkflowInputSchema,
     outputSchema: getOrderDetailWorkflowOutputSchema,
   },
-  (input): WorkflowResponse<OrderDetailDTO> => {
+  (input) => {
     const fields = transform(input, ({ fields }) => {
       return deduplicate([
         ...fields,

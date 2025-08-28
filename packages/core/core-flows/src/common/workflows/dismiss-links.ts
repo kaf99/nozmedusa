@@ -1,5 +1,5 @@
+import { LinkDefinition } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -7,19 +7,23 @@ import { dismissRemoteLinkStep } from "../steps/dismiss-remote-links"
 import {
   dismissLinksWorkflowInputSchema,
   dismissLinksWorkflowOutputSchema,
-  type DismissLinksWorkflowInput,
-  type DismissLinksWorkflowOutput,
+  type DismissLinksWorkflowInput as SchemaInput,
+  type DismissLinksWorkflowOutput as SchemaOutput,
 } from "../utils/batch-links-schemas"
+
+const _in: SchemaInput = {} as LinkDefinition[]
+const _out: SchemaOutput = {} as LinkDefinition[]
+void _in, _out
 
 export const dismissLinksWorkflowId = "dismiss-link"
 /**
  * This workflow dismisses one or more links between records.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * dismiss links within your custom flows.
- * 
+ *
  * Learn more about links in [this documentation](https://docs.medusajs.com/learn/fundamentals/module-links/link).
- * 
+ *
  * @example
  * const { result } = await dismissLinksWorkflow(container)
  * .run({
@@ -35,9 +39,9 @@ export const dismissLinksWorkflowId = "dismiss-link"
  *     }
  *   ]
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Dismiss links between two records of linked data models.
  */
 export const dismissLinksWorkflow = createWorkflow(
@@ -47,8 +51,7 @@ export const dismissLinksWorkflow = createWorkflow(
     inputSchema: dismissLinksWorkflowInputSchema,
     outputSchema: dismissLinksWorkflowOutputSchema,
   },
-  (input: WorkflowData<DismissLinksWorkflowInput>): WorkflowResponse<DismissLinksWorkflowOutput> => {
-    dismissRemoteLinkStep(input)
-    return new WorkflowResponse(void 0)
+  (input) => {
+    return new WorkflowResponse(dismissRemoteLinkStep(input))
   }
 )

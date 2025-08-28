@@ -42,7 +42,7 @@ export const createShippingProfilesWorkflowOutputSchema = z.array(
 const createGeoZoneBaseDTOSchema = z.object({
   type: z.enum(["country", "province", "city", "zip"]),
   country_code: z.string(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).nullable().optional(),
 })
 
 /**
@@ -96,7 +96,7 @@ const createServiceZoneDTOSchema = z.object({
   name: z.string(),
   fulfillment_set_id: z.string(),
   geo_zones: z.array(createGeoZoneDTOSchema).optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).nullable().optional(),
 })
 
 /**
@@ -722,20 +722,20 @@ const updateServiceZoneSchema = z.object({
         z.object({
           type: z.literal("country"),
           country_code: z.string(),
-          metadata: z.record(z.unknown()).optional(),
+          metadata: z.record(z.unknown()).nullable().optional(),
         }),
         z.object({
           type: z.literal("province"),
           country_code: z.string(),
           province_code: z.string(),
-          metadata: z.record(z.unknown()).optional(),
+          metadata: z.record(z.unknown()).nullable().optional(),
         }),
         z.object({
           type: z.literal("city"),
           country_code: z.string(),
           province_code: z.string(),
           city: z.string(),
-          metadata: z.record(z.unknown()).optional(),
+          metadata: z.record(z.unknown()).nullable().optional(),
         }),
         z.object({
           type: z.literal("zip"),
@@ -743,7 +743,7 @@ const updateServiceZoneSchema = z.object({
           province_code: z.string(),
           city: z.string(),
           postal_expression: z.record(z.any()),
-          metadata: z.record(z.unknown()).optional(),
+          metadata: z.record(z.unknown()).nullable().optional(),
         }),
         z.object({ id: z.string() }),
       ])

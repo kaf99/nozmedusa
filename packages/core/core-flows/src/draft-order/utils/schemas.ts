@@ -1,12 +1,9 @@
 import { z } from "zod"
-import {
-  bigNumberInputSchema,
-  bigNumberValueSchema,
-} from "../../common/utils/schemas"
+import { bigNumberInputSchema } from "../../common/utils/schemas"
 import {
   orderDTOSchema,
-  orderLineItemDTOSchema,
-  orderCreditLineDTOSchema,
+  orderPreviewDTOSchema,
+  upsertOrderAddressDTOSchema,
 } from "../../order/utils/schemas"
 import { PromotionActions } from "@medusajs/framework/utils"
 
@@ -29,119 +26,6 @@ const newItemSchema = z.object({
 export const orderEditAddNewItemWorkflowInputSchema = z.object({
   order_id: z.string(),
   items: z.array(newItemSchema),
-})
-
-/**
- * Schema for OrderShippingMethodDTO in preview
- */
-const orderShippingMethodDTOSchema = z.object({
-  id: z.string(),
-  order_id: z.string(),
-  shipping_option_id: z.string().optional(),
-  shipping_option: z.any().optional(),
-  name: z.string(),
-  amount: bigNumberValueSchema,
-  raw_amount: z.any().optional(),
-  is_tax_inclusive: z.boolean().optional(),
-  data: z.record(z.unknown()).optional(),
-  metadata: z.record(z.unknown()).nullable().optional(),
-  created_at: z.union([z.string(), z.date()]).optional(),
-  updated_at: z.union([z.string(), z.date()]).optional(),
-})
-
-/**
- * Schema for OrderChangeActionDTO
- */
-const orderChangeActionDTOSchema = z.object({
-  id: z.string(),
-  order_change_id: z.string().nullable().optional(),
-  order_id: z.string().nullable().optional(),
-  reference: z.string().optional(),
-  reference_id: z.string().optional(),
-  action: z.string(),
-  details: z.record(z.unknown()).nullable().optional(),
-  internal_note: z.string().nullable().optional(),
-  created_at: z.union([z.string(), z.date()]).optional(),
-  updated_at: z.union([z.string(), z.date()]).optional(),
-})
-
-/**
- * Schema for OrderChangeDTO in preview
- */
-const orderChangeDTOSchema = z.object({
-  id: z.string(),
-  version: z.number(),
-  order_id: z.string(),
-  return_id: z.string().nullable().optional(),
-  exchange_id: z.string().nullable().optional(),
-  claim_id: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
-  internal_note: z.string().nullable().optional(),
-  status: z.string(),
-  requested_by: z.string().nullable().optional(),
-  requested_at: z.union([z.string(), z.date()]).nullable().optional(),
-  confirmed_by: z.string().nullable().optional(),
-  confirmed_at: z.union([z.string(), z.date()]).nullable().optional(),
-  declined_by: z.string().nullable().optional(),
-  declined_at: z.union([z.string(), z.date()]).nullable().optional(),
-  declined_reason: z.string().nullable().optional(),
-  canceled_by: z.string().nullable().optional(),
-  canceled_at: z.union([z.string(), z.date()]).nullable().optional(),
-  created_by: z.string().nullable().optional(),
-  created_at: z.union([z.string(), z.date()]).optional(),
-  updated_at: z.union([z.string(), z.date()]).optional(),
-})
-
-/**
- * Schema for OrderPreviewDTO (output)
- */
-const orderPreviewDTOSchema = z.object({
-  // Base OrderDTO fields that are commonly used in preview
-  id: z.string(),
-  order_id: z.string().optional(), // sometimes returned as order_id instead of id
-  version: z.number(),
-  status: z.string().optional(),
-  region_id: z.string().optional(),
-  customer_id: z.string().optional(),
-  sales_channel_id: z.string().optional(),
-  email: z.string().optional(),
-  currency_code: z.string().optional(),
-
-  // Items with actions
-  items: z.array(
-    orderLineItemDTOSchema.extend({
-      actions: z.array(orderChangeActionDTOSchema).optional(),
-    })
-  ),
-
-  // Shipping methods with actions
-  shipping_methods: z.array(
-    orderShippingMethodDTOSchema.extend({
-      actions: z.array(orderChangeActionDTOSchema).optional(),
-    })
-  ),
-
-  // Credit lines
-  credit_lines: z.array(orderCreditLineDTOSchema).optional(),
-
-  // Order change details
-  order_change: orderChangeDTOSchema.optional(),
-
-  // Totals
-  shipping_total: bigNumberValueSchema,
-  gift_card_total: bigNumberValueSchema,
-  discount_subtotal: bigNumberValueSchema,
-  discount_total: bigNumberValueSchema,
-  tax_total: bigNumberValueSchema,
-  subtotal: bigNumberValueSchema,
-  total: bigNumberValueSchema,
-  return_requested_total: z.number().optional(),
-
-  // Additional fields that might be present
-  change_type: z.string().optional(),
-  metadata: z.record(z.unknown()).nullable().optional(),
-  created_at: z.union([z.string(), z.date()]).optional(),
-  updated_at: z.union([z.string(), z.date()]).optional(),
 })
 
 /**
@@ -196,11 +80,10 @@ export type ConfirmDraftOrderEditWorkflowOutput = z.infer<
  */
 export const removeDraftOrderPromotionsWorkflowInputSchema = z.object({
   order_id: z.string(),
-  code: z.array(z.string()),
+  promo_codes: z.array(z.string()),
 })
 
-export const removeDraftOrderPromotionsWorkflowOutputSchema =
-  orderPreviewDTOSchema
+export const removeDraftOrderPromotionsWorkflowOutputSchema = orderDTOSchema
 
 export type RemoveDraftOrderPromotionsWorkflowInput = z.infer<
   typeof removeDraftOrderPromotionsWorkflowInputSchema
@@ -236,18 +119,19 @@ export type UpdateDraftOrderShippingMethodWorkflowOutput = z.infer<
  * Schema for UpdateDraftOrderWorkflowInput
  */
 export const updateDraftOrderWorkflowInputSchema = z.object({
-  order_id: z.string(),
+  id: z.string(),
+  user_id: z.string(),
+  shipping_address: upsertOrderAddressDTOSchema.optional(),
+  billing_address: upsertOrderAddressDTOSchema.optional(),
   no_notification: z.boolean().optional(),
   region_id: z.string().optional(),
   customer_id: z.string().optional(),
-  billing_address: z.record(z.any()).optional(),
-  shipping_address: z.record(z.any()).optional(),
   sales_channel_id: z.string().optional(),
   email: z.string().optional(),
   metadata: z.record(z.unknown()).nullable().optional(),
 })
 
-export const updateDraftOrderWorkflowOutputSchema = orderPreviewDTOSchema
+export const updateDraftOrderWorkflowOutputSchema = orderDTOSchema
 
 export type UpdateDraftOrderWorkflowInput = z.infer<
   typeof updateDraftOrderWorkflowInputSchema
@@ -260,9 +144,7 @@ export type UpdateDraftOrderWorkflowOutput = z.infer<
  * Schema for ConvertDraftOrderWorkflowInput
  */
 export const convertDraftOrderWorkflowInputSchema = z.object({
-  order_id: z.string(),
-  no_notification_order: z.boolean().optional(),
-  metadata: z.record(z.unknown()).nullable().optional(),
+  id: z.string(),
 })
 
 export const convertDraftOrderWorkflowOutputSchema = orderDTOSchema
@@ -467,8 +349,15 @@ export type DeleteOrderEditItemActionWorkflowOutput = z.infer<
  */
 export const orderEditUpdateItemQuantityWorkflowInputSchema = z.object({
   order_id: z.string(),
-  item_id: z.string(),
-  quantity: bigNumberInputSchema,
+  items: z.array(
+    z.object({
+      id: z.string(),
+      quantity: bigNumberInputSchema,
+      unit_price: bigNumberInputSchema.nullable().optional(),
+      compare_at_unit_price: bigNumberInputSchema.nullable().optional(),
+      internal_note: z.string().nullable().optional(),
+    })
+  ),
 })
 
 export const orderEditUpdateItemQuantityWorkflowOutputSchema =

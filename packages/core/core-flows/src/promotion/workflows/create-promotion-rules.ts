@@ -20,25 +20,18 @@ export {
 } from "../utils/schemas"
 
 // Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: AddPromotionRulesWorkflowDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PromotionRuleDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
+const _in: SchemaInput = {} as AddPromotionRulesWorkflowDTO
+const _out: SchemaOutput = {} as PromotionRuleDTO[]
+void _in, _out
 
 export const createPromotionRulesWorkflowId = "create-promotion-rules-workflow"
 /**
  * This workflow creates one or more promotion rules. It's used by other workflows,
  * such as {@link batchPromotionRulesWorkflow} that manages the rules of a promotion.
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you to
  * create promotion rules within your custom flows.
- * 
+ *
  * @example
  * const { result } = await createPromotionRulesWorkflow(container)
  * .run({
@@ -57,9 +50,9 @@ export const createPromotionRulesWorkflowId = "create-promotion-rules-workflow"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more promotion rules.
  */
 export const createPromotionRulesWorkflow = createWorkflow(

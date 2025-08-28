@@ -21,23 +21,38 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   removeDraftOrderPromotionsWorkflowInputSchema,
   removeDraftOrderPromotionsWorkflowOutputSchema,
-  type RemoveDraftOrderPromotionsWorkflowInput,
-  type RemoveDraftOrderPromotionsWorkflowOutput,
+  type RemoveDraftOrderPromotionsWorkflowInput as SchemaInput,
+  type RemoveDraftOrderPromotionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-removeDraftOrderPromotionsWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-removeDraftOrderPromotionsWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const removeDraftOrderPromotionsWorkflowId =
   "remove-draft-order-promotions"
 
 /**
+ * The details of the promotions to remove from a draft order.
+ */
+export interface RemoveDraftOrderPromotionsWorkflowInput {
+  /**
+   * The ID of the draft order to remove the promotions from.
+   */
+  order_id: string
+  /**
+   * The codes of the promotions to remove from the draft order.
+   */
+  promo_codes: string[]
+}
+
+const _in: SchemaInput = {} as RemoveDraftOrderPromotionsWorkflowInput
+const _out: SchemaOutput = {} as OrderDTO
+void _in, _out
+
+/**
  * This workflow removes promotions from a draft order edit. It's used by the
  * [Remove Promotions from Draft Order Edit Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_deletedraftordersideditpromotions).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * removing promotions from a draft order edit.
- * 
+ *
  * @example
  * const { result } = await removeDraftOrderPromotionsWorkflow(container)
  * .run({
@@ -46,9 +61,9 @@ export const removeDraftOrderPromotionsWorkflowId =
  *     promo_codes: ["PROMO_CODE_1", "PROMO_CODE_2"],
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Remove promotions from a draft order edit.
  */
 export const removeDraftOrderPromotionsWorkflow = createWorkflow(
@@ -58,9 +73,7 @@ export const removeDraftOrderPromotionsWorkflow = createWorkflow(
     outputSchema: removeDraftOrderPromotionsWorkflowOutputSchema,
     description: "Remove promotions from a draft order edit",
   },
-  function (
-    input: RemoveDraftOrderPromotionsWorkflowInput
-  ): WorkflowResponse<RemoveDraftOrderPromotionsWorkflowOutput> {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,
@@ -90,21 +103,21 @@ export const removeDraftOrderPromotionsWorkflow = createWorkflow(
       fields: ["id", "code", "status"],
       variables: {
         filters: {
-          code: input.code,
+          code: input.promo_codes,
         },
       },
       list: true,
     }).config({ name: "promotions-query" })
 
     validatePromoCodesToRemoveStep({
-      promo_codes: input.code,
+      promo_codes: input.promo_codes,
       promotions,
     })
 
     refreshDraftOrderAdjustmentsWorkflow.runAsStep({
       input: {
         order,
-        promo_codes: input.code,
+        promo_codes: input.promo_codes,
         action: PromotionActions.REMOVE,
       },
     })

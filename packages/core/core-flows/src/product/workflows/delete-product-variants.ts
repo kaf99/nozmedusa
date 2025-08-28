@@ -20,7 +20,6 @@ import {
   deleteProductVariantsWorkflowOutputSchema,
 } from "../utils/schemas"
 
-
 export const deleteProductVariantsWorkflowId = "delete-product-variants"
 /**
  * This workflow deletes one or more product variants. It's used by the
@@ -95,9 +94,7 @@ export const deleteProductVariantsWorkflow = createWorkflow(
     )
 
     deleteInventoryItemWorkflow.runAsStep({
-      input: {
-        ids: toDeleteInventoryItemIds,
-      },
+      input: toDeleteInventoryItemIds,
     })
 
     const deletedProductVariants = deleteProductVariantsStep(input.ids)

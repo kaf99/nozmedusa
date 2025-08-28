@@ -2126,28 +2126,28 @@ export interface OrderChangeDTO {
    *
    * @expandable
    */
-  order: OrderDTO
+  order?: OrderDTO
 
   /**
    * The associated return order
    *
    * @expandable
    */
-  return_order: ReturnDTO
+  return_order?: ReturnDTO
 
   /**
    * The associated exchange order
    *
    * @expandable
    */
-  exchange: OrderExchangeDTO
+  exchange?: OrderExchangeDTO
 
   /**
    * The associated claim order
    *
    * @expandable
    */
-  claim: OrderClaimDTO
+  claim?: OrderClaimDTO
 
   /**
    * The actions of the order change

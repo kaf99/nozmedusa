@@ -24,22 +24,9 @@ export {
 } from "../utils/schemas"
 
 // Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateViewConfigurationDTO & {
-  set_active?: boolean
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as ViewConfigurationDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { CreateViewConfigurationWorkflowInput as LegacyCreateViewConfigurationWorkflowInput } from "../utils/schemas"
-export type { CreateViewConfigurationWorkflowOutput as LegacyCreateViewConfigurationWorkflowOutput } from "../utils/schemas"
+const _in: SchemaInput = {} as CreateViewConfigurationDTO
+const _out: ViewConfigurationDTO = {} as SchemaOutput
+void _in, _out
 
 export const createViewConfigurationWorkflowId = "create-view-configuration"
 

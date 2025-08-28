@@ -19,32 +19,28 @@ export {
   type UpdatePriceListsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
+/**
+ * The data to update price lists.
+ */
+export type OldUpdatePriceListsWorkflowInput = {
+  /**
+   * The price lists to update.
+   */
   price_lists_data: UpdatePriceListWorkflowInputDTO[]
-} = schemaInput
+}
 
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PriceListDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { UpdatePriceListsWorkflowInput as LegacyUpdatePriceListsWorkflowInput } from "../utils/schemas"
-export type { UpdatePriceListsWorkflowOutput as LegacyUpdatePriceListsWorkflowOutput } from "../utils/schemas"
+const _in: SchemaInput = {} as OldUpdatePriceListsWorkflowInput
+const _out: SchemaOutput = {} as PriceListDTO[]
+void _in, _out
 
 export const updatePriceListsWorkflowId = "update-price-lists"
 /**
  * This workflow updates one or more price lists. It's used by the
  * [Update Price List Admin API Route](https://docs.medusajs.com/api/admin#price-lists_postpricelistsid).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * update price lists in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updatePriceListsWorkflow(container)
  * .run({
@@ -57,9 +53,9 @@ export const updatePriceListsWorkflowId = "update-price-lists"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update one or more price lists.
  */
 export const updatePriceListsWorkflow = createWorkflow(
@@ -72,8 +68,6 @@ export const updatePriceListsWorkflow = createWorkflow(
   (input) => {
     validatePriceListsStep(input.price_lists_data)
 
-    return new WorkflowResponse(
-      updatePriceListsStep(input.price_lists_data)
-    )
+    return new WorkflowResponse(updatePriceListsStep(input.price_lists_data))
   }
 )

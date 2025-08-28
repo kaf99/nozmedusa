@@ -1,6 +1,5 @@
 import {
   createWorkflow,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { Modules } from "@medusajs/framework/utils"
@@ -11,47 +10,28 @@ import { useQueryGraphStep } from "../../common"
 import {
   deleteInventoryItemsWorkflowInputSchema,
   deleteInventoryItemsWorkflowOutputSchema,
-  // type DeleteInventoryItemsWorkflowInput as SchemaInput,
-  // type DeleteInventoryItemsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-// import { expectTypeOf } from "expect-type"
-
-/**
- * The data to delete inventory items.
- */
-export type DeleteInventoryItemWorkflowInput = {
-  /**
-   * The IDs of the inventory items to delete.
-   */
-  ids: string[]
-}
-
-/**
- * No response is returned.
- */
-export type DeleteInventoryItemWorkflowOutput = void
-
-// Type verification
-// TODO: Type verification disabled temporarily
-// expectTypeOf<SchemaInput>().toEqualTypeOf<DeleteInventoryItemWorkflowInput>()
-// expectTypeOf<SchemaOutput>().toEqualTypeOf<DeleteInventoryItemWorkflowOutput>()
+export {
+  type DeleteInventoryItemsWorkflowInput,
+  type DeleteInventoryItemsWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteInventoryItemWorkflowId = "delete-inventory-item-workflow"
 /**
  * This workflow deletes one or more inventory items. It's used by the
  * [Delete Inventory Item Admin API Route](https://docs.medusajs.com/api/admin#inventory-items_deleteinventoryitemsid).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to delete inventory items in your custom flows.
- * 
+ *
  * @example
  * const { result } = await deleteInventoryItemWorkflow(container)
  * .run({
  *   input: ["iitem_123"]
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Delete one or more inventory items.
  */
 export const deleteInventoryItemWorkflow = createWorkflow(
@@ -61,23 +41,21 @@ export const deleteInventoryItemWorkflow = createWorkflow(
     inputSchema: deleteInventoryItemsWorkflowInputSchema,
     outputSchema: deleteInventoryItemsWorkflowOutputSchema,
   },
-  (input: WorkflowData<DeleteInventoryItemWorkflowInput>): WorkflowResponse<
-    DeleteInventoryItemWorkflowOutput
-  > => {
+  (input) => {
     const { data: inventoryItemsToDelete } = useQueryGraphStep({
       entity: "inventory",
       fields: ["id", "reserved_quantity"],
       filters: {
-        id: input.ids,
+        id: input,
       },
     })
 
     validateInventoryDeleteStep({ inventory_items: inventoryItemsToDelete })
 
-    deleteInventoryItemStep(input.ids)
+    deleteInventoryItemStep(input)
     removeRemoteLinkStep({
-      [Modules.INVENTORY]: { inventory_item_id: input.ids },
+      [Modules.INVENTORY]: { inventory_item_id: input },
     })
-    return new WorkflowResponse(void 0)
+    return new WorkflowResponse(input)
   }
 )

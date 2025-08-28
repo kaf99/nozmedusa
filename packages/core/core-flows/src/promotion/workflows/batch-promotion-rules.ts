@@ -26,23 +26,15 @@ export {
   type BatchPromotionRulesWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: BatchWorkflowInput<
+const _in: SchemaInput = {} as BatchWorkflowInput<
   CreatePromotionRuleDTO,
   UpdatePromotionRuleDTO
 > & {
   id: string
   rule_type: "buy_rules" | "target_rules" | "rules"
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as BatchWorkflowOutput<PromotionRuleDTO>
-
-console.log(existingInput, existingOutput, schemaOutput)
+}
+const _out: SchemaOutput = {} as BatchWorkflowOutput<PromotionRuleDTO>
+void _in, _out
 
 export const batchPromotionRulesWorkflowId = "batch-promotion-rules"
 /**

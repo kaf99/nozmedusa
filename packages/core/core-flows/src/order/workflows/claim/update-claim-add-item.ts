@@ -116,17 +116,12 @@ export const updateClaimAddItemValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.UpdateClaimAddNewItemWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
+const _in: SchemaInput = {} as OrderWorkflow.UpdateClaimAddNewItemWorkflowInput
+const _inRev: OrderWorkflow.UpdateClaimAddNewItemWorkflowInput =
+  {} as SchemaInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+const _outRev: OrderPreviewDTO = {} as SchemaOutput
+void _in, _out, _outRev, _inRev
 
 export const updateClaimAddItemWorkflowId = "update-claim-add-item"
 /**
@@ -159,9 +154,7 @@ export const updateClaimAddItemWorkflow = createWorkflow(
     inputSchema: updateClaimAddItemWorkflowInputSchema,
     outputSchema: updateClaimAddItemWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input) {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "status", "order_id", "canceled_at"],

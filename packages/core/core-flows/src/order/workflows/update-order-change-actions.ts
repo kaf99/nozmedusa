@@ -20,26 +20,21 @@ export {
 } from "../utils/schemas"
 
 // Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: UpdateOrderChangeActionDTO[] = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderChangeActionDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
+const _in: SchemaInput = {} as UpdateOrderChangeActionDTO[]
+const _inRev: UpdateOrderChangeActionDTO[] = {} as SchemaInput
+const _out: OrderChangeActionDTO[] = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as OrderChangeActionDTO[]
+void _in, _out, _outRev, _inRev
 
 export const updateOrderChangeActionsWorkflowId = "update-order-change-actions"
 /**
  * This workflow updates one or more order change actions.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * updating order change actions.
- * 
+ *
  * @summary
- * 
+ *
  * Update one or more order change actions.
  */
 export const updateOrderChangeActionsWorkflow = createWorkflow(

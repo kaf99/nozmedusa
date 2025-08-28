@@ -24,23 +24,14 @@ import {
  */
 export interface ConvertDraftOrderWorkflowInput {
   /**
-   * The ID of the draft order to convert to a pending order.
+   * The ID of the draft order to convert to an order.
    */
-  order_id: string
-  /**
-   * Whether to send the customer a notification about the placed order.
-   */
-  no_notification_order?: boolean
-  /**
-   * The metadata to attach to the created order.
-   */
-  metadata?: Record<string, unknown> | null
+  id: string
 }
 
 // Type verification
 const _in: SchemaInput = {} as ConvertDraftOrderWorkflowInput
 const _out: SchemaOutput = {} as OrderDTO
-
 void _in
 void _out
 
@@ -98,10 +89,10 @@ export const convertDraftOrderStep = createStep(
 /**
  * This workflow converts a draft order to a pending order. It's used by the
  * [Convert Draft Order to Order Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersidconverttoorder).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * converting a draft order to a pending order.
- * 
+ *
  * @example
  * const { result } = await convertDraftOrderWorkflow(container)
  * .run({
@@ -109,9 +100,9 @@ export const convertDraftOrderStep = createStep(
  *     id: "order_123",
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Convert a draft order to a pending order.
  */
 export const convertDraftOrderWorkflow = createWorkflow(
@@ -126,7 +117,7 @@ export const convertDraftOrderWorkflow = createWorkflow(
       entry_point: "orders",
       fields: ["id", "status", "is_draft_order"],
       variables: {
-        id: input.order_id,
+        id: input.id,
       },
       list: false,
       throw_if_key_not_found: true,
@@ -134,7 +125,7 @@ export const convertDraftOrderWorkflow = createWorkflow(
 
     validateDraftOrderStep({ order })
 
-    const updatedOrder = convertDraftOrderStep({ id: input.order_id })
+    const updatedOrder = convertDraftOrderStep({ id: input.id })
 
     emitEventStep({
       eventName: OrderWorkflowEvents.PLACED,

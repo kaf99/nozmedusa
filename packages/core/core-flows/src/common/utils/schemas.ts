@@ -8,7 +8,6 @@ const iBigNumberSchema = z.object({
     .object({
       value: z.union([z.string(), z.number()]),
     })
-    .passthrough()
     .optional(),
   bigNumber: z.instanceof(BigNumberJS).optional(),
   toJSON: z.function().returns(z.number()),
@@ -16,11 +15,9 @@ const iBigNumberSchema = z.object({
 })
 
 // BigNumberRawValue is an object with value and optional additional properties
-export const bigNumberRawValueSchema = z
-  .object({
-    value: z.union([z.string(), z.number()]),
-  })
-  .passthrough()
+export const bigNumberRawValueSchema = z.object({
+  value: z.union([z.string(), z.number()]),
+})
 
 // BigNumberValue can be number, string, BigNumberJS, or IBigNumber
 export const bigNumberValueSchema = z.union([

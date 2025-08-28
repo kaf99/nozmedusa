@@ -4,11 +4,10 @@ import {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { AdminPostCancelReturnReqSchemaType } from "../../validators"
-import { HttpTypes } from "@medusajs/framework/types"
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminPostCancelReturnReqSchemaType>,
-  res: MedusaResponse<HttpTypes.AdminReturnResponse>
+  res: MedusaResponse<{ return: void }>
 ) => {
   const { id } = req.params
 
@@ -20,5 +19,5 @@ export const POST = async (
     },
   })
 
-  res.status(200).json({ return: result as HttpTypes.AdminReturn })
+  res.status(200).json({ return: result })
 }

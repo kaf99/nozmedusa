@@ -44,14 +44,14 @@ export type OrderEditAddNewItemValidationStepInput = {
 /**
  * This step validates that new items can be added to an order edit.
  * If the order is canceled or the order change is not active, the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = orderEditAddNewItemValidationStep({
  *   order: {
@@ -75,29 +75,18 @@ export const orderEditAddNewItemValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.OrderEditAddNewItemWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
+const _in: SchemaInput = {} as OrderWorkflow.OrderEditAddNewItemWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+void _in, _out
 
 export const orderEditAddNewItemWorkflowId = "order-edit-add-new-item"
 /**
  * This workflow adds new items to an order edit. It's used by the
  * [Add Items to Order Edit Admin API Route](https://docs.medusajs.com/api/admin#order-edits_postordereditsiditems).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to add new items to an order edit
  * in your custom flows.
- * 
+ *
  * @example
  * const { result } = await orderEditAddNewItemWorkflow(container)
  * .run({
@@ -111,9 +100,9 @@ export const orderEditAddNewItemWorkflowId = "order-edit-add-new-item"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Add new items to an order edit.
  */
 export const orderEditAddNewItemWorkflow = createWorkflow(
@@ -122,9 +111,7 @@ export const orderEditAddNewItemWorkflow = createWorkflow(
     inputSchema: orderEditAddNewItemWorkflowInputSchema,
     outputSchema: orderEditAddNewItemWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "canceled_at", "items.*"],

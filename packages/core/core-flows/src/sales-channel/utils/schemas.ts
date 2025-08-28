@@ -18,11 +18,15 @@ const salesChannelDTOSchema = z.object({
   description: z.string().nullable(),
   is_disabled: z.boolean(),
   metadata: z.record(z.unknown()).nullable(),
-  locations: z.array(z.object({
-    sales_channel_id: z.string(),
-    location_id: z.string(),
-    sales_channel: z.lazy(() => salesChannelDTOSchema),
-  })).optional(),
+  locations: z
+    .array(
+      z.object({
+        sales_channel_id: z.string(),
+        location_id: z.string(),
+        sales_channel: z.lazy(() => salesChannelDTOSchema),
+      })
+    )
+    .optional(),
 })
 
 /**
@@ -32,7 +36,7 @@ const updateSalesChannelDTOSchema = z.object({
   name: z.string().optional(),
   description: z.string().nullable().optional(),
   is_disabled: z.boolean().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).nullable().optional(),
 })
 
 /**
@@ -66,7 +70,9 @@ export const createSalesChannelsWorkflowInputSchema = z.object({
 /**
  * Schema for CreateSalesChannelsWorkflowOutput
  */
-export const createSalesChannelsWorkflowOutputSchema = z.array(salesChannelDTOSchema)
+export const createSalesChannelsWorkflowOutputSchema = z.array(
+  salesChannelDTOSchema
+)
 
 /**
  * Schema for UpdateSalesChannelsWorkflowInput
@@ -79,7 +85,9 @@ export const updateSalesChannelsWorkflowInputSchema = z.object({
 /**
  * Schema for UpdateSalesChannelsWorkflowOutput
  */
-export const updateSalesChannelsWorkflowOutputSchema = z.array(salesChannelDTOSchema)
+export const updateSalesChannelsWorkflowOutputSchema = z.array(
+  salesChannelDTOSchema
+)
 
 /**
  * Schema for DeleteSalesChannelsWorkflowInput
@@ -96,7 +104,8 @@ export const deleteSalesChannelsWorkflowOutputSchema = z.void()
 /**
  * Schema for LinkProductsToSalesChannelWorkflowInput
  */
-export const linkProductsToSalesChannelWorkflowInputSchema = linkWorkflowInputSchema
+export const linkProductsToSalesChannelWorkflowInputSchema =
+  linkWorkflowInputSchema
 
 /**
  * Schema for LinkProductsToSalesChannelWorkflowOutput
@@ -104,11 +113,27 @@ export const linkProductsToSalesChannelWorkflowInputSchema = linkWorkflowInputSc
 export const linkProductsToSalesChannelWorkflowOutputSchema = z.void()
 
 // Type exports for workflow input/output types
-export type CreateSalesChannelsWorkflowInput = z.infer<typeof createSalesChannelsWorkflowInputSchema>
-export type CreateSalesChannelsWorkflowOutput = z.infer<typeof createSalesChannelsWorkflowOutputSchema>
-export type UpdateSalesChannelsWorkflowInput = z.infer<typeof updateSalesChannelsWorkflowInputSchema>
-export type UpdateSalesChannelsWorkflowOutput = z.infer<typeof updateSalesChannelsWorkflowOutputSchema>
-export type DeleteSalesChannelsWorkflowInput = z.infer<typeof deleteSalesChannelsWorkflowInputSchema>
-export type DeleteSalesChannelsWorkflowOutput = z.infer<typeof deleteSalesChannelsWorkflowOutputSchema>
-export type LinkProductsToSalesChannelWorkflowInput = z.infer<typeof linkProductsToSalesChannelWorkflowInputSchema>
-export type LinkProductsToSalesChannelWorkflowOutput = z.infer<typeof linkProductsToSalesChannelWorkflowOutputSchema>
+export type CreateSalesChannelsWorkflowInput = z.infer<
+  typeof createSalesChannelsWorkflowInputSchema
+>
+export type CreateSalesChannelsWorkflowOutput = z.infer<
+  typeof createSalesChannelsWorkflowOutputSchema
+>
+export type UpdateSalesChannelsWorkflowInput = z.infer<
+  typeof updateSalesChannelsWorkflowInputSchema
+>
+export type UpdateSalesChannelsWorkflowOutput = z.infer<
+  typeof updateSalesChannelsWorkflowOutputSchema
+>
+export type DeleteSalesChannelsWorkflowInput = z.infer<
+  typeof deleteSalesChannelsWorkflowInputSchema
+>
+export type DeleteSalesChannelsWorkflowOutput = z.infer<
+  typeof deleteSalesChannelsWorkflowOutputSchema
+>
+export type LinkProductsToSalesChannelWorkflowInput = z.infer<
+  typeof linkProductsToSalesChannelWorkflowInputSchema
+>
+export type LinkProductsToSalesChannelWorkflowOutput = z.infer<
+  typeof linkProductsToSalesChannelWorkflowOutputSchema
+>

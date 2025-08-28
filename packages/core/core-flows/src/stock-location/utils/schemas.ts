@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { createOperatorMap } from "../../common/utils/validator-schemas"
 
 /**
  * Schema for CreateStockLocationInput
@@ -83,30 +84,28 @@ const updateStockLocationInputSchema = z.object({
     .object({
       address_1: z.string(),
       address_2: z.string().nullable().optional(),
-      city: z.string().optional(),
+      city: z.string().nullable().optional(),
       country_code: z.string(),
       phone: z.string().nullable().optional(),
       province: z.string().nullable().optional(),
-      postal_code: z.string().optional(),
+      postal_code: z.string().nullable().optional(),
       company: z.string().nullable().optional(),
     })
     .optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).nullable().optional(),
 })
 
 /**
  * Schema for FilterableStockLocationProps
  */
-const filterableStockLocationPropsSchema = z
-  .object({
-    q: z.string().optional(),
-    id: z.union([z.string(), z.array(z.string())]).optional(),
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    address_id: z.union([z.string(), z.array(z.string())]).optional(),
-    $and: z.any().optional(),
-    $or: z.any().optional(),
-  })
-  .passthrough()
+const filterableStockLocationPropsSchema = z.object({
+  q: z.string().optional(),
+  id: z.union([z.string(), z.array(z.string())]).optional(),
+  name: z
+    .union([z.string(), z.array(z.string()), createOperatorMap(z.string())])
+    .optional(),
+  address_id: z.union([z.string(), z.array(z.string())]).optional(),
+})
 
 /**
  * Schema for UpdateStockLocationsWorkflowInput

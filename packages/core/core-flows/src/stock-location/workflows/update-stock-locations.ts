@@ -26,20 +26,13 @@ export {
   type UpdateStockLocationsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
+const _in: SchemaInput = {} as {
   selector: FilterableStockLocationProps
   update: UpdateStockLocationInput
-} = schemaInput
+}
+const _out: SchemaOutput = {} as StockLocationDTO[]
+void _in, _out
 
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as StockLocationDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 export const updateStockLocationsWorkflowId = "update-stock-locations-workflow"
 /**
  * This workflow updates stock locations matching the specified filters. It's used by the

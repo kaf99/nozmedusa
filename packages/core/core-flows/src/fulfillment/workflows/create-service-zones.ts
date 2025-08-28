@@ -1,5 +1,5 @@
+import { FulfillmentWorkflow, ServiceZoneDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -7,18 +7,32 @@ import { createServiceZonesStep } from "../steps"
 import {
   createServiceZonesWorkflowInputSchema,
   createServiceZonesWorkflowOutputSchema,
-  type CreateServiceZonesWorkflowInput,
-  type CreateServiceZonesWorkflowOutput,
+  type CreateServiceZonesWorkflowInput as SchemaInput,
+  type CreateServiceZonesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
+
+/**
+ * The service zones to create.
+ */
+export type CreateServiceZonesWorkflowOutput = ServiceZoneDTO[]
+
+const _in: SchemaInput =
+  {} as FulfillmentWorkflow.CreateServiceZonesWorkflowInput
+const _out: SchemaOutput = {} as CreateServiceZonesWorkflowOutput
+void _in, _out
+
+/**
+ * The workflow that creates one or more service zones.
+ */
 
 export const createServiceZonesWorkflowId = "create-service-zones-workflow"
 /**
  * This workflow creates one or more service zones. It's used by the
  * [Add Service Zone to Fulfillment Set Admin API Route](https://docs.medusajs.com/api/admin#fulfillment-sets_postfulfillmentsetsidservicezones).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you to
  * create service zones within your custom flows.
- * 
+ *
  * @example
  * const { result } = await createServiceZonesWorkflow(container)
  * .run({
@@ -37,9 +51,9 @@ export const createServiceZonesWorkflowId = "create-service-zones-workflow"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more service zones.
  */
 export const createServiceZonesWorkflow = createWorkflow(
@@ -49,9 +63,7 @@ export const createServiceZonesWorkflow = createWorkflow(
     inputSchema: createServiceZonesWorkflowInputSchema,
     outputSchema: createServiceZonesWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<CreateServiceZonesWorkflowInput>
-  ): WorkflowResponse<CreateServiceZonesWorkflowOutput> => {
+  (input) => {
     return new WorkflowResponse(createServiceZonesStep(input.data))
   }
 )

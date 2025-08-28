@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { createOperatorMap } from "../../common/utils/validator-schemas"
 
 /**
  * Schema for CreateTaxRatesWorkflowInput
@@ -11,11 +12,16 @@ export const createTaxRatesWorkflowInputSchema = z.array(
     rate: z.number().nullable().optional(),
     is_default: z.boolean().optional(),
     is_combinable: z.boolean().optional(),
-    rules: z.array(z.object({
-      reference: z.string(),
-      reference_id: z.string(),
-    })).optional(),
-    metadata: z.record(z.unknown()).optional(),
+    created_by: z.string().optional(),
+    rules: z
+      .array(
+        z.object({
+          reference: z.string(),
+          reference_id: z.string(),
+        })
+      )
+      .optional(),
+    metadata: z.record(z.unknown()).nullable().optional(),
   })
 )
 
@@ -40,32 +46,50 @@ export const createTaxRatesWorkflowOutputSchema = z.array(
   })
 )
 
-export type CreateTaxRatesWorkflowInput = z.infer<typeof createTaxRatesWorkflowInputSchema>
-export type CreateTaxRatesWorkflowOutput = z.infer<typeof createTaxRatesWorkflowOutputSchema>
+export type CreateTaxRatesWorkflowInput = z.infer<
+  typeof createTaxRatesWorkflowInputSchema
+>
+export type CreateTaxRatesWorkflowOutput = z.infer<
+  typeof createTaxRatesWorkflowOutputSchema
+>
+
+const filterableTaxRateProps = z.object({
+  id: z.union([z.string(), z.array(z.string())]).optional(),
+  tax_region_id: z.union([z.string(), z.array(z.string())]).optional(),
+  rate: z
+    .union([z.number(), z.array(z.number()), z.record(z.unknown())])
+    .optional(),
+  code: z
+    .union([z.string(), z.array(z.string()), createOperatorMap(z.string())])
+    .optional(),
+  name: z
+    .union([z.string(), z.array(z.string()), createOperatorMap(z.string())])
+    .optional(),
+  created_by: z
+    .union([z.string(), z.array(z.string()), createOperatorMap(z.string())])
+    .optional(),
+})
 
 /**
  * Schema for UpdateTaxRatesWorkflowInput
  */
 export const updateTaxRatesWorkflowInputSchema = z.object({
-  selector: z.object({
-    id: z.union([z.string(), z.array(z.string())]).optional(),
-    tax_region_id: z.union([z.string(), z.array(z.string())]).optional(),
-    rate: z.union([z.number(), z.array(z.number()), z.record(z.unknown())]).optional(),
-    code: z.union([z.string(), z.array(z.string())]).optional(),
-    name: z.union([z.string(), z.array(z.string())]).optional(),
-    created_by: z.union([z.string(), z.array(z.string())]).optional(),
-  }).passthrough(),
+  selector: filterableTaxRateProps,
   update: z.object({
     name: z.string().optional(),
-    rate: z.number().optional(),
-    code: z.string().optional(),
-    rules: z.array(z.object({
-      reference: z.string(),
-      reference_id: z.string(),
-    })).optional(),
+    rate: z.number().nullable().optional(),
+    code: z.string().nullable().optional(),
+    rules: z
+      .array(
+        z.object({
+          reference: z.string(),
+          reference_id: z.string(),
+        })
+      )
+      .optional(),
     is_default: z.boolean().optional(),
     is_combinable: z.boolean().optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.unknown()).nullable().optional(),
     updated_by: z.string().optional(),
   }),
 })
@@ -91,25 +115,32 @@ export const updateTaxRatesWorkflowOutputSchema = z.array(
   })
 )
 
-export type UpdateTaxRatesWorkflowInput = z.infer<typeof updateTaxRatesWorkflowInputSchema>
-export type UpdateTaxRatesWorkflowOutput = z.infer<typeof updateTaxRatesWorkflowOutputSchema>
+export type UpdateTaxRatesWorkflowInput = z.infer<
+  typeof updateTaxRatesWorkflowInputSchema
+>
+export type UpdateTaxRatesWorkflowOutput = z.infer<
+  typeof updateTaxRatesWorkflowOutputSchema
+>
 
 /**
  * Schema for CreateTaxRegionsWorkflowInput
  */
 export const createTaxRegionsWorkflowInputSchema = z.array(
   z.object({
+    created_by: z.string().optional(),
     country_code: z.string(),
     province_code: z.string().nullable().optional(),
     parent_id: z.string().nullable().optional(),
-    default_tax_rate: z.object({
-      name: z.string(),
-      rate: z.number().nullable().optional(),
-      code: z.string().nullable().optional(),
-      is_combinable: z.boolean().optional(),
-      metadata: z.record(z.unknown()).optional(),
-    }).optional(),
-    metadata: z.record(z.unknown()).optional(),
+    default_tax_rate: z
+      .object({
+        name: z.string(),
+        rate: z.number().nullable().optional(),
+        code: z.string().nullable().optional(),
+        is_combinable: z.boolean().optional(),
+        metadata: z.record(z.unknown()).nullable().optional(),
+      })
+      .optional(),
+    metadata: z.record(z.unknown()).nullable().optional(),
   })
 )
 
@@ -130,8 +161,12 @@ export const createTaxRegionsWorkflowOutputSchema = z.array(
   })
 )
 
-export type CreateTaxRegionsWorkflowInput = z.infer<typeof createTaxRegionsWorkflowInputSchema>
-export type CreateTaxRegionsWorkflowOutput = z.infer<typeof createTaxRegionsWorkflowOutputSchema>
+export type CreateTaxRegionsWorkflowInput = z.infer<
+  typeof createTaxRegionsWorkflowInputSchema
+>
+export type CreateTaxRegionsWorkflowOutput = z.infer<
+  typeof createTaxRegionsWorkflowOutputSchema
+>
 
 /**
  * Schema for CreateTaxRateRulesWorkflowInput
@@ -164,8 +199,12 @@ export const createTaxRateRulesWorkflowOutputSchema = z.array(
   })
 )
 
-export type CreateTaxRateRulesWorkflowInput = z.infer<typeof createTaxRateRulesWorkflowInputSchema>
-export type CreateTaxRateRulesWorkflowOutput = z.infer<typeof createTaxRateRulesWorkflowOutputSchema>
+export type CreateTaxRateRulesWorkflowInput = z.infer<
+  typeof createTaxRateRulesWorkflowInputSchema
+>
+export type CreateTaxRateRulesWorkflowOutput = z.infer<
+  typeof createTaxRateRulesWorkflowOutputSchema
+>
 
 /**
  * Schema for SetTaxRatesRulesWorkflowInput
@@ -198,8 +237,12 @@ export const setTaxRateRulesWorkflowOutputSchema = z.array(
   })
 )
 
-export type SetTaxRatesRulesWorkflowInput = z.infer<typeof setTaxRateRulesWorkflowInputSchema>
-export type SetTaxRatesRulesWorkflowOutput = z.infer<typeof setTaxRateRulesWorkflowOutputSchema>
+export type SetTaxRatesRulesWorkflowInput = z.infer<
+  typeof setTaxRateRulesWorkflowInputSchema
+>
+export type SetTaxRatesRulesWorkflowOutput = z.infer<
+  typeof setTaxRateRulesWorkflowOutputSchema
+>
 
 /**
  * Schema for UpdateTaxRegionsWorkflowInput
@@ -210,7 +253,7 @@ export const updateTaxRegionsWorkflowInputSchema = z.array(
     country_code: z.string().optional(),
     province_code: z.string().nullable().optional(),
     parent_id: z.string().nullable().optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.unknown()).nullable().optional(),
   })
 )
 
@@ -231,8 +274,12 @@ export const updateTaxRegionsWorkflowOutputSchema = z.array(
   })
 )
 
-export type UpdateTaxRegionsWorkflowInput = z.infer<typeof updateTaxRegionsWorkflowInputSchema>
-export type UpdateTaxRegionsWorkflowOutput = z.infer<typeof updateTaxRegionsWorkflowOutputSchema>
+export type UpdateTaxRegionsWorkflowInput = z.infer<
+  typeof updateTaxRegionsWorkflowInputSchema
+>
+export type UpdateTaxRegionsWorkflowOutput = z.infer<
+  typeof updateTaxRegionsWorkflowOutputSchema
+>
 
 /**
  * Schema for DeleteTaxRegionsWorkflowInput
@@ -246,8 +293,12 @@ export const deleteTaxRegionsWorkflowInputSchema = z.object({
  */
 export const deleteTaxRegionsWorkflowOutputSchema = z.void()
 
-export type DeleteTaxRegionsWorkflowInput = z.infer<typeof deleteTaxRegionsWorkflowInputSchema>
-export type DeleteTaxRegionsWorkflowOutput = z.infer<typeof deleteTaxRegionsWorkflowOutputSchema>
+export type DeleteTaxRegionsWorkflowInput = z.infer<
+  typeof deleteTaxRegionsWorkflowInputSchema
+>
+export type DeleteTaxRegionsWorkflowOutput = z.infer<
+  typeof deleteTaxRegionsWorkflowOutputSchema
+>
 
 /**
  * Schema for DeleteTaxRatesWorkflowInput
@@ -261,8 +312,12 @@ export const deleteTaxRatesWorkflowInputSchema = z.object({
  */
 export const deleteTaxRatesWorkflowOutputSchema = z.void()
 
-export type DeleteTaxRatesWorkflowInput = z.infer<typeof deleteTaxRatesWorkflowInputSchema>
-export type DeleteTaxRatesWorkflowOutput = z.infer<typeof deleteTaxRatesWorkflowOutputSchema>
+export type DeleteTaxRatesWorkflowInput = z.infer<
+  typeof deleteTaxRatesWorkflowInputSchema
+>
+export type DeleteTaxRatesWorkflowOutput = z.infer<
+  typeof deleteTaxRatesWorkflowOutputSchema
+>
 
 /**
  * Schema for DeleteTaxRateRulesWorkflowInput
@@ -276,5 +331,9 @@ export const deleteTaxRateRulesWorkflowInputSchema = z.object({
  */
 export const deleteTaxRateRulesWorkflowOutputSchema = z.void()
 
-export type DeleteTaxRateRulesWorkflowInput = z.infer<typeof deleteTaxRateRulesWorkflowInputSchema>
-export type DeleteTaxRateRulesWorkflowOutput = z.infer<typeof deleteTaxRateRulesWorkflowOutputSchema>
+export type DeleteTaxRateRulesWorkflowInput = z.infer<
+  typeof deleteTaxRateRulesWorkflowInputSchema
+>
+export type DeleteTaxRateRulesWorkflowOutput = z.infer<
+  typeof deleteTaxRateRulesWorkflowOutputSchema
+>

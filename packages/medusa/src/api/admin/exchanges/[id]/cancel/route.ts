@@ -1,5 +1,4 @@
 import { cancelOrderExchangeWorkflow } from "@medusajs/core-flows"
-import { HttpTypes } from "@medusajs/framework/types"
 import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
@@ -8,7 +7,7 @@ import { AdminPostCancelExchangeReqSchemaType } from "../../validators"
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminPostCancelExchangeReqSchemaType>,
-  res: MedusaResponse<HttpTypes.AdminExchangeResponse>
+  res: MedusaResponse<{ exchange: void }>
 ) => {
   const { id } = req.params
 
@@ -21,5 +20,5 @@ export const POST = async (
     },
   })
 
-  res.status(200).json({ exchange: result as HttpTypes.AdminExchange })
+  res.status(200).json({ exchange: result })
 }

@@ -1,5 +1,4 @@
 import { cancelOrderClaimWorkflow } from "@medusajs/core-flows"
-import { HttpTypes } from "@medusajs/framework/types"
 import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
@@ -8,7 +7,7 @@ import { AdminPostCancelClaimReqSchemaType } from "../../validators"
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminPostCancelClaimReqSchemaType>,
-  res: MedusaResponse<HttpTypes.AdminClaimResponse>
+  res: MedusaResponse<{ claim: unknown }>
 ) => {
   const { id } = req.params
 
@@ -21,5 +20,5 @@ export const POST = async (
     },
   })
 
-  res.status(200).json({ claim: result as HttpTypes.AdminClaim })
+  res.status(200).json({ claim: result })
 }

@@ -115,17 +115,11 @@ export const updateClaimItemValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.UpdateClaimItemWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
+const _in: SchemaInput = {} as OrderWorkflow.UpdateClaimItemWorkflowInput
+const _inRev: OrderWorkflow.UpdateClaimItemWorkflowInput = {} as SchemaInput
+const _out: OrderPreviewDTO = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as OrderPreviewDTO
+void _in, _out, _outRev, _inRev
 
 export const updateClaimItemWorkflowId = "update-claim-item"
 /**

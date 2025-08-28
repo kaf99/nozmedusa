@@ -1,4 +1,8 @@
-import { AdditionalData, CreateCampaignDTO, CampaignDTO } from "@medusajs/framework/types"
+import {
+  AdditionalData,
+  CreateCampaignDTO,
+  CampaignDTO,
+} from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createHook,
@@ -17,29 +21,22 @@ export {
   type CreateCampaignsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
+const _in: SchemaInput = {} as {
   campaignsData: CreateCampaignDTO[]
-} & AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as CampaignDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
+} & AdditionalData
+const _out: CampaignDTO[] = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as CampaignDTO[]
+void _in, _out, _outRev
 
 export const createCampaignsWorkflowId = "create-campaigns"
 /**
  * This workflow creates one or more campaigns. It's used by the [Create Campaign Admin API Route](https://docs.medusajs.com/api/admin#campaigns_postcampaigns).
- * 
+ *
  * This workflow has a hook that allows you to perform custom actions on the created campaigns. For example, you can pass under `additional_data` custom data that
  * allows you to create custom data models linked to the campaigns.
- * 
+ *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around creating campaigns.
- * 
+ *
  * @example
  * const { result } = await createCampaignsWorkflow(container)
  * .run({
@@ -61,11 +58,11 @@ export const createCampaignsWorkflowId = "create-campaigns"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more campaigns.
- * 
+ *
  * @property hooks.campaignsCreated - This hook is executed after the campaigns are created. You can consume this hook to perform custom actions on the created campaigns.
  */
 export const createCampaignsWorkflow = createWorkflow(

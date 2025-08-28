@@ -85,10 +85,10 @@ export const updateProductDTOSchema = z.object({
     )
     .optional(),
   variants: z.array(updateProductVariantWorkflowInputDTOSchema).optional(),
-  width: z.string().nullable().optional(),
-  height: z.string().nullable().optional(),
-  length: z.string().nullable().optional(),
-  weight: z.string().nullable().optional(),
+  width: z.union([z.number(), z.string()]).nullable().optional(),
+  height: z.union([z.number(), z.string()]).nullable().optional(),
+  length: z.union([z.number(), z.string()]).nullable().optional(),
+  weight: z.union([z.number(), z.string()]).nullable().optional(),
   origin_country: z.string().nullable().optional(),
   hs_code: z.string().nullable().optional(),
   material: z.string().nullable().optional(),
@@ -274,7 +274,9 @@ export const updateProductOptionsWorkflowInputSchema = z
 /**
  * Schema for UpdateProductOptionsWorkflowOutput
  */
-export const updateProductOptionsWorkflowOutputSchema = z.array(productOptionDTOSchema)
+export const updateProductOptionsWorkflowOutputSchema = z.array(
+  productOptionDTOSchema
+)
 
 export type UpdateProductOptionsWorkflowInput = z.infer<
   typeof updateProductOptionsWorkflowInputSchema

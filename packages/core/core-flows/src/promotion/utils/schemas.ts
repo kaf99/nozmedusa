@@ -9,10 +9,18 @@ const campaignBudgetTypeSchema = z.enum(["spend", "usage"])
  * Schema for CampaignBudget
  */
 const campaignBudgetSchema = z.object({
+  id: z.string(),
   type: campaignBudgetTypeSchema.optional(),
   limit: z.number().nullable().optional(),
   used: z.number().optional(),
   currency_code: z.string().optional(),
+})
+
+const createCampaignBudgetSchema = z.object({
+  type: campaignBudgetTypeSchema.optional(),
+  limit: z.number().nullable().optional(),
+  used: z.number().optional(),
+  currency_code: z.string().nullable().optional(),
 })
 
 /**
@@ -20,11 +28,11 @@ const campaignBudgetSchema = z.object({
  */
 const createCampaignDTOSchema = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   campaign_identifier: z.string(),
   starts_at: z.date().nullable().optional(),
   ends_at: z.date().nullable().optional(),
-  budget: campaignBudgetSchema.optional(),
+  budget: createCampaignBudgetSchema.nullable().optional(),
   promotions: z
     .array(
       z.object({
@@ -39,12 +47,12 @@ const createCampaignDTOSchema = z.object({
  */
 const campaignDTOSchema = z.object({
   id: z.string(),
-  name: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
   campaign_identifier: z.string().optional(),
-  starts_at: z.union([z.date(), z.string()]).nullable().optional(),
-  ends_at: z.union([z.date(), z.string()]).nullable().optional(),
-  budget: campaignBudgetSchema.nullable().optional(),
+  starts_at: z.date().optional(),
+  ends_at: z.date().optional(),
+  budget: campaignBudgetSchema.optional(),
   created_at: z.union([z.date(), z.string()]).optional(),
   updated_at: z.union([z.date(), z.string()]).optional(),
   deleted_at: z.union([z.date(), z.string()]).nullable().optional(),
@@ -177,17 +185,25 @@ export type CreatePromotionsWorkflowOutput = z.infer<
   typeof createPromotionsWorkflowOutputSchema
 >
 
+const updateCapaignBudgetDTOSchema = z.object({
+  id: z.string().optional(),
+  type: campaignBudgetTypeSchema.optional(),
+  limit: z.number().nullable().optional(),
+  used: z.number().optional(),
+  currency_code: z.string().nullable().optional(),
+})
+
 /**
  * Schema for UpdateCampaignDTO
  */
 const updateCampaignDTOSchema = z.object({
   id: z.string(),
   name: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   campaign_identifier: z.string().optional(),
-  starts_at: z.date().optional(),
-  ends_at: z.date().optional(),
-  budget: campaignBudgetSchema.optional(),
+  starts_at: z.date().nullable().optional(),
+  ends_at: z.date().nullable().optional(),
+  budget: updateCapaignBudgetDTOSchema.optional(),
   promotions: z
     .array(
       z.object({
@@ -204,7 +220,11 @@ export const updateCampaignsWorkflowInputSchema = z
   .object({
     campaignsData: z.array(updateCampaignDTOSchema),
   })
-  .passthrough() // Allow additional_data
+  .and(
+    z.object({
+      additional_data: z.record(z.unknown()).optional(),
+    })
+  )
 
 /**
  * Schema for UpdateCampaignsWorkflowOutput
@@ -284,8 +304,8 @@ const promotionRuleDTOSchema = z.object({
 const batchUpdatePromotionRuleDTOSchema = z.object({
   id: z.string(),
   attribute: z.string().optional(),
-  operator: promotionRuleOperatorType,
-  values: z.array(z.string()).optional(),
+  operator: promotionRuleOperatorType.optional(),
+  values: z.union([z.string(), z.array(z.string())]).optional(),
 })
 
 /**
@@ -294,13 +314,13 @@ const batchUpdatePromotionRuleDTOSchema = z.object({
 const createPromotionRuleDTOSchema = z.object({
   attribute: z.string(),
   operator: promotionRuleOperatorType,
-  values: z.array(z.string()),
+  values: z.union([z.string(), z.array(z.string())]),
 })
 
 const batchCreatePromotionRuleDTOSchema = z.object({
   attribute: z.string(),
   operator: promotionRuleOperatorType,
-  values: z.array(z.string()),
+  values: z.union([z.string(), z.array(z.string())]),
 })
 
 /**
@@ -335,7 +355,7 @@ const updatePromotionRuleDTOSchema = z.object({
   id: z.string(),
   attribute: z.string().optional(),
   operator: z.enum(["gt", "lt", "eq", "ne", "in", "lte", "gte"]).optional(),
-  values: z.array(z.string()).optional(),
+  values: z.union([z.string(), z.array(z.string())]).optional(),
 })
 
 /**
@@ -468,7 +488,8 @@ export const updatePromotionsStatusWorkflowInputSchema = z
 /**
  * Schema for UpdatePromotionsStatusWorkflowOutput
  */
-export const updatePromotionsStatusWorkflowOutputSchema = z.array(promotionDTOSchema)
+export const updatePromotionsStatusWorkflowOutputSchema =
+  z.array(promotionDTOSchema)
 
 export type UpdatePromotionsStatusWorkflowInput = z.infer<
   typeof updatePromotionsStatusWorkflowInputSchema

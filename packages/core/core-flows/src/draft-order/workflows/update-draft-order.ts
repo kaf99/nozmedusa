@@ -11,6 +11,7 @@ import {
   OrderDTO,
   RegisterOrderChangeDTO,
   UpdateOrderDTO,
+  UpsertOrderAddressDTO,
 } from "@medusajs/types"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { previewOrderChangeStep, registerOrderChangesStep } from "../../order"
@@ -18,15 +19,49 @@ import { validateDraftOrderStep } from "../steps/validate-draft-order"
 import {
   updateDraftOrderWorkflowInputSchema,
   updateDraftOrderWorkflowOutputSchema,
-  type UpdateDraftOrderWorkflowInput,
-  type UpdateDraftOrderWorkflowOutput,
+  type UpdateDraftOrderWorkflowInput as SchemaInput,
+  type UpdateDraftOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-updateDraftOrderWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-updateDraftOrderWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const updateDraftOrderWorkflowId = "update-draft-order"
 
+/**
+ * The details of the draft order to update.
+ */
+export interface UpdateDraftOrderWorkflowInput {
+  /**
+   * The ID of the draft order to update.
+   */
+  id: string
+  /**
+   * The ID of the user updating the draft order.
+   */
+  user_id: string
+  /**
+   * Create or update the shipping address of the draft order.
+   */
+  shipping_address?: UpsertOrderAddressDTO
+  /**
+   * Create or update the billing address of the draft order.
+   */
+  billing_address?: UpsertOrderAddressDTO
+  /**
+   * The ID of the customer to associate the draft order with.
+   */
+  customer_id?: string
+  /**
+   * The new email of the draft order.
+   */
+  email?: string
+  /**
+   * The ID of the sales channel to associate the draft order with.
+   */
+  sales_channel_id?: string
+  /**
+   * The new metadata of the draft order.
+   */
+  metadata?: Record<string, unknown> | null
+}
 /**
  * The input for the update draft order step.
  */
@@ -43,14 +78,14 @@ export interface UpdateDraftOrderStepInput {
 
 /**
  * This step updates a draft order's details.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve a draft order's details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateDraftOrderStep({
  *   order: {
@@ -92,15 +127,15 @@ export const updateDraftOrderStep = createStep(
 /**
  * This workflow updates a draft order's details. It's used by the
  * [Update Draft Order Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersid).
- * 
- * This workflow doesn't update the draft order's items, shipping methods, or promotions. Instead, you have to 
+ *
+ * This workflow doesn't update the draft order's items, shipping methods, or promotions. Instead, you have to
  * create a draft order edit using {@link beginDraftOrderEditWorkflow} and make updates in the draft order edit.
  * Then, you can confirm the draft order edit using {@link confirmDraftOrderEditWorkflow} or request a draft order edit
  * using {@link requestDraftOrderEditWorkflow}.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * updating a draft order.
- * 
+ *
  * @example
  * const { result } = await updateDraftOrderWorkflow(container)
  * .run({
@@ -110,11 +145,21 @@ export const updateDraftOrderStep = createStep(
  *     customer_id: "cus_123",
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update a draft order's details.
  */
+const _in: SchemaInput = {} as UpdateDraftOrderWorkflowInput
+const _inRev: UpdateDraftOrderWorkflowInput = {} as SchemaInput
+const _out: SchemaOutput = {} as OrderDTO
+const _outRev: OrderDTO = {} as SchemaOutput
+void _in, _out, _inRev, _outRev
+
+/**
+ * The updated draft order.
+ */
+export type UpdateDraftOrderWorkflowOutput = OrderDTO
 export const updateDraftOrderWorkflow = createWorkflow(
   {
     name: updateDraftOrderWorkflowId,
@@ -122,9 +167,7 @@ export const updateDraftOrderWorkflow = createWorkflow(
     outputSchema: updateDraftOrderWorkflowOutputSchema,
     description: "Update a draft order's details",
   },
-  function (
-    input: UpdateDraftOrderWorkflowInput
-  ): WorkflowResponse<UpdateDraftOrderWorkflowOutput> {
+  function (input) {
     const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: [
@@ -140,7 +183,7 @@ export const updateDraftOrderWorkflow = createWorkflow(
         "metadata",
       ],
       variables: {
-        id: input.order_id,
+        id: input.id,
       },
       list: false,
       throw_if_key_not_found: true,
@@ -177,20 +220,14 @@ export const updateDraftOrderWorkflow = createWorkflow(
           update.billing_address = address
         }
 
-        const { order_id, ...restInput } = input
-        return { ...restInput, ...update }
+        return { ...input, ...update }
       }
     )
 
-    const updateStepInput = transform(
-      { order, updateInput },
-      ({ order, updateInput }) => ({
-        order,
-        input: updateInput,
-      })
-    )
-
-    const updatedOrder = updateDraftOrderStep(updateStepInput)
+    const updatedOrder = updateDraftOrderStep({
+      order,
+      input: updateInput,
+    })
 
     const orderChangeInput = transform(
       { input, updatedOrder, order },
@@ -200,9 +237,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.shipping_address) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "shipping_address",
               old: order.shipping_address,
@@ -214,9 +251,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.billing_address) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "billing_address",
               old: order.billing_address,
@@ -228,9 +265,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.customer_id) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "customer_id",
               old: order.customer_id,
@@ -242,9 +279,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.email) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "email",
               old: order.email,
@@ -256,9 +293,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.sales_channel_id) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "sales_channel_id",
               old: order.sales_channel_id,
@@ -270,9 +307,9 @@ export const updateDraftOrderWorkflow = createWorkflow(
         if (input.metadata) {
           changes.push({
             change_type: "update_order" as const,
-            order_id: input.order_id,
-            created_by: undefined,
-            confirmed_by: undefined,
+            order_id: input.id,
+            created_by: input.user_id,
+            confirmed_by: input.user_id,
             details: {
               type: "metadata",
               old: order.metadata,
@@ -289,10 +326,10 @@ export const updateDraftOrderWorkflow = createWorkflow(
 
     emitEventStep({
       eventName: OrderWorkflowEvents.UPDATED,
-      data: { id: input.order_id },
+      data: { id: input.id },
     })
 
-    const preview = previewOrderChangeStep(input.order_id)
+    const preview = previewOrderChangeStep(input.id)
 
     return new WorkflowResponse(preview)
   }

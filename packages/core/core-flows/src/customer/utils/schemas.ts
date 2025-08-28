@@ -156,10 +156,12 @@ export const updateCustomersWorkflowOutputSchema = z.array(customerDTOSchema)
 /**
  * Schema for UpdateAddressesWorkflowInput
  */
-export const updateAddressesWorkflowInputSchema = z.object({
-  selector: z.record(z.any()),
-  update: z.record(z.any()),
-})
+export const updateAddressesWorkflowInputSchema = z
+  .object({
+    selector: z.record(z.any()),
+    update: z.record(z.any()),
+  })
+  .and(additionalDataSchema)
 
 /**
  * Schema for UpdateAddressesWorkflowOutput

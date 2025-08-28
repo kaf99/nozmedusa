@@ -9,12 +9,13 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   OrderChangeDTO,
   OrderDTO,
+  OrderPreviewDTO,
+  OrderWorkflow,
 } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -28,12 +29,20 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   orderEditUpdateItemQuantityWorkflowInputSchema,
   orderEditUpdateItemQuantityWorkflowOutputSchema,
-  type OrderEditUpdateItemQuantityWorkflowInput,
-  type OrderEditUpdateItemQuantityWorkflowOutput,
+  type OrderEditUpdateItemQuantityWorkflowInput as SchemaInput,
+  type OrderEditUpdateItemQuantityWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-orderEditUpdateItemQuantityWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-orderEditUpdateItemQuantityWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
+const _in: SchemaInput =
+  {} as OrderWorkflow.OrderEditUpdateItemQuantityWorkflowInput
+const _out: OrderPreviewDTO = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as OrderPreviewDTO
+
+export type OrderEditUpdateItemQuantityWorkflowInput = SchemaInput
+export type OrderEditUpdateItemQuantityWorkflowOutput = SchemaOutput
+
+// This is to ensure that the types are not tree-shaken away
+void _in, _out, _outRev
 
 export const updateDraftOrderItemWorkflowId = "update-draft-order-item"
 
@@ -60,13 +69,11 @@ export const updateDraftOrderItemWorkflowId = "update-draft-order-item"
 export const updateDraftOrderItemWorkflow = createWorkflow(
   {
     name: updateDraftOrderItemWorkflowId,
+    description: "Update an item in a draft order edit.",
     inputSchema: orderEditUpdateItemQuantityWorkflowInputSchema,
     outputSchema: orderEditUpdateItemQuantityWorkflowOutputSchema,
-    description: "Update an item in a draft order edit",
   },
-  function (
-    input: WorkflowData<OrderEditUpdateItemQuantityWorkflowInput>
-  ): WorkflowResponse<OrderEditUpdateItemQuantityWorkflowOutput> {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,
@@ -90,30 +97,32 @@ export const updateDraftOrderItemWorkflow = createWorkflow(
     validateDraftOrderChangeStep({ order, orderChange })
 
     const orderChangeActionInput = transform(
-      { order, orderChange, input },
-      ({ order, orderChange, input }) => {
-        const existing = order?.items?.find(
-          (exItem) => exItem.id === input.item_id
-        )!
+      { order, orderChange, items: input.items },
+      ({ order, orderChange, items }) => {
+        return items.map((item) => {
+          const existing = order?.items?.find(
+            (exItem) => exItem.id === item.id
+          )!
 
-        const quantityDiff = new BigNumber(
-          MathBN.sub(input.quantity, existing.quantity)
-        )
+          const quantityDiff = new BigNumber(
+            MathBN.sub(item.quantity, existing.quantity)
+          )
 
-        return [{
-          order_change_id: orderChange.id,
-          order_id: order.id,
-          version: orderChange.version,
-          action: ChangeActionType.ITEM_UPDATE,
-          internal_note: undefined,
-          details: {
-            reference_id: input.item_id,
-            quantity: input.quantity,
-            unit_price: undefined,
-            compare_at_unit_price: undefined,
-            quantity_diff: quantityDiff,
-          },
-        }]
+          return {
+            order_change_id: orderChange.id,
+            order_id: order.id,
+            version: orderChange.version,
+            action: ChangeActionType.ITEM_UPDATE,
+            internal_note: item.internal_note,
+            details: {
+              reference_id: item.id,
+              quantity: item.quantity,
+              unit_price: item.unit_price,
+              compare_at_unit_price: item.compare_at_unit_price,
+              quantity_diff: quantityDiff,
+            },
+          }
+        })
       }
     )
 

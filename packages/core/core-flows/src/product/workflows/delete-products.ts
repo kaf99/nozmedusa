@@ -19,7 +19,6 @@ import {
   deleteProductsWorkflowOutputSchema,
 } from "../utils/schemas"
 
-
 export const deleteProductsWorkflowId = "delete-products"
 /**
  * This workflow deletes one or more products. It's used by the
@@ -97,9 +96,7 @@ export const deleteProductsWorkflow = createWorkflow(
     )
 
     deleteInventoryItemWorkflow.runAsStep({
-      input: {
-        ids: toDeleteInventoryItemIds,
-      },
+      input: toDeleteInventoryItemIds,
     })
 
     const [, deletedProduct] = parallelize(

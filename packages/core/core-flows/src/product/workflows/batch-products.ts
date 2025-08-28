@@ -40,12 +40,9 @@ export {
 } from "../utils/schemas"
 
 // Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldBatchProductWorkflowInput = schemaInput
-const existingOutput: OldBatchProductsWorkflowOutput = schemaOutput
-
-console.log(existingInput, existingOutput)
+const _in: SchemaInput = {} as OldBatchProductWorkflowInput
+const _out: SchemaOutput = {} as OldBatchProductsWorkflowOutput
+void _in, _out
 
 const conditionallyCreateProducts = (input: SchemaInput) =>
   when({ input }, ({ input }) => !!input.create?.length).then(() =>
@@ -116,6 +113,7 @@ export const batchProductsWorkflowId = "batch-products"
 export const batchProductsWorkflow = createWorkflow(
   {
     name: batchProductsWorkflowId,
+    description: "Create, update, and delete products in bulk",
     inputSchema: batchProductWorkflowInputSchema,
     outputSchema: batchProductsWorkflowOutputSchema,
   },

@@ -100,7 +100,7 @@ export type CreatePriceListsWorkflowOutput = z.infer<
 const updatePriceListWorkflowInputDTOSchema = z.object({
   id: z.string(),
   title: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   starts_at: z.string().nullable().optional(),
   ends_at: z.string().nullable().optional(),
   status: priceListStatusSchema.optional(),

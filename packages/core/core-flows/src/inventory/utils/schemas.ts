@@ -156,14 +156,12 @@ export const updateInventoryItemsWorkflowOutputSchema = z.array(
 /**
  * Schema for DeleteInventoryItemsWorkflowInput
  */
-export const deleteInventoryItemsWorkflowInputSchema = z.object({
-  ids: z.array(z.string()),
-})
+export const deleteInventoryItemsWorkflowInputSchema = z.array(z.string())
 
 /**
  * Schema for DeleteInventoryItemsWorkflowOutput
  */
-export const deleteInventoryItemsWorkflowOutputSchema = z.void()
+export const deleteInventoryItemsWorkflowOutputSchema = z.array(z.string())
 
 /**
  * Schema for UpdateInventoryLevelsWorkflowInput
@@ -268,16 +266,18 @@ export type DeleteInventoryLevelsWorkflowOutput = z.infer<
  */
 export const batchInventoryItemLevelsWorkflowInputSchema = z.object({
   create: z.array(createInventoryLevelInputSchema).optional(),
-  update: z.array(
-    z.object({
-      id: z.string().optional(),
-      inventory_item_id: z.string(),
-      location_id: z.string(),
-      stocked_quantity: z.number().optional(),
-      incoming_quantity: z.number().optional(),
-      metadata: z.record(z.unknown()).optional(),
-    })
-  ).optional(),
+  update: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        inventory_item_id: z.string(),
+        location_id: z.string(),
+        stocked_quantity: z.number().optional(),
+        incoming_quantity: z.number().optional(),
+        metadata: z.record(z.unknown()).optional(),
+      })
+    )
+    .optional(),
   delete: z.array(z.string()).optional(),
   force: z.boolean().optional(),
 })

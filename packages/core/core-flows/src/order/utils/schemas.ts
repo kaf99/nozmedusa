@@ -8,6 +8,7 @@ import {
   fulfillmentDTOSchema,
   shippingOptionRuleDTOSchema,
 } from "../../fulfillment/utils/schemas"
+import { paymentCollectionDTOSchema } from "../../payment-collection/utils/schemas"
 
 /**
  * Schema for AdditionalData
@@ -378,7 +379,7 @@ export type CompleteOrdersWorkflowOutput = z.infer<
 /**
  * Schema for line item adjustment
  */
-const orderLineItemAdjustmentDTOSchema = z.object({
+const baseOrderLineItemAdjustmentDTOSchema = z.object({
   id: z.string(),
   code: z.string().optional(),
   amount: bigNumberValueSchema,
@@ -388,14 +389,24 @@ const orderLineItemAdjustmentDTOSchema = z.object({
   provider_id: z.string().optional(),
   created_at: z.union([z.date(), z.string()]),
   updated_at: z.union([z.date(), z.string()]),
-  item: z.lazy(() => orderLineItemDTOSchema),
   item_id: z.string(),
 })
+
+type OrderLineItemAdjustment = z.infer<
+  typeof baseOrderLineItemAdjustmentDTOSchema
+> & {
+  item: z.infer<typeof orderLineItemDTOSchema>
+}
+
+const orderLineItemAdjustmentDTOSchema: z.ZodType<OrderLineItemAdjustment> =
+  baseOrderLineItemAdjustmentDTOSchema.extend({
+    item: z.lazy(() => orderLineItemDTOSchema),
+  })
 
 /**
  * Schema for line item tax line
  */
-const orderLineItemTaxLineDTOSchema = z.object({
+const baseOrderLineItemTaxLineDTOSchema = z.object({
   id: z.string(),
   description: z.string().optional(),
   tax_rate_id: z.string().optional(),
@@ -404,7 +415,6 @@ const orderLineItemTaxLineDTOSchema = z.object({
   provider_id: z.string().optional(),
   created_at: z.union([z.date(), z.string()]),
   updated_at: z.union([z.date(), z.string()]),
-  item: z.lazy(() => orderLineItemDTOSchema),
   item_id: z.string(),
   total: bigNumberValueSchema,
   subtotal: bigNumberValueSchema,
@@ -412,10 +422,91 @@ const orderLineItemTaxLineDTOSchema = z.object({
   raw_subtotal: bigNumberRawValueSchema,
 })
 
+type OrderLineItemTaxLine = z.infer<
+  typeof baseOrderLineItemTaxLineDTOSchema
+> & {
+  item: z.infer<typeof orderLineItemDTOSchema>
+}
+
+const orderLineItemTaxLineDTOSchema: z.ZodType<OrderLineItemTaxLine> =
+  baseOrderLineItemTaxLineDTOSchema.extend({
+    item: z.lazy(() => orderLineItemDTOSchema),
+  })
+
+const baseOrderItemDTOSchema = z.object({
+  id: z.string(),
+  item_id: z.string(),
+  quantity: z.number(),
+  raw_quantity: bigNumberRawValueSchema,
+  fulfilled_quantity: z.number(),
+  raw_fulfilled_quantity: bigNumberRawValueSchema,
+  delivered_quantity: z.number(),
+  raw_delivered_quantity: bigNumberRawValueSchema,
+  shipped_quantity: z.number(),
+  raw_shipped_quantity: bigNumberRawValueSchema,
+  return_requested_quantity: z.number(),
+  raw_return_requested_quantity: bigNumberRawValueSchema,
+  return_received_quantity: z.number(),
+  raw_return_received_quantity: bigNumberRawValueSchema,
+  return_dismissed_quantity: z.number(),
+  raw_return_dismissed_quantity: bigNumberRawValueSchema,
+  written_off_quantity: z.number(),
+  raw_written_off_quantity: bigNumberRawValueSchema,
+  metadata: z.record(z.unknown()).nullable(),
+  created_at: z.date(),
+  updated_at: z.date(),
+})
+
+type OrderItemDTO = z.infer<typeof baseOrderItemDTOSchema> & {
+  item: z.infer<typeof orderLineItemDTOSchema>
+}
+
+const orderItemDTOSchema: z.ZodType<OrderItemDTO> =
+  baseOrderItemDTOSchema.extend({
+    item: z.lazy(() => orderLineItemDTOSchema),
+  })
+
 /**
- * Schema for OrderLineItemTotalsDTO
+ * Schema for OrderLineItemDTO
  */
-const orderLineItemTotalsDTOSchema = z.object({
+export const orderLineItemDTOSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  subtitle: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  variant_id: z.string().nullable().optional(),
+  product_id: z.string().nullable().optional(),
+  product_title: z.string().nullable().optional(),
+  product_description: z.string().nullable().optional(),
+  product_subtitle: z.string().nullable().optional(),
+  product_type_id: z.string().nullable().optional(),
+  product_type: z.string().nullable().optional(),
+  product_collection: z.string().nullable().optional(),
+  product_handle: z.string().nullable().optional(),
+  variant_sku: z.string().nullable().optional(),
+  variant_barcode: z.string().nullable().optional(),
+  variant_title: z.string().nullable().optional(),
+  variant_option_values: z.record(z.unknown()).nullable().optional(),
+  requires_shipping: z.boolean(),
+  is_discountable: z.boolean(),
+  is_tax_inclusive: z.boolean(),
+  is_giftcard: z.boolean(),
+  compare_at_unit_price: z.number().optional(),
+  raw_compare_at_unit_price: bigNumberRawValueSchema.optional(),
+  unit_price: z.number(),
+  raw_unit_price: bigNumberRawValueSchema,
+  quantity: z.number(),
+  raw_quantity: bigNumberRawValueSchema,
+  tax_lines: z.array(orderLineItemTaxLineDTOSchema).optional(),
+  adjustments: z.array(orderLineItemAdjustmentDTOSchema).optional(),
+  item: z.any().optional(), // Related to return/claim items
+  detail: orderItemDTOSchema,
+  order_id: z.string().optional(),
+  original_item_id: z.string().nullable().optional(),
+  order_version: z.number().nullable().optional(),
+  created_at: z.date(),
+  updated_at: z.date(),
+  metadata: z.record(z.unknown()).nullable().optional(),
   original_total: bigNumberValueSchema,
   original_subtotal: bigNumberValueSchema,
   original_tax_total: bigNumberValueSchema,
@@ -442,50 +533,6 @@ const orderLineItemTotalsDTOSchema = z.object({
   raw_discount_tax_total: bigNumberRawValueSchema,
   raw_refundable_total: bigNumberRawValueSchema,
   raw_refundable_total_per_unit: bigNumberRawValueSchema,
-})
-
-/**
- * Schema for OrderLineItemDTO
- */
-export const orderLineItemDTOSchema = orderLineItemTotalsDTOSchema.extend({
-  id: z.string(),
-  title: z.string(),
-  subtitle: z.string().nullable().optional(),
-  thumbnail: z.string().nullable().optional(),
-  variant_id: z.string().nullable().optional(),
-  product_id: z.string().nullable().optional(),
-  product_title: z.string().nullable().optional(),
-  product_description: z.string().nullable().optional(),
-  product_subtitle: z.string().nullable().optional(),
-  product_type_id: z.string().nullable().optional(),
-  product_type: z.string().nullable().optional(),
-  product_collection: z.string().nullable().optional(),
-  product_handle: z.string().nullable().optional(),
-  variant_sku: z.string().nullable().optional(),
-  variant_barcode: z.string().nullable().optional(),
-  variant_title: z.string().nullable().optional(),
-  variant_option_values: z.record(z.unknown()).nullable().optional(),
-  requires_shipping: z.boolean().optional(),
-  is_discountable: z.boolean().optional(),
-  is_tax_inclusive: z.boolean().optional(),
-  is_giftcard: z.boolean().optional(),
-  compare_at_unit_price: bigNumberValueSchema.nullable().optional(),
-  raw_compare_at_unit_price: bigNumberRawValueSchema.nullable().optional(),
-  unit_price: bigNumberValueSchema,
-  raw_unit_price: bigNumberRawValueSchema,
-  quantity: bigNumberValueSchema,
-  raw_quantity: bigNumberRawValueSchema,
-  tax_lines: z.array(orderLineItemTaxLineDTOSchema).optional(),
-  adjustments: z.array(orderLineItemAdjustmentDTOSchema).optional(),
-  item: z.any().optional(), // Related to return/claim items
-  detail: z.any().optional(), // OrderItemDetail
-  metadata: z.record(z.unknown()).nullable().optional(),
-  order_id: z.string().optional(),
-  original_item_id: z.string().nullable().optional(),
-  order_version: z.number().nullable().optional(),
-  created_at: z.union([z.date(), z.string()]).optional(),
-  updated_at: z.union([z.date(), z.string()]).optional(),
-  deleted_at: z.union([z.date(), z.string()]).nullable().optional(),
 })
 
 /**
@@ -603,28 +650,38 @@ const createOrderChangeActionDTOSchema = z.object({
 const orderChangeDTOBaseSchema = z.object({
   id: z.string(),
   order_id: z.string(),
-  return_id: z.string().nullable(),
-  claim_id: z.string().nullable(),
-  exchange_id: z.string().nullable(),
-  change_type: z.string().nullable().optional(),
-  status: z.string(),
+  return_id: z.string(),
+  claim_id: z.string(),
+  exchange_id: z.string(),
+  change_type: z
+    .enum(["exchange", "claim", "edit", "return", "transfer"])
+    .optional(),
+  status: z.enum(["confirmed", "declined", "requested", "pending", "canceled"]),
   requested_by: z.string().nullable(),
   requested_at: z.union([z.string(), z.date()]).nullable(),
   confirmed_by: z.string().nullable(),
   confirmed_at: z.union([z.string(), z.date()]).nullable(),
   declined_by: z.string().nullable(),
   declined_at: z.union([z.string(), z.date()]).nullable(),
+  declined_reason: z.string().nullable(),
   canceled_by: z.string().nullable(),
   canceled_at: z.union([z.string(), z.date()]).nullable(),
   created_by: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
   internal_note: z.string().nullable().optional(),
-  metadata: z.record(z.unknown()).nullable().optional(),
+  metadata: z.record(z.unknown()).nullable(),
   version: z.number(),
   order_version: z.number().optional(),
-  created_at: z.union([z.string(), z.date()]).optional(),
-  updated_at: z.union([z.string(), z.date()]).optional(),
+  created_at: z.union([z.string(), z.date()]),
+  updated_at: z.union([z.string(), z.date()]),
   deleted_at: z.union([z.string(), z.date()]).nullable().optional(),
+
+  // Needed for orderchangeactiondto compat
+  order: z.any(),
+  exchange: z.any(),
+  return_order: z.any(),
+  claim: z.any(),
+  actions: z.array(z.any()),
 })
 
 /**
@@ -653,7 +710,7 @@ const orderChangeActionDTOSchema = z.object({
 })
 
 const orderChangeDTOSchema = orderChangeDTOBaseSchema.extend({
-  actions: z.array(orderChangeActionDTOSchema).optional(),
+  actions: z.array(orderChangeActionDTOSchema),
 })
 
 /**
@@ -965,14 +1022,16 @@ const orderShippingMethodDTOSchema = z.object({
 /**
  * Schema for OrderPreviewDTO
  */
-const orderPreviewDTOSchema = orderDTOSchema
+export const orderPreviewDTOSchema = orderDTOSchema
   .omit({ items: true, shipping_methods: true })
   .extend({
     order_change: orderChangeDTOSchema,
     items: z.array(
-      orderLineItemDTOSchema.extend({
-        actions: z.array(orderChangeActionDTOSchema).optional(),
-      })
+      orderLineItemDTOSchema.and(
+        z.object({
+          actions: z.array(orderChangeActionDTOSchema).optional(),
+        })
+      )
     ),
     shipping_methods: z.array(
       orderShippingMethodDTOSchema.extend({
@@ -1569,7 +1628,8 @@ export const updateClaimAddItemWorkflowInputSchema = z.object({
   action_id: z.string(),
   data: z.object({
     quantity: bigNumberInputSchema.optional(),
-    internal_note: z.string().optional(),
+    reason_id: z.string().nullable().optional(),
+    internal_note: z.string().nullable().optional(),
   }),
 })
 
@@ -1593,7 +1653,8 @@ export const updateClaimItemWorkflowInputSchema = z.object({
   action_id: z.string(),
   data: z.object({
     quantity: bigNumberInputSchema.optional(),
-    internal_note: z.string().optional(),
+    reason_id: z.string().nullable().optional(),
+    internal_note: z.string().nullable().optional(),
   }),
 })
 
@@ -1996,8 +2057,30 @@ export const getOrderDetailWorkflowInputSchema = z.object({
  * Schema for OrderDetailDTO (extending OrderDTO)
  */
 export const orderDetailDTOSchema = orderDTOSchema.extend({
-  payment_status: z.string(),
-  fulfillment_status: z.string(),
+  payment_collections: z.array(paymentCollectionDTOSchema),
+  fulfillments: z.array(fulfillmentDTOSchema),
+  payment_status: z.enum([
+    "not_paid",
+    "awaiting",
+    "authorized",
+    "partially_authorized",
+    "captured",
+    "partially_captured",
+    "partially_refunded",
+    "refunded",
+    "canceled",
+    "requires_action",
+  ]),
+  fulfillment_status: z.enum([
+    "not_fulfilled",
+    "partially_fulfilled",
+    "fulfilled",
+    "partially_shipped",
+    "shipped",
+    "partially_delivered",
+    "delivered",
+    "canceled",
+  ]),
 })
 
 /**
@@ -2163,11 +2246,11 @@ export const orderEditAddNewItemWorkflowInputSchema = z.object({
   order_id: z.string(),
   items: z.array(
     z.object({
-      variant_id: z.string(),
+      variant_id: z.string().optional(),
       quantity: bigNumberInputSchema,
-      unit_price: bigNumberInputSchema.optional(),
-      compare_at_unit_price: bigNumberInputSchema.optional(),
-      internal_note: z.string().optional(),
+      unit_price: bigNumberInputSchema.nullable().optional(),
+      compare_at_unit_price: bigNumberInputSchema.nullable().optional(),
+      internal_note: z.string().nullable().optional(),
       allow_backorder: z.boolean().optional(),
       metadata: z.record(z.unknown()).nullable().optional(),
     })

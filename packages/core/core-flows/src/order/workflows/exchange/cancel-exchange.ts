@@ -6,7 +6,6 @@ import {
 } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   parallelize,
@@ -114,18 +113,9 @@ export const cancelOrderExchangeWorkflowId = "cancel-exchange"
  *
  * Cancel an exchange for an order.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.CancelOrderExchangeWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as void
-
-console.log(existingInput, existingOutput, schemaOutput)
-
+const _in: SchemaInput = {} as OrderWorkflow.CancelOrderExchangeWorkflowInput
+const _out: SchemaOutput = undefined as void
+void _in, _out
 export const cancelOrderExchangeWorkflow = createWorkflow(
   {
     name: cancelOrderExchangeWorkflowId,
@@ -133,9 +123,7 @@ export const cancelOrderExchangeWorkflow = createWorkflow(
     inputSchema: cancelOrderExchangeWorkflowInputSchema,
     outputSchema: cancelOrderExchangeWorkflowOutputSchema,
   },
-  (
-    input
-  ): WorkflowData<void> => {
+  (input) => {
     const orderExchange: OrderExchangeDTO & { fulfillments: FulfillmentDTO[] } =
       useRemoteQueryStep({
         entry_point: "order_exchange",

@@ -69,15 +69,15 @@ export const acceptInviteWorkflowInputSchema = z.object({
   auth_identity_id: z.string(),
   user: z.object({
     email: z.string().email().optional(),
-    first_name: z.string().optional(),
-    last_name: z.string().optional(),
-    avatar_url: z.string().optional(),
+    first_name: z.string().nullable().optional(),
+    last_name: z.string().nullable().optional(),
+    avatar_url: z.string().nullable().optional(),
     metadata: z.record(z.unknown()).nullable().optional(),
   }),
 })
 
 /**
- * Schema for UserDTO 
+ * Schema for UserDTO
  */
 const userDTOSchema = z.object({
   id: z.string(),

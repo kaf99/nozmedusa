@@ -40,13 +40,15 @@ const customerGroupUpdatableFieldsSchema = z.object({
  * Schema for CreateCustomerGroupsWorkflowInput
  */
 export const createCustomerGroupsWorkflowInputSchema = z.object({
-  groupsData: z.array(createCustomerGroupDTOSchema),
+  customersData: z.array(createCustomerGroupDTOSchema),
 })
 
 /**
  * Schema for CreateCustomerGroupsWorkflowOutput
  */
-export const createCustomerGroupsWorkflowOutputSchema = z.array(customerGroupDTOSchema)
+export const createCustomerGroupsWorkflowOutputSchema = z.array(
+  customerGroupDTOSchema
+)
 
 /**
  * Schema for UpdateCustomerGroupsWorkflowInput
@@ -59,7 +61,9 @@ export const updateCustomerGroupsWorkflowInputSchema = z.object({
 /**
  * Schema for UpdateCustomerGroupsWorkflowOutput
  */
-export const updateCustomerGroupsWorkflowOutputSchema = z.array(customerGroupDTOSchema)
+export const updateCustomerGroupsWorkflowOutputSchema = z.array(
+  customerGroupDTOSchema
+)
 
 /**
  * Schema for DeleteCustomerGroupsWorkflowInput
@@ -102,13 +106,33 @@ export const linkCustomersCustomerGroupWorkflowInputSchema = z.object({
 export const linkCustomersCustomerGroupWorkflowOutputSchema = z.void()
 
 // Type exports for workflow input/output types
-export type CreateCustomerGroupsWorkflowInput = z.infer<typeof createCustomerGroupsWorkflowInputSchema>
-export type CreateCustomerGroupsWorkflowOutput = z.infer<typeof createCustomerGroupsWorkflowOutputSchema>
-export type UpdateCustomerGroupsWorkflowInput = z.infer<typeof updateCustomerGroupsWorkflowInputSchema>
-export type UpdateCustomerGroupsWorkflowOutput = z.infer<typeof updateCustomerGroupsWorkflowOutputSchema>
-export type DeleteCustomerGroupsWorkflowInput = z.infer<typeof deleteCustomerGroupsWorkflowInputSchema>
-export type DeleteCustomerGroupsWorkflowOutput = z.infer<typeof deleteCustomerGroupsWorkflowOutputSchema>
-export type LinkCustomerGroupsCustomerWorkflowInput = z.infer<typeof linkCustomerGroupsCustomerWorkflowInputSchema>
-export type LinkCustomerGroupsCustomerWorkflowOutput = z.infer<typeof linkCustomerGroupsCustomerWorkflowOutputSchema>
-export type LinkCustomersCustomerGroupWorkflowInput = z.infer<typeof linkCustomersCustomerGroupWorkflowInputSchema>
-export type LinkCustomersCustomerGroupWorkflowOutput = z.infer<typeof linkCustomersCustomerGroupWorkflowOutputSchema>
+export type CreateCustomerGroupsWorkflowInput = z.infer<
+  typeof createCustomerGroupsWorkflowInputSchema
+>
+export type CreateCustomerGroupsWorkflowOutput = z.infer<
+  typeof createCustomerGroupsWorkflowOutputSchema
+>
+export type UpdateCustomerGroupsWorkflowInput = z.infer<
+  typeof updateCustomerGroupsWorkflowInputSchema
+>
+export type UpdateCustomerGroupsWorkflowOutput = z.infer<
+  typeof updateCustomerGroupsWorkflowOutputSchema
+>
+export type DeleteCustomerGroupsWorkflowInput = z.infer<
+  typeof deleteCustomerGroupsWorkflowInputSchema
+>
+export type DeleteCustomerGroupsWorkflowOutput = z.infer<
+  typeof deleteCustomerGroupsWorkflowOutputSchema
+>
+export type LinkCustomerGroupsCustomerWorkflowInput = z.infer<
+  typeof linkCustomerGroupsCustomerWorkflowInputSchema
+>
+export type LinkCustomerGroupsCustomerWorkflowOutput = z.infer<
+  typeof linkCustomerGroupsCustomerWorkflowOutputSchema
+>
+export type LinkCustomersCustomerGroupWorkflowInput = z.infer<
+  typeof linkCustomersCustomerGroupWorkflowInputSchema
+>
+export type LinkCustomersCustomerGroupWorkflowOutput = z.infer<
+  typeof linkCustomersCustomerGroupWorkflowOutputSchema
+>
