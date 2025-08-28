@@ -3,7 +3,6 @@ import {
   BatchPriceListPricesWorkflowResult,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -12,25 +11,31 @@ import {
 import { createPriceListPricesWorkflow } from "./create-price-list-prices"
 import { removePriceListPricesWorkflow } from "./remove-price-list-prices"
 import { updatePriceListPricesWorkflow } from "./update-price-list-prices"
+import {
+  batchPriceListPricesWorkflowInputSchema,
+  batchPriceListPricesWorkflowOutputSchema,
+  type BatchPriceListPricesWorkflowInput as SchemaInput,
+  type BatchPriceListPricesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to manage a price list's prices.
- */
-export type BatchPriceListPricesWorkflowInput = {
-  /**
-   * The data to manage the prices of a price list.
-   */
-  data: BatchPriceListPricesWorkflowDTO
-}
+export {
+  type BatchPriceListPricesWorkflowInput,
+  type BatchPriceListPricesWorkflowOutput,
+} from "../utils/schemas"
+
+const _in: SchemaInput = {} as { data: BatchPriceListPricesWorkflowDTO }
+const _out: BatchPriceListPricesWorkflowResult = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as BatchPriceListPricesWorkflowResult
+void _in, _out, _outRev
 
 export const batchPriceListPricesWorkflowId = "batch-price-list-prices"
 /**
  * This workflow manages a price list's prices by creating, updating, or removing them. It's used by the
  * [Manage Prices in Price List Admin API Route](https://docs.medusajs.com/api/admin#price-lists_postpricelistsidpricesbatch).
- * 
- * You can use this workflow within your customizations or your own custom workflows, allowing you to 
+ *
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * manage price lists' prices in your custom flows.
- * 
+ *
  * @example
  * const { result } = await batchPriceListPricesWorkflow(container)
  * .run({
@@ -56,22 +61,25 @@ export const batchPriceListPricesWorkflowId = "batch-price-list-prices"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Manage a price list's prices.
  */
 export const batchPriceListPricesWorkflow = createWorkflow(
-  batchPriceListPricesWorkflowId,
-  (
-    input: WorkflowData<BatchPriceListPricesWorkflowInput>
-  ): WorkflowResponse<BatchPriceListPricesWorkflowResult> => {
+  {
+    name: batchPriceListPricesWorkflowId,
+    description: "Manage a price list's prices",
+    inputSchema: batchPriceListPricesWorkflowInputSchema,
+    outputSchema: batchPriceListPricesWorkflowOutputSchema,
+  },
+  (input) => {
     const createInput = transform({ input: input.data }, (data) => [
-      { id: data.input.id, prices: data.input.create },
+      { id: data.input.id, prices: data.input.create || [] },
     ])
 
     const updateInput = transform({ input: input.data }, (data) => [
-      { id: data.input.id, prices: data.input.update },
+      { id: data.input.id, prices: data.input.update || [] },
     ])
 
     const [created, updated, deleted] = parallelize(
@@ -87,7 +95,7 @@ export const batchPriceListPricesWorkflow = createWorkflow(
       }),
       removePriceListPricesWorkflow.runAsStep({
         input: {
-          ids: input.data.delete,
+          ids: input.data.delete || [],
         },
       })
     )

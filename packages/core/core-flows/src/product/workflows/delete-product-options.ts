@@ -1,6 +1,5 @@
 import { Modules, ProductOptionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -10,16 +9,16 @@ import {
 import { emitEventStep } from "../../common/steps/emit-event"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteProductOptionsStep } from "../steps"
+import {
+  deleteProductOptionsWorkflowInputSchema,
+  deleteProductOptionsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more product options.
- */
-export type DeleteProductOptionsWorkflowInput = {
-  /**
-   * The IDs of the options to delete.
-   */
-  ids: string[]
-}
+export {
+  type DeleteProductOptionsWorkflowInput,
+  type DeleteProductOptionsWorkflowOutput,
+} from "../utils/delete-schemas"
+
 
 export const deleteProductOptionsWorkflowId = "delete-product-options"
 /**
@@ -46,8 +45,13 @@ export const deleteProductOptionsWorkflowId = "delete-product-options"
  * @property hooks.productOptionsDeleted - This hook is executed after the options are deleted. You can consume this hook to perform custom actions on the deleted options.
  */
 export const deleteProductOptionsWorkflow = createWorkflow(
-  deleteProductOptionsWorkflowId,
-  (input: WorkflowData<DeleteProductOptionsWorkflowInput>) => {
+  {
+    name: deleteProductOptionsWorkflowId,
+    description: "Delete one or more product options",
+    inputSchema: deleteProductOptionsWorkflowInputSchema,
+    outputSchema: deleteProductOptionsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedProductOptions = deleteProductOptionsStep(input.ids)
     const productOptionsDeleted = createHook("productOptionsDeleted", {
       ids: input.ids,

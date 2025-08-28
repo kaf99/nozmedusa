@@ -7,7 +7,6 @@ import {
 import { Modules } from "@medusajs/framework/utils"
 import {
   StepResponse,
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -18,26 +17,33 @@ import {
   deleteTaxRateRulesStep,
   updateTaxRatesStep,
 } from "../steps"
+import {
+  updateTaxRatesWorkflowInputSchema,
+  updateTaxRatesWorkflowOutputSchema,
+  type UpdateTaxRatesWorkflowInput as SchemaInput,
+  type UpdateTaxRatesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 // import { setTaxRateRulesWorkflow } from "./set-tax-rate-rules"
 
-/**
- * The data to update tax rates.
- */
-export type UpdateTaxRatesWorkflowInput = {
-  /**
-   * The filters to select the tax rates to update.
-   */
-  selector: FilterableTaxRateProps
-  /**
-   * The data to update in the tax rates.
-   */
-  update: UpdateTaxRateDTO
-}
+export {
+  type UpdateTaxRatesWorkflowInput,
+  type UpdateTaxRatesWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The updated tax rates.
- */
-export type UpdateTaxRatesWorkflowOutput = TaxRateDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  selector: FilterableTaxRateProps
+  update: UpdateTaxRateDTO
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRateDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 /**
  * The data to retrieve the IDs of tax rate rules.
@@ -143,10 +149,13 @@ export const updateTaxRatesWorkflowId = "update-tax-rates"
  * Update tax rates.
  */
 export const updateTaxRatesWorkflow = createWorkflow(
-  updateTaxRatesWorkflowId,
-  (
-    input: WorkflowData<UpdateTaxRatesWorkflowInput>
-  ): WorkflowResponse<UpdateTaxRatesWorkflowOutput> => {
+  {
+    name: updateTaxRatesWorkflowId,
+    description: "Update tax rates matching specified filters",
+    inputSchema: updateTaxRatesWorkflowInputSchema,
+    outputSchema: updateTaxRatesWorkflowOutputSchema,
+  },
+  (input) => {
     const cleanedUpdateInput = transform(input, (data) => {
       // Transform clones data so we can safely modify it
       if (data.update.rules) {

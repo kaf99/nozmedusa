@@ -2,16 +2,12 @@ import { createWorkflow, WorkflowData } from "@medusajs/framework/workflows-sdk"
 import { deleteFulfillmentSetsStep } from "../steps"
 import { removeRemoteLinkStep } from "../../common"
 import { Modules } from "@medusajs/framework/utils"
-
-/**
- * The data to delete one or more fulfillment sets.
- */
-export type DeleteFulfillmentSetsWorkflowInput = {
-  /**
-   * The IDs of the fulfillment sets to delete.
-   */
-  ids: string[]
-}
+import {
+  deleteFulfillmentSetsWorkflowInputSchema,
+  deleteFulfillmentSetsWorkflowOutputSchema,
+  type DeleteFulfillmentSetsWorkflowInput,
+  type DeleteFulfillmentSetsWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteFulfillmentSetsWorkflowId =
   "delete-fulfillment-sets-workflow"
@@ -35,8 +31,13 @@ export const deleteFulfillmentSetsWorkflowId =
  * Delete one or more fulfillment sets.
  */
 export const deleteFulfillmentSetsWorkflow = createWorkflow(
-  deleteFulfillmentSetsWorkflowId,
-  (input: WorkflowData<DeleteFulfillmentSetsWorkflowInput>) => {
+  {
+    name: deleteFulfillmentSetsWorkflowId,
+    description: "Delete one or more fulfillment sets",
+    inputSchema: deleteFulfillmentSetsWorkflowInputSchema,
+    outputSchema: deleteFulfillmentSetsWorkflowOutputSchema,
+  },
+  (input: WorkflowData<DeleteFulfillmentSetsWorkflowInput>): WorkflowData<DeleteFulfillmentSetsWorkflowOutput> => {
     deleteFulfillmentSetsStep(input.ids)
 
     removeRemoteLinkStep({

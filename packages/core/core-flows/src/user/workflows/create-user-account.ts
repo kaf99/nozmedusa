@@ -1,4 +1,3 @@
-import { CreateUserDTO, UserDTO } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -7,20 +6,13 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { setAuthAppMetadataStep } from "../../auth"
 import { createUsersWorkflow } from "./create-users"
-
-/**
- * The details of the user account to create.
- */
-export type CreateUserAccountWorkflowInput = {
-  /**
-   * The ID of the auth identity to attach the user to.
-   */
-  authIdentityId: string
-  /**
-   * The details of the user to create.
-   */
-  userData: CreateUserDTO
-}
+import {
+  createUserAccountWorkflowInputSchema,
+  createUserAccountWorkflowOutputSchema,
+  type CreateUserAccountWorkflowInput,
+  type CreateUserAccountWorkflowOutput,
+  type CreateUsersWorkflowOutput,
+} from "../utils/schemas"
 
 export const createUserAccountWorkflowId = "create-user-account"
 /**
@@ -50,17 +42,22 @@ export const createUserAccountWorkflowId = "create-user-account"
  * Create a user account and attach an auth identity.
  */
 export const createUserAccountWorkflow = createWorkflow(
-  createUserAccountWorkflowId,
+  {
+    name: createUserAccountWorkflowId,
+    description: "Create a user account and attach an auth identity",
+    inputSchema: createUserAccountWorkflowInputSchema,
+    outputSchema: createUserAccountWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<CreateUserAccountWorkflowInput>
-  ): WorkflowResponse<UserDTO> => {
+  ): WorkflowResponse<CreateUserAccountWorkflowOutput> => {
     const users = createUsersWorkflow.runAsStep({
       input: {
         users: [input.userData],
       },
     })
 
-    const user = transform(users, (users: UserDTO[]) => users[0])
+    const user = transform(users, (users: CreateUsersWorkflowOutput) => users[0])
 
     setAuthAppMetadataStep({
       authIdentityId: input.authIdentityId,

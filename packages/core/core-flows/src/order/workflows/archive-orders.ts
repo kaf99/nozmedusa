@@ -1,18 +1,27 @@
 import { OrderDTO } from "@medusajs/framework/types"
 import { OrderWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { archiveOrdersStep } from "../steps"
+import {
+  archiveOrdersWorkflowInputSchema,
+  archiveOrdersWorkflowOutputSchema,
+  type ArchiveOrdersWorkflowInput as SchemaInput,
+  type ArchiveOrdersWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type ArchiveOrdersWorkflowInput,
+  type ArchiveOrdersWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The details of the orders to archive.
  */
-export type ArchiveOrdersWorkflowInput = {
+type OldArchiveOrdersWorkflowInput = {
   /**
    * The IDs of the orders to archive.
    */
@@ -22,7 +31,21 @@ export type ArchiveOrdersWorkflowInput = {
 /**
  * The archived orders.
  */
-export type ArchiveOrdersWorkflowOutput = OrderDTO[]
+type OldArchiveOrdersWorkflowOutput = OrderDTO[]
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldArchiveOrdersWorkflowInput = schemaInput
+const existingOutput: OldArchiveOrdersWorkflowOutput = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldArchiveOrdersWorkflowInput
+const oldOutput = {} as OldArchiveOrdersWorkflowOutput
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const archiveOrderWorkflowId = "archive-order-workflow"
 /**
@@ -44,10 +67,12 @@ export const archiveOrderWorkflowId = "archive-order-workflow"
  * Archive one or more orders.
  */
 export const archiveOrderWorkflow = createWorkflow(
-  archiveOrderWorkflowId,
-  (
-    input: WorkflowData<ArchiveOrdersWorkflowInput>
-  ): WorkflowResponse<ArchiveOrdersWorkflowOutput> => {
+  {
+    name: archiveOrderWorkflowId,
+    inputSchema: archiveOrdersWorkflowInputSchema,
+    outputSchema: archiveOrdersWorkflowOutputSchema,
+  },
+  (input) => {
     const eventData = transform({ input }, (data) => {
       return data.input.orderIds.map((id) => ({ id }))
     })

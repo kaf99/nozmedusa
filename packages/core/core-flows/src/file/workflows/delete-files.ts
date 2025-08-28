@@ -1,7 +1,10 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteFilesStep } from "../steps"
+import {
+  deleteFilesWorkflowInputSchema,
+  deleteFilesWorkflowOutputSchema,
+} from "../utils/schemas"
 
-export type DeleteFilesWorkflowInput = { ids: string[] }
 
 export const deleteFilesWorkflowId = "delete-files"
 /**
@@ -27,8 +30,13 @@ export const deleteFilesWorkflowId = "delete-files"
  * Delete files from the database and storage.
  */
 export const deleteFilesWorkflow = createWorkflow(
-  deleteFilesWorkflowId,
-  (input: WorkflowData<DeleteFilesWorkflowInput>): WorkflowData<void> => {
+  {
+    name: deleteFilesWorkflowId,
+    description: "Delete files from the database and storage",
+    inputSchema: deleteFilesWorkflowInputSchema,
+    outputSchema: deleteFilesWorkflowOutputSchema,
+  },
+  (input) => {
     deleteFilesStep(input.ids)
   }
 )

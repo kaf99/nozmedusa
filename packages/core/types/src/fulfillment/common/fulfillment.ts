@@ -73,7 +73,7 @@ export interface FulfillmentDTO {
   /**
    * The associated shipping option.
    */
-  shipping_option: ShippingOptionDTO | null
+  shipping_option?: ShippingOptionDTO | null
 
   /**
    * Flag to indidcate whether shipping is required
@@ -83,22 +83,22 @@ export interface FulfillmentDTO {
   /**
    * The associated fulfillment provider.
    */
-  provider: FulfillmentProviderDTO
+  provider?: FulfillmentProviderDTO
 
   /**
    * The associated fulfillment address used for delivery.
    */
-  delivery_address: FulfillmentAddressDTO
+  delivery_address?: FulfillmentAddressDTO
 
   /**
    * The items of the fulfillment.
    */
-  items: FulfillmentItemDTO[]
+  items?: FulfillmentItemDTO[]
 
   /**
    * The labels of the fulfillment.
    */
-  labels: FulfillmentLabelDTO[]
+  labels?: FulfillmentLabelDTO[]
 
   /**
    * The creation date of the fulfillment.

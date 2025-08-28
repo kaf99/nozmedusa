@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -29,6 +28,12 @@ import {
 } from "../../utils/order-validation"
 import { prepareShippingMethodUpdate } from "../../utils/prepare-shipping-method"
 import { pricingContextResult } from "../../../cart/utils/schemas"
+import {
+  updateClaimShippingMethodWorkflowInputSchema,
+  updateClaimShippingMethodWorkflowOutputSchema,
+  type UpdateClaimShippingMethodWorkflowInput as SchemaInput,
+  type UpdateClaimShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a claim's shipping method can be updated.
@@ -105,6 +110,18 @@ export const updateClaimShippingMethodValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.UpdateClaimShippingMethodWorkflowInput & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const updateClaimShippingMethodWorkflowId =
   "update-claim-shipping-method"
 /**
@@ -167,11 +184,14 @@ export const updateClaimShippingMethodWorkflowId =
  * :::
  */
 export const updateClaimShippingMethodWorkflow = createWorkflow(
-  updateClaimShippingMethodWorkflowId,
+  {
+    name: updateClaimShippingMethodWorkflowId,
+    description: "Update an inbound or outbound shipping method of a claim",
+    inputSchema: updateClaimShippingMethodWorkflowInputSchema,
+    outputSchema: updateClaimShippingMethodWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<
-      OrderWorkflow.UpdateClaimShippingMethodWorkflowInput & AdditionalData
-    >
+    input
   ) {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

@@ -1,6 +1,5 @@
 import {
   FulfillmentDTO,
-  OrderWorkflow,
   PaymentCollectionDTO,
   ReturnDTO,
 } from "@medusajs/framework/types"
@@ -10,6 +9,12 @@ import {
   createStep,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  cancelReturnWorkflowInputSchema,
+  cancelReturnWorkflowOutputSchema,
+  type CancelReturnWorkflowInput as SchemaInput,
+  type CancelReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { cancelOrderReturnStep } from "../../steps"
 import { throwIfIsCancelled } from "../../utils/order-validation"
@@ -25,7 +30,25 @@ export type CancelReturnValidateOrderInput = {
   /**
    * The data to cancel a return.
    */
-  input: OrderWorkflow.CancelReturnWorkflowInput
+  input: CancelReturnWorkflowInput
+}
+
+/**
+ * The data to cancel a return.
+ */
+export type CancelReturnWorkflowInput = {
+  /**
+   * The ID of the return to cancel.
+   */
+  return_id: string
+  /**
+   * Indicates that the customer should not receive notifications about the update.
+   */
+  no_notification?: boolean
+  /**
+   * The user that canceled the return.
+   */
+  canceled_by?: string
 }
 
 /**
@@ -108,10 +131,27 @@ export const cancelReturnWorkflowId = "cancel-return"
  *
  * Cancel a return.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CancelReturnWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelReturnWorkflow = createWorkflow(
-  cancelReturnWorkflowId,
+  {
+    name: cancelReturnWorkflowId,
+    description: "Cancel a return",
+    inputSchema: cancelReturnWorkflowInputSchema,
+    outputSchema: cancelReturnWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<OrderWorkflow.CancelReturnWorkflowInput>
+    input
   ): WorkflowData<void> => {
     const orderReturn: ReturnDTO & { fulfillments: FulfillmentDTO[] } =
       useRemoteQueryStep({

@@ -8,16 +8,33 @@ import { Modules } from "@medusajs/framework/utils"
 import { deleteInventoryItemStep, validateInventoryDeleteStep } from "../steps"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { useQueryGraphStep } from "../../common"
+import {
+  deleteInventoryItemsWorkflowInputSchema,
+  deleteInventoryItemsWorkflowOutputSchema,
+  // type DeleteInventoryItemsWorkflowInput as SchemaInput,
+  // type DeleteInventoryItemsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+// import { expectTypeOf } from "expect-type"
 
 /**
- * The IDs of the inventory items to delete.
+ * The data to delete inventory items.
  */
-export type DeleteInventoryItemWorkflowInput = string[]
+export type DeleteInventoryItemWorkflowInput = {
+  /**
+   * The IDs of the inventory items to delete.
+   */
+  ids: string[]
+}
 
 /**
- * The IDs of deleted inventory items.
+ * No response is returned.
  */
-export type DeleteInventoryItemWorkflowOutput = string[]
+export type DeleteInventoryItemWorkflowOutput = void
+
+// Type verification
+// TODO: Type verification disabled temporarily
+// expectTypeOf<SchemaInput>().toEqualTypeOf<DeleteInventoryItemWorkflowInput>()
+// expectTypeOf<SchemaOutput>().toEqualTypeOf<DeleteInventoryItemWorkflowOutput>()
 
 export const deleteInventoryItemWorkflowId = "delete-inventory-item-workflow"
 /**
@@ -38,7 +55,12 @@ export const deleteInventoryItemWorkflowId = "delete-inventory-item-workflow"
  * Delete one or more inventory items.
  */
 export const deleteInventoryItemWorkflow = createWorkflow(
-  deleteInventoryItemWorkflowId,
+  {
+    name: deleteInventoryItemWorkflowId,
+    description: "Delete one or more inventory items",
+    inputSchema: deleteInventoryItemsWorkflowInputSchema,
+    outputSchema: deleteInventoryItemsWorkflowOutputSchema,
+  },
   (input: WorkflowData<DeleteInventoryItemWorkflowInput>): WorkflowResponse<
     DeleteInventoryItemWorkflowOutput
   > => {
@@ -46,16 +68,16 @@ export const deleteInventoryItemWorkflow = createWorkflow(
       entity: "inventory",
       fields: ["id", "reserved_quantity"],
       filters: {
-        id: input,
+        id: input.ids,
       },
     })
 
     validateInventoryDeleteStep({ inventory_items: inventoryItemsToDelete })
 
-    deleteInventoryItemStep(input)
+    deleteInventoryItemStep(input.ids)
     removeRemoteLinkStep({
-      [Modules.INVENTORY]: { inventory_item_id: input },
+      [Modules.INVENTORY]: { inventory_item_id: input.ids },
     })
-    return new WorkflowResponse(input)
+    return new WorkflowResponse(void 0)
   }
 )

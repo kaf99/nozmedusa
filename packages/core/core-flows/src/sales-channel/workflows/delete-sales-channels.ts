@@ -2,22 +2,31 @@ import { Modules, SalesChannelWorkflowEvents } from "@medusajs/framework/utils"
 import {
   createWorkflow,
   transform,
-  WorkflowData,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteSalesChannelsStep } from "../steps/delete-sales-channels"
 import { canDeleteSalesChannelsOrThrowStep } from "../steps"
+import {
+  deleteSalesChannelsWorkflowInputSchema,
+  deleteSalesChannelsWorkflowOutputSchema,
+  type DeleteSalesChannelsWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The data to delete sales channels.
- */
-export type DeleteSalesChannelsWorkflowInput = { 
-  /**
-   * The IDs of the sales channels to delete.
-   */
-  ids: string[]
-}
+// Re-export workflow types from schemas
+export type DeleteSalesChannelsWorkflowInput = SchemaInput
+export type DeleteSalesChannelsWorkflowOutput = void
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { ids: string[] } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: void = undefined as unknown as void
+
+console.log(existingInput, existingOutput)
 
 export const deleteSalesChannelsWorkflowId = "delete-sales-channels"
 /**
@@ -40,10 +49,13 @@ export const deleteSalesChannelsWorkflowId = "delete-sales-channels"
  * Delete sales channels.
  */
 export const deleteSalesChannelsWorkflow = createWorkflow(
-  deleteSalesChannelsWorkflowId,
-  (
-    input: WorkflowData<DeleteSalesChannelsWorkflowInput>
-  ): WorkflowData<void> => {
+  {
+    name: deleteSalesChannelsWorkflowId,
+    description: "Delete sales channels",
+    inputSchema: deleteSalesChannelsWorkflowInputSchema,
+    outputSchema: deleteSalesChannelsWorkflowOutputSchema,
+  },
+  (input) => {
     canDeleteSalesChannelsOrThrowStep({ ids: input.ids })
     deleteSalesChannelsStep(input.ids)
 

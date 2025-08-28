@@ -5,9 +5,7 @@ import {
   PromotionRuleDTO,
   UpdatePromotionRuleDTO,
 } from "@medusajs/framework/types"
-import { RuleType } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -16,32 +14,35 @@ import {
 import { deletePromotionRulesWorkflowStep } from "../steps/delete-promotion-rules-workflow"
 import { createPromotionRulesWorkflow } from "./create-promotion-rules"
 import { updatePromotionRulesWorkflow } from "./update-promotion-rules"
+import {
+  batchPromotionRulesWorkflowInputSchema,
+  batchPromotionRulesWorkflowOutputSchema,
+  type BatchPromotionRulesWorkflowInput as SchemaInput,
+  type BatchPromotionRulesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to manage a promotion's rules.
- * 
- * @property id - The ID of the promotion to manage the rules of.
- * @property rule_type - The type of rule to manage.
- * @property create - The rules to create.
- * @property update - The rules to update.
- * @property delete - The IDs of the rules to delete.
- */
-export interface BatchPromotionRulesWorkflowInput extends BatchWorkflowInput<
+export {
+  type BatchPromotionRulesWorkflowInput,
+  type BatchPromotionRulesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: BatchWorkflowInput<
   CreatePromotionRuleDTO,
   UpdatePromotionRuleDTO
-> {
+> & {
   id: string
-  rule_type: RuleType
-}
+  rule_type: "buy_rules" | "target_rules" | "rules"
+} = schemaInput
 
-/**
- * The result of managing the promotion's rules.
- * 
- * @property created - The created rules.
- * @property updated - The updated rules.
- * @property deleted - The deleted rule IDs.
- */
-export interface BatchPromotionRulesWorkflowOutput extends BatchWorkflowOutput<PromotionRuleDTO> {}
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as BatchWorkflowOutput<PromotionRuleDTO>
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const batchPromotionRulesWorkflowId = "batch-promotion-rules"
 /**
@@ -49,10 +50,10 @@ export const batchPromotionRulesWorkflowId = "batch-promotion-rules"
  * [Manage Promotion Rules Admin API Route](https://docs.medusajs.com/api/admin#promotions_postpromotionsidrulesbatch),
  * [Manage Promotion Buy Rules Admin API Route](https://docs.medusajs.com/api/admin#promotions_postpromotionsidbuyrulesbatch),
  * and [Manage Promotion Target Rules Admin API Route](https://docs.medusajs.com/api/admin#promotions_postpromotionsidtargetrulesbatch).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you to
  * manage promotion rules within your custom flows.
- * 
+ *
  * @example
  * const { result } = await batchPromotionRulesWorkflow(container)
  * .run({
@@ -76,16 +77,19 @@ export const batchPromotionRulesWorkflowId = "batch-promotion-rules"
  *     delete: ["prule_123"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Manage the rules of a promotion.
  */
 export const batchPromotionRulesWorkflow = createWorkflow(
-  batchPromotionRulesWorkflowId,
-  (
-    input: WorkflowData<BatchPromotionRulesWorkflowInput>
-  ): WorkflowResponse<BatchPromotionRulesWorkflowOutput> => {
+  {
+    name: batchPromotionRulesWorkflowId,
+    description: "Manage the rules of a promotion",
+    inputSchema: batchPromotionRulesWorkflowInputSchema,
+    outputSchema: batchPromotionRulesWorkflowOutputSchema,
+  },
+  (input) => {
     const createInput = transform({ input }, (data) => ({
       rule_type: data.input.rule_type,
       data: { id: data.input.id, rules: data.input.create ?? [] },

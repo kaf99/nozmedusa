@@ -3,7 +3,6 @@ import {
   ProductVariantWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -16,16 +15,11 @@ import {
 } from "../../common"
 import { deleteProductVariantsStep } from "../steps"
 import { deleteInventoryItemWorkflow } from "../../inventory"
+import {
+  deleteProductVariantsWorkflowInputSchema,
+  deleteProductVariantsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more product variants.
- */
-export type DeleteProductVariantsWorkflowInput = {
-  /**
-   * The IDs of the variants to delete.
-   */
-  ids: string[]
-}
 
 export const deleteProductVariantsWorkflowId = "delete-product-variants"
 /**
@@ -52,8 +46,13 @@ export const deleteProductVariantsWorkflowId = "delete-product-variants"
  * @property hooks.productVariantsDeleted - This hook is executed after the variants are deleted. You can consume this hook to perform custom actions on the deleted variants.
  */
 export const deleteProductVariantsWorkflow = createWorkflow(
-  deleteProductVariantsWorkflowId,
-  (input: WorkflowData<DeleteProductVariantsWorkflowInput>) => {
+  {
+    name: deleteProductVariantsWorkflowId,
+    description: "Delete one or more product variants",
+    inputSchema: deleteProductVariantsWorkflowInputSchema,
+    outputSchema: deleteProductVariantsWorkflowOutputSchema,
+  },
+  (input) => {
     const variantsWithInventoryStepResponse = useQueryGraphStep({
       entity: "variants",
       fields: [
@@ -96,7 +95,9 @@ export const deleteProductVariantsWorkflow = createWorkflow(
     )
 
     deleteInventoryItemWorkflow.runAsStep({
-      input: toDeleteInventoryItemIds,
+      input: {
+        ids: toDeleteInventoryItemIds,
+      },
     })
 
     const deletedProductVariants = deleteProductVariantsStep(input.ids)

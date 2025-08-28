@@ -13,7 +13,6 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
@@ -29,12 +28,23 @@ import {
 } from "../steps"
 import { validateSalesChannelStep } from "../steps/validate-sales-channel"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
+import {
+  updateCartWorkflowInputSchema,
+  updateCartWorkflowOutputSchema,
+  type UpdateCartWorkflowInput as SchemaInput,
+  type UpdateCartWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update the cart, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateCartWorkflowInput = UpdateCartWorkflowInputDTO &
-  AdditionalData
+// Re-export types from schemas for backward compatibility
+export type {
+  UpdateCartWorkflowInput,
+  UpdateCartWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const _in: SchemaInput = {} as UpdateCartWorkflowInputDTO & AdditionalData
+const _out: void = undefined as SchemaOutput
+void _in, _out
 
 export const updateCartWorkflowId = "update-cart"
 /**
@@ -81,8 +91,13 @@ export const updateCartWorkflowId = "update-cart"
  * @property hooks.cartUpdated - This hook is executed after a cart is update. You can consume this hook to perform custom actions on the updated cart.
  */
 export const updateCartWorkflow = createWorkflow(
-  updateCartWorkflowId,
-  (input: WorkflowData<UpdateCartWorkflowInput>) => {
+  {
+    name: updateCartWorkflowId,
+    description: "Update a cart's details, such as region, address, and more",
+    inputSchema: updateCartWorkflowInputSchema,
+    outputSchema: updateCartWorkflowOutputSchema,
+  },
+  (input) => {
     const cartToUpdate = useRemoteQueryStep({
       entry_point: "cart",
       variables: { id: input.id },

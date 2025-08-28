@@ -6,7 +6,6 @@ import {
 import {
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { OrderChangeDTO, OrderDTO, PromotionDTO } from "@medusajs/types"
@@ -19,6 +18,13 @@ import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-chan
 import { validatePromoCodesToAddStep } from "../steps/validate-promo-codes-to-add"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  addDraftOrderPromotionWorkflowInputSchema,
+  addDraftOrderPromotionWorkflowOutputSchema,
+  type AddDraftOrderPromotionWorkflowInput as SchemaInput,
+  type AddDraftOrderPromotionWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+import { OrderPreviewDTO } from "@medusajs/types"
 
 export const addDraftOrderPromotionWorkflowId = "add-draft-order-promotion"
 
@@ -35,6 +41,13 @@ export interface AddDraftOrderPromotionWorkflowInput {
    */
   promo_codes: string[]
 }
+
+// Type verification
+const _in: SchemaInput = {} as AddDraftOrderPromotionWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
 
 /**
  * This workflow adds promotions to a draft order. It's used by the
@@ -57,8 +70,13 @@ export interface AddDraftOrderPromotionWorkflowInput {
  * Add promotions to a draft order.
  */
 export const addDraftOrderPromotionWorkflow = createWorkflow(
-  addDraftOrderPromotionWorkflowId,
-  function (input: WorkflowData<AddDraftOrderPromotionWorkflowInput>) {
+  {
+    name: addDraftOrderPromotionWorkflowId,
+    description: "Add promotions to a draft order.",
+    inputSchema: addDraftOrderPromotionWorkflowInputSchema,
+    outputSchema: addDraftOrderPromotionWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,

@@ -1,4 +1,3 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   createWorkflow,
   transform,
@@ -8,6 +7,12 @@ import {
 import { calculateShippingOptionsPricesStep } from "../steps"
 import { useQueryGraphStep } from "../../common"
 import { cartFieldsForCalculateShippingOptionsPrices } from "../../cart/utils/fields"
+import {
+  calculateShippingOptionsPricesWorkflowInputSchema,
+  calculateShippingOptionsPricesWorkflowOutputSchema,
+  type CalculateShippingOptionsPricesWorkflowInput,
+  type CalculateShippingOptionsPricesWorkflowOutput,
+} from "../utils/schemas"
 
 export const calculateShippingOptionsPricesWorkflowId =
   "calculate-shipping-options-prices-workflow"
@@ -47,10 +52,15 @@ export const calculateShippingOptionsPricesWorkflowId =
  * Calculate shipping option prices in a cart.
  */
 export const calculateShippingOptionsPricesWorkflow = createWorkflow(
-  calculateShippingOptionsPricesWorkflowId,
+  {
+    name: calculateShippingOptionsPricesWorkflowId,
+    description: "Calculate shipping option prices in a cart",
+    inputSchema: calculateShippingOptionsPricesWorkflowInputSchema,
+    outputSchema: calculateShippingOptionsPricesWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<FulfillmentWorkflow.CalculateShippingOptionsPricesWorkflowInput>
-  ): WorkflowResponse<FulfillmentWorkflow.CalculateShippingOptionsPricesWorkflowOutput> => {
+    input: WorkflowData<CalculateShippingOptionsPricesWorkflowInput>
+  ): WorkflowResponse<CalculateShippingOptionsPricesWorkflowOutput> => {
     const ids = transform({ input }, ({ input }) =>
       input.shipping_options.map((so) => so.id)
     )

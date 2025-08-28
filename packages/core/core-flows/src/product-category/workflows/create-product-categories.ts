@@ -7,16 +7,37 @@ import {
   createHook,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { createProductCategoriesStep } from "../steps"
+import {
+  createProductCategoriesWorkflowInputSchema,
+  createProductCategoriesWorkflowOutputSchema,
+  type CreateProductCategoriesWorkflowInput as SchemaInput,
+  type CreateProductCategoriesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The created product categories.
- */
-export type CreateProductCategoriesWorkflowOutput = ProductCategoryDTO[]
+export {
+  type CreateProductCategoriesWorkflowInput,
+  type CreateProductCategoriesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ProductCategoryWorkflow.CreateProductCategoriesWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as ProductCategoryDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateProductCategoriesWorkflowInput as LegacyCreateProductCategoriesWorkflowInput } from "../utils/schemas"
+export type { CreateProductCategoriesWorkflowOutput as LegacyCreateProductCategoriesWorkflowOutput } from "../utils/schemas"
 
 export const createProductCategoriesWorkflowId = "create-product-categories"
 /**
@@ -43,10 +64,13 @@ export const createProductCategoriesWorkflowId = "create-product-categories"
  * Create product categories.
  */
 export const createProductCategoriesWorkflow = createWorkflow(
-  createProductCategoriesWorkflowId,
-  (
-    input: WorkflowData<ProductCategoryWorkflow.CreateProductCategoriesWorkflowInput>
-  ) => {
+  {
+    name: createProductCategoriesWorkflowId,
+    description: "Create product categories",
+    inputSchema: createProductCategoriesWorkflowInputSchema,
+    outputSchema: createProductCategoriesWorkflowOutputSchema,
+  },
+  (input) => {
     const createdCategories = createProductCategoriesStep(input)
 
     const productCategoryIdEvents = transform(

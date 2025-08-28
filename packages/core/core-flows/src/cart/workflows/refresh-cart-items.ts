@@ -8,7 +8,6 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
@@ -28,44 +27,17 @@ import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-colle
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
 import { updateTaxLinesWorkflow } from "./update-tax-lines"
 import { upsertTaxLinesWorkflow } from "./upsert-tax-lines"
-import { AdditionalData } from "@medusajs/types"
-import { pricingContextResult } from "../utils/schemas"
+import { 
+  pricingContextResult,
+  refreshCartItemsWorkflowInputSchema,
+  refreshCartItemsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The details of the cart to refresh.
- */
-export type RefreshCartItemsWorkflowInput = {
-  /**
-   * The cart's ID.
-   */
-  cart_id: string
-  /**
-   * The promotion codes applied on the cart.
-   * These promotion codes will replace previously applied codes.
-   */
-  promo_codes?: string[]
-  /**
-   * Force refresh the cart items
-   */
-  force_refresh?: boolean
-
-  /**
-   * The items to refresh.
-   */
-  items?: any[]
-
-  /**
-   * The shipping methods to refresh.
-   */
-  shipping_methods?: any[]
-
-  /**
-   * Whether to force re-calculating tax amounts, which
-   * may include sending requests to a third-part tax provider, depending
-   * on the configurations of the cart's tax region.
-   */
-  force_tax_calculation?: boolean
-}
+// Re-export types from schemas for backward compatibility
+export type { 
+  RefreshCartItemsWorkflowInput,
+  RefreshCartItemsWorkflowOutput 
+} from "../utils/schemas"
 
 export const refreshCartItemsWorkflowId = "refresh-cart-items"
 /**
@@ -127,8 +99,12 @@ export const refreshCartItemsWorkflowId = "refresh-cart-items"
  *
  */
 export const refreshCartItemsWorkflow = createWorkflow(
-  refreshCartItemsWorkflowId,
-  (input: WorkflowData<RefreshCartItemsWorkflowInput & AdditionalData>) => {
+  {
+    name: refreshCartItemsWorkflowId,
+    inputSchema: refreshCartItemsWorkflowInputSchema,
+    outputSchema: refreshCartItemsWorkflowOutputSchema,
+  },
+  (input) => {
     const setPricingContext = createHook(
       "setPricingContext",
       {

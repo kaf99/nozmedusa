@@ -15,8 +15,6 @@ import {
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -27,6 +25,15 @@ import { getDraftOrderPromotionContextStep } from "../steps/get-draft-order-prom
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  orderEditUpdateItemQuantityWorkflowInputSchema,
+  orderEditUpdateItemQuantityWorkflowOutputSchema,
+  type OrderEditUpdateItemQuantityWorkflowInput,
+  type OrderEditUpdateItemQuantityWorkflowOutput,
+} from "../utils/schemas"
+
+orderEditUpdateItemQuantityWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
+orderEditUpdateItemQuantityWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const updateDraftOrderItemWorkflowId = "update-draft-order-item"
 
@@ -51,10 +58,15 @@ export const updateDraftOrderItemWorkflowId = "update-draft-order-item"
  * Update an item in a draft order edit.
  */
 export const updateDraftOrderItemWorkflow = createWorkflow(
-  updateDraftOrderItemWorkflowId,
+  {
+    name: updateDraftOrderItemWorkflowId,
+    inputSchema: orderEditUpdateItemQuantityWorkflowInputSchema,
+    outputSchema: orderEditUpdateItemQuantityWorkflowOutputSchema,
+    description: "Update an item in a draft order edit",
+  },
   function (
-    input: WorkflowData<OrderWorkflow.OrderEditUpdateItemQuantityWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+    input: WorkflowData<OrderEditUpdateItemQuantityWorkflowInput>
+  ): WorkflowResponse<OrderEditUpdateItemQuantityWorkflowOutput> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,
@@ -78,32 +90,30 @@ export const updateDraftOrderItemWorkflow = createWorkflow(
     validateDraftOrderChangeStep({ order, orderChange })
 
     const orderChangeActionInput = transform(
-      { order, orderChange, items: input.items },
-      ({ order, orderChange, items }) => {
-        return items.map((item) => {
-          const existing = order?.items?.find(
-            (exItem) => exItem.id === item.id
-          )!
+      { order, orderChange, input },
+      ({ order, orderChange, input }) => {
+        const existing = order?.items?.find(
+          (exItem) => exItem.id === input.item_id
+        )!
 
-          const quantityDiff = new BigNumber(
-            MathBN.sub(item.quantity, existing.quantity)
-          )
+        const quantityDiff = new BigNumber(
+          MathBN.sub(input.quantity, existing.quantity)
+        )
 
-          return {
-            order_change_id: orderChange.id,
-            order_id: order.id,
-            version: orderChange.version,
-            action: ChangeActionType.ITEM_UPDATE,
-            internal_note: item.internal_note,
-            details: {
-              reference_id: item.id,
-              quantity: item.quantity,
-              unit_price: item.unit_price,
-              compare_at_unit_price: item.compare_at_unit_price,
-              quantity_diff: quantityDiff,
-            },
-          }
-        })
+        return [{
+          order_change_id: orderChange.id,
+          order_id: order.id,
+          version: orderChange.version,
+          action: ChangeActionType.ITEM_UPDATE,
+          internal_note: undefined,
+          details: {
+            reference_id: input.item_id,
+            quantity: input.quantity,
+            unit_price: undefined,
+            compare_at_unit_price: undefined,
+            quantity_diff: quantityDiff,
+          },
+        }]
       }
     )
 

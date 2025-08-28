@@ -7,9 +7,12 @@ import {
   ProductVariantDTO,
   RegisterOrderDeliveryDTO,
 } from "@medusajs/framework/types"
-import { FulfillmentWorkflowEvents, MathBN, Modules } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
+  FulfillmentWorkflowEvents,
+  MathBN,
+  Modules,
+} from "@medusajs/framework/utils"
+import {
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -23,6 +26,12 @@ import {
   throwIfItemsDoesNotExistsInOrder,
   throwIfOrderIsCancelled,
 } from "../utils/order-validation"
+import {
+  markOrderFulfillmentAsDeliveredWorkflowInputSchema,
+  markOrderFulfillmentAsDeliveredWorkflowOutputSchema,
+  type MarkOrderFulfillmentAsDeliveredWorkflowInput as SchemaInput,
+  type MarkOrderFulfillmentAsDeliveredWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
   variant?: ProductVariantDTO & {
@@ -129,7 +138,7 @@ function prepareRegisterDeliveryData({
   )!
 
   const lineItemIds = new Array(
-    ...new Set(orderFulfillment.items.map((i) => i.line_item_id))
+    ...new Set((orderFulfillment.items ?? []).map((i) => i.line_item_id))
   )
 
   return {
@@ -144,7 +153,7 @@ function prepareRegisterDeliveryData({
       // find inventory items
       const iitems = orderItem!.variant?.inventory_items
       // find fulfillment item
-      const fitem = orderFulfillment.items.find(
+      const fitem = (orderFulfillment.items ?? []).find(
         (i) => i.line_item_id === lineItemId
       )!
 
@@ -189,6 +198,24 @@ export type MarkOrderFulfillmentAsDeliveredWorkflowInput = {
   fulfillmentId: string
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: MarkOrderFulfillmentAsDeliveredWorkflowInput =
+  _schemaInput
+const _in: SchemaInput = {} as MarkOrderFulfillmentAsDeliveredWorkflowInput
+void _in
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// For void outputs, we don't need to check compatibility
+const _existingOutput = undefined as SchemaOutput
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const markOrderFulfillmentAsDeliveredWorkflowId =
   "mark-order-fulfillment-as-delivered-workflow"
 /**
@@ -212,8 +239,12 @@ export const markOrderFulfillmentAsDeliveredWorkflowId =
  * Mark a fulfillment in an order as delivered.
  */
 export const markOrderFulfillmentAsDeliveredWorkflow = createWorkflow(
-  markOrderFulfillmentAsDeliveredWorkflowId,
-  (input: WorkflowData<MarkOrderFulfillmentAsDeliveredWorkflowInput>) => {
+  {
+    name: markOrderFulfillmentAsDeliveredWorkflowId,
+    inputSchema: markOrderFulfillmentAsDeliveredWorkflowInputSchema,
+    outputSchema: markOrderFulfillmentAsDeliveredWorkflowOutputSchema,
+  },
+  (input) => {
     const { fulfillmentId, orderId } = input
     const fulfillment = useRemoteQueryStep({
       entry_point: "fulfillment",

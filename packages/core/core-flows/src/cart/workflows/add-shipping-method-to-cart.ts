@@ -4,7 +4,6 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
@@ -20,31 +19,10 @@ import { validateCartShippingOptionsPriceStep } from "../steps/validate-shipping
 import { cartFieldsForRefreshSteps } from "../utils/fields"
 import { listShippingOptionsForCartWithPricingWorkflow } from "./list-shipping-options-for-cart-with-pricing"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
-
-/**
- * The data to add a shipping method to a cart.
- */
-export interface AddShippingMethodToCartWorkflowInput {
-  /**
-   * The ID of the cart to add the shipping method to.
-   */
-  cart_id: string
-  /**
-   * The shipping options to create the shipping methods from and add to the cart.
-   */
-  options: {
-    /**
-     * The ID of the shipping option.
-     */
-    id: string
-    /**
-     * Custom data useful for the fulfillment provider processing the shipping option or method.
-     *
-     * Learn more in [this documentation](https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property).
-     */
-    data?: Record<string, unknown>
-  }[]
-}
+import {
+  addShippingMethodToCartWorkflowInputSchema,
+  addShippingMethodToCartWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const addShippingMethodToCartWorkflowId = "add-shipping-method-to-cart"
 /**
@@ -79,8 +57,13 @@ export const addShippingMethodToCartWorkflowId = "add-shipping-method-to-cart"
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
  */
 export const addShippingMethodToCartWorkflow = createWorkflow(
-  addShippingMethodToCartWorkflowId,
-  (input: WorkflowData<AddShippingMethodToCartWorkflowInput>) => {
+  {
+    name: addShippingMethodToCartWorkflowId,
+    description: "Add a shipping method to a cart",
+    inputSchema: addShippingMethodToCartWorkflowInputSchema,
+    outputSchema: addShippingMethodToCartWorkflowOutputSchema,
+  },
+  (input) => {
     const cart = useRemoteQueryStep({
       entry_point: "cart",
       fields: cartFieldsForRefreshSteps,
@@ -127,7 +110,7 @@ export const addShippingMethodToCartWorkflow = createWorkflow(
 
           return {
             id: inputOption.id,
-            provider_id: shippingOption?.provider_id,
+            provider_id: shippingOption?.provider_id ?? "",
             option_data: shippingOption?.data ?? {},
             method_data: inputOption.data ?? {},
             context: {

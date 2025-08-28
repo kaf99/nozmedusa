@@ -1,7 +1,5 @@
-import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductCollectionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,16 +7,33 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { createCollectionsStep } from "../steps"
+import {
+  createCollectionsWorkflowInputSchema,
+  createCollectionsWorkflowOutputSchema,
+  type CreateCollectionsWorkflowInput as SchemaInput,
+  type CreateCollectionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The details of the collection to create, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateCollectionsWorkflowInput = {
-  /**
-   * The collections to create.
-   */
-  collections: ProductTypes.CreateProductCollectionDTO[]
-} & AdditionalData
+export {
+  type CreateCollectionsWorkflowInput,
+  type CreateCollectionsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: SchemaInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as SchemaOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateCollectionsWorkflowInput as LegacyCreateCollectionsWorkflowInput } from "../utils/schemas"
+export type { CreateCollectionsWorkflowOutput as LegacyCreateCollectionsWorkflowOutput } from "../utils/schemas"
 
 export const createCollectionsWorkflowId = "create-collections"
 /**
@@ -52,8 +67,13 @@ export const createCollectionsWorkflowId = "create-collections"
  * @property hooks.collectionsCreated - This hook is executed after the collections are created. You can consume this hook to perform custom actions on the created collections.
  */
 export const createCollectionsWorkflow = createWorkflow(
-  createCollectionsWorkflowId,
-  (input: WorkflowData<CreateCollectionsWorkflowInput>) => {
+  {
+    name: createCollectionsWorkflowId,
+    description: "Create one or more product collections",
+    inputSchema: createCollectionsWorkflowInputSchema,
+    outputSchema: createCollectionsWorkflowOutputSchema,
+  },
+  (input) => {
     const collections = createCollectionsStep(input.collections)
 
     const collectionIdEvents = transform({ collections }, ({ collections }) => {

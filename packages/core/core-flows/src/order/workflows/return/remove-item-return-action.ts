@@ -8,13 +8,18 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  deleteRequestItemReturnWorkflowInputSchema,
+  deleteRequestItemReturnWorkflowOutputSchema,
+  type DeleteRequestItemReturnWorkflowInput as SchemaInput,
+  type DeleteRequestItemReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   deleteOrderChangeActionsStep,
@@ -132,11 +137,23 @@ export const removeItemReturnActionWorkflowId = "remove-item-return-action"
  *
  * Remove an item from a return.
  */
+
+// Type verification block - DO NOT REMOVE
+const _inputCheck: SchemaInput =
+  {} as OrderWorkflow.DeleteRequestItemReturnWorkflowInput
+const _outputCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputCheck
+void _outputCheck
+
 export const removeItemReturnActionWorkflow = createWorkflow(
-  removeItemReturnActionWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.DeleteRequestItemReturnWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: removeItemReturnActionWorkflowId,
+    description: "Remove an item from a return.",
+    inputSchema: deleteRequestItemReturnWorkflowInputSchema,
+    outputSchema: deleteRequestItemReturnWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

@@ -9,6 +9,12 @@ import {
   createStep,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  deleteOrderPaymentCollectionsInputSchema,
+  deleteOrderPaymentCollectionsOutputSchema,
+  type DeleteOrderPaymentCollectionsInput as SchemaInput,
+  type DeleteOrderPaymentCollectionsOutput as SchemaOutput,
+} from "../utils/schemas"
 import { removeRemoteLinkStep, useRemoteQueryStep } from "../../common"
 
 /**
@@ -57,9 +63,26 @@ export const deleteOrderPaymentCollectionsId =
  * 
  * Delete a payment collection of an order.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: DeleteOrderPaymentCollectionsInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const deleteOrderPaymentCollections = createWorkflow(
-  deleteOrderPaymentCollectionsId,
-  (input: WorkflowData<DeleteOrderPaymentCollectionsInput>): WorkflowData<void> => {
+  {
+    name: deleteOrderPaymentCollectionsId,
+    description: "Delete a payment collection of an order",
+    inputSchema: deleteOrderPaymentCollectionsInputSchema,
+    outputSchema: deleteOrderPaymentCollectionsOutputSchema,
+  },
+  (input): WorkflowData<void> => {
     const paymentCollection = useRemoteQueryStep({
       entry_point: "payment_collection",
       fields: ["id", "status"],

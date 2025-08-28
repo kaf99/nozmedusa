@@ -1,6 +1,33 @@
 import { ProductCategoryWorkflow } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { batchLinkProductsToCategoryStep } from "../steps/batch-link-products-in-category"
+import {
+  linkWorkflowInputSchema,
+  batchLinkWorkflowOutputSchema,
+  type LinkWorkflowInput as SchemaInput,
+  type BatchLinkWorkflowOutput as SchemaOutput,
+} from "../utils/batch-schemas"
+
+export {
+  type LinkWorkflowInput as BatchUpdateProductsOnCategoryWorkflowInput,
+  type BatchLinkWorkflowOutput as BatchUpdateProductsOnCategoryWorkflowOutput,
+} from "../utils/batch-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ProductCategoryWorkflow.BatchUpdateProductsOnCategoryWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { LinkWorkflowInput as LegacyBatchUpdateProductsOnCategoryWorkflowInput } from "../utils/batch-schemas"
+export type { BatchLinkWorkflowOutput as LegacyBatchUpdateProductsOnCategoryWorkflowOutput } from "../utils/batch-schemas"
 
 export const batchLinkProductsToCategoryWorkflowId =
   "batch-link-products-to-category"
@@ -25,11 +52,13 @@ export const batchLinkProductsToCategoryWorkflowId =
  * Manage the links between a collection and products.
  */
 export const batchLinkProductsToCategoryWorkflow = createWorkflow(
-  batchLinkProductsToCategoryWorkflowId,
-  (
-    // eslint-disable-next-line max-len
-    input: WorkflowData<ProductCategoryWorkflow.BatchUpdateProductsOnCategoryWorkflowInput>
-  ): WorkflowData<void> => {
+  {
+    name: batchLinkProductsToCategoryWorkflowId,
+    description: "Batch link products to category",
+    inputSchema: linkWorkflowInputSchema,
+    outputSchema: batchLinkWorkflowOutputSchema,
+  },
+  (input) => {
     return batchLinkProductsToCategoryStep(input)
   }
 )

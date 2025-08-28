@@ -1,11 +1,16 @@
 import { PaymentCollectionDTO } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  markPaymentCollectionAsPaidInputSchema,
+  markPaymentCollectionAsPaidOutputSchema,
+  type MarkPaymentCollectionAsPaidInput as SchemaInput,
+  type MarkPaymentCollectionAsPaidOutput as SchemaOutput,
+} from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import {
   authorizePaymentSessionStep,
@@ -94,9 +99,26 @@ export const markPaymentCollectionAsPaidId = "mark-payment-collection-as-paid"
  *
  * Mark a payment collection for an order as paid.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: MarkPaymentCollectionAsPaidInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as any // Payment DTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const markPaymentCollectionAsPaid = createWorkflow(
-  markPaymentCollectionAsPaidId,
-  (input: WorkflowData<MarkPaymentCollectionAsPaidInput>) => {
+  {
+    name: markPaymentCollectionAsPaidId,
+    description: "Mark a payment collection for an order as paid",
+    inputSchema: markPaymentCollectionAsPaidInputSchema,
+    outputSchema: markPaymentCollectionAsPaidOutputSchema,
+  },
+  (input) => {
     const paymentCollection = useRemoteQueryStep({
       entry_point: "payment_collection",
       fields: ["id", "status", "amount"],

@@ -1,7 +1,6 @@
 import { WorkflowTypes } from "@medusajs/framework/types"
 import { RegionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -11,6 +10,28 @@ import { emitEventStep } from "../../common/steps/emit-event"
 import { createPricePreferencesWorkflow } from "../../pricing"
 import { createRegionsStep } from "../steps"
 import { setRegionsPaymentProvidersStep } from "../steps/set-regions-payment-providers"
+import {
+  createRegionsWorkflowInputSchema,
+  createRegionsWorkflowOutputSchema,
+  type CreateRegionsWorkflowInput as SchemaInput,
+  type CreateRegionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Re-export workflow types from schemas
+export type CreateRegionsWorkflowInput = SchemaInput
+export type CreateRegionsWorkflowOutput = SchemaOutput
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createRegionsWorkflowId = "create-regions"
 /**
@@ -39,10 +60,13 @@ export const createRegionsWorkflowId = "create-regions"
  * Create one or more regions.
  */
 export const createRegionsWorkflow = createWorkflow(
-  createRegionsWorkflowId,
-  (
-    input: WorkflowData<WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowInput>
-  ): WorkflowResponse<WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowOutput> => {
+  {
+    name: createRegionsWorkflowId,
+    description: "Create one or more regions",
+    inputSchema: createRegionsWorkflowInputSchema,
+    outputSchema: createRegionsWorkflowOutputSchema,
+  },
+  (input) => {
     const data = transform(input, (data) => {
       const regionIndexToAdditionalData = data.regions.map((region, index) => {
         return {

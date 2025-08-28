@@ -4,7 +4,6 @@ import {
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -14,6 +13,12 @@ import { useRemoteQueryStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps/create-order-change"
 import { createOrderExchangesStep } from "../../steps/exchange/create-exchange"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
+import {
+  beginOrderExchangeWorkflowInputSchema,
+  beginOrderExchangeWorkflowOutputSchema,
+  type BeginOrderExchangeWorkflowInput as SchemaInput,
+  type BeginOrderExchangeWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that an exchange can be requested for an order.
@@ -51,6 +56,18 @@ export const beginOrderExchangeValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.BeginOrderExchangeWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderChangeDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const beginExchangeOrderWorkflowId = "begin-exchange-order"
 /**
  * This workflow requests an order exchange. It's used by the
@@ -72,9 +89,14 @@ export const beginExchangeOrderWorkflowId = "begin-exchange-order"
  * Request an order exchange.
  */
 export const beginExchangeOrderWorkflow = createWorkflow(
-  beginExchangeOrderWorkflowId,
+  {
+    name: beginExchangeOrderWorkflowId,
+    description: "Begin order exchange",
+    inputSchema: beginOrderExchangeWorkflowInputSchema,
+    outputSchema: beginOrderExchangeWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.BeginOrderExchangeWorkflowInput>
+    input
   ): WorkflowResponse<OrderChangeDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

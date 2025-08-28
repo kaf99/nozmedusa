@@ -1,4 +1,4 @@
-import { AdditionalData, CreateOrderDTO } from "@medusajs/framework/types"
+import { AdditionalData, CreateOrderDTO, OrderDTO } from "@medusajs/framework/types"
 import {
   MedusaError,
   deduplicate,
@@ -6,7 +6,6 @@ import {
   isPresent,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -30,6 +29,16 @@ import { useRemoteQueryStep } from "../../common"
 import { createOrdersStep } from "../steps"
 import { productVariantsFields } from "../utils/fields"
 import { updateOrderTaxLinesWorkflow } from "./update-tax-lines"
+import {
+  createOrderWorkflowInputSchema,
+  createOrderWorkflowOutputSchema,
+  type CreateOrderWorkflowInput as SchemaInput,
+  type CreateOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreateOrderWorkflowInput,
+  type CreateOrderWorkflowOutput,
+} from "../utils/schemas"
 
 function prepareLineItems(data) {
   const items = (data.input.items ?? []).map((item) => {
@@ -87,7 +96,21 @@ function getOrderInput(data) {
 /**
  * The data to create an order, along with custom data that's passed to the workflow's hooks.
  */
-export type CreateOrderWorkflowInput = CreateOrderDTO & AdditionalData
+type OldCreateOrderWorkflowInput = CreateOrderDTO & AdditionalData
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateOrderWorkflowInput = schemaInput
+const existingOutput: OrderDTO = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreateOrderWorkflowInput
+const oldOutput = {} as OrderDTO
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createOrdersWorkflowId = "create-orders"
 /**
@@ -170,8 +193,12 @@ export const createOrdersWorkflowId = "create-orders"
  * :::
  */
 export const createOrderWorkflow = createWorkflow(
-  createOrdersWorkflowId,
-  (input: WorkflowData<CreateOrderWorkflowInput>) => {
+  {
+    name: createOrdersWorkflowId,
+    inputSchema: createOrderWorkflowInputSchema,
+    outputSchema: createOrderWorkflowOutputSchema,
+  },
+  (input) => {
     const variantIds = transform({ input }, (data) => {
       return (data.input.items ?? [])
         .map((item) => item.variant_id)

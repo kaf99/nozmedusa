@@ -1,17 +1,14 @@
 import { Modules } from "@medusajs/framework/utils"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteStoresStep } from "../steps"
+import { 
+  deleteStoresWorkflowInputSchema,
+  deleteStoresWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete stores.
- */
-export type DeleteStoresWorkflowInput = {
-  /**
-   * The IDs of the stores to delete.
-   */
-  ids: string[]
-}
+// Re-export types from schemas for backward compatibility
+export type { DeleteStoresWorkflowInput, DeleteStoresWorkflowOutput } from "../utils/schemas"
 
 export const deleteStoresWorkflowId = "delete-stores"
 /**
@@ -41,8 +38,12 @@ export const deleteStoresWorkflowId = "delete-stores"
  * Delete one or more stores.
  */
 export const deleteStoresWorkflow = createWorkflow(
-  deleteStoresWorkflowId,
-  (input: WorkflowData<DeleteStoresWorkflowInput>): WorkflowData<void> => {
+  {
+    name: deleteStoresWorkflowId,
+    inputSchema: deleteStoresWorkflowInputSchema,
+    outputSchema: deleteStoresWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedStores = deleteStoresStep(input.ids)
 
     removeRemoteLinkStep({

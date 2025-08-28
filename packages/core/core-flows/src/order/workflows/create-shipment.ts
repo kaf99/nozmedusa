@@ -8,9 +8,12 @@ import {
   OrderWorkflow,
   ProductVariantDTO,
 } from "@medusajs/framework/types"
-import { FulfillmentWorkflowEvents, MathBN, Modules } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
+  FulfillmentWorkflowEvents,
+  MathBN,
+  Modules,
+} from "@medusajs/framework/utils"
+import {
   WorkflowResponse,
   createHook,
   createStep,
@@ -25,6 +28,12 @@ import {
   throwIfItemsDoesNotExistsInOrder,
   throwIfOrderIsCancelled,
 } from "../utils/order-validation"
+import {
+  createOrderShipmentWorkflowInputSchema,
+  createOrderShipmentWorkflowOutputSchema,
+  type CreateOrderShipmentWorkflowInput as SchemaInput,
+  type CreateOrderShipmentWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
   variant?: ProductVariantDTO & {
@@ -110,7 +119,7 @@ function prepareRegisterShipmentData({
   const fulfillment = order_.fulfillments.find((f) => f.id === fulfillId)!
 
   const lineItemIds = new Array(
-    ...new Set(fulfillment.items.map((i) => i.line_item_id))
+    ...new Set((fulfillment.items ?? []).map((i) => i.line_item_id))
   )
 
   return {
@@ -126,7 +135,7 @@ function prepareRegisterShipmentData({
       // find inventory items
       const iitems = orderItem!.variant?.inventory_items
       // find fulfillment item
-      const fitem = fulfillment.items.find(
+      const fitem = (fulfillment.items ?? []).find(
         (i) => i.line_item_id === lineItemId
       )!
 
@@ -162,6 +171,19 @@ function prepareRegisterShipmentData({
 export type CreateOrderShipmentWorkflowInput =
   OrderWorkflow.CreateOrderShipmentWorkflowInput & AdditionalData
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateOrderShipmentWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// For void outputs, we don't need to check compatibility
+const existingOutput = undefined as SchemaOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const createOrderShipmentWorkflowId = "create-order-shipment"
 /**
  * This workflow creates a shipment for an order. It's used by the [Create Order Shipment Admin API Route](https://docs.medusajs.com/api/admin#orders_postordersidfulfillmentsfulfillment_idshipments).
@@ -196,8 +218,13 @@ export const createOrderShipmentWorkflowId = "create-order-shipment"
  * @property hooks.shipmentCreated - This hook is executed after the shipment is created. You can consume this hook to perform custom actions on the created shipment.
  */
 export const createOrderShipmentWorkflow = createWorkflow(
-  createOrderShipmentWorkflowId,
-  (input: WorkflowData<CreateOrderShipmentWorkflowInput>) => {
+  {
+    name: createOrderShipmentWorkflowId,
+    description: "Creates a shipment for an order",
+    inputSchema: createOrderShipmentWorkflowInputSchema,
+    outputSchema: createOrderShipmentWorkflowOutputSchema,
+  },
+  (input) => {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: [

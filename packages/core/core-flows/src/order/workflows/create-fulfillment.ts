@@ -1,6 +1,7 @@
 import {
   AdditionalData,
   BigNumberInput,
+  FulfillmentDTO,
   FulfillmentWorkflow,
   InventoryItemDTO,
   OrderDTO,
@@ -18,7 +19,6 @@ import {
   OrderWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -44,6 +44,12 @@ import {
   throwIfItemsDoesNotExistsInOrder,
   throwIfOrderIsCancelled,
 } from "../utils/order-validation"
+import {
+  createOrderFulfillmentWorkflowInputSchema,
+  createOrderFulfillmentWorkflowOutputSchema,
+  type CreateOrderFulfillmentWorkflowInput as SchemaInput,
+  type CreateOrderFulfillmentWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
   variant?: ProductVariantDTO & {
@@ -357,6 +363,12 @@ function prepareInventoryUpdate({
 export type CreateOrderFulfillmentWorkflowInput =
   OrderWorkflow.CreateOrderFulfillmentWorkflowInput & AdditionalData
 
+// Type verification - CORRECT ORDER!
+const _in: SchemaInput = {} as CreateOrderFulfillmentWorkflowInput
+const _out: FulfillmentDTO = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as FulfillmentDTO
+void _in, _out, _outRev
+
 export const createOrderFulfillmentWorkflowId = "create-order-fulfillment"
 /**
  * This workflow creates a fulfillment for an order. It's used by the [Create Order Fulfillment Admin API Route](https://docs.medusajs.com/api/admin#orders_postordersidfulfillments).
@@ -390,8 +402,13 @@ export const createOrderFulfillmentWorkflowId = "create-order-fulfillment"
  * @property hooks.fulfillmentCreated - This hook is executed after the fulfillment is created. You can consume this hook to perform custom actions on the created fulfillment.
  */
 export const createOrderFulfillmentWorkflow = createWorkflow(
-  createOrderFulfillmentWorkflowId,
-  (input: WorkflowData<CreateOrderFulfillmentWorkflowInput>) => {
+  {
+    name: createOrderFulfillmentWorkflowId,
+    description: "Creates a fulfillment for an order",
+    inputSchema: createOrderFulfillmentWorkflowInputSchema,
+    outputSchema: createOrderFulfillmentWorkflowOutputSchema,
+  },
+  (input) => {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: [

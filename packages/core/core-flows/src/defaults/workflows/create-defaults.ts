@@ -4,6 +4,25 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { createDefaultSalesChannelStep } from "../../sales-channel"
 import { createDefaultStoreStep } from "../steps/create-default-store"
+import {
+  createDefaultsWorkflowInputSchema,
+  createDefaultsWorkflowOutputSchema,
+  type CreateDefaultsWorkflowInput as SchemaInput,
+  type CreateDefaultsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type CreateDefaultsWorkflowInput,
+  type CreateDefaultsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: {} = schemaInput
+const existingOutput: import("@medusajs/framework/types").StoreDTO = schemaOutput
+
+console.log(existingInput, existingOutput)
 
 export const createDefaultsWorkflowID = "create-defaults"
 /**
@@ -23,7 +42,12 @@ export const createDefaultsWorkflowID = "create-defaults"
  * Create default data for a Medusa application.
  */
 export const createDefaultsWorkflow = createWorkflow(
-  createDefaultsWorkflowID,
+  {
+    name: createDefaultsWorkflowID,
+    description: "Create default data for a Medusa application",
+    inputSchema: createDefaultsWorkflowInputSchema,
+    outputSchema: createDefaultsWorkflowOutputSchema,
+  },
   () => {
     const salesChannel = createDefaultSalesChannelStep({
       data: {

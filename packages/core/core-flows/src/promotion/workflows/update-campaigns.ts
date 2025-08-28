@@ -1,21 +1,35 @@
-import { AdditionalData, UpdateCampaignDTO } from "@medusajs/framework/types"
+import { AdditionalData, UpdateCampaignDTO, CampaignDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateCampaignsStep } from "../steps"
+import {
+  updateCampaignsWorkflowInputSchema,
+  updateCampaignsWorkflowOutputSchema,
+  type UpdateCampaignsWorkflowInput as SchemaInput,
+  type UpdateCampaignsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update one or more campaigns, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateCampaignsWorkflowInput = {
-  /**
-   * The campaigns to update.
-   */
+export {
+  type UpdateCampaignsWorkflowInput,
+  type UpdateCampaignsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   campaignsData: UpdateCampaignDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as CampaignDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateCampaignsWorkflowId = "update-campaigns"
 /**
@@ -50,8 +64,13 @@ export const updateCampaignsWorkflowId = "update-campaigns"
  * @property hooks.campaignsUpdated - This hook is executed after the campaigns are updated. You can consume this hook to perform custom actions on the updated campaigns.
  */
 export const updateCampaignsWorkflow = createWorkflow(
-  updateCampaignsWorkflowId,
-  (input: WorkflowData<UpdateCampaignsWorkflowInput>) => {
+  {
+    name: updateCampaignsWorkflowId,
+    description: "Update one or more campaigns",
+    inputSchema: updateCampaignsWorkflowInputSchema,
+    outputSchema: updateCampaignsWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedCampaigns = updateCampaignsStep(input.campaignsData)
     const campaignsUpdated = createHook("campaignsUpdated", {
       campaigns: updatedCampaigns,

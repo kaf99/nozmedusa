@@ -17,6 +17,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  cancelReturnRequestWorkflowInputSchema,
+  cancelReturnRequestWorkflowOutputSchema,
+  type CancelReturnRequestWorkflowInput as SchemaInput,
+  type CancelReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a requested return can be canceled.
@@ -87,6 +93,18 @@ export type CancelRequestReturnWorkflowInput = {
   return_id: string
 }
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CancelRequestReturnWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelReturnRequestWorkflowId = "cancel-return-request"
 /**
  * This workflow cancels a requested return. It's used by the
@@ -108,8 +126,13 @@ export const cancelReturnRequestWorkflowId = "cancel-return-request"
  * Cancel a requested return.
  */
 export const cancelReturnRequestWorkflow = createWorkflow(
-  cancelReturnRequestWorkflowId,
-  function (input: CancelRequestReturnWorkflowInput): WorkflowData<void> {
+  {
+    name: cancelReturnRequestWorkflowId,
+    description: "Cancel a requested return",
+    inputSchema: cancelReturnRequestWorkflowInputSchema,
+    outputSchema: cancelReturnRequestWorkflowOutputSchema,
+  },
+  function (input): WorkflowData<void> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

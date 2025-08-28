@@ -1,7 +1,6 @@
 import { OrderDTO, OrderDetailDTO } from "@medusajs/framework/types"
 import { deduplicate } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -11,6 +10,12 @@ import {
   getLastFulfillmentStatus,
   getLastPaymentStatus,
 } from "../utils/aggregate-status"
+import {
+  getOrdersListWorkflowInputSchema,
+  getOrdersListWorkflowOutputSchema,
+  type GetOrdersListWorkflowInput as SchemaInput,
+  type GetOrdersListWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The retrieved list of orders. If you passed pagination configurations in the 
@@ -70,6 +75,21 @@ export type GetOrdersListWorkflowInput = {
   }
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: GetOrdersListWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as GetOrdersListWorkflowOutput
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const getOrdersListWorkflowId = "get-orders-list"
 /**
  * This workflow retrieves a list of orders. It's used by the 
@@ -112,10 +132,12 @@ export const getOrdersListWorkflowId = "get-orders-list"
  * Retrieve a list of orders.
  */
 export const getOrdersListWorkflow = createWorkflow(
-  getOrdersListWorkflowId,
-  (
-    input: WorkflowData<GetOrdersListWorkflowInput>
-  ): WorkflowResponse<GetOrdersListWorkflowOutput> => {
+  {
+    name: getOrdersListWorkflowId,
+    inputSchema: getOrdersListWorkflowInputSchema,
+    outputSchema: getOrdersListWorkflowOutputSchema,
+  },
+  (input): WorkflowResponse<GetOrdersListWorkflowOutput> => {
     const fields = transform(input, ({ fields }) => {
       return deduplicate([
         ...fields,

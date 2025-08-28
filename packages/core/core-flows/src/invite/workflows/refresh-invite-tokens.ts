@@ -1,6 +1,5 @@
 import { InviteDTO, InviteWorkflow } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -9,6 +8,29 @@ import {
 import { InviteWorkflowEvents } from "@medusajs/framework/utils"
 import { emitEventStep } from "../../common"
 import { refreshInviteTokensStep } from "../steps/refresh-invite-tokens"
+import {
+  refreshInviteTokensWorkflowInputSchema,
+  refreshInviteTokensWorkflowOutputSchema,
+  type RefreshInviteTokensWorkflowInput as SchemaInput,
+  type RefreshInviteTokensWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type RefreshInviteTokensWorkflowInput,
+  type RefreshInviteTokensWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: InviteWorkflow.ResendInvitesWorkflowInputDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as InviteDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const refreshInviteTokensWorkflowId = "refresh-invite-tokens-workflow"
 /**
@@ -35,10 +57,13 @@ export const refreshInviteTokensWorkflowId = "refresh-invite-tokens-workflow"
  * Refresh user invite tokens.
  */
 export const refreshInviteTokensWorkflow = createWorkflow(
-  refreshInviteTokensWorkflowId,
-  (
-    input: WorkflowData<InviteWorkflow.ResendInvitesWorkflowInputDTO>
-  ): WorkflowResponse<InviteDTO[]> => {
+  {
+    name: refreshInviteTokensWorkflowId,
+    description: "Refresh user invite tokens",
+    inputSchema: refreshInviteTokensWorkflowInputSchema,
+    outputSchema: refreshInviteTokensWorkflowOutputSchema,
+  },
+  (input) => {
     const invites = refreshInviteTokensStep(input.invite_ids)
 
     const invitesIdEvents = transform({ invites }, ({ invites }) => {

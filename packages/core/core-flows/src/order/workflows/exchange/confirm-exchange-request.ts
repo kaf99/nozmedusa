@@ -24,6 +24,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  confirmExchangeRequestWorkflowInputSchema,
+  confirmExchangeRequestWorkflowOutputSchema,
+  type ConfirmExchangeRequestWorkflowInput as SchemaInput,
+  type ConfirmExchangeRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import { prepareConfirmInventoryInput } from "../../../cart/utils/prepare-confirm-inventory-input"
 import {
@@ -282,10 +288,27 @@ export const confirmExchangeRequestWorkflowId = "confirm-exchange-request"
  *
  * Confirm an exchange request.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ConfirmExchangeRequestWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const confirmExchangeRequestWorkflow = createWorkflow(
-  confirmExchangeRequestWorkflowId,
+  {
+    name: confirmExchangeRequestWorkflowId,
+    description: "Confirm an exchange request",
+    inputSchema: confirmExchangeRequestWorkflowInputSchema,
+    outputSchema: confirmExchangeRequestWorkflowOutputSchema,
+  },
   function (
-    input: ConfirmExchangeRequestWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",

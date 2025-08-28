@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -17,6 +16,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateOrderEditShippingMethodWorkflowInputSchema,
+  updateOrderEditShippingMethodWorkflowOutputSchema,
+  type UpdateOrderEditShippingMethodWorkflowInput as SchemaInput,
+  type UpdateOrderEditShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   updateOrderChangeActionsStep,
@@ -95,6 +100,21 @@ export const updateOrderEditShippingMethodValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.UpdateOrderEditShippingMethodWorkflowInput & AdditionalData = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const updateOrderEditShippingMethodWorkflowId =
   "update-order-edit-shipping-method"
 /**
@@ -156,11 +176,13 @@ export const updateOrderEditShippingMethodWorkflowId =
  * :::
  */
 export const updateOrderEditShippingMethodWorkflow = createWorkflow(
-  updateOrderEditShippingMethodWorkflowId,
+  {
+    name: updateOrderEditShippingMethodWorkflowId,
+    inputSchema: updateOrderEditShippingMethodWorkflowInputSchema,
+    outputSchema: updateOrderEditShippingMethodWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<
-      OrderWorkflow.UpdateOrderEditShippingMethodWorkflowInput & AdditionalData
-    >
+    input
   ) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "order_claim",

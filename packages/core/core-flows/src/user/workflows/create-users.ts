@@ -1,4 +1,3 @@
-import { UserDTO, UserWorkflow } from "@medusajs/framework/types"
 import { UserWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -8,6 +7,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createUsersStep } from "../steps"
+import {
+  createUsersWorkflowInputSchema,
+  createUsersWorkflowOutputSchema,
+  type CreateUsersWorkflowInput,
+  type CreateUsersWorkflowOutput,
+} from "../utils/schemas"
 
 export const createUsersWorkflowId = "create-users-workflow"
 /**
@@ -38,10 +43,15 @@ export const createUsersWorkflowId = "create-users-workflow"
  * Create one or more users.
  */
 export const createUsersWorkflow = createWorkflow(
-  createUsersWorkflowId,
+  {
+    name: createUsersWorkflowId,
+    description: "Create one or more users",
+    inputSchema: createUsersWorkflowInputSchema,
+    outputSchema: createUsersWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<UserWorkflow.CreateUsersWorkflowInputDTO>
-  ): WorkflowResponse<UserDTO[]> => {
+    input: WorkflowData<CreateUsersWorkflowInput>
+  ): WorkflowResponse<CreateUsersWorkflowOutput> => {
     const createdUsers = createUsersStep(input.users)
 
     const userIdEvents = transform({ createdUsers }, ({ createdUsers }) => {

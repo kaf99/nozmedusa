@@ -10,7 +10,7 @@ export interface CreateViewConfigurationDTO {
   /**
    * The name of the configuration. Required unless creating a system default.
    */
-  name?: string
+  name?: string | null
 
   /**
    * The user ID this configuration belongs to. Can be null for system defaults.
@@ -65,7 +65,7 @@ export interface UpdateViewConfigurationDTO {
   /**
    * The name of the configuration.
    */
-  name?: string
+  name?: string | null
 
   /**
    * The configuration data.

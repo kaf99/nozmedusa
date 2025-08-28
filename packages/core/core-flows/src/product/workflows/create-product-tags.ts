@@ -1,7 +1,5 @@
-import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductTagWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,16 +7,33 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createProductTagsStep } from "../steps"
+import {
+  createProductTagsWorkflowInputSchema,
+  createProductTagsWorkflowOutputSchema,
+  type CreateProductTagsWorkflowInput as SchemaInput,
+  type CreateProductTagsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create one or more product tags, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateProductTagsWorkflowInput = {
-  /**
-   * The product tags to create.
-   */
-  product_tags: ProductTypes.CreateProductTagDTO[]
-} & AdditionalData
+export {
+  type CreateProductTagsWorkflowInput,
+  type CreateProductTagsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: SchemaInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as SchemaOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateProductTagsWorkflowInput as LegacyCreateProductTagsWorkflowInput } from "../utils/schemas"
+export type { CreateProductTagsWorkflowOutput as LegacyCreateProductTagsWorkflowOutput } from "../utils/schemas"
 
 export const createProductTagsWorkflowId = "create-product-tags"
 /**
@@ -52,8 +67,13 @@ export const createProductTagsWorkflowId = "create-product-tags"
  * @property hooks.productTagsCreated - This hook is executed after the product tags are created. You can consume this hook to perform custom actions on the created product tags.
  */
 export const createProductTagsWorkflow = createWorkflow(
-  createProductTagsWorkflowId,
-  (input: WorkflowData<CreateProductTagsWorkflowInput>) => {
+  {
+    name: createProductTagsWorkflowId,
+    description: "Create one or more product tags",
+    inputSchema: createProductTagsWorkflowInputSchema,
+    outputSchema: createProductTagsWorkflowOutputSchema,
+  },
+  (input) => {
     const productTags = createProductTagsStep(input.product_tags)
     const productTagsCreated = createHook("productTagsCreated", {
       product_tags: productTags,

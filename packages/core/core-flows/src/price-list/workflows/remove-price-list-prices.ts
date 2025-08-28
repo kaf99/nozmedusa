@@ -1,19 +1,37 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { removePriceListPricesStep } from "../steps/remove-price-list-prices"
+import {
+  removePriceListPricesWorkflowInputSchema,
+  removePriceListPricesWorkflowOutputSchema,
+  type RemovePriceListPricesWorkflowInput as SchemaInput,
+  type RemovePriceListPricesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to remove prices from price lists.
- */
-export type RemovePriceListPricesWorkflowInput = {
-  /**
-   * The IDs of the price lists to remove their prices.
-   */
+export {
+  type RemovePriceListPricesWorkflowInput,
+  type RemovePriceListPricesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as any as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   ids: string[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as string[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { RemovePriceListPricesWorkflowInput as LegacyRemovePriceListPricesWorkflowInput } from "../utils/schemas"
+export type { RemovePriceListPricesWorkflowOutput as LegacyRemovePriceListPricesWorkflowOutput } from "../utils/schemas"
 
 export const removePriceListPricesWorkflowId = "remove-price-list-prices"
 /**
@@ -36,8 +54,15 @@ export const removePriceListPricesWorkflowId = "remove-price-list-prices"
  * Remove prices in price lists.
  */
 export const removePriceListPricesWorkflow = createWorkflow(
-  removePriceListPricesWorkflowId,
-  (input: WorkflowData<RemovePriceListPricesWorkflowInput>): WorkflowResponse<string[]> => {
-    return new WorkflowResponse(removePriceListPricesStep(input.ids))
+  {
+    name: removePriceListPricesWorkflowId,
+    description: "Remove prices in price lists",
+    inputSchema: removePriceListPricesWorkflowInputSchema,
+    outputSchema: removePriceListPricesWorkflowOutputSchema,
+  },
+  (input) => {
+    return new WorkflowResponse(
+      removePriceListPricesStep(input.ids)
+    )
   }
 )

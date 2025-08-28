@@ -1,7 +1,6 @@
 import { BigNumberInput, OrderDTO, PaymentDTO } from "@medusajs/framework/types"
 import { MathBN, MedusaError, PaymentEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -11,6 +10,12 @@ import {
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { addOrderTransactionStep } from "../../order/steps/add-order-transaction"
 import { refundPaymentStep } from "../steps/refund-payment"
+import {
+  refundPaymentWorkflowInputSchema,
+  refundPaymentWorkflowOutputSchema,
+  type RefundPaymentWorkflowInput as SchemaInput,
+  type RefundPaymentWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate whether the refund is valid for the order.
@@ -81,23 +86,26 @@ export const validateRefundStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  payment_id: string
+  created_by?: string
+  amount?: BigNumberInput
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PaymentDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 /**
  * The data to refund a payment.
  */
-export type RefundPaymentWorkflowInput = {
-  /**
-   * The ID of the payment to refund.
-   */
-  payment_id: string
-  /**
-   * The ID of the user that refunded the payment.
-   */
-  created_by?: string
-  /**
-   * The amount to refund. If not provided, the full payment amount will be refunded.
-   */
-  amount?: BigNumberInput
-}
+export type RefundPaymentWorkflowInput = SchemaInput
 
 export const refundPaymentWorkflowId = "refund-payment-workflow"
 /**
@@ -120,8 +128,13 @@ export const refundPaymentWorkflowId = "refund-payment-workflow"
  * Refund a payment.
  */
 export const refundPaymentWorkflow = createWorkflow(
-  refundPaymentWorkflowId,
-  (input: WorkflowData<RefundPaymentWorkflowInput>) => {
+  {
+    name: refundPaymentWorkflowId,
+    description: "Refund a payment",
+    inputSchema: refundPaymentWorkflowInputSchema,
+    outputSchema: refundPaymentWorkflowOutputSchema,
+  },
+  (input) => {
     const payment = useRemoteQueryStep({
       entry_point: "payment",
       fields: [

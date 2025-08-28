@@ -1,18 +1,15 @@
-import { LinkWorkflowInput } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import {
   linkSalesChannelsToApiKeyStep,
   validateSalesChannelsExistStep,
 } from "../steps"
+import {
+  linkSalesChannelsToApiKeyWorkflowInputSchema,
+  linkSalesChannelsToApiKeyWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to manage the sales channels of a publishable API key.
- * 
- * @property id - The ID of the publishable API key.
- * @property add - The sales channel IDs to add to the publishable API key.
- * @property remove - The sales channel IDs to remove from the publishable API key.
- */
-export type LinkSalesChannelsToApiKeyWorkflowInput = LinkWorkflowInput
+// Re-export types from schemas for backward compatibility
+export type { LinkSalesChannelsToApiKeyWorkflowInput, LinkSalesChannelsToApiKeyWorkflowOutput } from "../utils/schemas"
 
 export const linkSalesChannelsToApiKeyWorkflowId =
   "link-sales-channels-to-api-key"
@@ -37,8 +34,12 @@ export const linkSalesChannelsToApiKeyWorkflowId =
  * Manage the sales channels of a publishable API key.
  */
 export const linkSalesChannelsToApiKeyWorkflow = createWorkflow(
-  linkSalesChannelsToApiKeyWorkflowId,
-  (input: WorkflowData<LinkSalesChannelsToApiKeyWorkflowInput>) => {
+  {
+    name: linkSalesChannelsToApiKeyWorkflowId,
+    inputSchema: linkSalesChannelsToApiKeyWorkflowInputSchema,
+    outputSchema: linkSalesChannelsToApiKeyWorkflowOutputSchema,
+  },
+  (input) => {
     validateSalesChannelsExistStep({
       sales_channel_ids: input.add ?? [],
     })

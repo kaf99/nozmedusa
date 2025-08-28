@@ -1,10 +1,15 @@
-import { LinkDefinition } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateRemoteLinksStep } from "../steps/update-remote-links"
+import {
+  updateLinksWorkflowInputSchema,
+  updateLinksWorkflowOutputSchema,
+  type UpdateLinksWorkflowInput,
+  type UpdateLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
 
 export const updateLinksWorkflowId = "update-link"
 /**
@@ -41,8 +46,13 @@ export const updateLinksWorkflowId = "update-link"
  * Update links between two records of linked data models.
  */
 export const updateLinksWorkflow = createWorkflow(
-  updateLinksWorkflowId,
-  (input: WorkflowData<LinkDefinition[]>) => {
+  {
+    name: updateLinksWorkflowId,
+    description: "Update links between two records of linked data models",
+    inputSchema: updateLinksWorkflowInputSchema,
+    outputSchema: updateLinksWorkflowOutputSchema,
+  },
+  (input: WorkflowData<UpdateLinksWorkflowInput>): WorkflowResponse<UpdateLinksWorkflowOutput> => {
     return new WorkflowResponse(updateRemoteLinksStep(input))
   }
 )

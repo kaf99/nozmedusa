@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -24,6 +23,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { refreshClaimShippingWorkflow } from "./refresh-shipping"
+import {
+  removeItemClaimActionWorkflowInputSchema,
+  removeItemClaimActionWorkflowOutputSchema,
+  type RemoveItemClaimActionWorkflowInput as SchemaInput,
+  type RemoveItemClaimActionWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that claim items can be removed.
@@ -115,6 +120,18 @@ export const removeClaimItemActionValidationStep = createStep(
 export type RemoveItemClaimActionWorkflowInput =
   OrderWorkflow.DeleteOrderClaimItemActionWorkflowInput
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: RemoveItemClaimActionWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const removeItemClaimActionWorkflowId = "remove-item-claim-action"
 /**
  * This workflow removes order items from a claim. It's used by the
@@ -137,9 +154,14 @@ export const removeItemClaimActionWorkflowId = "remove-item-claim-action"
  * Remove order items from a claim.
  */
 export const removeItemClaimActionWorkflow = createWorkflow(
-  removeItemClaimActionWorkflowId,
+  {
+    name: removeItemClaimActionWorkflowId,
+    description: "Remove order items from a claim",
+    inputSchema: removeItemClaimActionWorkflowInputSchema,
+    outputSchema: removeItemClaimActionWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<RemoveItemClaimActionWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

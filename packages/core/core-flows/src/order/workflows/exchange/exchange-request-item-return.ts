@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -27,6 +26,12 @@ import {
 } from "../../utils/order-validation"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
+import {
+  orderExchangeRequestItemReturnWorkflowInputSchema,
+  orderExchangeRequestItemReturnWorkflowOutputSchema,
+  type OrderExchangeRequestItemReturnWorkflowInput as SchemaInput,
+  type OrderExchangeRequestItemReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that items can be returned as part of an exchange.
@@ -109,6 +114,21 @@ export const exchangeRequestItemReturnValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.OrderExchangeRequestItemReturnWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const orderExchangeRequestItemReturnWorkflowId =
   "exchange-request-item-return"
 /**
@@ -138,10 +158,12 @@ export const orderExchangeRequestItemReturnWorkflowId =
  * Add inbound items to be returned as part of the exchange.
  */
 export const orderExchangeRequestItemReturnWorkflow = createWorkflow(
-  orderExchangeRequestItemReturnWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.OrderExchangeRequestItemReturnWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: orderExchangeRequestItemReturnWorkflowId,
+    inputSchema: orderExchangeRequestItemReturnWorkflowInputSchema,
+    outputSchema: orderExchangeRequestItemReturnWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderExchange = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "order_id", "return_id", "canceled_at"],

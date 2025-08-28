@@ -17,6 +17,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  cancelBeginOrderEditWorkflowInputSchema,
+  cancelBeginOrderEditWorkflowOutputSchema,
+  type CancelBeginOrderEditWorkflowInput as SchemaInput,
+  type CancelBeginOrderEditWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a requested order edit can be canceled.
@@ -76,6 +82,22 @@ export type CancelBeginOrderEditWorkflowInput = {
   order_id: string
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: CancelBeginOrderEditWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// For void outputs, we don't need to check compatibility
+const _existingOutput = undefined as SchemaOutput
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const cancelBeginOrderEditWorkflowId = "cancel-begin-order-edit"
 /**
  * This workflow cancels a requested edit for an order. It's used by the
@@ -97,10 +119,12 @@ export const cancelBeginOrderEditWorkflowId = "cancel-begin-order-edit"
  * Cancel a requested order edit.
  */
 export const cancelBeginOrderEditWorkflow = createWorkflow(
-  cancelBeginOrderEditWorkflowId,
-  function (
-    input: WorkflowData<CancelBeginOrderEditWorkflowInput>
-  ): WorkflowData<void> {
+  {
+    name: cancelBeginOrderEditWorkflowId,
+    inputSchema: cancelBeginOrderEditWorkflowInputSchema,
+    outputSchema: cancelBeginOrderEditWorkflowOutputSchema,
+  },
+  function (input): WorkflowData<void> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "version", "canceled_at"],

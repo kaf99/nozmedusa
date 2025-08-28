@@ -1,19 +1,13 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { deleteTaxRatesStep } from "../steps"
+import {
+  deleteTaxRatesWorkflowInputSchema,
+  deleteTaxRatesWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete tax rates.
- */
-export type DeleteTaxRatesWorkflowInput = { 
-  /**
-   * The IDs of the tax rates to delete.
-   */
-  ids: string[]
-}
 
 export const deleteTaxRatesWorkflowId = "delete-tax-rates"
 /**
@@ -36,10 +30,13 @@ export const deleteTaxRatesWorkflowId = "delete-tax-rates"
  * Delete one or more tax rates.
  */
 export const deleteTaxRatesWorkflow = createWorkflow(
-  deleteTaxRatesWorkflowId,
-  (
-    input: WorkflowData<DeleteTaxRatesWorkflowInput>
-  ): WorkflowResponse<void> => {
+  {
+    name: deleteTaxRatesWorkflowId,
+    description: "Delete one or more tax rates",
+    inputSchema: deleteTaxRatesWorkflowInputSchema,
+    outputSchema: deleteTaxRatesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(deleteTaxRatesStep(input.ids))
   }
 )

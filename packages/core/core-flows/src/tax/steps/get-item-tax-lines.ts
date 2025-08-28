@@ -1,12 +1,7 @@
 import {
-  CartLineItemDTO,
-  CartShippingMethodDTO,
-  CartWorkflowDTO,
+  BigNumberValue,
   ITaxModuleService,
   ItemTaxLineDTO,
-  OrderLineItemDTO,
-  OrderShippingMethodDTO,
-  OrderWorkflowDTO,
   ShippingTaxLineDTO,
   TaxableItemDTO,
   TaxableShippingDTO,
@@ -16,21 +11,64 @@ import { isDefined, MedusaError, Modules } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 
 /**
+ * Minimal type for tax calculation items - only includes fields actually used by the step.
+ * Accepts any object with these fields, including full CartLineItemDTO or OrderLineItemDTO.
+ */
+interface TaxCalculationItem {
+  id: string
+  product_id?: string
+  product_type_id?: string
+  quantity: BigNumberValue
+  unit_price: BigNumberValue
+  is_giftcard?: boolean
+}
+
+/**
+ * Minimal type for tax calculation shipping methods - only includes fields actually used by the step.
+ * Accepts any object with these fields, including full CartShippingMethodDTO or OrderShippingMethodDTO.
+ */
+interface TaxCalculationShippingMethod {
+  id: string
+  shipping_option_id?: string
+  amount: BigNumberValue
+}
+
+/**
  * The data to retrieve tax lines for an order or cart's line items and shipping methods.
  */
 export interface GetItemTaxLinesStepInput {
   /**
    * The order or cart details.
    */
-  orderOrCart: OrderWorkflowDTO | CartWorkflowDTO
+  orderOrCart: {
+    currency_code: string
+    shipping_address?: {
+      country_code?: string
+      province?: string
+      address_1?: string
+      address_2?: string
+      city?: string
+      postal_code?: string
+      metadata?: Record<string, unknown> | null
+    }
+    region?: {
+      automatic_taxes?: boolean
+    }
+    customer?: {
+      id: string
+      email: string
+      groups?: Array<{ id: string }>
+      metadata?: Record<string, unknown>
+    }
+  }
   /**
    * The order or cart's items.
    */
-  items: OrderLineItemDTO[] | CartLineItemDTO[]
+  items: TaxCalculationItem[]
   /**
    * The order or cart's shipping methods.
    */
-  shipping_methods: OrderShippingMethodDTO[] | CartShippingMethodDTO[]
+  shipping_methods: TaxCalculationShippingMethod[]
   /**
    * Whether to re-calculate taxes. Enabling this may require sending
    * requests to third-party services, depending on the implementation of the
@@ -44,14 +82,22 @@ export interface GetItemTaxLinesStepInput {
   /**
    * The shipping address of the order.
    */
-  shipping_address?: OrderWorkflowDTO["shipping_address"]
+  shipping_address?: {
+    country_code?: string
+    province?: string
+    address_1?: string
+    address_2?: string
+    city?: string
+    postal_code?: string
+    metadata?: Record<string, unknown> | null
+  }
 }
 
 function normalizeTaxModuleContext(
-  orderOrCart: OrderWorkflowDTO | CartWorkflowDTO,
+  orderOrCart: GetItemTaxLinesStepInput["orderOrCart"],
   forceTaxCalculation: boolean,
   isReturn?: boolean,
-  shippingAddress?: OrderWorkflowDTO["shipping_address"]
+  shippingAddress?: GetItemTaxLinesStepInput["shipping_address"]
 ): TaxCalculationContext | null {
   const address = shippingAddress ?? orderOrCart.shipping_address
   const shouldCalculateTax =
@@ -95,8 +141,8 @@ function normalizeTaxModuleContext(
 }
 
 function normalizeLineItemsForTax(
-  orderOrCart: OrderWorkflowDTO | CartWorkflowDTO,
-  items: OrderLineItemDTO[] | CartLineItemDTO[]
+  orderOrCart: GetItemTaxLinesStepInput["orderOrCart"],
+  items: TaxCalculationItem[]
 ): TaxableItemDTO[] {
   return items.map(
     (item) =>
@@ -112,8 +158,8 @@ function normalizeLineItemsForTax(
 }
 
 function normalizeLineItemsForShipping(
-  orderOrCart: OrderWorkflowDTO | CartWorkflowDTO,
-  shippingMethods: OrderShippingMethodDTO[] | CartShippingMethodDTO[]
+  orderOrCart: GetItemTaxLinesStepInput["orderOrCart"],
+  shippingMethods: TaxCalculationShippingMethod[]
 ): TaxableShippingDTO[] {
   return shippingMethods.map(
     (shippingMethod) =>
@@ -171,7 +217,7 @@ export const getItemTaxLinesStep = createStep(
 
     const filteredItems = items.filter(
       (item) => !item.is_giftcard || !isDefined(item.is_giftcard)
-    ) as OrderLineItemDTO[] | CartLineItemDTO[]
+    )
 
     const taxService = container.resolve<ITaxModuleService>(Modules.TAX)
 

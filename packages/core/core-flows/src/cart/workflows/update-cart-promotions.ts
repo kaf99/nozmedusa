@@ -5,7 +5,6 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common"
@@ -20,32 +19,10 @@ import {
 } from "../steps"
 import { updateCartPromotionsStep } from "../steps/update-cart-promotions"
 import { cartFieldsForRefreshSteps } from "../utils/fields"
-
-/**
- * The details of the promotion updates on a cart.
- */
-export type UpdateCartPromotionsWorkflowInput = {
-  /**
-   * The cart's ID.
-   */
-  cart_id?: string
-  /**
-   * The Cart reference.
-   */
-  cart?: any
-  /**
-   * The promotion codes to add to the cart, remove from the cart,
-   * or replace all existing promotions in the cart.
-   */
-  promo_codes?: string[]
-  /**
-   * The action to perform with the specified promotion codes.
-   */
-  action?:
-    | PromotionActions.ADD
-    | PromotionActions.REMOVE
-    | PromotionActions.REPLACE
-}
+import {
+  updateCartPromotionsWorkflowInputSchema,
+  updateCartPromotionsWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const updateCartPromotionsWorkflowId = "update-cart-promotions"
 /**
@@ -73,8 +50,13 @@ export const updateCartPromotionsWorkflowId = "update-cart-promotions"
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
  */
 export const updateCartPromotionsWorkflow = createWorkflow(
-  updateCartPromotionsWorkflowId,
-  (input: WorkflowData<UpdateCartPromotionsWorkflowInput>) => {
+  {
+    name: updateCartPromotionsWorkflowId,
+    description: "Update a cart's applied promotions to add, replace, or remove them",
+    inputSchema: updateCartPromotionsWorkflowInputSchema,
+    outputSchema: updateCartPromotionsWorkflowOutputSchema,
+  },
+  (input) => {
     const fetchCart = when({ input }, ({ input }) => {
       return !input.cart
     }).then(() => {

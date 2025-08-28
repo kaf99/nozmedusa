@@ -4,30 +4,40 @@ import {
   ReturnReasonUpdatableFields,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateReturnReasonsStep } from "../steps"
+import {
+  updateReturnReasonsWorkflowInputSchema,
+  updateReturnReasonsWorkflowOutputSchema,
+  type UpdateReturnReasonsWorkflowInput as SchemaInput,
+  type UpdateReturnReasonsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update return reasons.
- */
-export type UpdateReturnReasonsWorkflowInput = {
-  /**
-   * The filters to select the return reasons to update.
-   */
+export {
+  type UpdateReturnReasonsWorkflowInput,
+  type UpdateReturnReasonsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: FilterableOrderReturnReasonProps
-  /**
-   * The data to update the return reasons.
-   */
   update: ReturnReasonUpdatableFields
-}
+} = schemaInput
 
-/**
- * The updated return reasons.
- */
-export type UpdateReturnReasonsWorkflowOutput = OrderReturnReasonDTO[]
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderReturnReasonDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { UpdateReturnReasonsWorkflowInput as LegacyUpdateReturnReasonsWorkflowInput } from "../utils/schemas"
+export type { UpdateReturnReasonsWorkflowOutput as LegacyUpdateReturnReasonsWorkflowOutput } from "../utils/schemas"
 
 export const updateReturnReasonsWorkflowId = "update-return-reasons"
 /**
@@ -55,10 +65,13 @@ export const updateReturnReasonsWorkflowId = "update-return-reasons"
  * Update return reasons.
  */
 export const updateReturnReasonsWorkflow = createWorkflow(
-  updateReturnReasonsWorkflowId,
-  (
-    input: WorkflowData<UpdateReturnReasonsWorkflowInput>
-  ): WorkflowResponse<UpdateReturnReasonsWorkflowOutput> => {
+  {
+    name: updateReturnReasonsWorkflowId,
+    description: "Update return reasons",
+    inputSchema: updateReturnReasonsWorkflowInputSchema,
+    outputSchema: updateReturnReasonsWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(updateReturnReasonsStep(input))
   }
 )

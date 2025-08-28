@@ -40,7 +40,7 @@ export type CreateProductWorkflowInputDTO = Omit<
   /**
    * The product's variants.
    */
-  variants?: CreateProductVariantWorkflowInputDTO[]
+  variants?: Omit<CreateProductVariantWorkflowInputDTO, "product_id">[]
 }
 
 export type UpdateProductWorkflowInputDTO = ProductTypes.UpsertProductDTO & {

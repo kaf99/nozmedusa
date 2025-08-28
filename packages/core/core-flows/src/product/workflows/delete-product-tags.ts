@@ -1,6 +1,5 @@
 import { ProductTagWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -8,16 +7,11 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { deleteProductTagsStep } from "../steps"
+import {
+  deleteProductTagsWorkflowInputSchema,
+  deleteProductTagsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more product tags.
- */
-export type DeleteProductTagsWorkflowInput = { 
-  /**
-   * The IDs of the tags to delete.
-   */
-  ids: string[]
-}
 
 export const deleteProductTagsWorkflowId = "delete-product-tags"
 /**
@@ -44,8 +38,13 @@ export const deleteProductTagsWorkflowId = "delete-product-tags"
  * @property hooks.productTagsDeleted - This hook is executed after the tags are deleted. You can consume this hook to perform custom actions on the deleted tags.
  */
 export const deleteProductTagsWorkflow = createWorkflow(
-  deleteProductTagsWorkflowId,
-  (input: WorkflowData<DeleteProductTagsWorkflowInput>) => {
+  {
+    name: deleteProductTagsWorkflowId,
+    description: "Delete one or more product tags",
+    inputSchema: deleteProductTagsWorkflowInputSchema,
+    outputSchema: deleteProductTagsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedProductTags = deleteProductTagsStep(input.ids)
     const productTagsDeleted = createHook("productTagsDeleted", {
       ids: input.ids,

@@ -2,7 +2,6 @@ import {
   createStep,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 
@@ -13,6 +12,16 @@ import {
 import { deduplicate, MedusaError, Modules } from "@medusajs/framework/utils"
 import { useRemoteQueryStep } from "../../common"
 import { deleteEntitiesStep } from "../../common/steps/delete-entities"
+import {
+  deleteInventoryLevelsWorkflowInputSchema,
+  deleteInventoryLevelsWorkflowOutputSchema,
+  type DeleteInventoryLevelsWorkflowInput as SchemaInput,
+  type DeleteInventoryLevelsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type DeleteInventoryLevelsWorkflowInput,
+  type DeleteInventoryLevelsWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate the deletion of inventory levels.
@@ -95,13 +104,27 @@ export const validateInventoryLevelsDelete = createStep(
  * The data to delete inventory levels. The inventory levels to be deleted
  * are selected based on the filters that you specify.
  */
-export interface DeleteInventoryLevelsWorkflowInput
+interface OldDeleteInventoryLevelsWorkflowInput
   extends FilterableInventoryLevelProps {
   /**
    * If true, the inventory levels will be deleted even if they have stocked items.
    */
   force?: boolean
 }
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+const existingInput: OldDeleteInventoryLevelsWorkflowInput = schemaInput
+const existingOutput: void = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldDeleteInventoryLevelsWorkflowInput
+const oldOutput = undefined as void
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const deleteInventoryLevelsWorkflowId =
   "delete-inventory-levels-workflow"
@@ -125,8 +148,12 @@ export const deleteInventoryLevelsWorkflowId =
  * Delete one or more inventory levels.
  */
 export const deleteInventoryLevelsWorkflow = createWorkflow(
-  deleteInventoryLevelsWorkflowId,
-  (input: WorkflowData<DeleteInventoryLevelsWorkflowInput>) => {
+  {
+    name: deleteInventoryLevelsWorkflowId,
+    inputSchema: deleteInventoryLevelsWorkflowInputSchema,
+    outputSchema: deleteInventoryLevelsWorkflowOutputSchema,
+  },
+  (input) => {
     const { filters, force } = transform(input, (data) => {
       const { force, ...filters } = data
 

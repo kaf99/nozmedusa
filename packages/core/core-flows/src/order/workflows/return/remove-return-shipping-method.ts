@@ -7,13 +7,18 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   parallelize,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  deleteReturnShippingMethodWorkflowInputSchema,
+  deleteReturnShippingMethodWorkflowOutputSchema,
+  type DeleteReturnShippingMethodWorkflowInput as SchemaInput,
+  type DeleteReturnShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteOrderShippingMethods } from "../../steps"
 import { deleteOrderChangeActionsStep } from "../../steps/delete-order-change-actions"
@@ -38,7 +43,10 @@ export type RemoveReturnShippingMethodValidationStepInput = {
   /**
    * The details of the shipping method to be removed.
    */
-  input: Pick<OrderWorkflow.DeleteReturnShippingMethodWorkflowInput, "return_id" | "action_id">
+  input: Pick<
+    OrderWorkflow.DeleteReturnShippingMethodWorkflowInput,
+    "return_id" | "action_id"
+  >
 }
 
 /**
@@ -46,14 +54,14 @@ export type RemoveReturnShippingMethodValidationStepInput = {
  * If the return is canceled, the order change is not active,
  * the shipping method isn't in the return,
  * or the action doesn't add a shipping method, the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve a return and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = removeReturnShippingMethodValidationStep({
  *   orderChange: {
@@ -101,10 +109,10 @@ export const removeReturnShippingMethodWorkflowId =
 /**
  * This workflow removes a shipping method from a return. It's used by the
  * [Remove Shipping Method from Return Admin API Route](https://docs.medusajs.com/api/admin#returns_deletereturnsidshippingmethodaction_id).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you
  * to remove a shipping method from a return in your custom flows.
- * 
+ *
  * @example
  * const { result } = await removeReturnShippingMethodWorkflow(container)
  * .run({
@@ -113,16 +121,28 @@ export const removeReturnShippingMethodWorkflowId =
  *     action_id: "orchac_123",
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Remove a shipping method from a return.
  */
+
+// Type verification block - DO NOT REMOVE
+const _in: SchemaInput =
+  {} as OrderWorkflow.DeleteReturnShippingMethodWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
 export const removeReturnShippingMethodWorkflow = createWorkflow(
-  removeReturnShippingMethodWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.DeleteReturnShippingMethodWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: removeReturnShippingMethodWorkflowId,
+    description: "Remove a shipping method from a return",
+    inputSchema: deleteReturnShippingMethodWorkflowInputSchema,
+    outputSchema: deleteReturnShippingMethodWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

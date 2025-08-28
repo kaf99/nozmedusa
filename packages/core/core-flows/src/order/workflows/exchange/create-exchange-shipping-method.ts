@@ -8,6 +8,7 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
+  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -24,6 +25,12 @@ import { prepareShippingMethod } from "../../utils/prepare-shipping-method"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { updateOrderTaxLinesWorkflow } from "../update-tax-lines"
 import { fetchShippingOptionForOrderWorkflow } from "../fetch-shipping-option"
+import {
+  createExchangeShippingMethodWorkflowInputSchema,
+  createExchangeShippingMethodWorkflowOutputSchema,
+  type CreateExchangeShippingMethodWorkflowInput as SchemaInput,
+  type CreateExchangeShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a shipping method can be created for an exchange.
@@ -108,6 +115,18 @@ export type CreateExchangeShippingMethodWorkflowInput = {
   custom_amount?: BigNumberInput | null
 }
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateExchangeShippingMethodWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const createExchangeShippingMethodWorkflowId =
   "create-exchange-shipping-method"
 /**
@@ -149,11 +168,15 @@ export const createExchangeShippingMethodWorkflowId =
  * Create an inbound or outbound shipping method for an exchange.
  */
 export const createExchangeShippingMethodWorkflow = createWorkflow(
-  createExchangeShippingMethodWorkflowId,
-  function (
-    input: CreateExchangeShippingMethodWorkflowInput
-  ): WorkflowResponse<OrderPreviewDTO> {
-    const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
+  {
+    name: createExchangeShippingMethodWorkflowId,
+    description:
+      "Create an inbound or outbound shipping method for an exchange",
+    inputSchema: createExchangeShippingMethodWorkflowInputSchema,
+    outputSchema: createExchangeShippingMethodWorkflowOutputSchema,
+  },
+  function (input) {
+    const orderExchange: WorkflowData<OrderExchangeDTO> = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "canceled_at"],
       variables: { id: input.exchange_id },
@@ -161,7 +184,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     })
 
-    const order: OrderDTO = useRemoteQueryStep({
+    const order: WorkflowData<OrderDTO> = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "currency_code", "canceled_at"],
       variables: { id: orderExchange.order_id },
@@ -173,7 +196,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
       return !!data.return_id
     })
 
-    const orderChange: OrderChangeDTO = useRemoteQueryStep({
+    const orderChange: WorkflowData<OrderChangeDTO> = useRemoteQueryStep({
       entry_point: "order_change",
       fields: ["id", "status", "version", "actions.*"],
       variables: {
@@ -238,9 +261,9 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
       {
         relatedEntity: orderExchange,
         shippingOptions,
-        customPrice: input.custom_amount,
+        customPrice: input.custom_amount as BigNumberInput | null | undefined,
         orderChange,
-        input,
+        return_id: input.return_id,
       },
       prepareShippingMethod("exchange_id")
     )
@@ -267,7 +290,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
         orderExchange,
         shippingOptions,
         createdMethods,
-        customPrice: input.custom_amount,
+        customPrice: input.custom_amount as BigNumberInput | null | undefined,
         orderChange,
         input,
       },

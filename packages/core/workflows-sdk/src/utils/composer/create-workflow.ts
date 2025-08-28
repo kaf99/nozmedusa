@@ -34,7 +34,8 @@ global[OrchestrationUtils.SymbolMedusaWorkflowComposerContext] = null
 /**
  * Options for creating a workflow with schema validation
  */
-export interface CreateWorkflowOptions<TInput = unknown, TOutput = unknown> extends TransactionModelOptions {
+export interface CreateWorkflowOptions<TInput = unknown, TOutput = unknown>
+  extends TransactionModelOptions {
   /**
    * The name of the workflow
    */
@@ -123,7 +124,10 @@ export function createWorkflow<
   },
   composer: (
     input: WorkflowData<StandardSchemaV1.InferOutput<TInputSchema>>
-  ) => void | WorkflowResponse<StandardSchemaV1.InferOutput<TOutputSchema>, THooks>
+  ) => void | WorkflowResponse<
+    StandardSchemaV1.InferOutput<TOutputSchema>,
+    THooks
+  >
 ): ReturnWorkflow<
   StandardSchemaV1.InferOutput<TInputSchema>,
   StandardSchemaV1.InferOutput<TOutputSchema>,
@@ -156,7 +160,10 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
 
 // Implementation
 export function createWorkflow<TData, TResult, THooks extends any[]>(
-  nameOrConfig: string | ({ name: string } & TransactionModelOptions) | CreateWorkflowOptions<any, any>,
+  nameOrConfig:
+    | string
+    | ({ name: string } & TransactionModelOptions)
+    | CreateWorkflowOptions<any, any>,
   composer: (
     input: WorkflowData<TData>
   ) => void | WorkflowResponse<TResult, THooks>
@@ -164,7 +171,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
   const fileSourcePath = getCallerFilePath() as string
   const name = isString(nameOrConfig) ? nameOrConfig : nameOrConfig.name
   const options = isString(nameOrConfig) ? {} : nameOrConfig
-  
+
   // Extract schemas and description if provided
   const inputSchema = (options as CreateWorkflowOptions<any, any>).inputSchema
   const outputSchema = (options as CreateWorkflowOptions<any, any>).outputSchema
@@ -178,7 +185,7 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
     WorkflowManager.register(name, undefined, handlers, options, {
       inputSchema,
       outputSchema,
-      description
+      description,
     })
   }
 
@@ -226,13 +233,13 @@ export function createWorkflow<TData, TResult, THooks extends any[]>(
     WorkflowManager.update(name, context.flow, handlers, options, {
       inputSchema,
       outputSchema,
-      description
+      description,
     })
   } else {
     WorkflowManager.register(name, context.flow, handlers, options, {
       inputSchema,
       outputSchema,
-      description
+      description,
     })
   }
 

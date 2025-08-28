@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -7,16 +6,10 @@ import {
   deletePaymentSessionsStep,
   validateDeletedPaymentSessionsStep,
 } from "../steps"
-
-/**
- * The data to delete payment sessions.
- */
-export interface DeletePaymentSessionsWorkflowInput {
-  /**
-   * The IDs of the payment sessions to delete.
-   */
-  ids: string[]
-}
+import {
+  deletePaymentSessionsWorkflowInputSchema,
+  deletePaymentSessionsWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const deletePaymentSessionsWorkflowId = "delete-payment-sessions"
 /**
@@ -39,8 +32,13 @@ export const deletePaymentSessionsWorkflowId = "delete-payment-sessions"
  * Delete payment sessions.
  */
 export const deletePaymentSessionsWorkflow = createWorkflow(
-  deletePaymentSessionsWorkflowId,
-  (input: WorkflowData<DeletePaymentSessionsWorkflowInput>) => {
+  {
+    name: deletePaymentSessionsWorkflowId,
+    description: "Delete payment sessions",
+    inputSchema: deletePaymentSessionsWorkflowInputSchema,
+    outputSchema: deletePaymentSessionsWorkflowOutputSchema,
+  },
+  (input) => {
     const idsDeleted = deletePaymentSessionsStep({ ids: input.ids })
 
     validateDeletedPaymentSessionsStep({

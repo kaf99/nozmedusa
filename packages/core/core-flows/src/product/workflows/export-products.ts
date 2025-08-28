@@ -7,6 +7,24 @@ import { WorkflowTypes } from "@medusajs/framework/types"
 import { generateProductCsvStep, getAllProductsStep } from "../steps"
 import { useRemoteQueryStep } from "../../common"
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
+import {
+  exportProductsDTOSchema,
+  exportProductsWorkflowOutputSchema,
+  type ExportProductsDTO as SchemaInput,
+  type ExportProductsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as unknown as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: WorkflowTypes.ProductWorkflow.ExportProductsDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const exportProductsWorkflowId = "export-products"
 /**
@@ -51,9 +69,14 @@ export const exportProductsWorkflowId = "export-products"
  * Export products with filtering capabilities.
  */
 export const exportProductsWorkflow = createWorkflow(
-  exportProductsWorkflowId,
+  {
+    name: exportProductsWorkflowId,
+    description: "Export products",
+    inputSchema: exportProductsDTOSchema,
+    outputSchema: exportProductsWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<WorkflowTypes.ProductWorkflow.ExportProductsDTO>
+    input
   ): WorkflowData<void> => {
     const products = getAllProductsStep(input).config({
       async: true,

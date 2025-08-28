@@ -24,6 +24,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  confirmClaimRequestWorkflowInputSchema,
+  confirmClaimRequestWorkflowOutputSchema,
+  type ConfirmClaimRequestWorkflowInput as SchemaInput,
+  type ConfirmClaimRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import { prepareConfirmInventoryInput } from "../../../cart/utils/prepare-confirm-inventory-input"
 import {
@@ -288,10 +294,27 @@ export const confirmClaimRequestWorkflowId = "confirm-claim-request"
  *
  * Confirm a requested claim.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ConfirmClaimRequestWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const confirmClaimRequestWorkflow = createWorkflow(
-  confirmClaimRequestWorkflowId,
+  {
+    name: confirmClaimRequestWorkflowId,
+    description: "Confirm a requested claim",
+    inputSchema: confirmClaimRequestWorkflowInputSchema,
+    outputSchema: confirmClaimRequestWorkflowOutputSchema,
+  },
   function (
-    input: ConfirmClaimRequestWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

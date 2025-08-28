@@ -5,13 +5,34 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updatePricePreferencesWorkflow } from "../../pricing"
 import { updateRegionsStep } from "../steps"
 import { setRegionsPaymentProvidersStep } from "../steps/set-regions-payment-providers"
+import {
+  updateRegionsWorkflowInputSchema,
+  updateRegionsWorkflowOutputSchema,
+  type UpdateRegionsWorkflowInput as SchemaInput,
+  type UpdateRegionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Re-export workflow types from schemas
+export type UpdateRegionsWorkflowInput = SchemaInput
+export type UpdateRegionsWorkflowOutput = SchemaOutput
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateRegionsWorkflowId = "update-regions"
 /**
@@ -39,10 +60,13 @@ export const updateRegionsWorkflowId = "update-regions"
  * Update regions.
  */
 export const updateRegionsWorkflow = createWorkflow(
-  updateRegionsWorkflowId,
-  (
-    input: WorkflowData<WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowInput>
-  ): WorkflowResponse<WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowOutput> => {
+  {
+    name: updateRegionsWorkflowId,
+    description: "Update regions",
+    inputSchema: updateRegionsWorkflowInputSchema,
+    outputSchema: updateRegionsWorkflowOutputSchema,
+  },
+  (input) => {
     const normalizedInput = transform(input, (data) => {
       const { selector, update } = data
       const { payment_providers = [], is_tax_inclusive, ...rest } = update

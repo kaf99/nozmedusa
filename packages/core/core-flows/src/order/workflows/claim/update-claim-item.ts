@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -23,6 +22,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  updateClaimItemWorkflowInputSchema,
+  updateClaimItemWorkflowOutputSchema,
+  type UpdateClaimItemWorkflowInput as SchemaInput,
+  type UpdateClaimItemWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a claim's item can be updated.
@@ -50,14 +55,14 @@ export type UpdateClaimItemValidationStepInput = {
  * This step validates that a claim's item (added as an order item) can be updated.
  * If the order, claim, or order change is canceled, no action is claiming the item,
  * or the action is not claiming the item, the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order, order claim, and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateClaimItemValidationStep({
  *   order: {
@@ -110,14 +115,26 @@ export const updateClaimItemValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.UpdateClaimItemWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const updateClaimItemWorkflowId = "update-claim-item"
 /**
  * This workflow updates a claim item, added to the claim from an order item.
  * It's used by the [Update Claim Item Admin API Route](https://docs.medusajs.com/api/admin#claims_postclaimsidclaimitemsaction_id).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to update a claim item
  * in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateClaimItemWorkflow(container)
  * .run({
@@ -129,16 +146,19 @@ export const updateClaimItemWorkflowId = "update-claim-item"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update a claim item, added to the claim from an order item.
  */
 export const updateClaimItemWorkflow = createWorkflow(
-  updateClaimItemWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.UpdateClaimItemWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: updateClaimItemWorkflowId,
+    description: "Update a claim item, added to the claim from an order item.",
+    inputSchema: updateClaimItemWorkflowInputSchema,
+    outputSchema: updateClaimItemWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "status", "order_id", "canceled_at"],

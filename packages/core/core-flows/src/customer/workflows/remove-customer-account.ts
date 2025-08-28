@@ -6,13 +6,26 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import { expectTypeOf } from "expect-type"
 import { setAuthAppMetadataStep } from "../../auth"
 import { useRemoteQueryStep } from "../../common"
 import { deleteCustomersWorkflow } from "./delete-customers"
+import {
+  removeCustomerAccountWorkflowInputSchema,
+  removeCustomerAccountWorkflowOutputSchema,
+  type RemoveCustomerAccountWorkflowInput as SchemaInput,
+  type RemoveCustomerAccountWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 export type RemoveCustomerAccountWorkflowInput = {
   customerId: string
 }
+
+export type RemoveCustomerAccountWorkflowOutput = string
+
+// Type verification
+expectTypeOf<SchemaInput>().toEqualTypeOf<RemoveCustomerAccountWorkflowInput>()
+expectTypeOf<SchemaOutput>().toEqualTypeOf<RemoveCustomerAccountWorkflowOutput>()
 export const removeCustomerAccountWorkflowId = "remove-customer-account"
 /**
  * This workflow deletes a customer and remove its association to its auth identity. It's used by the
@@ -41,7 +54,12 @@ export const removeCustomerAccountWorkflowId = "remove-customer-account"
  * Delete a customer account and its auth identity association.
  */
 export const removeCustomerAccountWorkflow = createWorkflow(
-  removeCustomerAccountWorkflowId,
+  {
+    name: removeCustomerAccountWorkflowId,
+    description: "Delete a customer account and its auth identity association",
+    inputSchema: removeCustomerAccountWorkflowInputSchema,
+    outputSchema: removeCustomerAccountWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<RemoveCustomerAccountWorkflowInput>
   ): WorkflowResponse<string> => {

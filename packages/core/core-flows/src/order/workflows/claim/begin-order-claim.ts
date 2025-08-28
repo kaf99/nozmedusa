@@ -4,12 +4,17 @@ import {
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  beginOrderClaimWorkflowInputSchema,
+  beginOrderClaimWorkflowOutputSchema,
+  type BeginOrderClaimWorkflowInput as SchemaInput,
+  type BeginOrderClaimWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { createOrderClaimsStep } from "../../steps/claim/create-claims"
 import { createOrderChangeStep } from "../../steps/create-order-change"
@@ -72,10 +77,27 @@ export const beginClaimOrderWorkflowId = "begin-claim-order"
  * 
  * Create an order claim in requested state.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.BeginOrderClaimWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderChangeDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const beginClaimOrderWorkflow = createWorkflow(
-  beginClaimOrderWorkflowId,
+  {
+    name: beginClaimOrderWorkflowId,
+    description: "Create an order claim in requested state",
+    inputSchema: beginOrderClaimWorkflowInputSchema,
+    outputSchema: beginOrderClaimWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.BeginOrderClaimWorkflowInput>
+    input
   ): WorkflowResponse<OrderChangeDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

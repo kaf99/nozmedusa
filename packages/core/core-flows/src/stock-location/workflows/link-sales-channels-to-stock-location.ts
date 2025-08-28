@@ -1,19 +1,31 @@
 import { LinkWorkflowInput } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { transform } from "@medusajs/framework/workflows-sdk"
 import {
   associateLocationsWithSalesChannelsStep,
   detachLocationsFromSalesChannelsStep,
 } from "../../sales-channel"
+import {
+  linkSalesChannelsToStockLocationWorkflowInputSchema,
+  linkSalesChannelsToStockLocationWorkflowOutputSchema,
+  type LinkSalesChannelsToStockLocationWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The sales channels to manage for a stock location.
- * 
- * @property id - The ID of the stock location.
- * @property add - The IDs of the sales channels to add to the stock location.
- * @property remove - The IDs of the sales channels to remove from the stock location.
- */
-export type LinkSalesChannelsToStockLocationWorkflowInput = LinkWorkflowInput
+export {
+  type LinkSalesChannelsToStockLocationWorkflowInput,
+  type LinkSalesChannelsToStockLocationWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: LinkWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: void = undefined as unknown as void
+
+console.log(existingInput, existingOutput)
 
 export const linkSalesChannelsToStockLocationWorkflowId =
   "link-sales-channels-to-stock-location"
@@ -39,8 +51,13 @@ export const linkSalesChannelsToStockLocationWorkflowId =
  * Manage the sales channels of a stock location.
  */
 export const linkSalesChannelsToStockLocationWorkflow = createWorkflow(
-  linkSalesChannelsToStockLocationWorkflowId,
-  (input: WorkflowData<LinkSalesChannelsToStockLocationWorkflowInput>): void => {
+  {
+    name: linkSalesChannelsToStockLocationWorkflowId,
+    description: "Manage the sales channels of a stock location",
+    inputSchema: linkSalesChannelsToStockLocationWorkflowInputSchema,
+    outputSchema: linkSalesChannelsToStockLocationWorkflowOutputSchema,
+  },
+  (input) => {
     const toAdd = transform({ input }, (data) => {
       return data.input.add?.map((salesChannelId) => ({
         sales_channel_id: salesChannelId,

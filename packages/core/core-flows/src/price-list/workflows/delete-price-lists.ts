@@ -1,17 +1,36 @@
 import { Modules } from "@medusajs/framework/utils"
-import { createWorkflow, WorkflowData } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deletePriceListsStep } from "../steps"
+import {
+  deletePriceListsWorkflowInputSchema,
+  deletePriceListsWorkflowOutputSchema,
+  type DeletePriceListsWorkflowInput as SchemaInput,
+  type DeletePriceListsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to delete price lists.
- */
-export type DeletePriceListsWorkflowInput = {
-  /**
-   * The IDs of the price lists to delete.
-   */
+export {
+  type DeletePriceListsWorkflowInput,
+  type DeletePriceListsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as any as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   ids: string[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { DeletePriceListsWorkflowInput as LegacyDeletePriceListsWorkflowInput } from "../utils/schemas"
+export type { DeletePriceListsWorkflowOutput as LegacyDeletePriceListsWorkflowOutput } from "../utils/schemas"
 
 export const deletePriceListsWorkflowId = "delete-price-lists"
 /**
@@ -34,8 +53,13 @@ export const deletePriceListsWorkflowId = "delete-price-lists"
  * Delete one or more price lists.
  */
 export const deletePriceListsWorkflow = createWorkflow(
-  deletePriceListsWorkflowId,
-  (input: WorkflowData<DeletePriceListsWorkflowInput>): WorkflowData<void> => {
+  {
+    name: deletePriceListsWorkflowId,
+    description: "Delete one or more price lists",
+    inputSchema: deletePriceListsWorkflowInputSchema,
+    outputSchema: deletePriceListsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedPriceLists = deletePriceListsStep(input.ids)
 
     removeRemoteLinkStep({

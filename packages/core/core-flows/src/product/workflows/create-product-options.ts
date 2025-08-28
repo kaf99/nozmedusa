@@ -1,7 +1,6 @@
 import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductOptionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,16 +8,35 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createProductOptionsStep } from "../steps"
+import {
+  createProductOptionsWorkflowInputSchema,
+  createProductOptionsWorkflowOutputSchema,
+  type CreateProductOptionsWorkflowInput as SchemaInput,
+  type CreateProductOptionsWorkflowOutput as SchemaOutput,
+} from "../utils/create-schemas"
 
-/**
- * The data to create one or more product options, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateProductOptionsWorkflowInput = {
-  /**
-   * The product options to create.
-   */
+export {
+  type CreateProductOptionsWorkflowInput,
+  type CreateProductOptionsWorkflowOutput,
+} from "../utils/create-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   product_options: ProductTypes.CreateProductOptionDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as ProductTypes.ProductOptionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateProductOptionsWorkflowInput as LegacyCreateProductOptionsWorkflowInput } from "../utils/create-schemas"
+export type { CreateProductOptionsWorkflowOutput as LegacyCreateProductOptionsWorkflowOutput } from "../utils/create-schemas"
 
 export const createProductOptionsWorkflowId = "create-product-options"
 /**
@@ -56,8 +74,13 @@ export const createProductOptionsWorkflowId = "create-product-options"
  * @property hooks.productOptionsCreated - This hook is executed after the product options are created. You can consume this hook to perform custom actions on the created product options.
  */
 export const createProductOptionsWorkflow = createWorkflow(
-  createProductOptionsWorkflowId,
-  (input: WorkflowData<CreateProductOptionsWorkflowInput>) => {
+  {
+    name: createProductOptionsWorkflowId,
+    description: "Create one or more product options",
+    inputSchema: createProductOptionsWorkflowInputSchema,
+    outputSchema: createProductOptionsWorkflowOutputSchema,
+  },
+  (input) => {
     const productOptions = createProductOptionsStep(input.product_options)
     const productOptionsCreated = createHook("productOptionsCreated", {
       product_options: productOptions,

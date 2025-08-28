@@ -5,6 +5,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateOrderTaxLinesWorkflowInputSchema,
+  updateOrderTaxLinesWorkflowOutputSchema,
+  type UpdateOrderTaxLinesWorkflowInput as SchemaInput,
+  type UpdateOrderTaxLinesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { getItemTaxLinesStep } from "../../tax/steps/get-item-tax-lines"
 import { setOrderTaxLinesForItemsStep } from "../steps"
@@ -177,10 +183,27 @@ export const updateOrderTaxLinesWorkflowId = "update-order-tax-lines"
  *
  * Update the tax lines of items and shipping methods in an order.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: UpdateOrderTaxLinesWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const updateOrderTaxLinesWorkflow = createWorkflow(
-  updateOrderTaxLinesWorkflowId,
+  {
+    name: updateOrderTaxLinesWorkflowId,
+    description: "Update the tax lines of items and shipping methods in an order",
+    inputSchema: updateOrderTaxLinesWorkflowInputSchema,
+    outputSchema: updateOrderTaxLinesWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<UpdateOrderTaxLinesWorkflowInput>
+    input
   ): WorkflowData<void> => {
     const isFullOrder = transform(input, (data) => {
       return !data.item_ids && !data.shipping_method_ids

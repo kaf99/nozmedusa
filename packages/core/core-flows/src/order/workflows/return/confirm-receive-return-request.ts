@@ -34,6 +34,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  confirmReceiveReturnRequestWorkflowInputSchema,
+  confirmReceiveReturnRequestWorkflowOutputSchema,
+  type ConfirmReceiveReturnRequestWorkflowInput as SchemaInput,
+  type ConfirmReceiveReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return receival can be confirmed.
@@ -178,6 +184,18 @@ export type ConfirmReceiveReturnRequestWorkflowInput = {
   confirmed_by?: string
 }
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ConfirmReceiveReturnRequestWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const confirmReturnReceiveWorkflowId = "confirm-return-receive"
 /**
  * This workflow confirms a return receival request. It's used by the
@@ -199,9 +217,14 @@ export const confirmReturnReceiveWorkflowId = "confirm-return-receive"
  * Confirm a return receival request.
  */
 export const confirmReturnReceiveWorkflow = createWorkflow(
-  confirmReturnReceiveWorkflowId,
+  {
+    name: confirmReturnReceiveWorkflowId,
+    description: "Confirm a return receival request",
+    inputSchema: confirmReceiveReturnRequestWorkflowInputSchema,
+    outputSchema: confirmReceiveReturnRequestWorkflowOutputSchema,
+  },
   function (
-    input: ConfirmReceiveReturnRequestWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",

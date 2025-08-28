@@ -16,7 +16,6 @@ import {
   OrderWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -34,6 +33,20 @@ import {
 } from "../utils/order-validation"
 import { createReservationsStep } from "../../reservation"
 import { updateReservationsStep } from "../../reservation"
+import {
+  cancelOrderFulfillmentWorkflowInputSchema,
+  cancelOrderFulfillmentWorkflowOutputSchema,
+  type CancelOrderFulfillmentWorkflowInput as SchemaInput,
+} from "../utils/schemas"
+
+export {
+  type CancelOrderFulfillmentWorkflowInput,
+  type CancelOrderFulfillmentWorkflowOutput,
+} from "../utils/schemas"
+
+const _in: SchemaInput =
+  {} as OrderWorkflow.CancelOrderFulfillmentWorkflowInput & AdditionalData
+void _in
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
   variant?: ProductVariantDTO & {
@@ -124,7 +137,7 @@ export const cancelOrderFulfillmentValidateOrder = createStep(
 
     throwIfItemsDoesNotExistsInOrder({
       order,
-      inputItems: fulfillment.items.map((i) => ({
+      inputItems: (fulfillment.items ?? []).map((i) => ({
         id: i.line_item_id as string,
         quantity: i.quantity,
       })),
@@ -140,7 +153,7 @@ function prepareCancelOrderFulfillmentData({
   fulfillment: FulfillmentDTO
 }) {
   const lineItemIds = new Array(
-    ...new Set(fulfillment.items.map((i) => i.line_item_id))
+    ...new Set((fulfillment.items ?? []).map((i) => i.line_item_id))
   )
 
   return {
@@ -155,7 +168,7 @@ function prepareCancelOrderFulfillmentData({
       // find inventory items
       const iitems = orderItem!.variant?.inventory_items
       // find fulfillment item
-      const fitem = fulfillment.items.find(
+      const fitem = (fulfillment.items ?? []).find(
         (i) => i.line_item_id === lineItemId
       )!
 
@@ -215,7 +228,7 @@ function prepareInventoryUpdate({
     return acc
   }, {})
 
-  for (const fulfillmentItem of fulfillment.items) {
+  for (const fulfillmentItem of fulfillment.items ?? []) {
     // if this is `null` this means that item is from variant that has `manage_inventory` false
     if (!fulfillmentItem.inventory_item_id) {
       continue
@@ -268,11 +281,8 @@ function prepareInventoryUpdate({
   }
 }
 
-/**
- * The data to cancel an order's fulfillment, along with custom data that's passed to the workflow's hooks.
- */
-export type CancelOrderFulfillmentWorkflowInput =
-  OrderWorkflow.CancelOrderFulfillmentWorkflowInput & AdditionalData
+// Legacy type for backward compatibility
+export type { CancelOrderFulfillmentWorkflowInput as LegacyCancelOrderFulfillmentWorkflowInput } from "../utils/schemas"
 
 export const cancelOrderFulfillmentWorkflowId = "cancel-order-fulfillment"
 /**
@@ -302,8 +312,13 @@ export const cancelOrderFulfillmentWorkflowId = "cancel-order-fulfillment"
  * @property hooks.orderFulfillmentCanceled - This hook is executed after the fulfillment is canceled. You can consume this hook to perform custom actions on the canceled fulfillment.
  */
 export const cancelOrderFulfillmentWorkflow = createWorkflow(
-  cancelOrderFulfillmentWorkflowId,
-  (input: WorkflowData<CancelOrderFulfillmentWorkflowInput>) => {
+  {
+    name: cancelOrderFulfillmentWorkflowId,
+    description: "Cancel an order's fulfillment",
+    inputSchema: cancelOrderFulfillmentWorkflowInputSchema,
+    outputSchema: cancelOrderFulfillmentWorkflowOutputSchema,
+  },
+  (input) => {
     const order: OrderDTO & { fulfillments: FulfillmentDTO[] } =
       useRemoteQueryStep({
         entry_point: "orders",
@@ -336,7 +351,7 @@ export const cancelOrderFulfillmentWorkflow = createWorkflow(
     })
 
     const lineItemIds = transform({ fulfillment }, ({ fulfillment }) => {
-      return fulfillment.items.map((i) => i.line_item_id)
+      return (fulfillment.items ?? []).map((i) => i.line_item_id)
     })
 
     const reservations = useRemoteQueryStep({

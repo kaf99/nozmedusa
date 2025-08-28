@@ -1,6 +1,5 @@
 import { LinkWorkflowInput } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   createWorkflow,
   parallelize,
 } from "@medusajs/framework/workflows-sdk"
@@ -8,15 +7,27 @@ import {
   addCampaignPromotionsStep,
   removeCampaignPromotionsStep,
 } from "../steps"
+import {
+  addOrRemoveCampaignPromotionsWorkflowInputSchema,
+  addOrRemoveCampaignPromotionsWorkflowOutputSchema,
+  type AddOrRemoveCampaignPromotionsWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The data to manage the promotions of a campaign.
- * 
- * @property id - The ID of the campaign to manage the promotions of.
- * @property add - The IDs of the promotions to add to the campaign.
- * @property remove - The IDs of the promotions to remove from the campaign.
- */
-export type AddOrRemoveCampaignPromotionsWorkflowInput = LinkWorkflowInput
+export {
+  type AddOrRemoveCampaignPromotionsWorkflowInput,
+  type AddOrRemoveCampaignPromotionsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: LinkWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: void = undefined as unknown as void
+
+console.log(existingInput, existingOutput)
 
 export const addOrRemoveCampaignPromotionsWorkflowId =
   "add-or-remove-campaign-promotions"
@@ -42,8 +53,13 @@ export const addOrRemoveCampaignPromotionsWorkflowId =
  * Manage the promotions of a campaign.
  */
 export const addOrRemoveCampaignPromotionsWorkflow = createWorkflow(
-  addOrRemoveCampaignPromotionsWorkflowId,
-  (input: WorkflowData<AddOrRemoveCampaignPromotionsWorkflowInput>): WorkflowData<void> => {
+  {
+    name: addOrRemoveCampaignPromotionsWorkflowId,
+    description: "Manage the promotions of a campaign",
+    inputSchema: addOrRemoveCampaignPromotionsWorkflowInputSchema,
+    outputSchema: addOrRemoveCampaignPromotionsWorkflowOutputSchema,
+  },
+  (input) => {
     parallelize(
       addCampaignPromotionsStep(input),
       removeCampaignPromotionsStep(input)

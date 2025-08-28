@@ -1,9 +1,4 @@
 import {
-  CartLineItemDTO,
-  CartShippingMethodDTO,
-} from "@medusajs/framework/types"
-import {
-  WorkflowData,
   createWorkflow,
   transform,
   when,
@@ -11,6 +6,10 @@ import {
 import { useRemoteQueryStep } from "../../common"
 import { getItemTaxLinesStep } from "../../tax/steps/get-item-tax-lines"
 import { setTaxLinesForItemsStep } from "../steps"
+import {
+  updateTaxLinesWorkflowInputSchema,
+  updateTaxLinesWorkflowOutputSchema,
+} from "../utils/schemas"
 
 const cartFields = [
   "id",
@@ -61,45 +60,6 @@ const cartFields = [
   "shipping_address.metadata",
 ]
 
-/**
- * The details of the cart to update tax lines for.
- */
-export type UpdateTaxLinesWorkflowInput = {
-  /**
-   * The cart's ID.
-   */
-  cart_id?: string
-  /**
-   * The Cart reference.
-   */
-  cart?: any
-  /**
-   * The items to update their tax lines.
-   * If not specified, taxes are updated for all of the cart's
-   * line items.
-   *
-   * @privateRemarks
-   * This doesn't seem to be used?
-   */
-  items?: CartLineItemDTO[]
-  /**
-   * The shipping methods to update their tax lines.
-   * If not specified, taxes are updated for all of the cart's
-   * shipping methods.
-   *
-   * @privateRemarks
-   * This doesn't seem to be used?
-   */
-  shipping_methods?: CartShippingMethodDTO[]
-  /**
-   * Whether to force re-calculating tax amounts, which
-   * may include sending requests to a third-part tax provider, depending
-   * on the configurations of the cart's tax region.
-   *
-   * @defaultValue false
-   */
-  force_tax_calculation?: boolean
-}
 
 export const updateTaxLinesWorkflowId = "update-tax-lines"
 /**
@@ -121,8 +81,13 @@ export const updateTaxLinesWorkflowId = "update-tax-lines"
  * Update a cart's tax lines.
  */
 export const updateTaxLinesWorkflow = createWorkflow(
-  updateTaxLinesWorkflowId,
-  (input: WorkflowData<UpdateTaxLinesWorkflowInput>): WorkflowData<void> => {
+  {
+    name: updateTaxLinesWorkflowId,
+    description: "Update a cart's tax lines",
+    inputSchema: updateTaxLinesWorkflowInputSchema,
+    outputSchema: updateTaxLinesWorkflowOutputSchema,
+  },
+  (input) => {
     const fetchCart = when({ input }, ({ input }) => {
       return !input.cart
     }).then(() => {

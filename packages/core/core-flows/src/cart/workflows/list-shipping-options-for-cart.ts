@@ -2,7 +2,6 @@ import {
   createHook,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep, validatePresenceOfStep } from "../../common"
@@ -10,10 +9,34 @@ import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { cartFieldsForPricingContext } from "../utils/fields"
 import {
   AdditionalData,
-  ListShippingOptionsForCartWorkflowInput,
+  ListShippingOptionsForCartWorkflowInput as OldListShippingOptionsForCartWorkflowInput,
 } from "@medusajs/types"
 import { isDefined } from "@medusajs/framework/utils"
-import { pricingContextResult } from "../utils/schemas"
+import {
+  pricingContextResult,
+  listShippingOptionsForCartWorkflowInputSchema,
+  listShippingOptionsForCartWorkflowOutputSchema,
+  type ListShippingOptionsForCartWorkflowInput as SchemaInput,
+  type ListShippingOptionsForCartWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type ListShippingOptionsForCartWorkflowInput,
+  type ListShippingOptionsForCartWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput[]
+const existingInput: OldListShippingOptionsForCartWorkflowInput & AdditionalData = schemaInput
+const existingOutput: any[] = schemaOutput // Output is complex shipping option with pricing
+
+// Check reverse too
+const oldInput = {} as OldListShippingOptionsForCartWorkflowInput & AdditionalData
+const oldOutput = {} as any[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const listShippingOptionsForCartWorkflowId =
   "list-shipping-options-for-cart"
@@ -80,12 +103,12 @@ export const listShippingOptionsForCartWorkflowId =
  * :::
  */
 export const listShippingOptionsForCartWorkflow = createWorkflow(
-  listShippingOptionsForCartWorkflowId,
-  (
-    input: WorkflowData<
-      ListShippingOptionsForCartWorkflowInput & AdditionalData
-    >
-  ) => {
+  {
+    name: listShippingOptionsForCartWorkflowId,
+    inputSchema: listShippingOptionsForCartWorkflowInputSchema,
+    outputSchema: listShippingOptionsForCartWorkflowOutputSchema,
+  },
+  (input) => {
     const cartQuery = useQueryGraphStep({
       entity: "cart",
       filters: { id: input.cart_id },

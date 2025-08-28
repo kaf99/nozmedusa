@@ -7,24 +7,44 @@ import {
   createStep,
   createWorkflow,
   StepResponse,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { IOrderModuleService, OrderDTO } from "@medusajs/types"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { validateDraftOrderStep } from "../steps/validate-draft-order"
-
-export const convertDraftOrderWorkflowId = "convert-draft-order"
+import {
+  convertDraftOrderWorkflowInputSchema,
+  convertDraftOrderWorkflowOutputSchema,
+  type ConvertDraftOrderWorkflowInput as SchemaInput,
+  type ConvertDraftOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
- * The details of the draft order to convert to an order.
+ * The details of the draft order to convert to a pending order.
  */
 export interface ConvertDraftOrderWorkflowInput {
   /**
-   * The ID of the draft order to convert to an order.
+   * The ID of the draft order to convert to a pending order.
    */
-  id: string
+  order_id: string
+  /**
+   * Whether to send the customer a notification about the placed order.
+   */
+  no_notification_order?: boolean
+  /**
+   * The metadata to attach to the created order.
+   */
+  metadata?: Record<string, unknown> | null
 }
+
+// Type verification
+const _in: SchemaInput = {} as ConvertDraftOrderWorkflowInput
+const _out: SchemaOutput = {} as OrderDTO
+
+void _in
+void _out
+
+export const convertDraftOrderWorkflowId = "convert-draft-order"
 
 /**
  * The details of the draft order to convert to an order.
@@ -95,15 +115,18 @@ export const convertDraftOrderStep = createStep(
  * Convert a draft order to a pending order.
  */
 export const convertDraftOrderWorkflow = createWorkflow(
-  convertDraftOrderWorkflowId,
-  function (
-    input: WorkflowData<ConvertDraftOrderWorkflowInput>
-  ): WorkflowResponse<OrderDTO> {
+  {
+    name: convertDraftOrderWorkflowId,
+    description: "Convert a draft order to a pending order.",
+    inputSchema: convertDraftOrderWorkflowInputSchema,
+    outputSchema: convertDraftOrderWorkflowOutputSchema,
+  },
+  function (input) {
     const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "is_draft_order"],
       variables: {
-        id: input.id,
+        id: input.order_id,
       },
       list: false,
       throw_if_key_not_found: true,
@@ -111,7 +134,7 @@ export const convertDraftOrderWorkflow = createWorkflow(
 
     validateDraftOrderStep({ order })
 
-    const updatedOrder = convertDraftOrderStep({ id: input.id })
+    const updatedOrder = convertDraftOrderStep({ id: input.order_id })
 
     emitEventStep({
       eventName: OrderWorkflowEvents.PLACED,

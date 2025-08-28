@@ -3,11 +3,33 @@ import {
   PromotionRuleDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updatePromotionRulesStep } from "../steps"
+import {
+  updatePromotionRulesWorkflowInputSchema,
+  updatePromotionRulesWorkflowOutputSchema,
+  type UpdatePromotionRulesWorkflowInput as SchemaInput,
+  type UpdatePromotionRulesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type UpdatePromotionRulesWorkflowInput,
+  type UpdatePromotionRulesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: UpdatePromotionRulesWorkflowDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PromotionRuleDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updatePromotionRulesWorkflowId = "update-promotion-rules-workflow"
 /**
@@ -35,10 +57,13 @@ export const updatePromotionRulesWorkflowId = "update-promotion-rules-workflow"
  * Update one or more promotion rules.
  */
 export const updatePromotionRulesWorkflow = createWorkflow(
-  updatePromotionRulesWorkflowId,
-  (
-    input: WorkflowData<UpdatePromotionRulesWorkflowDTO>
-  ): WorkflowResponse<PromotionRuleDTO[]> => {
+  {
+    name: updatePromotionRulesWorkflowId,
+    description: "Update one or more promotion rules",
+    inputSchema: updatePromotionRulesWorkflowInputSchema,
+    outputSchema: updatePromotionRulesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(updatePromotionRulesStep(input))
   }
 )

@@ -1,10 +1,15 @@
-import { LinkDefinition } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createRemoteLinkStep } from "../steps/create-remote-links"
+import {
+  createLinksWorkflowInputSchema,
+  createLinksWorkflowOutputSchema,
+  type CreateLinksWorkflowInput,
+  type CreateLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
 
 export const createLinksWorkflowId = "create-link"
 /**
@@ -36,8 +41,13 @@ export const createLinksWorkflowId = "create-link"
  * Create links between two records of linked data models.
  */
 export const createLinksWorkflow = createWorkflow(
-  createLinksWorkflowId,
-  (input: WorkflowData<LinkDefinition[]>) => {
+  {
+    name: createLinksWorkflowId,
+    description: "Create links between two records of linked data models",
+    inputSchema: createLinksWorkflowInputSchema,
+    outputSchema: createLinksWorkflowOutputSchema,
+  },
+  (input: WorkflowData<CreateLinksWorkflowInput>): WorkflowResponse<CreateLinksWorkflowOutput> => {
     return new WorkflowResponse(createRemoteLinkStep(input))
   }
 )

@@ -1,56 +1,36 @@
-import { BigNumberInput, PaymentSessionDTO } from "@medusajs/framework/types"
 import {
   createWorkflow,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+import { PaymentSessionDTO } from "@medusajs/framework/types"
 import { createPaymentSessionsWorkflow } from "../../payment-collection/workflows/create-payment-session"
 import { refundPaymentsWorkflow } from "../../payment/workflows/refund-payments"
+import {
+  refundPaymentAndRecreatePaymentSessionWorkflowInputSchema,
+  refundPaymentAndRecreatePaymentSessionWorkflowOutputSchema,
+  type RefundPaymentAndRecreatePaymentSessionWorkflowInput as SchemaInput,
+  type RefundPaymentAndRecreatePaymentSessionWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type RefundPaymentAndRecreatePaymentSessionWorkflowInput,
+  type RefundPaymentAndRecreatePaymentSessionWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create payment sessions.
- */
-export interface refundPaymentAndRecreatePaymentSessionWorkflowInput {
-  /**
-   * The ID of the payment collection to create payment sessions for.
-   */
-  payment_collection_id: string
-  /**
-   * The ID of the payment provider that the payment sessions are associated with.
-   * This provider is used to later process the payment sessions and their payments.
-   */
+type OldRefundPaymentAndRecreatePaymentSessionWorkflowInput = {
   provider_id: string
-  /**
-   * The ID of the customer that the payment session should be associated with.
-   */
-  customer_id?: string
-  /**
-   * Custom data relevant for the payment provider to process the payment session.
-   * Learn more in [this documentation](https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property).
-   */
-  data?: Record<string, unknown>
-
-  /**
-   * Additional context that's useful for the payment provider to process the payment session.
-   * Currently all of the context is calculated within the workflow.
-   */
-  context?: Record<string, unknown>
-
-  /**
-   * The ID of the payment to refund.
-   */
+  amount: string | number
+  payment_collection_id: string
   payment_id: string
-
-  /**
-   * The amount to refund.
-   */
-  amount: BigNumberInput
-
-  /**
-   * The note to attach to the refund.
-   */
+  customer_id?: string
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
   note?: string
 }
+
+const _in: SchemaInput =
+  {} as OldRefundPaymentAndRecreatePaymentSessionWorkflowInput
+const _out: PaymentSessionDTO = {} as SchemaOutput
+void _in, _out
 
 export const refundPaymentAndRecreatePaymentSessionWorkflowId =
   "refund-payment-and-recreate-payment-session"
@@ -62,10 +42,12 @@ export const refundPaymentAndRecreatePaymentSessionWorkflowId =
  * Refund a payment and create a new payment session.
  */
 export const refundPaymentAndRecreatePaymentSessionWorkflow = createWorkflow(
-  refundPaymentAndRecreatePaymentSessionWorkflowId,
-  (
-    input: WorkflowData<refundPaymentAndRecreatePaymentSessionWorkflowInput>
-  ): WorkflowResponse<PaymentSessionDTO> => {
+  {
+    name: refundPaymentAndRecreatePaymentSessionWorkflowId,
+    inputSchema: refundPaymentAndRecreatePaymentSessionWorkflowInputSchema,
+    outputSchema: refundPaymentAndRecreatePaymentSessionWorkflowOutputSchema,
+  },
+  (input) => {
     refundPaymentsWorkflow.runAsStep({
       input: [
         {

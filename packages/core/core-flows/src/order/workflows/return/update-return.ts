@@ -6,12 +6,17 @@ import {
 } from "@medusajs/framework/types"
 import { OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateReturnWorkflowInputSchema,
+  updateReturnWorkflowOutputSchema,
+  type UpdateReturnWorkflowInput as SchemaInput,
+  type UpdateReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { updateReturnsStep } from "../../steps"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
@@ -37,14 +42,14 @@ export type UpdateReturnValidationStepInput = {
 /**
  * This step validates that a return can be updated.
  * If the return is canceled or the order change is not active, the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve a return and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateReturnValidationStep({
  *   orderChange: {
@@ -72,10 +77,10 @@ export const updateReturnWorkflowId = "update-return"
 /**
  * This workflow updates a return's details. It's used by the
  * [Update Return Admin API Route](https://docs.medusajs.com/api/admin#returns_postreturnsid).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you
  * to update a return in your custom flow.
- * 
+ *
  * @example
  * const { result } = await updateReturnWorkflow(container)
  * .run({
@@ -84,16 +89,28 @@ export const updateReturnWorkflowId = "update-return"
  *     no_notification: true
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update a return's details.
  */
+
+// Type verification block - DO NOT REMOVE
+const _inputSchemaCheck: OrderWorkflow.UpdateReturnWorkflowInput =
+  {} as SchemaInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const updateReturnWorkflow = createWorkflow(
-  updateReturnWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.UpdateReturnWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: updateReturnWorkflowId,
+    description: "Update a return's details.",
+    inputSchema: updateReturnWorkflowInputSchema,
+    outputSchema: updateReturnWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

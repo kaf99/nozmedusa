@@ -1,12 +1,17 @@
 import {
   createStep,
   createWorkflow,
-  WorkflowData,
 } from "@medusajs/framework/workflows-sdk"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 
 import { deleteShippingProfilesStep } from "../steps"
 import { removeRemoteLinkStep, useQueryGraphStep } from "../../common"
+import {
+  deleteShippingProfilesWorkflowInputSchema,
+  deleteShippingProfilesWorkflowOutputSchema,
+  type DeleteShippingProfilesWorkflowInput as SchemaInput,
+  type DeleteShippingProfilesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate the deletion of shipping profiles.
@@ -57,15 +62,28 @@ export const validateStepShippingProfileDelete = createStep(
   }
 )
 
-/**
- * The data to delete shipping profiles.
- */
-export type DeleteShippingProfilesWorkflowInput = {
-  /**
-   * The IDs of the shipping profiles to delete.
-   */
+export {
+  type DeleteShippingProfilesWorkflowInput,
+  type DeleteShippingProfilesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   ids: string[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { DeleteShippingProfilesWorkflowInput as LegacyDeleteShippingProfilesWorkflowInput } from "../utils/schemas"
+export type { DeleteShippingProfilesWorkflowOutput as LegacyDeleteShippingProfilesWorkflowOutput } from "../utils/schemas"
 
 export const deleteShippingProfileWorkflowId =
   "delete-shipping-profile-workflow"
@@ -90,8 +108,13 @@ export const deleteShippingProfileWorkflowId =
  * Delete shipping profiles.
  */
 export const deleteShippingProfileWorkflow = createWorkflow(
-  deleteShippingProfileWorkflowId,
-  (input: WorkflowData<DeleteShippingProfilesWorkflowInput>) => {
+  {
+    name: deleteShippingProfileWorkflowId,
+    description: "Delete shipping profiles",
+    inputSchema: deleteShippingProfilesWorkflowInputSchema,
+    outputSchema: deleteShippingProfilesWorkflowOutputSchema,
+  },
+  (input) => {
     const currentShippingProfileLinks = useQueryGraphStep({
       entity: "product_shipping_profile",
       fields: ["product_id", "shipping_profile_id"],

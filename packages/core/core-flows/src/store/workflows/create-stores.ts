@@ -1,27 +1,17 @@
-import { StoreDTO, StoreWorkflow } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { createStoresStep } from "../steps"
 import { updatePricePreferencesAsArrayStep } from "../../pricing"
+import {
+  createStoresWorkflowInputSchema,
+  createStoresWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to create stores.
- */
-export type CreateStoresWorkflowInput = {
-  /**
-   * The stores to create.
-   */
-  stores: StoreWorkflow.CreateStoreWorkflowInput[]
-}
-
-/**
- * The created stores.
- */
-export type CreateStoresWorkflowOutput = StoreDTO[]
+// Re-export types from schemas for backward compatibility
+export type { CreateStoresWorkflowInput, CreateStoresWorkflowOutput } from "../utils/schemas"
 
 export const createStoresWorkflowId = "create-stores"
 /**
@@ -52,10 +42,13 @@ export const createStoresWorkflowId = "create-stores"
  * Create one or more stores.
  */
 export const createStoresWorkflow = createWorkflow(
-  createStoresWorkflowId,
-  (
-    input: WorkflowData<CreateStoresWorkflowInput>
-  ): WorkflowResponse<CreateStoresWorkflowOutput> => {
+  {
+    name: createStoresWorkflowId,
+    description: "Create one or more stores",
+    inputSchema: createStoresWorkflowInputSchema,
+    outputSchema: createStoresWorkflowOutputSchema,
+  },
+  (input) => {
     const normalizedInput = transform({ input }, (data) => {
       return data.input.stores.map((store) => {
         return {

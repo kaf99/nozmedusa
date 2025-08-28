@@ -1,36 +1,55 @@
-import {
-  FilterableSalesChannelProps,
-  SalesChannelDTO,
-  UpdateSalesChannelDTO,
-} from "@medusajs/framework/types"
 import { SalesChannelWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { updateSalesChannelsStep } from "../steps/update-sales-channels"
+import {
+  updateSalesChannelsWorkflowInputSchema,
+  updateSalesChannelsWorkflowOutputSchema,
+  type UpdateSalesChannelsWorkflowInput as SchemaInput,
+  type UpdateSalesChannelsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update sales channels.
- */
-export type UpdateSalesChannelsWorkflowInput = {
-  /**
-   * The filters to select the sales channels to update.
-   */
-  selector: FilterableSalesChannelProps
-  /**
-   * The data to update the sales channels.
-   */
-  update: UpdateSalesChannelDTO
-}
+// Re-export workflow types from schemas
+export type UpdateSalesChannelsWorkflowInput = SchemaInput
+export type UpdateSalesChannelsWorkflowOutput = SchemaOutput
 
-/**
- * The updated sales channels.
- */
-export type UpdateSalesChannelsWorkflowOutput = SalesChannelDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  selector: {
+    q?: string
+    id?: string | string[]
+    name?: string | string[]
+    is_disabled?: boolean
+    $and?: any
+    $or?: any
+  }
+  update: {
+    name?: string
+    description?: string | null
+    is_disabled?: boolean
+    metadata?: Record<string, unknown>
+  }
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as Array<{
+  id: string
+  name: string
+  description: string | null
+  is_disabled: boolean
+  metadata: Record<string, unknown> | null
+  locations?: any
+}>
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateSalesChannelsWorkflowId = "update-sales-channels"
 /**
@@ -58,10 +77,13 @@ export const updateSalesChannelsWorkflowId = "update-sales-channels"
  * Update sales channels.
  */
 export const updateSalesChannelsWorkflow = createWorkflow(
-  updateSalesChannelsWorkflowId,
-  (
-    input: WorkflowData<UpdateSalesChannelsWorkflowInput>
-  ): WorkflowResponse<UpdateSalesChannelsWorkflowOutput> => {
+  {
+    name: updateSalesChannelsWorkflowId,
+    description: "Update sales channels",
+    inputSchema: updateSalesChannelsWorkflowInputSchema,
+    outputSchema: updateSalesChannelsWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedSalesChannels = updateSalesChannelsStep(input)
 
     const salesChannelIdEvents = transform(

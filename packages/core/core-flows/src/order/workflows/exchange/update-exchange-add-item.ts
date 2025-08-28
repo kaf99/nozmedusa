@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -24,6 +23,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
+import {
+  updateExchangeAddNewItemWorkflowInputSchema,
+  updateExchangeAddNewItemWorkflowOutputSchema,
+  type UpdateExchangeAddNewItemWorkflowInput as SchemaInput,
+  type UpdateExchangeAddNewItemWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that an outbound or new item in an exchange can be updated.
@@ -111,6 +116,21 @@ export const updateExchangeAddItemValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.UpdateExchangeAddNewItemWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const updateExchangeAddItemWorkflowId = "update-exchange-add-item"
 /**
  * This workflow updates an outbound or new item in the exchange. It's used by the
@@ -136,10 +156,12 @@ export const updateExchangeAddItemWorkflowId = "update-exchange-add-item"
  * Update an outbound or new item in an exchange.
  */
 export const updateExchangeAddItemWorkflow = createWorkflow(
-  updateExchangeAddItemWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.UpdateExchangeAddNewItemWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: updateExchangeAddItemWorkflowId,
+    inputSchema: updateExchangeAddNewItemWorkflowInputSchema,
+    outputSchema: updateExchangeAddNewItemWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "canceled_at"],

@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -8,6 +7,16 @@ import { createInventoryItemsStep } from "../steps"
 
 import { InventoryTypes } from "@medusajs/framework/types"
 import { createInventoryLevelsWorkflow } from "./create-inventory-levels"
+import {
+  createInventoryItemsWorkflowInputSchema,
+  createInventoryItemsWorkflowOutputSchema,
+  type CreateInventoryItemsWorkflowInput as SchemaInput,
+  type CreateInventoryItemsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreateInventoryItemsWorkflowInput,
+  type CreateInventoryItemsWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The inventory level to create.
@@ -19,7 +28,7 @@ type LocationLevelWithoutInventory = Omit<
 /**
  * The data to create the inventory items.
  */
-export interface CreateInventoryItemsWorkflowInput {
+interface OldCreateInventoryItemsWorkflowInput {
   /**
    * The items to create.
    */
@@ -31,9 +40,10 @@ export interface CreateInventoryItemsWorkflowInput {
   })[]
 }
 
-const buildLocationLevelMapAndItemData = (
-  data: CreateInventoryItemsWorkflowInput
-) => {
+export type OldCreateInventoryItemsWorkflowOutput =
+  InventoryTypes.InventoryItemDTO[]
+
+const buildLocationLevelMapAndItemData = (data: SchemaInput) => {
   data.items = data.items ?? []
   const inventoryItems: InventoryTypes.CreateInventoryItemInput[] = []
   // Keep an index to location levels mapping to inject the created inventory item
@@ -78,14 +88,28 @@ const buildInventoryLevelsInput = (data: {
   }
 }
 
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateInventoryItemsWorkflowInput = schemaInput
+const existingOutput: InventoryTypes.InventoryItemDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreateInventoryItemsWorkflowInput
+const oldOutput = {} as OldCreateInventoryItemsWorkflowOutput
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
+
 export const createInventoryItemsWorkflowId = "create-inventory-items-workflow"
 /**
  * This workflow creates one or more inventory items. It's used by the
  * [Create Inventory Item Admin API Route](https://docs.medusajs.com/api/admin#inventory-items_postinventoryitems).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to create inventory items in your custom flows.
- * 
+ *
  * @example
  * const { result } = await createInventoryItemsWorkflow(container)
  * .run({
@@ -102,14 +126,19 @@ export const createInventoryItemsWorkflowId = "create-inventory-items-workflow"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more inventory items.
  */
 export const createInventoryItemsWorkflow = createWorkflow(
-  createInventoryItemsWorkflowId,
-  (input: WorkflowData<CreateInventoryItemsWorkflowInput>) => {
+  {
+    name: createInventoryItemsWorkflowId,
+    description: "Create one or more inventory items",
+    inputSchema: createInventoryItemsWorkflowInputSchema,
+    outputSchema: createInventoryItemsWorkflowOutputSchema,
+  },
+  (input) => {
     const { locationLevelMap, inventoryItems } = transform(
       input,
       buildLocationLevelMapAndItemData

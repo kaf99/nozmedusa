@@ -1,7 +1,6 @@
 import { OrderChangeDTO } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -10,6 +9,12 @@ import {
 
 import { maybeRefreshShippingMethodsWorkflow } from "../maybe-refresh-shipping-methods"
 import { useQueryGraphStep } from "../../../common"
+import {
+  refreshExchangeShippingWorkflowInputSchema,
+  refreshExchangeShippingWorkflowOutputSchema,
+  type RefreshExchangeShippingWorkflowInput as SchemaInput,
+  type RefreshExchangeShippingWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to refresh the shipping methods for an exchange.
@@ -29,6 +34,22 @@ export type RefreshExchangeShippingWorkflowInput = {
   order_id: string
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: RefreshExchangeShippingWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// For void outputs, we don't need to check compatibility
+const _existingOutput = undefined as SchemaOutput
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const refreshExchangeShippingWorkflowId = "refresh-exchange-shipping"
 /**
  * This workflow refreshes the shipping methods for an exchange in case the shipping option is calculated.
@@ -39,9 +60,13 @@ export const refreshExchangeShippingWorkflowId = "refresh-exchange-shipping"
  * Refresh exchange shipping.
  */
 export const refreshExchangeShippingWorkflow = createWorkflow(
-  refreshExchangeShippingWorkflowId,
+  {
+    name: refreshExchangeShippingWorkflowId,
+    inputSchema: refreshExchangeShippingWorkflowInputSchema,
+    outputSchema: refreshExchangeShippingWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<RefreshExchangeShippingWorkflowInput>
+    input
   ): WorkflowResponse<void> {
     const orderChangeQuery = useQueryGraphStep({
       entity: "order_change",

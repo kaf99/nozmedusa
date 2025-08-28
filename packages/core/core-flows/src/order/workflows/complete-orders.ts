@@ -1,7 +1,6 @@
-import { AdditionalData } from "@medusajs/framework/types"
+import { AdditionalData, OrderDTO } from "@medusajs/framework/types"
 import { OrderWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,16 +8,40 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { completeOrdersStep } from "../steps"
+import {
+  completeOrdersWorkflowInputSchema,
+  completeOrdersWorkflowOutputSchema,
+  type CompleteOrdersWorkflowInput as SchemaInput,
+  type CompleteOrdersWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CompleteOrdersWorkflowInput,
+  type CompleteOrdersWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The orders to complete, along with custom data that's passed to the workflow's hooks.
  */
-export type CompleteOrdersWorkflowInput = {
+type OldCompleteOrdersWorkflowInput = {
   /**
    * The IDs of the orders to complete.
    */
   orderIds: string[]
 } & AdditionalData
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCompleteOrdersWorkflowInput = schemaInput
+const existingOutput: OrderDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCompleteOrdersWorkflowInput
+const oldOutput = {} as OrderDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const completeOrderWorkflowId = "complete-order-workflow"
 /**
@@ -47,8 +70,12 @@ export const completeOrderWorkflowId = "complete-order-workflow"
  * @property hooks.ordersCompleted - This hook is executed after the orders are completed. You can consume this hook to perform custom actions on the completed orders.
  */
 export const completeOrderWorkflow = createWorkflow(
-  completeOrderWorkflowId,
-  (input: WorkflowData<CompleteOrdersWorkflowInput>) => {
+  {
+    name: completeOrderWorkflowId,
+    inputSchema: completeOrdersWorkflowInputSchema,
+    outputSchema: completeOrdersWorkflowOutputSchema,
+  },
+  (input) => {
     const completedOrders = completeOrdersStep(input)
 
     const eventData = transform({ input }, (data) => {

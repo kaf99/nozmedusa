@@ -5,7 +5,6 @@ import {
 } from "@medusajs/framework/types"
 import { ProductVariantWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -15,39 +14,42 @@ import { emitEventStep } from "../../common"
 import { updatePriceSetsStep } from "../../pricing"
 import { updateProductVariantsStep } from "../steps"
 import { getVariantPricingLinkStep } from "../steps/get-variant-pricing-link"
+import {
+  updateProductVariantsWorkflowInputSchema,
+  updateProductVariantsWorkflowOutputSchema,
+  type UpdateProductVariantsWorkflowInput as SchemaInput,
+  type UpdateProductVariantsWorkflowOutput as SchemaOutput,
+} from "../utils/update-schemas"
 
-/**
- * The data to update one or more product variants, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductVariantsWorkflowInput = (
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = [] as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: (
   | {
-      /**
-       * A filter to select the product variants to update.
-       */
       selector: ProductTypes.FilterableProductVariantProps
-      /**
-       * The data to update in the product variants.
-       */
       update: ProductTypes.UpdateProductVariantDTO & {
-        /**
-         * The product variant's prices.
-         */
         prices?: Partial<PricingTypes.CreateMoneyAmountDTO>[]
       }
     }
   | {
-      /**
-       * The product variants to update.
-       */
       product_variants: (ProductTypes.UpsertProductVariantDTO & {
-        /**
-         * The product variant's prices.
-         */
         prices?: Partial<PricingTypes.CreateMoneyAmountDTO>[]
       })[]
     }
 ) &
-  AdditionalData
+  AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = [] as ProductTypes.ProductVariantDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+/**
+ * The data to update one or more product variants, along with custom data that's passed to the workflow's hooks.
+ */
+export type UpdateProductVariantsWorkflowInput = SchemaInput
 
 export const updateProductVariantsWorkflowId = "update-product-variants"
 /**
@@ -125,8 +127,13 @@ export const updateProductVariantsWorkflowId = "update-product-variants"
  * @property hooks.productVariantsUpdated - This hook is executed after the product variants are updated. You can consume this hook to perform custom actions on the updated product variants.
  */
 export const updateProductVariantsWorkflow = createWorkflow(
-  updateProductVariantsWorkflowId,
-  (input: WorkflowData<UpdateProductVariantsWorkflowInput>) => {
+  {
+    name: updateProductVariantsWorkflowId,
+    description: "Update product variants",
+    inputSchema: updateProductVariantsWorkflowInputSchema,
+    outputSchema: updateProductVariantsWorkflowOutputSchema,
+  },
+  (input) => {
     // Passing prices to the product module will fail, we want to keep them for after the variant is updated.
     const updateWithoutPrices = transform({ input }, (data) => {
       if ("product_variants" in data.input) {

@@ -1,11 +1,4 @@
 import {
-  BatchWorkflowInput,
-  BatchWorkflowOutput,
-  CreateShippingOptionRuleDTO,
-  ShippingOptionRuleDTO,
-  UpdateShippingOptionRuleDTO,
-} from "@medusajs/framework/types"
-import {
   createWorkflow,
   parallelize,
   transform,
@@ -17,27 +10,12 @@ import {
   deleteShippingOptionRulesStep,
 } from "../steps"
 import { updateShippingOptionRulesStep } from "../steps/update-shipping-option-rules"
-
-/**
- * The data to manage the shipping option rules in bulk.
- * 
- * @property create - The shipping option rules to create.
- * @property update - The shipping option rules to update.
- * @property delete - The IDs of the shipping option rules to delete.
- */
-export interface BatchShippingOptionRulesInput extends BatchWorkflowInput<
-  CreateShippingOptionRuleDTO,
-  UpdateShippingOptionRuleDTO
-> {}
-
-/**
- * The result of managing the shipping option rules in bulk.
- * 
- * @property created - The shipping option rules that were created.
- * @property updated - The shipping option rules that were updated.
- * @property deleted - The IDs of the shipping option rules that were deleted.
- */
-export interface BatchShippingOptionRulesOutput extends BatchWorkflowOutput<ShippingOptionRuleDTO> {}
+import {
+  batchShippingOptionRulesWorkflowInputSchema,
+  batchShippingOptionRulesWorkflowOutputSchema,
+  type BatchShippingOptionRulesWorkflowInput,
+  type BatchShippingOptionRulesWorkflowOutput,
+} from "../utils/schemas"
 
 export const batchShippingOptionRulesWorkflowId = "batch-shipping-option-rules"
 /**
@@ -74,10 +52,15 @@ export const batchShippingOptionRulesWorkflowId = "batch-shipping-option-rules"
  * Manage shipping option rules.
  */
 export const batchShippingOptionRulesWorkflow = createWorkflow(
-  batchShippingOptionRulesWorkflowId,
+  {
+    name: batchShippingOptionRulesWorkflowId,
+    description: "Manage shipping option rules",
+    inputSchema: batchShippingOptionRulesWorkflowInputSchema,
+    outputSchema: batchShippingOptionRulesWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<BatchShippingOptionRulesInput>
-  ): WorkflowResponse<BatchShippingOptionRulesOutput> => {
+    input: WorkflowData<BatchShippingOptionRulesWorkflowInput>
+  ): WorkflowResponse<BatchShippingOptionRulesWorkflowOutput> => {
     const actionInputs = transform({ input }, (data) => {
       const { create, update, delete: del } = data.input
       return {

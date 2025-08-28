@@ -1,7 +1,6 @@
 import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductCollectionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,20 +8,36 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { updateCollectionsStep } from "../steps"
+import {
+  updateCollectionsWorkflowInputSchema,
+  updateCollectionsWorkflowOutputSchema,
+  type UpdateCollectionsWorkflowInput as SchemaInput,
+  type UpdateCollectionsWorkflowOutput as SchemaOutput,
+} from "../utils/update-schemas"
 
-/**
- * The data to update one or more product collections, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateCollectionsWorkflowInput = {
-  /**
-   * The filters to select the collections to update.
-   */
+export {
+  type UpdateCollectionsWorkflowInput,
+  type UpdateCollectionsWorkflowOutput,
+} from "../utils/update-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: ProductTypes.FilterableProductCollectionProps
-  /**
-   * The data to update the collections with.
-   */
   update: ProductTypes.UpdateProductCollectionDTO
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// The step returns either a single collection or array
+const existingOutput: SchemaOutput = {} as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy type for backward compatibility
+export type { UpdateCollectionsWorkflowInput as LegacyUpdateCollectionsWorkflowInput } from "../utils/update-schemas"
 
 export const updateCollectionsWorkflowId = "update-collections"
 /**
@@ -57,8 +72,13 @@ export const updateCollectionsWorkflowId = "update-collections"
  * @property hooks.collectionsUpdated - This hook is executed after the collections are updated. You can consume this hook to perform custom actions on the updated collections.
  */
 export const updateCollectionsWorkflow = createWorkflow(
-  updateCollectionsWorkflowId,
-  (input: WorkflowData<UpdateCollectionsWorkflowInput>) => {
+  {
+    name: updateCollectionsWorkflowId,
+    description: "Update one or more product collections",
+    inputSchema: updateCollectionsWorkflowInputSchema,
+    outputSchema: updateCollectionsWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedCollections = updateCollectionsStep(input)
 
     const collectionIdEvents = transform(

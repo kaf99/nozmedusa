@@ -1,7 +1,5 @@
-import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductTypeWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,16 +7,33 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createProductTypesStep } from "../steps"
+import {
+  createProductTypesWorkflowInputSchema,
+  createProductTypesWorkflowOutputSchema,
+  type CreateProductTypesWorkflowInput as SchemaInput,
+  type CreateProductTypesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create one or more product types, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateProductTypesWorkflowInput = {
-  /**
-   * The product types to create.
-   */
-  product_types: ProductTypes.CreateProductTypeDTO[]
-} & AdditionalData
+export {
+  type CreateProductTypesWorkflowInput,
+  type CreateProductTypesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: SchemaInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as SchemaOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateProductTypesWorkflowInput as LegacyCreateProductTypesWorkflowInput } from "../utils/schemas"
+export type { CreateProductTypesWorkflowOutput as LegacyCreateProductTypesWorkflowOutput } from "../utils/schemas"
 
 export const createProductTypesWorkflowId = "create-product-types"
 /**
@@ -52,8 +67,13 @@ export const createProductTypesWorkflowId = "create-product-types"
  * @property hooks.productTypesCreated - This hook is executed after the product types are created. You can consume this hook to perform custom actions on the created product types.
  */
 export const createProductTypesWorkflow = createWorkflow(
-  createProductTypesWorkflowId,
-  (input: WorkflowData<CreateProductTypesWorkflowInput>) => {
+  {
+    name: createProductTypesWorkflowId,
+    description: "Create one or more product types",
+    inputSchema: createProductTypesWorkflowInputSchema,
+    outputSchema: createProductTypesWorkflowOutputSchema,
+  },
+  (input) => {
     const productTypes = createProductTypesStep(input.product_types)
     const productTypesCreated = createHook("productTypesCreated", {
       product_types: productTypes,

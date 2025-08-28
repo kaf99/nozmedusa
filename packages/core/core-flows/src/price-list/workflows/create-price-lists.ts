@@ -3,26 +3,39 @@ import {
   PriceListDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createPriceListsStep, validateVariantPriceLinksStep } from "../steps"
+import {
+  createPriceListsWorkflowInputSchema,
+  createPriceListsWorkflowOutputSchema,
+  type CreatePriceListsWorkflowInput as SchemaInput,
+  type CreatePriceListsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create price lists.
- */
-export type CreatePriceListsWorkflowInput = {
-  /**
-   * The price lists to create.
-   */
+export {
+  type CreatePriceListsWorkflowInput,
+  type CreatePriceListsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   price_lists_data: CreatePriceListWorkflowInputDTO[]
-}
+} = schemaInput
 
-/**
- * The created price lists.
- */
-export type CreatePriceListsWorkflowOutput = PriceListDTO[]
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PriceListDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreatePriceListsWorkflowInput as LegacyCreatePriceListsWorkflowInput } from "../utils/schemas"
+export type { CreatePriceListsWorkflowOutput as LegacyCreatePriceListsWorkflowOutput } from "../utils/schemas"
 
 export const createPriceListsWorkflowId = "create-price-lists"
 /**
@@ -50,10 +63,13 @@ export const createPriceListsWorkflowId = "create-price-lists"
  * Create one or more price lists.
  */
 export const createPriceListsWorkflow = createWorkflow(
-  createPriceListsWorkflowId,
-  (
-    input: WorkflowData<CreatePriceListsWorkflowInput>
-  ): WorkflowResponse<PriceListDTO[]> => {
+  {
+    name: createPriceListsWorkflowId,
+    description: "Create one or more price lists",
+    inputSchema: createPriceListsWorkflowInputSchema,
+    outputSchema: createPriceListsWorkflowOutputSchema,
+  },
+  (input) => {
     const variantPriceMap = validateVariantPriceLinksStep(
       input.price_lists_data
     )

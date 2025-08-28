@@ -707,7 +707,7 @@ export interface CartLineItemDTO extends CartLineItemTotalsDTO {
    *
    * @expandable
    */
-  cart: CartDTO
+  cart?: CartDTO
 
   /**
    * The ID of the associated cart.
@@ -732,7 +732,7 @@ export interface CartLineItemDTO extends CartLineItemTotalsDTO {
   /**
    * When the line item was deleted.
    */
-  deleted_at?: Date
+  deleted_at?: Date | null
 }
 
 /**
@@ -752,17 +752,17 @@ export interface CartDTO {
   /**
    * The ID of the associated customer
    */
-  customer_id?: string
+  customer_id?: string | null
 
   /**
    * The ID of the sales channel the cart belongs to.
    */
-  sales_channel_id?: string
+  sales_channel_id?: string | null
 
   /**
    * The email of the customer that owns the cart.
    */
-  email?: string
+  email?: string | null
 
   /**
    * The currency of the cart
@@ -812,7 +812,7 @@ export interface CartDTO {
   /**
    * When the cart was completed.
    */
-  completed_at?: string | Date
+  completed_at?: string | Date | null
 
   /**
    * When the cart was created.
@@ -823,6 +823,11 @@ export interface CartDTO {
    * When the cart was updated.
    */
   updated_at?: string | Date
+
+  /**
+   * When the cart was updated.
+   */
+  deleted_at?: string | Date | null
 
   /**
    * The original item total of the cart.

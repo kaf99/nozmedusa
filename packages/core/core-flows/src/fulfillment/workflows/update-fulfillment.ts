@@ -1,10 +1,15 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateFulfillmentStep } from "../steps"
+import {
+  updateFulfillmentWorkflowInputSchema,
+  updateFulfillmentWorkflowOutputSchema,
+  type UpdateFulfillmentWorkflowInput,
+  type UpdateFulfillmentWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateFulfillmentWorkflowId = "update-fulfillment-workflow"
 /**
@@ -28,8 +33,13 @@ export const updateFulfillmentWorkflowId = "update-fulfillment-workflow"
  * Update a fulfillment.
  */
 export const updateFulfillmentWorkflow = createWorkflow(
-  updateFulfillmentWorkflowId,
-  (input: WorkflowData<FulfillmentWorkflow.UpdateFulfillmentWorkflowInput>) => {
+  {
+    name: updateFulfillmentWorkflowId,
+    description: "Update a fulfillment",
+    inputSchema: updateFulfillmentWorkflowInputSchema,
+    outputSchema: updateFulfillmentWorkflowOutputSchema,
+  },
+  (input: WorkflowData<UpdateFulfillmentWorkflowInput>): WorkflowResponse<UpdateFulfillmentWorkflowOutput> => {
     return new WorkflowResponse(updateFulfillmentStep(input))
   }
 )

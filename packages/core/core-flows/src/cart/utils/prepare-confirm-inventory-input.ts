@@ -1,13 +1,11 @@
-import {
-  BigNumberInput,
-  ConfirmVariantInventoryWorkflowInputDTO,
-} from "@medusajs/framework/types"
+import { BigNumberInput } from "@medusajs/framework/types"
 import {
   BigNumber,
   MathBN,
   MedusaError,
   deepFlatMap,
 } from "@medusajs/framework/utils"
+import { ConfirmVariantInventoryWorkflowInput } from "./confirm-variant-inventory-schemas"
 
 export const requiredOrderFieldsForInventoryConfirmation = [
   "id",
@@ -66,7 +64,7 @@ interface ConfirmInventoryPreparationInput {
   stockAvailability: Map<string, Map<string, BigNumberInput>>
 }
 
-interface ConfirmInventoryItem {
+export interface ConfirmInventoryItem {
   id?: string
   inventory_item_id: string
   required_quantity: number
@@ -83,11 +81,11 @@ interface ConfirmInventoryItem {
  * @throws {MedusaError} INVALID_DATA if any cart item is for a variant that has no inventory items.
  * @throws {MedusaError} INVALID_DATA if any cart item is for a variant with no stock locations in the input.sales_channel_id. An exception is made for variants with allow_backorder set to true.
  *
- * @returns {ConfirmInventoryPreparationInput}
+ * @returns
  * A list of inventory items to confirm. Only inventory items for variants with managed inventory are included.
  */
 export const prepareConfirmInventoryInput = (data: {
-  input: ConfirmVariantInventoryWorkflowInputDTO
+  input: ConfirmVariantInventoryWorkflowInput
 }) => {
   const productVariantInventoryItems = new Map<string, any>()
   const stockLocationIds = new Set<string>()

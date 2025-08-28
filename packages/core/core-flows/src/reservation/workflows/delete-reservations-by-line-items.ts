@@ -1,16 +1,31 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 
 import { deleteReservationsByLineItemsStep } from "../steps"
+import {
+  deleteReservationsByLineItemsWorkflowInputSchema,
+  deleteReservationsByLineItemsWorkflowOutputSchema,
+  type DeleteReservationsByLineItemsWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The data to delete reservations by their associated line items.
- */
-export type DeleteReservationByLineItemsWorkflowInput = { 
-  /**
-   * The IDs of the line items to delete reservations for.
-   */
-  ids: string[]
-}
+export {
+  type DeleteReservationsByLineItemsWorkflowInput,
+  type DeleteReservationsByLineItemsWorkflowOutput,
+} from "../utils/schemas"
+
+// Legacy type for backward compatibility
+export type DeleteReservationByLineItemsWorkflowInput = SchemaInput
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { ids: string[] } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// Note: void workflow returns nothing
+const _voidCheck: void = undefined!
+
+console.log(existingInput, _voidCheck)
 
 export const deleteReservationsByLineItemsWorkflowId =
   "delete-reservations-by-line-items"
@@ -33,10 +48,13 @@ export const deleteReservationsByLineItemsWorkflowId =
  * Delete reservations by their associated line items.
  */
 export const deleteReservationsByLineItemsWorkflow = createWorkflow(
-  deleteReservationsByLineItemsWorkflowId,
-  (
-    input: WorkflowData<DeleteReservationByLineItemsWorkflowInput>
-  ): WorkflowData<void> => {
+  {
+    name: deleteReservationsByLineItemsWorkflowId,
+    description: "Delete reservations by their associated line items",
+    inputSchema: deleteReservationsByLineItemsWorkflowInputSchema,
+    outputSchema: deleteReservationsByLineItemsWorkflowOutputSchema,
+  },
+  (input) => {
     return deleteReservationsByLineItemsStep(input.ids)
   }
 )

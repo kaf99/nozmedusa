@@ -24,6 +24,12 @@ import { prepareShippingMethod } from "../../utils/prepare-shipping-method"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { updateOrderTaxLinesWorkflow } from "../update-tax-lines"
 import { pricingContextResult } from "../../../cart/utils/schemas"
+import {
+  createOrderEditShippingMethodWorkflowInputSchema,
+  createOrderEditShippingMethodWorkflowOutputSchema,
+  type CreateOrderEditShippingMethodWorkflowInput as SchemaInput,
+  type CreateOrderEditShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a shipping method can be created for an order edit.
@@ -92,6 +98,22 @@ export type CreateOrderEditShippingMethodWorkflowInput = {
   custom_amount?: BigNumberInput | null
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: CreateOrderEditShippingMethodWorkflowInput &
+  AdditionalData = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const createOrderEditShippingMethodWorkflowId =
   "create-order-edit-shipping-method"
 /**
@@ -113,11 +135,11 @@ export const createOrderEditShippingMethodWorkflowId =
  * @summary
  *
  * Create a shipping method for an order edit.
- * 
+ *
  * @property hooks.setPricingContext - This hook is executed before the shipping method is created. You can consume this hook to return any custom context useful for the prices retrieval of the shipping method's option.
- * 
+ *
  * For example, assuming you have the following custom pricing rule:
- * 
+ *
  * ```json
  * {
  *   "attribute": "location_id",
@@ -125,13 +147,13 @@ export const createOrderEditShippingMethodWorkflowId =
  *   "value": "sloc_123",
  * }
  * ```
- * 
+ *
  * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
- * 
+ *
  * ```ts
  * import { createOrderEditShippingMethodWorkflow } from "@medusajs/medusa/core-flows";
  * import { StepResponse } from "@medusajs/workflows-sdk";
- * 
+ *
  * createOrderEditShippingMethodWorkflow.hooks.setPricingContext((
  *   { order, shipping_option_id, additional_data }, { container }
  * ) => {
@@ -140,20 +162,23 @@ export const createOrderEditShippingMethodWorkflowId =
  *   });
  * });
  * ```
- * 
+ *
  * The price of the shipping method's option will now be retrieved using the context you return.
- * 
+ *
  * :::note
- * 
+ *
  * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
- * 
+ *
  * :::
  */
 export const createOrderEditShippingMethodWorkflow = createWorkflow(
-  createOrderEditShippingMethodWorkflowId,
-  function (
-    input: CreateOrderEditShippingMethodWorkflowInput & AdditionalData
-  ) {
+  {
+    name: createOrderEditShippingMethodWorkflowId,
+    description: "Create a shipping method for an order edit",
+    inputSchema: createOrderEditShippingMethodWorkflowInputSchema,
+    outputSchema: createOrderEditShippingMethodWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "currency_code", "canceled_at"],
@@ -217,9 +242,8 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
       {
         relatedEntity: { order_id: order.id },
         shippingOptions,
-        customPrice: input.custom_amount,
+        customPrice: input.custom_amount as BigNumberInput | undefined,
         orderChange,
-        input,
       },
       prepareShippingMethod()
     )
@@ -244,7 +268,7 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
         order,
         shippingOptions,
         createdMethods,
-        customPrice: input.custom_amount,
+        customPrice: input.custom_amount as BigNumberInput | undefined,
         orderChange,
       },
       ({

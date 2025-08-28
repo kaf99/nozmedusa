@@ -7,7 +7,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -22,6 +21,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  deleteExchangeShippingMethodWorkflowInputSchema,
+  deleteExchangeShippingMethodWorkflowOutputSchema,
+  type DeleteExchangeShippingMethodWorkflowInput as SchemaInput,
+  type DeleteExchangeShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a shipping method can be removed from an exchange.
@@ -95,6 +100,21 @@ export const removeExchangeShippingMethodValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.DeleteExchangeShippingMethodWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const removeExchangeShippingMethodWorkflowId =
   "remove-exchange-shipping-method"
 /**
@@ -119,10 +139,12 @@ export const removeExchangeShippingMethodWorkflowId =
  * Remove an inbound or outbound shipping method from an exchange.
  */
 export const removeExchangeShippingMethodWorkflow = createWorkflow(
-  removeExchangeShippingMethodWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.DeleteExchangeShippingMethodWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: removeExchangeShippingMethodWorkflowId,
+    inputSchema: deleteExchangeShippingMethodWorkflowInputSchema,
+    outputSchema: deleteExchangeShippingMethodWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "canceled_at"],

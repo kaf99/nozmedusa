@@ -5,9 +5,16 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+import { expectTypeOf } from "expect-type"
 import { setAuthAppMetadataStep } from "../../auth"
 import { validateCustomerAccountCreation } from "../steps/validate-customer-account-creation"
 import { createCustomersWorkflow } from "./create-customers"
+import {
+  createCustomerAccountWorkflowInputSchema,
+  createCustomerAccountWorkflowOutputSchema,
+  type CreateCustomerAccountWorkflowInput as SchemaInput,
+  type CreateCustomerAccountWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The details of the customer account to create.
@@ -22,6 +29,12 @@ export type CreateCustomerAccountWorkflowInput = {
    */
   customerData: CreateCustomerDTO
 }
+
+export type CreateCustomerAccountWorkflowOutput = CustomerDTO
+
+// Type verification
+expectTypeOf<SchemaInput>().toEqualTypeOf<CreateCustomerAccountWorkflowInput>()
+expectTypeOf<SchemaOutput>().toEqualTypeOf<CreateCustomerAccountWorkflowOutput>()
 
 export const createCustomerAccountWorkflowId = "create-customer-account"
 /**
@@ -52,7 +65,12 @@ export const createCustomerAccountWorkflowId = "create-customer-account"
  * Create or register a customer account.
  */
 export const createCustomerAccountWorkflow = createWorkflow(
-  createCustomerAccountWorkflowId,
+  {
+    name: createCustomerAccountWorkflowId,
+    description: "Create or register a customer account",
+    inputSchema: createCustomerAccountWorkflowInputSchema,
+    outputSchema: createCustomerAccountWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<CreateCustomerAccountWorkflowInput>
   ): WorkflowResponse<CustomerDTO> => {

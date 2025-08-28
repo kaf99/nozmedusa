@@ -1,15 +1,11 @@
 import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteServiceZonesStep } from "../steps"
-
-/**
- * The data to delete one or more service zones.
- */
-export type DeleteServiceZonesWorkflowInput = {
-  /**
-   * The IDs of the service zones to delete.
-   */
-  ids: string[]
-}
+import {
+  deleteServiceZonesWorkflowInputSchema,
+  deleteServiceZonesWorkflowOutputSchema,
+  type DeleteServiceZonesWorkflowInput,
+  type DeleteServiceZonesWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteServiceZonesWorkflowId = "delete-service-zones-workflow"
 /**
@@ -32,8 +28,13 @@ export const deleteServiceZonesWorkflowId = "delete-service-zones-workflow"
  * Delete one or more service zones.
  */
 export const deleteServiceZonesWorkflow = createWorkflow(
-  deleteServiceZonesWorkflowId,
-  (input: WorkflowData<DeleteServiceZonesWorkflowInput>) => {
+  {
+    name: deleteServiceZonesWorkflowId,
+    description: "Delete one or more service zones",
+    inputSchema: deleteServiceZonesWorkflowInputSchema,
+    outputSchema: deleteServiceZonesWorkflowOutputSchema,
+  },
+  (input: WorkflowData<DeleteServiceZonesWorkflowInput>): WorkflowData<DeleteServiceZonesWorkflowOutput> => {
     deleteServiceZonesStep(input.ids)
   }
 )

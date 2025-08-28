@@ -13,7 +13,6 @@ import {
   isDefined,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -27,6 +26,12 @@ import {
   useRemoteQueryStep,
 } from "../../common"
 import { upsertVariantPricesWorkflow } from "./upsert-variant-prices"
+import {
+  updateProductWorkflowInputSchema,
+  updateProductsWorkflowOutputSchema,
+  type UpdateProductWorkflowInput as SchemaInput,
+  type UpdateProductsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * Update products that match a specified selector, along with custom data that's passed to the workflow's hooks.
@@ -81,15 +86,30 @@ export type UpdateProductsWorkflowInputProducts = {
 /**
  * The data to update one or more products, along with custom data that's passed to the workflow's hooks.
  */
-export type UpdateProductWorkflowInput =
+type OldUpdateProductWorkflowInput =
   | UpdateProductsWorkflowInputSelector
   | UpdateProductsWorkflowInputProducts
+
+type OldUpdateProductsWorkflowOutput = ProductTypes.ProductDTO[]
+
+export {
+  type UpdateProductWorkflowInput,
+  type UpdateProductsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldUpdateProductWorkflowInput = schemaInput
+const existingOutput: OldUpdateProductsWorkflowOutput = schemaOutput
+
+console.log(existingInput, existingOutput)
 
 function prepareUpdateProductInput({
   input,
 }: {
-  input: UpdateProductWorkflowInput
-}): UpdateProductWorkflowInput {
+  input: SchemaInput
+}): SchemaInput {
   if ("products" in input) {
     if (!input.products.length) {
       return { products: [] }
@@ -128,7 +148,7 @@ function findProductsWithSalesChannels({
   input,
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
-  input: UpdateProductWorkflowInput
+  input: SchemaInput
 }) {
   let productIds = updatedProducts.map((p) => p.id)
 
@@ -147,7 +167,7 @@ function findProductsWithShippingProfiles({
   input,
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
-  input: UpdateProductWorkflowInput
+  input: SchemaInput
 }) {
   let productIds = updatedProducts.map((p) => p.id)
 
@@ -166,7 +186,7 @@ function prepareSalesChannelLinks({
   updatedProducts,
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
-  input: UpdateProductWorkflowInput
+  input: SchemaInput
 }): Record<string, Record<string, any>>[] {
   if ("products" in input) {
     if (!input.products.length) {
@@ -208,7 +228,7 @@ function prepareShippingProfileLinks({
   updatedProducts,
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
-  input: UpdateProductWorkflowInput
+  input: SchemaInput
 }): Record<string, Record<string, any>>[] {
   if ("products" in input) {
     if (!input.products.length) {
@@ -246,7 +266,7 @@ function prepareVariantPrices({
   updatedProducts,
 }: {
   updatedProducts: ProductTypes.ProductDTO[]
-  input: UpdateProductWorkflowInput
+  input: SchemaInput
 }): {
   variant_id: string
   product_id: string
@@ -408,8 +428,12 @@ export const updateProductsWorkflowId = "update-products"
  * @property hooks.productsUpdated - This hook is executed after the products are updated. You can consume this hook to perform custom actions on the updated products.
  */
 export const updateProductsWorkflow = createWorkflow(
-  updateProductsWorkflowId,
-  (input: WorkflowData<UpdateProductWorkflowInput>) => {
+  {
+    name: updateProductsWorkflowId,
+    inputSchema: updateProductWorkflowInputSchema,
+    outputSchema: updateProductsWorkflowOutputSchema,
+  },
+  (input) => {
     // We only get the variant ids of products that are updating the variants and prices.
     const variantIdsSelector = transform({ input }, (data) => {
       if ("products" in data.input) {

@@ -4,21 +4,39 @@ import {
   createHook,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common"
 import { createShippingOptionTypesStep } from "../steps"
+import {
+  createShippingOptionTypesWorkflowInputSchema,
+  createShippingOptionTypesWorkflowOutputSchema,
+  type CreateShippingOptionTypesWorkflowInput as SchemaInput,
+  type CreateShippingOptionTypesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create one or more shipping option types, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateShippingOptionTypesWorkflowInput = {
-  /**
-   * The shipping option types to create.
-   */
+export {
+  type CreateShippingOptionTypesWorkflowInput,
+  type CreateShippingOptionTypesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   shipping_option_types: FulfillmentTypes.CreateShippingOptionTypeDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as FulfillmentTypes.ShippingOptionTypeDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreateShippingOptionTypesWorkflowInput as LegacyCreateShippingOptionTypesWorkflowInput } from "../utils/schemas"
+export type { CreateShippingOptionTypesWorkflowOutput as LegacyCreateShippingOptionTypesWorkflowOutput } from "../utils/schemas"
 
 export const createShippingOptionTypesWorkflowId = "create-shipping-option-types"
 /**
@@ -54,8 +72,13 @@ export const createShippingOptionTypesWorkflowId = "create-shipping-option-types
  * @property hooks.shippingOptionTypesCreated - This hook is executed after the shipping option types are created. You can consume this hook to perform custom actions on the created shipping option types.
  */
 export const createShippingOptionTypesWorkflow = createWorkflow(
-  createShippingOptionTypesWorkflowId,
-  (input: WorkflowData<CreateShippingOptionTypesWorkflowInput>) => {
+  {
+    name: createShippingOptionTypesWorkflowId,
+    description: "Create shipping option types",
+    inputSchema: createShippingOptionTypesWorkflowInputSchema,
+    outputSchema: createShippingOptionTypesWorkflowOutputSchema,
+  },
+  (input) => {
     const shippingOptionTypes = createShippingOptionTypesStep(input.shipping_option_types)
     const shippingOptionTypesCreated = createHook("shippingOptionTypesCreated", {
       shipping_option_types: shippingOptionTypes,

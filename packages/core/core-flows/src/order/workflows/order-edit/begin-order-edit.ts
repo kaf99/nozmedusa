@@ -4,7 +4,6 @@ import {
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -13,6 +12,12 @@ import {
 import { useRemoteQueryStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps/create-order-change"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
+import {
+  beginorderEditWorkflowInputSchema,
+  beginorderEditWorkflowOutputSchema,
+  type BeginorderEditWorkflowInput as SchemaInput,
+  type BeginorderEditWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that an order-edit can be requested for an order.
@@ -50,6 +55,21 @@ export const beginOrderEditValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.BeginorderEditWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderChangeDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const beginOrderEditOrderWorkflowId = "begin-order-edit-order"
 /**
  * This workflow creates an order edit request. It' used by the
@@ -74,10 +94,12 @@ export const beginOrderEditOrderWorkflowId = "begin-order-edit-order"
  * Create an order edit request.
  */
 export const beginOrderEditOrderWorkflow = createWorkflow(
-  beginOrderEditOrderWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.BeginorderEditWorkflowInput>
-  ): WorkflowResponse<OrderChangeDTO> {
+  {
+    name: beginOrderEditOrderWorkflowId,
+    inputSchema: beginorderEditWorkflowInputSchema,
+    outputSchema: beginorderEditWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderChangeDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status"],

@@ -13,6 +13,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  cancelOrderClaimWorkflowInputSchema,
+  cancelOrderClaimWorkflowOutputSchema,
+  type CancelOrderClaimWorkflowInput as SchemaInput,
+  type CancelOrderClaimWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteReservationsByLineItemsStep } from "../../../reservation/steps/delete-reservations-by-line-items"
 import { cancelOrderClaimStep } from "../../steps"
@@ -108,10 +114,27 @@ export const cancelOrderClaimWorkflowId = "cancel-claim"
  *
  * Cancel a confirmed order claim.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.CancelOrderClaimWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelOrderClaimWorkflow = createWorkflow(
-  cancelOrderClaimWorkflowId,
+  {
+    name: cancelOrderClaimWorkflowId,
+    description: "Cancel a confirmed order claim",
+    inputSchema: cancelOrderClaimWorkflowInputSchema,
+    outputSchema: cancelOrderClaimWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<OrderWorkflow.CancelOrderClaimWorkflowInput>
+    input
   ): WorkflowData<void> => {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

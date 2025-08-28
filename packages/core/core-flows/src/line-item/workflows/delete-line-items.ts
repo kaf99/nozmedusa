@@ -1,20 +1,11 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { refreshCartItemsWorkflow } from "../../cart/workflows/refresh-cart-items"
 import { deleteLineItemsStep } from "../steps/delete-line-items"
+import {
+  deleteLineItemsWorkflowInputSchema,
+  deleteLineItemsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete line items from a cart.
- */
-export type DeleteLineItemsWorkflowInput = { 
-  /**
-   * The cart's ID.
-   */
-  cart_id: string
-  /**
-   * The IDs of the line items to delete.
-   */
-  ids: string[]
-}
 
 export const deleteLineItemsWorkflowId = "delete-line-items"
 /**
@@ -38,8 +29,13 @@ export const deleteLineItemsWorkflowId = "delete-line-items"
  * Delete line items from a cart.
  */
 export const deleteLineItemsWorkflow = createWorkflow(
-  deleteLineItemsWorkflowId,
-  (input: WorkflowData<DeleteLineItemsWorkflowInput>) => {
+  {
+    name: deleteLineItemsWorkflowId,
+    description: "Delete line items from a cart",
+    inputSchema: deleteLineItemsWorkflowInputSchema,
+    outputSchema: deleteLineItemsWorkflowOutputSchema,
+  },
+  (input) => {
     deleteLineItemsStep(input.ids)
 
     refreshCartItemsWorkflow.runAsStep({

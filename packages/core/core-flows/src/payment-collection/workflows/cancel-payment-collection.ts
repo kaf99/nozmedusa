@@ -1,12 +1,17 @@
 import { PaymentCollectionDTO } from "@medusajs/framework/types"
 import { MedusaError, PaymentCollectionStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  cancelPaymentCollectionWorkflowInputSchema,
+  cancelPaymentCollectionWorkflowOutputSchema,
+  type CancelPaymentCollectionWorkflowInput as SchemaInput,
+  type CancelPaymentCollectionWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { useQueryGraphStep } from "../../common"
 import { updatePaymentCollectionStep } from "../steps/update-payment-collection"
 import { cancelPaymentStep } from "../steps/cancel-payment"
@@ -32,15 +37,6 @@ const validatePaymentCollectionCancellationStep = createStep(
   }
 )
 
-/**
- * The data to cancel a payment collection.
- */
-export interface CancelPaymentCollectionWorkflowInput {
-  /**
-   * The id of the payment collection to cancel.
-   */
-  payment_collection_id: string
-}
 
 export const cancelPaymentCollectionWorkflowId = "cancel-payment-collection"
 /**
@@ -53,11 +49,26 @@ export const cancelPaymentCollectionWorkflowId = "cancel-payment-collection"
  *   payment_collection_id: "paycol_123",
  * })
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { payment_collection_id: string } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PaymentCollectionDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelPaymentCollectionWorkflow = createWorkflow(
-  cancelPaymentCollectionWorkflowId,
-  (
-    input: WorkflowData<CancelPaymentCollectionWorkflowInput>
-  ): WorkflowResponse<PaymentCollectionDTO> => {
+  {
+    name: cancelPaymentCollectionWorkflowId,
+    description: "Cancel a payment collection",
+    inputSchema: cancelPaymentCollectionWorkflowInputSchema,
+    outputSchema: cancelPaymentCollectionWorkflowOutputSchema,
+  },
+  (input) => {
     const paymentCollectionQuery = useQueryGraphStep({
       entity: "payment_collection",
       fields: [

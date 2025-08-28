@@ -12,6 +12,15 @@ import {
   updateOrderChangesStep,
 } from "../../order"
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
+import {
+  requestDraftOrderEditWorkflowInputSchema,
+  requestDraftOrderEditWorkflowOutputSchema,
+  type RequestDraftOrderEditWorkflowInput,
+  type RequestDraftOrderEditWorkflowOutput,
+} from "../utils/schemas"
+
+requestDraftOrderEditWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
+requestDraftOrderEditWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const requestDraftOrderEditId = "request-draft-order-edit"
 
@@ -35,20 +44,6 @@ function getOrderChangesData({
 }
 
 /**
- * The data to request a draft order edit.
- */
-export type RequestDraftOrderEditWorkflowInput = {
-  /**
-   * The ID of the draft order to request the edit for.
-   */
-  order_id: string
-  /**
-   * The ID of the user requesting the edit.
-   */
-  requested_by?: string
-}
-
-/**
  * This workflow requests a draft order edit. It's used by the
  * [Request Draft Order Edit Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersideditrequest).
  * 
@@ -69,8 +64,15 @@ export type RequestDraftOrderEditWorkflowInput = {
  * Request a draft order edit.
  */
 export const requestDraftOrderEditWorkflow = createWorkflow(
-  requestDraftOrderEditId,
-  function (input: RequestDraftOrderEditWorkflowInput) {
+  {
+    name: requestDraftOrderEditId,
+    inputSchema: requestDraftOrderEditWorkflowInputSchema,
+    outputSchema: requestDraftOrderEditWorkflowOutputSchema,
+    description: "Request a draft order edit",
+  },
+  function (
+    input: RequestDraftOrderEditWorkflowInput
+  ): WorkflowResponse<RequestDraftOrderEditWorkflowOutput> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "version", "status", "is_draft_order", "canceled_at"],

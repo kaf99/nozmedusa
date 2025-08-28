@@ -1,25 +1,34 @@
 import { CreateTaxRateRuleDTO, TaxRateRuleDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createTaxRateRulesStep } from "../steps"
+import {
+  createTaxRateRulesWorkflowInputSchema,
+  createTaxRateRulesWorkflowOutputSchema,
+  type CreateTaxRateRulesWorkflowInput as SchemaInput,
+  type CreateTaxRateRulesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create tax rules for rates.
- */
-export type CreateTaxRateRulesWorkflowInput = {
-  /**
-   * The rules to create.
-   */
+export {
+  type CreateTaxRateRulesWorkflowInput,
+  type CreateTaxRateRulesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   rules: CreateTaxRateRuleDTO[]
-}
+} = schemaInput
 
-/**
- * The created tax rules for rates.
- */
-export type CreateTaxRateRulesWorkflowOutput = TaxRateRuleDTO[]
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRateRuleDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createTaxRateRulesWorkflowId = "create-tax-rate-rules"
 /**
@@ -48,10 +57,13 @@ export const createTaxRateRulesWorkflowId = "create-tax-rate-rules"
  * Create one or more tax rules for rates.
  */
 export const createTaxRateRulesWorkflow = createWorkflow(
-  createTaxRateRulesWorkflowId,
-  (
-    input: WorkflowData<CreateTaxRateRulesWorkflowInput>
-  ): WorkflowResponse<CreateTaxRateRulesWorkflowOutput> => {
+  {
+    name: createTaxRateRulesWorkflowId,
+    description: "Create one or more tax rules for rates",
+    inputSchema: createTaxRateRulesWorkflowInputSchema,
+    outputSchema: createTaxRateRulesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(createTaxRateRulesStep(input.rules))
   }
 )

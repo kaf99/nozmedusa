@@ -1,7 +1,6 @@
 import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductOptionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,20 +8,36 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateProductOptionsStep } from "../steps"
+import {
+  updateProductOptionsWorkflowInputSchema,
+  updateProductOptionsWorkflowOutputSchema,
+  type UpdateProductOptionsWorkflowInput as SchemaInput,
+  type UpdateProductOptionsWorkflowOutput as SchemaOutput,
+} from "../utils/update-schemas"
 
-/**
- * The data to update one or more product options, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductOptionsWorkflowInput = {
-  /**
-   * The filters to select the product options to update.
-   */
+export {
+  type UpdateProductOptionsWorkflowInput,
+  type UpdateProductOptionsWorkflowOutput,
+} from "../utils/update-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: ProductTypes.FilterableProductOptionProps
-  /**
-   * The data to update in the product options.
-   */
   update: ProductTypes.UpdateProductOptionDTO
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as ProductTypes.ProductOptionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { UpdateProductOptionsWorkflowInput as LegacyUpdateProductOptionsWorkflowInput } from "../utils/update-schemas"
+export type { UpdateProductOptionsWorkflowOutput as LegacyUpdateProductOptionsWorkflowOutput } from "../utils/update-schemas"
 
 export const updateProductOptionsWorkflowId = "update-product-options"
 /**
@@ -56,8 +71,13 @@ export const updateProductOptionsWorkflowId = "update-product-options"
  * @property hooks.productOptionsUpdated - This hook is executed after the product options are updated. You can consume this hook to perform custom actions on the updated product options.
  */
 export const updateProductOptionsWorkflow = createWorkflow(
-  updateProductOptionsWorkflowId,
-  (input: WorkflowData<UpdateProductOptionsWorkflowInput>) => {
+  {
+    name: updateProductOptionsWorkflowId,
+    description: "Update one or more product options",
+    inputSchema: updateProductOptionsWorkflowInputSchema,
+    outputSchema: updateProductOptionsWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedProductOptions = updateProductOptionsStep(input)
     const productOptionsUpdated = createHook("productOptionsUpdated", {
       product_options: updatedProductOptions,

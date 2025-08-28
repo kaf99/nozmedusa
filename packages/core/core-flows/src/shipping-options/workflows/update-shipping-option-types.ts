@@ -4,25 +4,40 @@ import {
   createHook,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateShippingOptionTypesStep } from "../steps"
+import {
+  updateShippingOptionTypesWorkflowInputSchema,
+  updateShippingOptionTypesWorkflowOutputSchema,
+  type UpdateShippingOptionTypesWorkflowInput as SchemaInput,
+  type UpdateShippingOptionTypesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update one or more shipping option types, along with custom data that's passed to the workflow's hooks.
- */
-type UpdateShippingOptionTypesWorkflowInput = {
-  /**
-   * The filters to select the shipping option types to update.
-   */
+export {
+  type UpdateShippingOptionTypesWorkflowInput,
+  type UpdateShippingOptionTypesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: FulfillmentTypes.FilterableShippingOptionTypeProps
-  /**
-   * The data to update in the shipping option types.
-   */
   update: FulfillmentTypes.UpdateShippingOptionTypeDTO
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as FulfillmentTypes.ShippingOptionTypeDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { UpdateShippingOptionTypesWorkflowInput as LegacyUpdateShippingOptionTypesWorkflowInput } from "../utils/schemas"
+export type { UpdateShippingOptionTypesWorkflowOutput as LegacyUpdateShippingOptionTypesWorkflowOutput } from "../utils/schemas"
 
 export const updateShippingOptionTypesWorkflowId = "update-shipping-option-types"
 /**
@@ -57,8 +72,13 @@ export const updateShippingOptionTypesWorkflowId = "update-shipping-option-types
  * @property hooks.shippingOptionTypesUpdated - This hook is executed after the shipping option types are updated. You can consume this hook to perform custom actions on the updated shipping option types.
  */
 export const updateShippingOptionTypesWorkflow = createWorkflow(
-  updateShippingOptionTypesWorkflowId,
-  (input: WorkflowData<UpdateShippingOptionTypesWorkflowInput>) => {
+  {
+    name: updateShippingOptionTypesWorkflowId,
+    description: "Update shipping option types",
+    inputSchema: updateShippingOptionTypesWorkflowInputSchema,
+    outputSchema: updateShippingOptionTypesWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedShippingOptionTypes = updateShippingOptionTypesStep(input)
     const shippingOptionTypesUpdated = createHook("shippingOptionTypesUpdated", {
       shipping_option_types: updatedShippingOptionTypes,

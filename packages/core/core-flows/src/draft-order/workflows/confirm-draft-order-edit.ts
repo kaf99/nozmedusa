@@ -8,7 +8,12 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput, OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import {
+  BigNumberInput,
+  OrderChangeDTO,
+  OrderDTO,
+  OrderPreviewDTO,
+} from "@medusajs/types"
 import { reserveInventoryStep } from "../../cart"
 import {
   prepareConfirmInventoryInput,
@@ -22,6 +27,19 @@ import {
 import { confirmOrderChanges } from "../../order/steps/confirm-order-changes"
 import { deleteReservationsByLineItemsStep } from "../../reservation"
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
+import {
+  confirmDraftOrderEditWorkflowInputSchema,
+  confirmDraftOrderEditWorkflowOutputSchema,
+  type ConfirmDraftOrderEditWorkflowInput as SchemaInput,
+  type ConfirmDraftOrderEditWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification
+const _in: SchemaInput = {} as ConfirmDraftOrderEditWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
 
 export const confirmDraftOrderEditWorkflowId = "confirm-draft-order-edit"
 
@@ -57,7 +75,11 @@ export interface ConfirmDraftOrderEditWorkflowInput {
  * Confirm a draft order edit.
  */
 export const confirmDraftOrderEditWorkflow = createWorkflow(
-  confirmDraftOrderEditWorkflowId,
+  {
+    name: confirmDraftOrderEditWorkflowId,
+    inputSchema: confirmDraftOrderEditWorkflowInputSchema,
+    outputSchema: confirmDraftOrderEditWorkflowOutputSchema,
+  },
   function (input: ConfirmDraftOrderEditWorkflowInput) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

@@ -10,9 +10,14 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  orderAddLineItemWorkflowInputSchema,
+  orderAddLineItemWorkflowOutputSchema,
+  type OrderAddLineItemWorkflowInput as SchemaInput,
+  type OrderAddLineItemWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { findOneOrAnyRegionStep } from "../../cart/steps/find-one-or-any-region"
 import { findOrCreateCustomerStep } from "../../cart/steps/find-or-create-customer"
 import { findSalesChannelStep } from "../../cart/steps/find-sales-channel"
@@ -55,10 +60,18 @@ function prepareLineItems(data) {
   return items
 }
 
-/**
- * The created order line items.
- */
-export type OrderAddLineItemWorkflowOutput = OrderLineItemDTO[]
+export {
+  type OrderAddLineItemWorkflowInput,
+  type OrderAddLineItemWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OrderWorkflow.OrderAddLineItemWorkflowInput & AdditionalData = schemaInput
+const existingOutput: OrderLineItemDTO[] = schemaOutput
+
+console.log(existingInput, existingOutput)
 
 export const addOrderLineItemsWorkflowId = "order-add-line-items"
 /**
@@ -122,12 +135,13 @@ export const addOrderLineItemsWorkflowId = "order-add-line-items"
  * :::
  */
 export const addOrderLineItemsWorkflow = createWorkflow(
-  addOrderLineItemsWorkflowId,
-  (
-    input: WorkflowData<
-      OrderWorkflow.OrderAddLineItemWorkflowInput & AdditionalData
-    >
-  ) => {
+  {
+    name: addOrderLineItemsWorkflowId,
+    description: "Add line items to an order",
+    inputSchema: orderAddLineItemWorkflowInputSchema,
+    outputSchema: orderAddLineItemWorkflowOutputSchema,
+  },
+  (input) => {
     const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: [
@@ -228,7 +242,7 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     return new WorkflowResponse(
       createOrderLineItemsStep({
         items: lineItems,
-      }) satisfies OrderAddLineItemWorkflowOutput,
+      }) satisfies SchemaOutput,
       {
         hooks: [setPricingContext] as const,
       }

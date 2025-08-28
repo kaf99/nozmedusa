@@ -7,12 +7,17 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  requestItemReturnWorkflowInputSchema,
+  requestItemReturnWorkflowOutputSchema,
+  type RequestItemReturnWorkflowInput as SchemaInput,
+  type RequestItemReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
 import {
@@ -134,11 +139,23 @@ export const requestItemReturnWorkflowId = "request-item-return"
  *
  * Add items to a return.
  */
+
+// Type verification block - DO NOT REMOVE
+const _inputSchemaCheck: OrderWorkflow.RequestItemReturnWorkflowInput =
+  {} as SchemaInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const requestItemReturnWorkflow = createWorkflow(
-  requestItemReturnWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.RequestItemReturnWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: requestItemReturnWorkflowId,
+    description: "Add items to a return.",
+    inputSchema: requestItemReturnWorkflowInputSchema,
+    outputSchema: requestItemReturnWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

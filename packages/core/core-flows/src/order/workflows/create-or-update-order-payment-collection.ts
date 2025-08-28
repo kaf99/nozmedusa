@@ -8,9 +8,14 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  createOrUpdateOrderPaymentCollectionWorkflowInputSchema,
+  createOrUpdateOrderPaymentCollectionWorkflowOutputSchema,
+  type CreateOrUpdateOrderPaymentCollectionWorkflowInput as SchemaInput,
+  type CreateOrUpdateOrderPaymentCollectionWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { updatePaymentCollectionStep } from "../../payment-collection"
 import { createOrderPaymentCollectionWorkflow } from "./create-order-payment-collection"
@@ -55,13 +60,27 @@ export const createOrUpdateOrderPaymentCollectionWorkflowId =
  *
  * Create or update payment collection for an order.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = [] as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateOrUpdateOrderPaymentCollectionInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = [] as PaymentCollectionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const createOrUpdateOrderPaymentCollectionWorkflow = createWorkflow(
-  createOrUpdateOrderPaymentCollectionWorkflowId,
+  {
+    name: createOrUpdateOrderPaymentCollectionWorkflowId,
+    description: "Create or update payment collection for an order",
+    inputSchema: createOrUpdateOrderPaymentCollectionWorkflowInputSchema,
+    outputSchema: createOrUpdateOrderPaymentCollectionWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<{
-      order_id: string
-      amount?: number
-    }>
+    input
   ) => {
     const order = useRemoteQueryStep({
       entry_point: "order",

@@ -1,6 +1,5 @@
 import { WorkflowTypes } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -8,6 +7,28 @@ import {
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import { normalizeCsvStep, waitConfirmationProductImportStep } from "../steps"
 import { batchProductsWorkflow } from "./batch-products"
+import {
+  importProductsDTOSchema,
+  importProductsSummarySchema,
+  type ImportProductsDTO as SchemaInput,
+  type ImportProductsSummary as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = { toCreate: 0, toUpdate: 0 } as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: WorkflowTypes.ProductWorkflow.ImportProductsDTO =
+  schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {
+  toCreate: 0,
+  toUpdate: 0,
+} as WorkflowTypes.ProductWorkflow.ImportProductsSummary
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const importProductsWorkflowId = "import-products"
 /**
@@ -86,9 +107,14 @@ export const importProductsWorkflowId = "import-products"
  * Import products from a CSV file.
  */
 export const importProductsWorkflow = createWorkflow(
-  importProductsWorkflowId,
+  {
+    name: importProductsWorkflowId,
+    description: "Import products from CSV",
+    inputSchema: importProductsDTOSchema,
+    outputSchema: importProductsSummarySchema,
+  },
   (
-    input: WorkflowData<WorkflowTypes.ProductWorkflow.ImportProductsDTO>
+    input
   ): WorkflowResponse<WorkflowTypes.ProductWorkflow.ImportProductsSummary> => {
     const batchRequest = normalizeCsvStep(input.fileContent)
 
@@ -119,8 +145,10 @@ export const importProductsWorkflow = createWorkflow(
 
     notifyOnFailureStep(failureNotification)
 
+    const transformed = transform({ batchRequest }, (data) => data.batchRequest)
+
     batchProductsWorkflow
-      .runAsStep({ input: batchRequest })
+      .runAsStep({ input: transformed })
       .config({ async: true, backgroundExecution: true })
 
     const notifications = transform({ input }, (data) => {

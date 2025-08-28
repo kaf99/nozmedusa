@@ -41,7 +41,7 @@ export interface ShippingOptionRuleDTO {
   /**
    * The associated shipping option.
    */
-  shipping_option: ShippingOptionDTO
+  shipping_option?: ShippingOptionDTO
 
   /**
    * The creation date of the shipping option rule.

@@ -1,6 +1,5 @@
 import { Modules, ProductWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -15,16 +14,11 @@ import {
 import { deleteInventoryItemWorkflow } from "../../inventory"
 import { deleteProductsStep } from "../steps/delete-products"
 import { getProductsStep } from "../steps/get-products"
+import {
+  deleteProductsWorkflowInputSchema,
+  deleteProductsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more products.
- */
-export type DeleteProductsWorkflowInput = {
-  /**
-   * The IDs of the products to delete.
-   */
-  ids: string[]
-}
 
 export const deleteProductsWorkflowId = "delete-products"
 /**
@@ -51,8 +45,13 @@ export const deleteProductsWorkflowId = "delete-products"
  * @property hooks.productsDeleted - This hook is executed after the products are deleted. You can consume this hook to perform custom actions on the deleted products.
  */
 export const deleteProductsWorkflow = createWorkflow(
-  deleteProductsWorkflowId,
-  (input: WorkflowData<DeleteProductsWorkflowInput>) => {
+  {
+    name: deleteProductsWorkflowId,
+    description: "Delete one or more products",
+    inputSchema: deleteProductsWorkflowInputSchema,
+    outputSchema: deleteProductsWorkflowOutputSchema,
+  },
+  (input) => {
     const productsToDelete = getProductsStep({ ids: input.ids })
     const variantsToBeDeleted = transform({ productsToDelete }, (data) => {
       return data.productsToDelete
@@ -98,7 +97,9 @@ export const deleteProductsWorkflow = createWorkflow(
     )
 
     deleteInventoryItemWorkflow.runAsStep({
-      input: toDeleteInventoryItemIds,
+      input: {
+        ids: toDeleteInventoryItemIds,
+      },
     })
 
     const [, deletedProduct] = parallelize(

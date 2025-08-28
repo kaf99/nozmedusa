@@ -16,6 +16,12 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  confirmOrderEditRequestWorkflowInputSchema,
+  confirmOrderEditRequestWorkflowOutputSchema,
+  type ConfirmOrderEditRequestWorkflowInput as SchemaInput,
+  type ConfirmOrderEditRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import {
   prepareConfirmInventoryInput,
@@ -93,6 +99,21 @@ export type ConfirmOrderEditRequestWorkflowInput = {
   confirmed_by?: string
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: ConfirmOrderEditRequestWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const confirmOrderEditRequestWorkflowId = "confirm-order-edit-request"
 /**
  * This workflow confirms an order edit request. It's used by the
@@ -114,10 +135,12 @@ export const confirmOrderEditRequestWorkflowId = "confirm-order-edit-request"
  * Confirm an order edit request.
  */
 export const confirmOrderEditRequestWorkflow = createWorkflow(
-  confirmOrderEditRequestWorkflowId,
-  function (
-    input: ConfirmOrderEditRequestWorkflowInput
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: confirmOrderEditRequestWorkflowId,
+    inputSchema: confirmOrderEditRequestWorkflowInputSchema,
+    outputSchema: confirmOrderEditRequestWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: [

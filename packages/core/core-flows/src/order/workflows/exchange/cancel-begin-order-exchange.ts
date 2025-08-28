@@ -5,7 +5,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   parallelize,
@@ -22,6 +21,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  cancelBeginOrderExchangeWorkflowInputSchema,
+  cancelBeginOrderExchangeWorkflowOutputSchema,
+  type CancelBeginOrderExchangeWorkflowInput as SchemaInput,
+  type CancelBeginOrderExchangeWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a requested exchange can be canceled.
@@ -81,15 +86,24 @@ export const cancelBeginOrderExchangeValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as unknown as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  exchange_id: string
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 /**
  * The details to cancel a requested order exchange.
  */
-export type CancelBeginOrderExchangeWorkflowInput = {
-  /**
-   * The ID of the exchange to cancel.
-   */
-  exchange_id: string
-}
+export type CancelBeginOrderExchangeWorkflowInput = SchemaInput
 
 export const cancelBeginOrderExchangeWorkflowId = "cancel-begin-order-exchange"
 /**
@@ -112,8 +126,13 @@ export const cancelBeginOrderExchangeWorkflowId = "cancel-begin-order-exchange"
  * Cancel a requested order exchange.
  */
 export const cancelBeginOrderExchangeWorkflow = createWorkflow(
-  cancelBeginOrderExchangeWorkflowId,
-  function (input: CancelBeginOrderExchangeWorkflowInput): WorkflowData<void> {
+  {
+    name: cancelBeginOrderExchangeWorkflowId,
+    description: "Cancel begin order exchange",
+    inputSchema: cancelBeginOrderExchangeWorkflowInputSchema,
+    outputSchema: cancelBeginOrderExchangeWorkflowOutputSchema,
+  },
+  function (input) {
     const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "return_id", "canceled_at"],

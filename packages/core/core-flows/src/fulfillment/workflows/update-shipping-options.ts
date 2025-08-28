@@ -1,4 +1,3 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   createWorkflow,
   parallelize,
@@ -13,11 +12,12 @@ import {
 import { validateFulfillmentProvidersStep } from "../steps/validate-fulfillment-providers"
 import { validateShippingOptionPricesStep } from "../steps/validate-shipping-option-prices"
 import { ShippingOptionPriceType } from "@medusajs/framework/utils"
-
-/**
- * The data to update the shipping options.
- */
-export type UpdateShippingOptionsWorkflowInput = FulfillmentWorkflow.UpdateShippingOptionsWorkflowInput[]
+import {
+  updateShippingOptionsWorkflowInputSchema,
+  updateShippingOptionsWorkflowOutputSchema,
+  type UpdateShippingOptionsWorkflowInput,
+  type UpdateShippingOptionsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateShippingOptionsWorkflowId =
   "update-shipping-options-workflow"
@@ -51,10 +51,15 @@ export const updateShippingOptionsWorkflowId =
  * Update one or more shipping options.
  */
 export const updateShippingOptionsWorkflow = createWorkflow(
-  updateShippingOptionsWorkflowId,
+  {
+    name: updateShippingOptionsWorkflowId,
+    description: "Update one or more shipping options",
+    inputSchema: updateShippingOptionsWorkflowInputSchema,
+    outputSchema: updateShippingOptionsWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<UpdateShippingOptionsWorkflowInput>
-  ): WorkflowResponse<FulfillmentWorkflow.UpdateShippingOptionsWorkflowOutput> => {
+  ): WorkflowResponse<UpdateShippingOptionsWorkflowOutput> => {
     parallelize(
       validateFulfillmentProvidersStep(input),
       validateShippingOptionPricesStep(input)
@@ -62,12 +67,9 @@ export const updateShippingOptionsWorkflow = createWorkflow(
 
     const data = transform(input, (data) => {
       const shippingOptionsIndexToPrices = data.map((option, index) => {
-        const prices = (
-          option as FulfillmentWorkflow.UpdateFlatRateShippingOptionInput
-        ).prices
+        const prices = (option as any).prices
 
-        delete (option as FulfillmentWorkflow.UpdateFlatRateShippingOptionInput)
-          .prices
+        delete (option as any).prices
 
         /**
          * When we are updating an option to be calculated, remove the prices.

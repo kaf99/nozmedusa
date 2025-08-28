@@ -1,15 +1,38 @@
-import { PricingWorkflow } from "@medusajs/framework/types"
+import { PricingWorkflow, PricePreferenceDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createPricePreferencesStep } from "../steps"
+import {
+  createPricePreferencesWorkflowInputSchema,
+  createPricePreferencesWorkflowOutputSchema,
+  type CreatePricePreferencesWorkflowInput as SchemaInput,
+  type CreatePricePreferencesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreatePricePreferencesWorkflowInput,
+  type CreatePricePreferencesWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The price preferences to create.
  */
-export type CreatePricePreferencesWorkflowInput = PricingWorkflow.CreatePricePreferencesWorkflowInput[]
+type OldCreatePricePreferencesWorkflowInput = PricingWorkflow.CreatePricePreferencesWorkflowInput[]
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreatePricePreferencesWorkflowInput = schemaInput
+const existingOutput: PricePreferenceDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreatePricePreferencesWorkflowInput
+const oldOutput = {} as PricePreferenceDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createPricePreferencesWorkflowId = "create-price-preferences"
 /**
@@ -36,10 +59,12 @@ export const createPricePreferencesWorkflowId = "create-price-preferences"
  * Create one or more price preferences.
  */
 export const createPricePreferencesWorkflow = createWorkflow(
-  createPricePreferencesWorkflowId,
-  (
-    input: WorkflowData<CreatePricePreferencesWorkflowInput>
-  ) => {
+  {
+    name: createPricePreferencesWorkflowId,
+    inputSchema: createPricePreferencesWorkflowInputSchema,
+    outputSchema: createPricePreferencesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(createPricePreferencesStep(input))
   }
 )

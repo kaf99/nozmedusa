@@ -1,21 +1,35 @@
-import { AdditionalData, CreatePromotionDTO } from "@medusajs/framework/types"
+import { AdditionalData, CreatePromotionDTO, PromotionDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createPromotionsStep } from "../steps"
+import {
+  createPromotionsWorkflowInputSchema,
+  createPromotionsWorkflowOutputSchema,
+  type CreatePromotionsWorkflowInput as SchemaInput,
+  type CreatePromotionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create one or more promotions, along with custom data that's passed to the workflow's hooks.
- */
-export type CreatePromotionsWorkflowInput = {
-  /**
-   * The promotions to create.
-   */
+export {
+  type CreatePromotionsWorkflowInput,
+  type CreatePromotionsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   promotionsData: CreatePromotionDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PromotionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createPromotionsWorkflowId = "create-promotions"
 /**
@@ -57,8 +71,13 @@ export const createPromotionsWorkflowId = "create-promotions"
  * @property hooks.promotionsCreated - This hook is executed after the promotions are created. You can consume this hook to perform custom actions on the created promotions.
  */
 export const createPromotionsWorkflow = createWorkflow(
-  createPromotionsWorkflowId,
-  (input: WorkflowData<CreatePromotionsWorkflowInput>) => {
+  {
+    name: createPromotionsWorkflowId,
+    description: "Create one or more promotions",
+    inputSchema: createPromotionsWorkflowInputSchema,
+    outputSchema: createPromotionsWorkflowOutputSchema,
+  },
+  (input) => {
     const createdPromotions = createPromotionsStep(input.promotionsData)
     const promotionsCreated = createHook("promotionsCreated", {
       promotions: createdPromotions,

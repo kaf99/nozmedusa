@@ -1,9 +1,9 @@
 import {
   AdditionalData,
   CreateCustomerAddressDTO,
+  CustomerAddressDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -15,16 +15,31 @@ import {
   maybeUnsetDefaultBillingAddressesStep,
   maybeUnsetDefaultShippingAddressesStep,
 } from "../steps"
+import {
+  createCustomerAddressesWorkflowInputSchema,
+  createCustomerAddressesWorkflowOutputSchema,
+  type CreateCustomerAddressesWorkflowInput as SchemaInput,
+  type CreateCustomerAddressesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create one or more customer addresses, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateCustomerAddressesWorkflowInput = {
-  /**
-   * The addresses to create.
-   */
+export {
+  type CreateCustomerAddressesWorkflowInput,
+  type CreateCustomerAddressesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   addresses: CreateCustomerAddressDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as CustomerAddressDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createCustomerAddressesWorkflowId = "create-customer-addresses"
 /**
@@ -73,8 +88,13 @@ export const createCustomerAddressesWorkflowId = "create-customer-addresses"
  * @property hooks.addressesCreated - This hook is executed after the addresses are created. You can consume this hook to perform custom actions on the created addresses.
  */
 export const createCustomerAddressesWorkflow = createWorkflow(
-  createCustomerAddressesWorkflowId,
-  (input: WorkflowData<CreateCustomerAddressesWorkflowInput>) => {
+  {
+    name: createCustomerAddressesWorkflowId,
+    description: "Create one or more customer addresses",
+    inputSchema: createCustomerAddressesWorkflowInputSchema,
+    outputSchema: createCustomerAddressesWorkflowOutputSchema,
+  },
+  (input) => {
     const unsetInput = transform(input, (data) => ({
       create: data.addresses,
     }))

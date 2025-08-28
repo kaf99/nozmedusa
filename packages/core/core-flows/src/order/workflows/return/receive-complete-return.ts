@@ -1,6 +1,5 @@
 import { OrderWorkflow } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -13,6 +12,12 @@ import {
   throwIfIsCancelled,
   throwIfItemsDoesNotExistsInReturn,
 } from "../../utils/order-validation"
+import {
+  receiveCompleteOrderReturnWorkflowInputSchema,
+  receiveAndCompleteReturnOrderWorkflowOutputSchema,
+  type ReceiveCompleteOrderReturnWorkflowInput as SchemaInput,
+  type ReceiveAndCompleteReturnOrderWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return can be received and completed.
@@ -70,6 +75,13 @@ export const receiveCompleteReturnValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput = {} as OrderWorkflow.ReceiveCompleteOrderReturnWorkflowInput
+const _out: SchemaOutput = {} as ReturnDTO | undefined
+
+void _in
+void _out
+
 export const receiveAndCompleteReturnOrderWorkflowId = "receive-return-order"
 /**
  * This workflow marks a return as received and completes it.
@@ -96,9 +108,14 @@ export const receiveAndCompleteReturnOrderWorkflowId = "receive-return-order"
  * Receive and complete a return.
  */
 export const receiveAndCompleteReturnOrderWorkflow = createWorkflow(
-  receiveAndCompleteReturnOrderWorkflowId,
+  {
+    name: receiveAndCompleteReturnOrderWorkflowId,
+    description: "Receive and complete a return.",
+    inputSchema: receiveCompleteOrderReturnWorkflowInputSchema,
+    outputSchema: receiveAndCompleteReturnOrderWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.ReceiveCompleteOrderReturnWorkflowInput>
+    input: OrderWorkflow.ReceiveCompleteOrderReturnWorkflowInput
   ): WorkflowResponse<ReturnDTO | undefined> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "returns",

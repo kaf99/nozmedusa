@@ -10,22 +10,36 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common"
 import { updatePromotionsStep } from "../steps"
 import { updatePromotionsStatusWorkflow } from "./update-promotions-status"
+import {
+  updatePromotionsWorkflowInputSchema,
+  updatePromotionsWorkflowOutputSchema,
+  type UpdatePromotionsWorkflowInput as SchemaInput,
+  type UpdatePromotionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update one or more promotions, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdatePromotionsWorkflowInput = {
-  /**
-   * The promotions to update.
-   */
+export {
+  type UpdatePromotionsWorkflowInput,
+  type UpdatePromotionsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   promotionsData: UpdatePromotionDTO[]
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PromotionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updatePromotionsWorkflowId = "update-promotions"
 /**
@@ -59,8 +73,13 @@ export const updatePromotionsWorkflowId = "update-promotions"
  * @property hooks.promotionsUpdated - This hook is executed after the promotions are updated. You can consume this hook to perform custom actions on the updated promotions.
  */
 export const updatePromotionsWorkflow = createWorkflow(
-  updatePromotionsWorkflowId,
-  (input: WorkflowData<UpdatePromotionsWorkflowInput>) => {
+  {
+    name: updatePromotionsWorkflowId,
+    description: "Update one or more promotions",
+    inputSchema: updatePromotionsWorkflowInputSchema,
+    outputSchema: updatePromotionsWorkflowOutputSchema,
+  },
+  (input) => {
     const promotionIds = transform({ input }, ({ input }) =>
       input.promotionsData.map((pd) => pd.id)
     )
@@ -77,7 +96,7 @@ export const updatePromotionsWorkflow = createWorkflow(
       { promotions, input },
       ({ promotions, input }) => {
         const promotionMap: Record<string, PromotionDTO> = {}
-        const promotionsUpdateInput: UpdatePromotionsWorkflowInput["promotionsData"] =
+        const promotionsUpdateInput: SchemaInput["promotionsData"] =
           []
         const promotionsStatusUpdateInput: {
           id: string

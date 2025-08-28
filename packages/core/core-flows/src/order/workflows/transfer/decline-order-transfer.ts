@@ -9,7 +9,6 @@ import {
   OrderChangeStatus,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   transform,
@@ -21,6 +20,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  declineTransferOrderRequestWorkflowInputSchema,
+  declineTransferOrderRequestWorkflowOutputSchema,
+  type DeclineTransferOrderRequestWorkflowInput as SchemaInput,
+  type DeclineTransferOrderRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The details of the order transfer decline to validate.
@@ -88,6 +93,14 @@ export const declineTransferOrderRequestValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput =
+  {} as OrderWorkflow.DeclineTransferOrderRequestWorkflowInput
+const _out: SchemaOutput = undefined as void
+
+void _in
+void _out
+
 export const declineTransferOrderRequestWorkflowId =
   "decline-transfer-order-request"
 /**
@@ -110,10 +123,14 @@ export const declineTransferOrderRequestWorkflowId =
  * Decline a requested order transfer.
  */
 export const declineOrderTransferRequestWorkflow = createWorkflow(
-  declineTransferOrderRequestWorkflowId,
+  {
+    name: declineTransferOrderRequestWorkflowId,
+    inputSchema: declineTransferOrderRequestWorkflowInputSchema,
+    outputSchema: declineTransferOrderRequestWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.DeclineTransferOrderRequestWorkflowInput>
-  ): WorkflowData<void> {
+    input: OrderWorkflow.DeclineTransferOrderRequestWorkflowInput
+  ): void {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: ["id", "version", "declined_at"],

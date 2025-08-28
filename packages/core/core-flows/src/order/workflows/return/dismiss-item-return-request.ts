@@ -7,7 +7,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -21,6 +20,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
+import {
+  dismissItemReturnRequestWorkflowInputSchema,
+  dismissItemReturnRequestWorkflowOutputSchema,
+  type DismissItemReturnRequestWorkflowInput as SchemaInput,
+  type DismissItemReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return request can have its items dismissed.
@@ -109,6 +114,13 @@ export const dismissItemReturnRequestValidationStep = createStep(
  */
 export type DismissItemReturnRequestWorkflowInput = OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput
 
+// Type verification
+const _in: SchemaInput = {} as DismissItemReturnRequestWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
 export const dismissItemReturnRequestWorkflowId = "dismiss-item-return-request"
 /**
  * This workflow dismisses items from a return request due to them being damaged. It's used
@@ -138,9 +150,14 @@ export const dismissItemReturnRequestWorkflowId = "dismiss-item-return-request"
  * Dismiss items from a return request.
  */
 export const dismissItemReturnRequestWorkflow = createWorkflow(
-  dismissItemReturnRequestWorkflowId,
+  {
+    name: dismissItemReturnRequestWorkflowId,
+    description: "Dismiss items from a return request.",
+    inputSchema: dismissItemReturnRequestWorkflowInputSchema,
+    outputSchema: dismissItemReturnRequestWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<DismissItemReturnRequestWorkflowInput>
+    input: DismissItemReturnRequestWorkflowInput
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",

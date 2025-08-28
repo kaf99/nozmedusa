@@ -1,6 +1,5 @@
 import { CreateTaxRateRuleDTO, TaxRateRuleDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -10,20 +9,32 @@ import {
   deleteTaxRateRulesStep,
   listTaxRateRuleIdsStep,
 } from "../steps"
+import {
+  setTaxRateRulesWorkflowInputSchema,
+  setTaxRateRulesWorkflowOutputSchema,
+  type SetTaxRatesRulesWorkflowInput as SchemaInput,
+  type SetTaxRatesRulesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to set the rules for tax rates.
- */
-export type SetTaxRatesRulesWorkflowInput = {
-  /**
-   * The IDs of the tax rates to set their rules.
-   */
+export {
+  type SetTaxRatesRulesWorkflowInput,
+  type SetTaxRatesRulesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   tax_rate_ids: string[]
-  /**
-   * The rules to create for the tax rates.
-   */
   rules: Omit<CreateTaxRateRuleDTO, "tax_rate_id">[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRateRuleDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const setTaxRateRulesWorkflowId = "set-tax-rate-rules"
 /**
@@ -51,10 +62,13 @@ export const setTaxRateRulesWorkflowId = "set-tax-rate-rules"
  * Set the rules of tax rates.
  */
 export const setTaxRateRulesWorkflow = createWorkflow(
-  setTaxRateRulesWorkflowId,
-  (
-    input: WorkflowData<SetTaxRatesRulesWorkflowInput>
-  ): WorkflowResponse<TaxRateRuleDTO[]> => {
+  {
+    name: setTaxRateRulesWorkflowId,
+    description: "Set the rules of tax rates",
+    inputSchema: setTaxRateRulesWorkflowInputSchema,
+    outputSchema: setTaxRateRulesWorkflowOutputSchema,
+  },
+  (input) => {
     const ruleIds = listTaxRateRuleIdsStep({
       selector: { tax_rate_id: input.tax_rate_ids },
     })

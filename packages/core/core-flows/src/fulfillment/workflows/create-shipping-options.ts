@@ -1,4 +1,3 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   createWorkflow,
   parallelize,
@@ -10,11 +9,12 @@ import { createShippingOptionsPriceSetsStep, upsertShippingOptionsStep, } from "
 import { setShippingOptionsPriceSetsStep } from "../steps/set-shipping-options-price-sets"
 import { validateFulfillmentProvidersStep } from "../steps/validate-fulfillment-providers"
 import { validateShippingOptionPricesStep } from "../steps/validate-shipping-option-prices"
-
-/**
- * The data to create the shipping options.
- */
-export type CreateShippingOptionsWorkflowInput = FulfillmentWorkflow.CreateShippingOptionsWorkflowInput[]
+import {
+  createShippingOptionsWorkflowInputSchema,
+  createShippingOptionsWorkflowOutputSchema,
+  type CreateShippingOptionsWorkflowInput,
+  type CreateShippingOptionsWorkflowOutput,
+} from "../utils/schemas"
 
 export const createShippingOptionsWorkflowId =
   "create-shipping-options-workflow"
@@ -94,10 +94,15 @@ export const createShippingOptionsWorkflowId =
  * Create shipping options.
  */
 export const createShippingOptionsWorkflow = createWorkflow(
-  createShippingOptionsWorkflowId,
+  {
+    name: createShippingOptionsWorkflowId,
+    description: "Create shipping options",
+    inputSchema: createShippingOptionsWorkflowInputSchema,
+    outputSchema: createShippingOptionsWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<CreateShippingOptionsWorkflowInput>
-  ): WorkflowResponse<FulfillmentWorkflow.CreateShippingOptionsWorkflowOutput> => {
+  ): WorkflowResponse<CreateShippingOptionsWorkflowOutput> => {
     parallelize(
       validateFulfillmentProvidersStep(input),
       validateShippingOptionPricesStep(input)

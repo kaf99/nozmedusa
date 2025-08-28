@@ -1,6 +1,5 @@
 import { Modules, ProductTypeWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -10,16 +9,11 @@ import {
 import { emitEventStep } from "../../common/steps/emit-event"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteProductTypesStep } from "../steps"
+import {
+  deleteProductTypesWorkflowInputSchema,
+  deleteProductTypesWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more product types.
- */
-export type DeleteProductTypesWorkflowInput = {
-  /**
-   * The IDs of the types to delete.
-   */
-  ids: string[]
-}
 
 export const deleteProductTypesWorkflowId = "delete-product-types"
 /**
@@ -46,8 +40,13 @@ export const deleteProductTypesWorkflowId = "delete-product-types"
  * @property hooks.productTypesDeleted - This hook is executed after the types are deleted. You can consume this hook to perform custom actions on the deleted types.
  */
 export const deleteProductTypesWorkflow = createWorkflow(
-  deleteProductTypesWorkflowId,
-  (input: WorkflowData<DeleteProductTypesWorkflowInput>) => {
+  {
+    name: deleteProductTypesWorkflowId,
+    description: "Delete one or more product types",
+    inputSchema: deleteProductTypesWorkflowInputSchema,
+    outputSchema: deleteProductTypesWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedProductTypes = deleteProductTypesStep(input.ids)
     const productTypesDeleted = createHook("productTypesDeleted", {
       ids: input.ids,

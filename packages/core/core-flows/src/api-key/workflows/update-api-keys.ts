@@ -1,33 +1,15 @@
 import {
-  ApiKeyDTO,
-  FilterableApiKeyProps,
-  UpdateApiKeyDTO,
-} from "@medusajs/framework/types"
-import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateApiKeysStep } from "../steps"
+import {
+  updateApiKeysWorkflowInputSchema,
+  updateApiKeysWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to update API keys.
- */
-export type UpdateApiKeysWorkflowInput = {
-  /**
-   * The filters to select the API keys to update.
-   */
-  selector: FilterableApiKeyProps
-  /**
-   * The data to update the API keys.
-   */
-  update: UpdateApiKeyDTO
-}
-
-/**
- * The updated API keys.
- */
-export type UpdateApiKeysWorkflowOutput = ApiKeyDTO[]
+// Re-export types from schemas for backward compatibility
+export type { UpdateApiKeysWorkflowInput, UpdateApiKeysWorkflowOutput } from "../utils/schemas"
 
 export const updateApiKeysWorkflowId = "update-api-keys"
 /**
@@ -55,10 +37,12 @@ export const updateApiKeysWorkflowId = "update-api-keys"
  * Update secret or publishable API keys.
  */
 export const updateApiKeysWorkflow = createWorkflow(
-  updateApiKeysWorkflowId,
-  (
-    input: WorkflowData<UpdateApiKeysWorkflowInput>
-  ): WorkflowResponse<UpdateApiKeysWorkflowOutput> => {
+  {
+    name: updateApiKeysWorkflowId,
+    inputSchema: updateApiKeysWorkflowInputSchema,
+    outputSchema: updateApiKeysWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(updateApiKeysStep(input))
   }
 )

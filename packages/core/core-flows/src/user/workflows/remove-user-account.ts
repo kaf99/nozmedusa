@@ -8,16 +8,12 @@ import {
 import { setAuthAppMetadataStep } from "../../auth"
 import { useRemoteQueryStep } from "../../common"
 import { deleteUsersWorkflow } from "./delete-users"
-
-/**
- * The data to remove a user account.
- */
-export type RemoveUserAccountWorkflowInput = {
-  /**
-   * The ID of the user to remove.
-   */
-  userId: string
-}
+import {
+  removeUserAccountWorkflowInputSchema,
+  removeUserAccountWorkflowOutputSchema,
+  type RemoveUserAccountWorkflowInput,
+  type RemoveUserAccountWorkflowOutput,
+} from "../utils/schemas"
 export const removeUserAccountWorkflowId = "remove-user-account"
 /**
  * This workflow deletes a user and remove the association to its auth identity. It's used
@@ -39,10 +35,15 @@ export const removeUserAccountWorkflowId = "remove-user-account"
  * Delete a user and remove the association to its auth identity.
  */
 export const removeUserAccountWorkflow = createWorkflow(
-  removeUserAccountWorkflowId,
+  {
+    name: removeUserAccountWorkflowId,
+    description: "Delete a user and remove the association to its auth identity",
+    inputSchema: removeUserAccountWorkflowInputSchema,
+    outputSchema: removeUserAccountWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<RemoveUserAccountWorkflowInput>
-  ): WorkflowResponse<string> => {
+  ): WorkflowResponse<RemoveUserAccountWorkflowOutput> => {
     deleteUsersWorkflow.runAsStep({
       input: {
         ids: [input.userId],

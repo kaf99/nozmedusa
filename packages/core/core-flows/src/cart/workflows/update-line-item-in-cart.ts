@@ -13,7 +13,6 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep } from "../../common"
@@ -27,9 +26,28 @@ import {
   productVariantsFields,
 } from "../utils/fields"
 import { requiredVariantFieldsForInventoryConfirmation } from "../utils/prepare-confirm-inventory-input"
-import { pricingContextResult } from "../utils/schemas"
+import { 
+  pricingContextResult,
+  updateLineItemInCartWorkflowInputSchema,
+  updateLineItemInCartWorkflowOutputSchema,
+  type UpdateLineItemInCartWorkflowInput,
+  type UpdateLineItemInCartWorkflowOutput,
+} from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
+
+// Re-export types from schemas for backward compatibility
+export type { 
+  UpdateLineItemInCartWorkflowInput,
+  UpdateLineItemInCartWorkflowOutput 
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as UpdateLineItemInCartWorkflowInput
+const schemaOutput = undefined as UpdateLineItemInCartWorkflowOutput
+const existingInput: UpdateLineItemInCartWorkflowInputDTO & AdditionalData = schemaInput
+const existingOutput: void = schemaOutput!
+console.log(existingInput, existingOutput)
 
 const cartFields = cartFieldsForPricingContext.concat(["items.*"])
 
@@ -93,10 +111,13 @@ export const updateLineItemInCartWorkflowId = "update-line-item-in-cart"
  * :::
  */
 export const updateLineItemInCartWorkflow = createWorkflow(
-  updateLineItemInCartWorkflowId,
-  (
-    input: WorkflowData<UpdateLineItemInCartWorkflowInputDTO & AdditionalData>
-  ) => {
+  {
+    name: updateLineItemInCartWorkflowId,
+    description: "Update a cart's line item",
+    inputSchema: updateLineItemInCartWorkflowInputSchema,
+    outputSchema: updateLineItemInCartWorkflowOutputSchema,
+  },
+  (input) => {
     const cartQuery = useQueryGraphStep({
       entity: "cart",
       filters: { id: input.cart_id },

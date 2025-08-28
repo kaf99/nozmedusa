@@ -1,4 +1,3 @@
-import { BatchWorkflowInput, LinkDefinition } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -8,6 +7,12 @@ import {
 import { createRemoteLinkStep } from "../steps/create-remote-links"
 import { dismissRemoteLinkStep } from "../steps/dismiss-remote-links"
 import { updateRemoteLinksStep } from "../steps/update-remote-links"
+import {
+  batchLinksWorkflowInputSchema,
+  batchLinksWorkflowOutputSchema,
+  type BatchLinksWorkflowInput,
+  type BatchLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
 
 export const batchLinksWorkflowId = "batch-links"
 /**
@@ -65,12 +70,15 @@ export const batchLinksWorkflowId = "batch-links"
  * Manage links between two records of linked data models.
  */
 export const batchLinksWorkflow = createWorkflow(
-  batchLinksWorkflowId,
+  {
+    name: batchLinksWorkflowId,
+    description: "Manage links between two records of linked data models",
+    inputSchema: batchLinksWorkflowInputSchema,
+    outputSchema: batchLinksWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<
-      BatchWorkflowInput<LinkDefinition, LinkDefinition, LinkDefinition>
-    >
-  ) => {
+    input: WorkflowData<BatchLinksWorkflowInput>
+  ): WorkflowResponse<BatchLinksWorkflowOutput> => {
     const [created, updated, deleted] = parallelize(
       createRemoteLinkStep(input.create || []),
       updateRemoteLinksStep(input.update || []),

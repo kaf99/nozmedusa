@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -10,16 +9,29 @@ import { Modules } from "@medusajs/framework/utils"
 
 import { removeRemoteLinkStep, useQueryGraphStep } from "../../common"
 import { deleteDraftOrdersStep } from "../steps"
+import {
+  deleteDraftOrderStepInputSchema,
+  deleteDraftOrdersWorkflowOutputSchema,
+  type DeleteDraftOrderStepInput as SchemaInput,
+  type DeleteDraftOrdersWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
- * The data to validate the order's cancelation.
+ * The details of the draft orders to delete.
  */
-export type DeleteDraftOrderStepInput = {
+export interface DeleteDraftOrderStepInput {
   /**
-   * The order ids to delete.
+   * The IDs of the draft orders to delete.
    */
   order_ids: string[]
 }
+
+// Type verification
+const _in: SchemaInput = {} as DeleteDraftOrderStepInput
+const _out: SchemaOutput = undefined as void
+
+void _in
+void _out
 
 const validateDraftOrdersStep = createStep(
   "validate-draft-orders",
@@ -57,8 +69,13 @@ export const deleteDraftOrderWorkflowId = "delete-draft-order"
  * Delete draft orders.
  */
 export const deleteDraftOrdersWorkflow = createWorkflow(
-  deleteDraftOrderWorkflowId,
-  (input: WorkflowData<DeleteDraftOrderStepInput>) => {
+  {
+    name: deleteDraftOrderWorkflowId,
+    description: "Delete draft orders.",
+    inputSchema: deleteDraftOrderStepInputSchema,
+    outputSchema: deleteDraftOrdersWorkflowOutputSchema,
+  },
+  (input) => {
     const orderQuery = useQueryGraphStep({
       entity: "orders",
       fields: ["id", "status", "is_draft_order", "deleted_at"],

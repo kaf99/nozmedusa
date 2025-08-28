@@ -7,7 +7,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -21,6 +20,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
+import {
+  receiveItemReturnRequestWorkflowInputSchema,
+  receiveItemReturnRequestWorkflowOutputSchema,
+  type ReceiveItemReturnRequestWorkflowInput as SchemaInput,
+  type ReceiveItemReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return's items can be marked as received.
@@ -96,6 +101,13 @@ export const receiveItemReturnRequestValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput = {} as OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
 export const receiveItemReturnRequestWorkflowId = "receive-item-return-request"
 /**
  * This workflow marks return items as received. It's used by the 
@@ -123,9 +135,14 @@ export const receiveItemReturnRequestWorkflowId = "receive-item-return-request"
  * Mark return items as received.
  */
 export const receiveItemReturnRequestWorkflow = createWorkflow(
-  receiveItemReturnRequestWorkflowId,
+  {
+    name: receiveItemReturnRequestWorkflowId,
+    description: "Mark return items as received.",
+    inputSchema: receiveItemReturnRequestWorkflowInputSchema,
+    outputSchema: receiveItemReturnRequestWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput>
+    input: OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",

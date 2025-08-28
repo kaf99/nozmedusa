@@ -1,10 +1,15 @@
 import { WorkflowTypes } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  importProductsAsChunksWorkflowInputSchema,
+  importProductsAsChunksWorkflowOutputSchema,
+  type ImportProductsAsChunksWorkflowInput as SchemaInput,
+  type ImportProductsAsChunksWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import {
   normalizeCsvToChunksStep,
@@ -88,10 +93,30 @@ export const importProductsAsChunksWorkflowId = "import-products-as-chunks"
  *
  * Import products from a CSV file.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = { toCreate: 0, toUpdate: 0 } as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { fileKey: string; filename: string } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {
+  toCreate: 0,
+  toUpdate: 0,
+} as WorkflowTypes.ProductWorkflow.ImportProductsSummary
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const importProductsAsChunksWorkflow = createWorkflow(
-  importProductsAsChunksWorkflowId,
+  {
+    name: importProductsAsChunksWorkflowId,
+    description: "Import products from a CSV file",
+    inputSchema: importProductsAsChunksWorkflowInputSchema,
+    outputSchema: importProductsAsChunksWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<{ fileKey: string; filename: string }>
+    input
   ): WorkflowResponse<WorkflowTypes.ProductWorkflow.ImportProductsSummary> => {
     const batchRequest = normalizeCsvToChunksStep(input.fileKey)
 

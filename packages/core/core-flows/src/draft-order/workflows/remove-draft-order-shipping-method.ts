@@ -7,10 +7,9 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO, OrderPreviewDTO } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -19,6 +18,19 @@ import {
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  removeDraftOrderShippingMethodWorkflowInputSchema,
+  removeDraftOrderShippingMethodWorkflowOutputSchema,
+  type RemoveDraftOrderShippingMethodWorkflowInput as SchemaInput,
+  type RemoveDraftOrderShippingMethodWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification
+const _in: SchemaInput = {} as RemoveDraftOrderShippingMethodWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
 
 export const removeDraftOrderShippingMethodWorkflowId =
   "remove-draft-order-shipping-method"
@@ -58,8 +70,12 @@ export interface RemoveDraftOrderShippingMethodWorkflowInput {
  * Remove an existing shipping method from a draft order edit.
  */
 export const removeDraftOrderShippingMethodWorkflow = createWorkflow(
-  removeDraftOrderShippingMethodWorkflowId,
-  function (input: WorkflowData<RemoveDraftOrderShippingMethodWorkflowInput>) {
+  {
+    name: removeDraftOrderShippingMethodWorkflowId,
+    inputSchema: removeDraftOrderShippingMethodWorkflowInputSchema,
+    outputSchema: removeDraftOrderShippingMethodWorkflowOutputSchema,
+  },
+  function (input: RemoveDraftOrderShippingMethodWorkflowInput) {
     const order: OrderDTO & {
       promotions: {
         code: string

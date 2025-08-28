@@ -13,6 +13,12 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  orderEditRequestWorkflowInputSchema,
+  orderEditRequestWorkflowOutputSchema,
+  type OrderEditRequestWorkflowInput as SchemaInput,
+  type OrderEditRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { emitEventStep, useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
 import { updateOrderChangesStep } from "../../steps/update-order-changes"
@@ -102,6 +108,21 @@ export type OrderEditRequestWorkflowInput = {
   requested_by?: string
 }
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderEditRequestWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const requestOrderEditRequestWorkflowId = "order-edit-request"
 /**
  * This workflow requests a previously created order edit request by {@link beginOrderEditOrderWorkflow}. This workflow is used by
@@ -123,9 +144,13 @@ export const requestOrderEditRequestWorkflowId = "order-edit-request"
  * Request an order edit.
  */
 export const requestOrderEditRequestWorkflow = createWorkflow(
-  requestOrderEditRequestWorkflowId,
+  {
+    name: requestOrderEditRequestWorkflowId,
+    inputSchema: orderEditRequestWorkflowInputSchema,
+    outputSchema: orderEditRequestWorkflowOutputSchema,
+  },
   function (
-    input: OrderEditRequestWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

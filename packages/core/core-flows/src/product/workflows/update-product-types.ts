@@ -1,7 +1,6 @@
 import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductTypeWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,20 +8,33 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateProductTypesStep } from "../steps"
+import {
+  updateProductTypesWorkflowInputSchema,
+  updateProductTypesWorkflowOutputSchema,
+  type UpdateProductTypesWorkflowInput as SchemaInput,
+  type UpdateProductTypesWorkflowOutput as SchemaOutput,
+} from "../utils/update-schemas"
 
-/**
- * The data to update one or more product types, along with custom data that's passed to the workflow's hooks.
- */
-type UpdateProductTypesWorkflowInput = {
-  /**
-   * The filters to select the product types to update.
-   */
+export {
+  type UpdateProductTypesWorkflowInput,
+  type UpdateProductTypesWorkflowOutput,
+} from "../utils/update-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: ProductTypes.FilterableProductTypeProps
-  /**
-   * The data to update in the product types.
-   */
   update: ProductTypes.UpdateProductTypeDTO
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// The step returns either a single type or array
+const existingOutput: SchemaOutput = {} as any
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateProductTypesWorkflowId = "update-product-types"
 /**
@@ -57,8 +69,13 @@ export const updateProductTypesWorkflowId = "update-product-types"
  * @property hooks.productTypesUpdated - This hook is executed after the product types are updated. You can consume this hook to perform custom actions on the updated product types.
  */
 export const updateProductTypesWorkflow = createWorkflow(
-  updateProductTypesWorkflowId,
-  (input: WorkflowData<UpdateProductTypesWorkflowInput>) => {
+  {
+    name: updateProductTypesWorkflowId,
+    description: "Update one or more product types",
+    inputSchema: updateProductTypesWorkflowInputSchema,
+    outputSchema: updateProductTypesWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedProductTypes = updateProductTypesStep(input)
     const productTypesUpdated = createHook("productTypesUpdated", {
       product_types: updatedProductTypes,

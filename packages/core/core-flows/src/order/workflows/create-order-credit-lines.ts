@@ -1,4 +1,8 @@
-import { CreateOrderCreditLineDTO, OrderDTO } from "@medusajs/framework/types"
+import {
+  CreateOrderCreditLineDTO,
+  OrderDTO,
+  OrderCreditLineDTO,
+} from "@medusajs/framework/types"
 import {
   ChangeActionType,
   MathBN,
@@ -7,7 +11,6 @@ import {
   OrderChangeType,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -18,6 +21,16 @@ import { useQueryGraphStep } from "../../common"
 import { confirmOrderChanges } from "../steps/confirm-order-changes"
 import { createOrderChangeStep } from "../steps/create-order-change"
 import { createOrderChangeActionsWorkflow } from "./create-order-change-actions"
+import {
+  createOrderCreditLinesWorkflowInputSchema,
+  createOrderCreditLinesWorkflowOutputSchema,
+  type CreateOrderCreditLinesWorkflowInput as SchemaInput,
+  type CreateOrderCreditLinesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreateOrderCreditLinesWorkflowInput,
+  type CreateOrderCreditLinesWorkflowOutput,
+} from "../utils/schemas"
 
 export const validateOrderCreditLinesStep = createStep(
   "validate-order-credit-lines",
@@ -79,15 +92,33 @@ export const validateOrderCreditLinesStep = createStep(
   }
 )
 
+// Type verification
+type OldInput = {
+  id: string
+  credit_lines: Omit<CreateOrderCreditLineDTO, "order_id">[]
+}
+
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldInput = schemaInput
+const existingOutput: OrderCreditLineDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldInput
+const oldOutput = {} as OrderCreditLineDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
+
 export const createOrderCreditLinesWorkflowId = "create-order-credit-lines"
 export const createOrderCreditLinesWorkflow = createWorkflow(
-  createOrderCreditLinesWorkflowId,
-  (
-    input: WorkflowData<{
-      id: string
-      credit_lines: Omit<CreateOrderCreditLineDTO, "order_id">[]
-    }>
-  ) => {
+  {
+    name: createOrderCreditLinesWorkflowId,
+    inputSchema: createOrderCreditLinesWorkflowInputSchema,
+    outputSchema: createOrderCreditLinesWorkflowOutputSchema,
+  },
+  (input) => {
     const orderQuery = useQueryGraphStep({
       entity: "orders",
       fields: ["id", "status", "summary"],

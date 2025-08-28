@@ -7,10 +7,14 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput, OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import {
+  BigNumberInput,
+  OrderChangeDTO,
+  OrderDTO,
+  OrderPreviewDTO,
+} from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -21,6 +25,22 @@ import { updateDraftOrderShippingMethodStep } from "../steps/update-draft-order-
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  updateDraftOrderShippingMethodWorkflowInputSchema,
+  updateDraftOrderShippingMethodWorkflowOutputSchema,
+  type UpdateDraftOrderShippingMethodWorkflowInput as SchemaInput,
+  type UpdateDraftOrderShippingMethodWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification
+const _in: SchemaInput = {} as UpdateDraftOrderShippingMethodWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+void _in
+void _out
+
+/**
+ * The identifier of the update draft order shipping method workflow.
+ */
 
 export const updateDraftOrderShippingMethodWorkflowId =
   "update-draft-order-shipping-method"
@@ -77,8 +97,12 @@ export interface UpdateDraftOrderShippingMethodWorkflowInput {
  * Update an existing shipping method in a draft order edit.
  */
 export const updateDraftOrderShippingMethodWorkflow = createWorkflow(
-  updateDraftOrderShippingMethodWorkflowId,
-  function (input: WorkflowData<UpdateDraftOrderShippingMethodWorkflowInput>) {
+  {
+    name: updateDraftOrderShippingMethodWorkflowId,
+    inputSchema: updateDraftOrderShippingMethodWorkflowInputSchema,
+    outputSchema: updateDraftOrderShippingMethodWorkflowOutputSchema,
+  },
+  function (input: UpdateDraftOrderShippingMethodWorkflowInput) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "is_draft_order"],

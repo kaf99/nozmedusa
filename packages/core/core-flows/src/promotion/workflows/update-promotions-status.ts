@@ -1,5 +1,6 @@
 import {
   AdditionalData,
+  PromotionDTO,
   PromotionStatusValues,
 } from "@medusajs/framework/types"
 import { MedusaError, PromotionStatus } from "@medusajs/framework/utils"
@@ -10,29 +11,40 @@ import {
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updatePromotionsStep } from "../steps"
+import {
+  updatePromotionsStatusWorkflowInputSchema,
+  updatePromotionsStatusWorkflowOutputSchema,
+  type UpdatePromotionsStatusWorkflowInput as SchemaInput,
+  type UpdatePromotionsStatusWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update the status of one or more promotions.
- */
-export type UpdatePromotionsStatusWorkflowInput = {
-  /**
-   * The promotions to update their status.
-   */
+export {
+  type UpdatePromotionsStatusWorkflowInput,
+  type UpdatePromotionsStatusWorkflowOutput,
+} from "../utils/schemas"
+
+type LegacyInput = {
   promotionsData: {
-    /**
-     * The ID of the promotion.
-     */
     id: string
-    /**
-     * The new status of the promotion.
-     */
     status: PromotionStatusValues
   }[]
 } & AdditionalData
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: LegacyInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PromotionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const updatePromotionsValidationStep = createStep(
   "update-promotions-validation",
-  async function ({ promotionsData }: UpdatePromotionsStatusWorkflowInput) {
+  async function ({ promotionsData }: SchemaInput) {
     for (const promotionData of promotionsData) {
       const allowedStatuses: PromotionStatusValues[] =
         Object.values(PromotionStatus)
@@ -78,8 +90,13 @@ export const updatePromotionsStatusWorkflowId = "update-promotions-status"
  * @property hooks.promotionStatusUpdated - This hook is executed after the promotions' status is updated. You can consume this hook to perform custom actions on the updated promotions.
  */
 export const updatePromotionsStatusWorkflow = createWorkflow(
-  updatePromotionsStatusWorkflowId,
-  (input: UpdatePromotionsStatusWorkflowInput) => {
+  {
+    name: updatePromotionsStatusWorkflowId,
+    description: "Update the status of one or more promotions",
+    inputSchema: updatePromotionsStatusWorkflowInputSchema,
+    outputSchema: updatePromotionsStatusWorkflowOutputSchema,
+  },
+  (input) => {
     updatePromotionsValidationStep(input)
 
     const updatedPromotions = updatePromotionsStep(input.promotionsData)

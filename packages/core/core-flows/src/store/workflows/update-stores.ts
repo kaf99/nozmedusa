@@ -1,6 +1,4 @@
-import { StoreDTO, StoreWorkflow } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -8,11 +6,13 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { updateStoresStep } from "../steps"
 import { updatePricePreferencesAsArrayStep } from "../../pricing"
+import {
+  updateStoresWorkflowInputSchema,
+  updateStoresWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The updated stores.
- */
-export type UpdateStoresWorkflowOutput = StoreDTO[]
+// Re-export types from schemas for backward compatibility
+export type { UpdateStoresWorkflowInput, UpdateStoresWorkflowOutput } from "../utils/schemas"
 
 export const updateStoresWorkflowId = "update-stores"
 /**
@@ -40,10 +40,13 @@ export const updateStoresWorkflowId = "update-stores"
  * Update stores.
  */
 export const updateStoresWorkflow = createWorkflow(
-  updateStoresWorkflowId,
-  (
-    input: WorkflowData<StoreWorkflow.UpdateStoreWorkflowInput>
-  ): WorkflowResponse<UpdateStoresWorkflowOutput> => {
+  {
+    name: updateStoresWorkflowId,
+    description: "Update stores matching specified filters",
+    inputSchema: updateStoresWorkflowInputSchema,
+    outputSchema: updateStoresWorkflowOutputSchema,
+  },
+  (input) => {
     const normalizedInput = transform({ input }, (data) => {
       if (!data.input.update.supported_currencies?.length) {
         return data.input

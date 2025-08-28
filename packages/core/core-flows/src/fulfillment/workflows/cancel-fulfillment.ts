@@ -1,15 +1,11 @@
 import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { cancelFulfillmentStep } from "../steps"
-
-/**
- * The data to cancel a fulfillment.
- */
-export type CancelFulfillmentWorkflowInput = {
-  /**
-   * The ID of the fulfillment to cancel.
-   */
-  id: string
-}
+import {
+  cancelFulfillmentWorkflowInputSchema,
+  cancelFulfillmentWorkflowOutputSchema,
+  type CancelFulfillmentWorkflowInput,
+  type CancelFulfillmentWorkflowOutput,
+} from "../utils/schemas"
 
 export const cancelFulfillmentWorkflowId = "cancel-fulfillment-workflow"
 /**
@@ -32,8 +28,13 @@ export const cancelFulfillmentWorkflowId = "cancel-fulfillment-workflow"
  * Cancel a fulfillment.
  */
 export const cancelFulfillmentWorkflow = createWorkflow(
-  cancelFulfillmentWorkflowId,
-  (input: WorkflowData<CancelFulfillmentWorkflowInput>) => {
+  {
+    name: cancelFulfillmentWorkflowId,
+    description: "Cancel a fulfillment",
+    inputSchema: cancelFulfillmentWorkflowInputSchema,
+    outputSchema: cancelFulfillmentWorkflowOutputSchema,
+  },
+  (input: WorkflowData<CancelFulfillmentWorkflowInput>): WorkflowData<CancelFulfillmentWorkflowOutput> => {
     cancelFulfillmentStep(input.id)
   }
 )

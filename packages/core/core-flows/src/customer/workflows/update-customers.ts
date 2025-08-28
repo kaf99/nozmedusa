@@ -2,6 +2,7 @@ import {
   AdditionalData,
   CustomerUpdatableFields,
   FilterableCustomerProps,
+  CustomerDTO,
 } from "@medusajs/framework/types"
 import { CustomerWorkflowEvents } from "@medusajs/framework/utils"
 import {
@@ -11,8 +12,15 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+// import { expectTypeOf } from "expect-type"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateCustomersStep } from "../steps"
+import {
+  updateCustomersWorkflowInputSchema,
+  updateCustomersWorkflowOutputSchema,
+  // type UpdateCustomersWorkflowInput as SchemaInput,
+  // type UpdateCustomersWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to update one or more customers, along with custom data that's passed to the workflow's hooks.
@@ -27,6 +35,13 @@ export type UpdateCustomersWorkflowInput = {
    */
   update: CustomerUpdatableFields
 } & AdditionalData
+
+export type UpdateCustomersWorkflowOutput = CustomerDTO[]
+
+// Type verification
+// TODO: Fix FilterableCustomerProps type issue
+// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateCustomersWorkflowInput>()
+// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateCustomersWorkflowOutput>()
 
 export const updateCustomersWorkflowId = "update-customers"
 /**
@@ -58,7 +73,12 @@ export const updateCustomersWorkflowId = "update-customers"
  * @property hooks.customersUpdated - This hook is executed after the customers are updated. You can consume this hook to perform custom actions on the updated customers.
  */
 export const updateCustomersWorkflow = createWorkflow(
-  updateCustomersWorkflowId,
+  {
+    name: updateCustomersWorkflowId,
+    description: "Update one or more customers",
+    inputSchema: updateCustomersWorkflowInputSchema,
+    outputSchema: updateCustomersWorkflowOutputSchema,
+  },
   (input: WorkflowData<UpdateCustomersWorkflowInput>) => {
     const updatedCustomers = updateCustomersStep(input)
     const customersUpdated = createHook("customersUpdated", {

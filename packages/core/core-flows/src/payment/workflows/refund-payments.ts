@@ -4,12 +4,21 @@ import {
   createStep,
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep } from "../../common"
 import { addOrderTransactionStep } from "../../order/steps/add-order-transaction"
 import { refundPaymentsStep } from "../steps/refund-payments"
+import {
+  refundPaymentsWorkflowInputSchema,
+  refundPaymentsWorkflowOutputSchema,
+  type RefundPaymentsWorkflowInput as SchemaInput,
+  type RefundPaymentsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type RefundPaymentsWorkflowInput,
+  type RefundPaymentsWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate whether the refund is valid for the payment.
@@ -22,7 +31,7 @@ export type ValidatePaymentsRefundStepInput = {
   /**
    * The payments to refund.
    */
-  input: RefundPaymentsWorkflowInput
+  input: SchemaInput
 }
 
 /**
@@ -85,7 +94,7 @@ export const validatePaymentsRefundStep = createStep(
 /**
  * The data to refund a payment.
  */
-export type RefundPaymentsWorkflowInput = {
+type OldRefundPaymentsWorkflowInput = {
   /**
    * The ID of the payment to refund.
    */
@@ -103,6 +112,20 @@ export type RefundPaymentsWorkflowInput = {
    */
   note?: string
 }[]
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldRefundPaymentsWorkflowInput = schemaInput
+const existingOutput: PaymentDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldRefundPaymentsWorkflowInput
+const oldOutput = {} as PaymentDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const refundPaymentsWorkflowId = "refund-payments-workflow"
 /**
@@ -127,8 +150,12 @@ export const refundPaymentsWorkflowId = "refund-payments-workflow"
  * Refund one or more payments.
  */
 export const refundPaymentsWorkflow = createWorkflow(
-  refundPaymentsWorkflowId,
-  (input: WorkflowData<RefundPaymentsWorkflowInput>) => {
+  {
+    name: refundPaymentsWorkflowId,
+    inputSchema: refundPaymentsWorkflowInputSchema,
+    outputSchema: refundPaymentsWorkflowOutputSchema,
+  },
+  (input) => {
     const paymentIds = transform({ input }, ({ input }) =>
       input.map((paymentInput) => paymentInput.payment_id)
     )

@@ -1,20 +1,32 @@
 import { CreateTaxRegionDTO, TaxRegionDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createTaxRegionsStep } from "../steps"
+import {
+  createTaxRegionsWorkflowInputSchema,
+  createTaxRegionsWorkflowOutputSchema,
+  type CreateTaxRegionsWorkflowInput as SchemaInput,
+  type CreateTaxRegionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The tax regions to create.
- */
-export type CreateTaxRegionsWorkflowInput = CreateTaxRegionDTO[]
+export {
+  type CreateTaxRegionsWorkflowInput,
+  type CreateTaxRegionsWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The created tax regions.
- */
-export type CreateTaxRegionsWorkflowOutput = TaxRegionDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateTaxRegionDTO[] = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRegionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createTaxRegionsWorkflowId = "create-tax-regions"
 /**
@@ -39,10 +51,13 @@ export const createTaxRegionsWorkflowId = "create-tax-regions"
  * Create one or more tax regions.
  */
 export const createTaxRegionsWorkflow = createWorkflow(
-  createTaxRegionsWorkflowId,
-  (
-    input: WorkflowData<CreateTaxRegionsWorkflowInput>
-  ): WorkflowResponse<CreateTaxRegionsWorkflowOutput> => {
+  {
+    name: createTaxRegionsWorkflowId,
+    description: "Create one or more tax regions",
+    inputSchema: createTaxRegionsWorkflowInputSchema,
+    outputSchema: createTaxRegionsWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(createTaxRegionsStep(input))
   }
 )

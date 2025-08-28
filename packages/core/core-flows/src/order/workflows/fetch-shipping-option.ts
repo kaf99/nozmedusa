@@ -1,6 +1,7 @@
 import {
   AdditionalData,
   BigNumberInput,
+  BigNumberValue,
   CalculatedRMAShippingContext,
   CalculateShippingOptionPriceDTO,
   ShippingOptionDTO,
@@ -12,10 +13,16 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumber, ShippingOptionPriceType } from "@medusajs/framework/utils"
+import { ShippingOptionPriceType } from "@medusajs/framework/utils"
 import { calculateShippingOptionsPricesStep } from "../../fulfillment/steps"
 import { useRemoteQueryStep } from "../../common"
 import { pricingContextResult } from "../../cart/utils/schemas"
+import {
+  fetchShippingOptionForOrderWorkflowInputSchema,
+  fetchShippingOptionForOrderWorkflowOutputSchema,
+  type FetchShippingOptionForOrderWorkflowInput as SchemaInput,
+  type FetchShippingOptionForOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 const COMMON_OPTIONS_FIELDS = [
   "id",
@@ -81,13 +88,20 @@ export type FetchShippingOptionForOrderWorkflowOutput = ShippingOptionDTO & {
     /**
      * The shipping option's price based on its type and provided context.
      */
-    calculated_amount: BigNumber
+    calculated_amount: BigNumberValue
     /**
      * Whether the amount includes taxes.
      */
     is_calculated_price_tax_inclusive: boolean
   }
 }
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _in: SchemaInput = {} as FetchShippingOptionForOrderWorkflowInput
+const _out: FetchShippingOptionForOrderWorkflowOutput = {} as SchemaOutput
+const _outRev: SchemaOutput = {} as FetchShippingOptionForOrderWorkflowOutput
+void _in, _out, _outRev
+
 export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
 /**
  * This workflow fetches a shipping option for an order. It's used in Return Merchandise Authorization (RMA) flows. It's used
@@ -95,7 +109,7 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around fetching
  * shipping options for an order.
- * 
+ *
  * @example
  * const { result } = await fetchShippingOptionForOrderWorkflow(container)
  * .run({
@@ -114,15 +128,15 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Fetch a shipping option for an order.
- * 
+ *
  * @property hooks.setPricingContext - This hook is executed before the shipping option is fetched. You can consume this hook to set the pricing context for the shipping option. This is useful when you have custom pricing rules that depend on the context of the order.
- * 
+ *
  * For example, assuming you have the following custom pricing rule:
- * 
+ *
  * ```json
  * {
  *   "attribute": "location_id",
@@ -130,13 +144,13 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  *   "value": "sloc_123",
  * }
  * ```
- * 
+ *
  * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
- * 
+ *
  * ```ts
  * import { fetchShippingOptionForOrderWorkflow } from "@medusajs/medusa/core-flows";
  * import { StepResponse } from "@medusajs/workflows-sdk";
- * 
+ *
  * fetchShippingOptionForOrderWorkflow.hooks.setPricingContext((
  *   { shipping_option_id, currency_code, order_id, context, additional_data }, { container }
  * ) => {
@@ -145,13 +159,13 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  *   });
  * });
  * ```
- * 
+ *
  * The shipping option's price will now be retrieved using the context you return.
- * 
+ *
  * :::note
- * 
+ *
  * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
- * 
+ *
  * :::
  *
  * @privateRemarks
@@ -164,8 +178,13 @@ export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
  *    In this case, we don't need to do caluclations above and just return the shipping option with the custom amount.
  */
 export const fetchShippingOptionForOrderWorkflow = createWorkflow(
-  fetchShippingOptionsForOrderWorkflowId,
-  function (input: FetchShippingOptionForOrderWorkflowInput) {
+  {
+    name: fetchShippingOptionsForOrderWorkflowId,
+    description: "Fetch a shipping option for an order",
+    inputSchema: fetchShippingOptionForOrderWorkflowInputSchema,
+    outputSchema: fetchShippingOptionForOrderWorkflowOutputSchema,
+  },
+  function (input) {
     const initialOption = useRemoteQueryStep({
       entry_point: "shipping_option",
       variables: { id: input.shipping_option_id },

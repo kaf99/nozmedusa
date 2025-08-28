@@ -14,7 +14,6 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep } from "../../common"
@@ -37,9 +36,28 @@ import {
   prepareLineItemData,
   PrepareLineItemDataInput,
 } from "../utils/prepare-line-item-data"
-import { pricingContextResult } from "../utils/schemas"
+import { 
+  pricingContextResult,
+  addToCartWorkflowInputSchema,
+  addToCartWorkflowOutputSchema,
+  type AddToCartWorkflowInput,
+  type AddToCartWorkflowOutput,
+} from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
+
+// Re-export types from schemas for backward compatibility
+export type { 
+  AddToCartWorkflowInput,
+  AddToCartWorkflowOutput 
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as AddToCartWorkflowInput
+const schemaOutput = undefined as AddToCartWorkflowOutput
+const existingInput: AddToCartWorkflowInputDTO & AdditionalData = schemaInput
+const existingOutput: void = schemaOutput!
+console.log(existingInput, existingOutput)
 
 const cartFields = ["completed_at"].concat(cartFieldsForPricingContext)
 
@@ -111,8 +129,13 @@ export const addToCartWorkflowId = "add-to-cart"
  * :::
  */
 export const addToCartWorkflow = createWorkflow(
-  addToCartWorkflowId,
-  (input: WorkflowData<AddToCartWorkflowInputDTO & AdditionalData>) => {
+  {
+    name: addToCartWorkflowId,
+    description: "Add a line item to a cart",
+    inputSchema: addToCartWorkflowInputSchema,
+    outputSchema: addToCartWorkflowOutputSchema,
+  },
+  (input) => {
     const cartQuery = useQueryGraphStep({
       entity: "cart",
       filters: { id: input.cart_id },

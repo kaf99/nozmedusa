@@ -1,11 +1,33 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 
 import { WorkflowTypes } from "@medusajs/framework/types"
 import { createReservationsStep } from "../steps"
+import {
+  createReservationsWorkflowInputSchema,
+  createReservationsWorkflowOutputSchema,
+  type CreateReservationsWorkflowInput as SchemaInput,
+  type CreateReservationsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type CreateReservationsWorkflowInput,
+  type CreateReservationsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: WorkflowTypes.ReservationWorkflow.CreateReservationsWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as WorkflowTypes.ReservationWorkflow.CreateReservationsWorkflowOutput
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createReservationsWorkflowId = "create-reservations-workflow"
 /**
@@ -34,10 +56,13 @@ export const createReservationsWorkflowId = "create-reservations-workflow"
  * Create one or more reservations.
  */
 export const createReservationsWorkflow = createWorkflow(
-  createReservationsWorkflowId,
-  (
-    input: WorkflowData<WorkflowTypes.ReservationWorkflow.CreateReservationsWorkflowInput>
-  ): WorkflowResponse<WorkflowTypes.ReservationWorkflow.CreateReservationsWorkflowOutput> => {
+  {
+    name: createReservationsWorkflowId,
+    description: "Create one or more reservations",
+    inputSchema: createReservationsWorkflowInputSchema,
+    outputSchema: createReservationsWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(createReservationsStep(input.reservations))
   }
 )

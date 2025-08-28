@@ -1,20 +1,14 @@
 import {
   createHook,
   createWorkflow,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { deletePromotionsStep } from "../steps"
+import {
+  deletePromotionsWorkflowInputSchema,
+  deletePromotionsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more promotions.
- */
-export type DeletePromotionsWorkflowInput = { 
-  /**
-   * The IDs of the promotions to delete.
-   */
-  ids: string[]
-}
 
 export const deletePromotionsWorkflowId = "delete-promotions"
 /**
@@ -37,8 +31,13 @@ export const deletePromotionsWorkflowId = "delete-promotions"
  * Delete one or more promotions.
  */
 export const deletePromotionsWorkflow = createWorkflow(
-  deletePromotionsWorkflowId,
-  (input: WorkflowData<DeletePromotionsWorkflowInput>) => {
+  {
+    name: deletePromotionsWorkflowId,
+    description: "Delete one or more promotions",
+    inputSchema: deletePromotionsWorkflowInputSchema,
+    outputSchema: deletePromotionsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedPromotions = deletePromotionsStep(input.ids)
     const promotionsDeleted = createHook("promotionsDeleted", {
       ids: input.ids,

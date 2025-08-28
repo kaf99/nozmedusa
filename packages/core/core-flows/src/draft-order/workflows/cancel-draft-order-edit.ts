@@ -8,27 +8,41 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { OrderChangeDTO, OrderDTO } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
-import { deleteOrderChangesStep, deleteOrderShippingMethods } from "../../order"
+import { deleteOrderChangesStep, deleteOrderShippingMethods, previewOrderChangeStep } from "../../order"
 import { restoreDraftOrderShippingMethodsStep } from "../steps/restore-draft-order-shipping-methods"
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
-
-export const cancelDraftOrderEditWorkflowId = "cancel-draft-order-edit"
+import {
+  cancelDraftOrderEditWorkflowInputSchema,
+  cancelDraftOrderEditWorkflowOutputSchema,
+  type CancelDraftOrderEditWorkflowInput as SchemaInput,
+  type CancelDraftOrderEditWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+import { OrderPreviewDTO } from "@medusajs/types"
 
 /**
  * The details of the draft order edit to cancel.
  */
 export interface CancelDraftOrderEditWorkflowInput {
   /**
-   * The ID of the draft order to cancel the edit for.
+   * The ID of the draft order whose edit to cancel.
    */
   order_id: string
 }
+
+// Type verification
+const _in: SchemaInput = {} as CancelDraftOrderEditWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
+export const cancelDraftOrderEditWorkflowId = "cancel-draft-order-edit"
 
 /**
  * This workflow cancels a draft order edit. It's used by the
@@ -50,8 +64,13 @@ export interface CancelDraftOrderEditWorkflowInput {
  * Cancel a draft order edit.
  */
 export const cancelDraftOrderEditWorkflow = createWorkflow(
-  cancelDraftOrderEditWorkflowId,
-  function (input: WorkflowData<CancelDraftOrderEditWorkflowInput>) {
+  {
+    name: cancelDraftOrderEditWorkflowId,
+    description: "Cancel a draft order edit.",
+    inputSchema: cancelDraftOrderEditWorkflowInputSchema,
+    outputSchema: cancelDraftOrderEditWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO & {
       promotions: {
         code: string
@@ -166,5 +185,7 @@ export const cancelDraftOrderEditWorkflow = createWorkflow(
         shippingMethods: shippingToRestore as any,
       })
     })
+
+    return new WorkflowResponse(previewOrderChangeStep(order.id))
   }
 )

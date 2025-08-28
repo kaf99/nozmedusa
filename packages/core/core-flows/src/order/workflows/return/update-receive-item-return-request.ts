@@ -8,12 +8,17 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateReceiveItemReturnRequestWorkflowInputSchema,
+  updateReceiveItemReturnRequestWorkflowOutputSchema,
+  type UpdateReceiveItemReturnRequestWorkflowInput as SchemaInput,
+  type UpdateReceiveItemReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   previewOrderChangeStep,
@@ -51,14 +56,14 @@ export type UpdateReceiveItemReturnRequestValidationStepInput = {
  * If the order or return is canceled, the order change is not active,
  * the return request is not found, or the action is not receiving an item return request,
  * the step will throw an error.
- * 
+ *
  * :::note
- * 
+ *
  * You can retrieve an order, return, and order change details using [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
  * or [useQueryGraphStep](https://docs.medusajs.com/resources/references/medusa-workflows/steps/useQueryGraphStep).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * const data = updateReceiveItemReturnRequestValidationStep({
  *   order: {
@@ -128,10 +133,10 @@ export const updateReceiveItemReturnRequestWorkflowId =
 /**
  * This workflow updates an item in a return receival request. It's used by the
  * [Update a Received Item in a Return Admin API Route](https://docs.medusajs.com/api/admin#returns_postreturnsidreceiveitemsaction_id).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to update an item in a return receival request
  * in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateReceiveItemReturnRequestWorkflow(container)
  * .run({
@@ -143,16 +148,28 @@ export const updateReceiveItemReturnRequestWorkflowId =
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update an item in a return receival request.
  */
+
+// Type verification block - DO NOT REMOVE
+const _inputSchemaCheck: OrderWorkflow.UpdateReceiveItemReturnRequestWorkflowInput =
+  {} as SchemaInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const updateReceiveItemReturnRequestWorkflow = createWorkflow(
-  updateReceiveItemReturnRequestWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.UpdateReceiveItemReturnRequestWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: updateReceiveItemReturnRequestWorkflowId,
+    description: "Update an item in a return receival request.",
+    inputSchema: updateReceiveItemReturnRequestWorkflowInputSchema,
+    outputSchema: updateReceiveItemReturnRequestWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

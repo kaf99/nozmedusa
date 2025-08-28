@@ -1,7 +1,6 @@
 import { InviteWorkflow, UserDTO } from "@medusajs/framework/types"
 import { InviteWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -12,6 +11,29 @@ import { emitEventStep } from "../../common/steps/emit-event"
 import { createUsersWorkflow } from "../../user"
 import { deleteInvitesStep } from "../steps"
 import { validateTokenStep } from "../steps/validate-token"
+import {
+  acceptInviteWorkflowInputSchema,
+  acceptInviteWorkflowOutputSchema,
+  type AcceptInviteWorkflowInput as SchemaInput,
+  type AcceptInviteWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type AcceptInviteWorkflowInput,
+  type AcceptInviteWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: InviteWorkflow.AcceptInviteWorkflowInputDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as UserDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const acceptInviteWorkflowId = "accept-invite-workflow"
 /**
@@ -44,10 +66,13 @@ export const acceptInviteWorkflowId = "accept-invite-workflow"
  * Accept invite and create user.
  */
 export const acceptInviteWorkflow = createWorkflow(
-  acceptInviteWorkflowId,
-  (
-    input: WorkflowData<InviteWorkflow.AcceptInviteWorkflowInputDTO>
-  ): WorkflowResponse<UserDTO[]> => {
+  {
+    name: acceptInviteWorkflowId,
+    description: "Accept invite and create user",
+    inputSchema: acceptInviteWorkflowInputSchema,
+    outputSchema: acceptInviteWorkflowOutputSchema,
+  },
+  (input) => {
     const invite = validateTokenStep(input.invite_token)
 
     const createUserInput = transform(

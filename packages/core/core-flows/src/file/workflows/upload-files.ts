@@ -1,45 +1,39 @@
 import { FileDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { uploadFilesStep } from "../steps"
+import {
+  uploadFilesWorkflowInputSchema,
+  uploadFilesWorkflowOutputSchema,
+  type UploadFilesWorkflowInput as SchemaInput,
+  type UploadFilesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to upload files.
- */
-export type UploadFilesWorkflowInput = {
-  /**
-   * The files to upload.
-   */
+export {
+  type UploadFilesWorkflowInput,
+  type UploadFilesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   files: {
-    /**
-     * The name of the file.
-     */
     filename: string
-    /**
-     * The MIME type of the file.
-     * 
-     * @example
-     * img/jpg
-     */
     mimeType: string
-    /**
-     * The content of the file. For images, for example, 
-     * use binary string. For CSV files, use the CSV content.
-     */
     content: string
-    /**
-     * The access level of the file. Use `public` for the file that
-     * can be accessed by anyone. For example, for images that are displayed
-     * on the storefront. Use `private` for files that are only accessible
-     * by authenticated users. For example, for CSV files used to 
-     * import data.
-     */
     access: "public" | "private"
   }[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as FileDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const uploadFilesWorkflowId = "upload-files"
 /**
@@ -70,10 +64,13 @@ export const uploadFilesWorkflowId = "upload-files"
  * Upload files using the installed File Module Provider.
  */
 export const uploadFilesWorkflow = createWorkflow(
-  uploadFilesWorkflowId,
-  (
-    input: WorkflowData<UploadFilesWorkflowInput>
-  ): WorkflowResponse<FileDTO[]> => {
+  {
+    name: uploadFilesWorkflowId,
+    description: "Upload files using the installed File Module Provider",
+    inputSchema: uploadFilesWorkflowInputSchema,
+    outputSchema: uploadFilesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(uploadFilesStep(input))
   }
 )

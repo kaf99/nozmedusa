@@ -52,6 +52,7 @@
   "scripts": {
     "build": "rimraf dist && tsc --build",
     "watch": "tsc --build --watch",
-    "test": "jest --runInBand --bail --forceExit --passWithNoTests"
+    "test": "jest --runInBand --bail --forceExit --passWithNoTests",
+    "check:migration": "node scripts/check-workflow-migration.js"
   }
 }

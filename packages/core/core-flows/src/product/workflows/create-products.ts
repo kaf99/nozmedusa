@@ -2,7 +2,6 @@ import {
   AdditionalData,
   CreateProductWorkflowInputDTO,
   LinkDefinition,
-  PricingTypes,
   ProductTypes,
 } from "@medusajs/framework/types"
 import {
@@ -12,7 +11,6 @@ import {
   Modules,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -23,6 +21,14 @@ import { createRemoteLinkStep, emitEventStep } from "../../common"
 import { associateProductsWithSalesChannelsStep } from "../../sales-channel"
 import { createProductsStep } from "../steps/create-products"
 import { createProductVariantsWorkflow } from "./create-product-variants"
+import {
+  createProductsWorkflowInputSchema,
+  createProductsWorkflowOutputSchema,
+  CreateProductVariantsWorkflowInput,
+  CreateProductVariantsWorkflowOutput,
+  type CreateProductsWorkflowInput as SchemaInput,
+  type CreateProductsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The product's data to validate.
@@ -93,12 +99,33 @@ export const validateProductInputStep = createStep(
 /**
  * The data to create one or more products, along with custom data that's passed to the workflow's hooks.
  */
-export type CreateProductsWorkflowInput = {
+type OldCreateProductsWorkflowInput = {
   /**
    * The products to create.
    */
   products: CreateProductWorkflowInputDTO[]
 } & AdditionalData
+
+type OldCreateProductsWorkflowOutput = ProductTypes.ProductDTO[]
+
+export {
+  type CreateProductsWorkflowInput,
+  type CreateProductsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateProductsWorkflowInput = schemaInput
+const existingOutput: OldCreateProductsWorkflowOutput = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreateProductsWorkflowInput
+const oldOutput = {} as OldCreateProductsWorkflowOutput
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createProductsWorkflowId = "create-products"
 /**
@@ -108,12 +135,12 @@ export const createProductsWorkflowId = "create-products"
  * This workflow has a hook that allows you to perform custom actions on the created products. You can see an example in [this guide](https://docs.medusajs.com/resources/commerce-modules/product/extend).
  *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around product creation.
- * 
+ *
  * :::note
- * 
- * Learn more about adding rules to the product variant's prices in the Pricing Module's 
+ *
+ * Learn more about adding rules to the product variant's prices in the Pricing Module's
  * [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
- * 
+ *
  * :::
  *
  * @example
@@ -161,8 +188,12 @@ export const createProductsWorkflowId = "create-products"
  * @property hooks.productsCreated - This hook is executed after the products are created. You can consume this hook to perform custom actions on the created products.
  */
 export const createProductsWorkflow = createWorkflow(
-  createProductsWorkflowId,
-  (input: WorkflowData<CreateProductsWorkflowInput>) => {
+  {
+    name: createProductsWorkflowId,
+    inputSchema: createProductsWorkflowInputSchema,
+    outputSchema: createProductsWorkflowOutputSchema,
+  },
+  (input) => {
     // Passing prices to the product module will fail, we want to keep them for after the product is created.
     const { products: productWithoutExternalRelations } = transform(
       { input },
@@ -221,10 +252,8 @@ export const createProductsWorkflow = createWorkflow(
     createRemoteLinkStep(shippingProfileLinks as LinkDefinition[])
 
     const variantsInput = transform({ input, createdProducts }, (data) => {
-      // TODO: Move this to a unified place for all product workflow types
-      const productVariants: (ProductTypes.CreateProductVariantDTO & {
-        prices?: PricingTypes.CreateMoneyAmountDTO[]
-      })[] = []
+      const productVariants: CreateProductVariantsWorkflowInput["product_variants"] =
+        []
 
       data.createdProducts.forEach((product, i) => {
         const inputProduct = data.input.products[i]
@@ -249,7 +278,8 @@ export const createProductsWorkflow = createWorkflow(
     const response = transform(
       { createdVariants, input, createdProducts },
       (data) => {
-        const variantMap: Record<string, ProductTypes.ProductVariantDTO[]> = {}
+        const variantMap: Record<string, CreateProductVariantsWorkflowOutput> =
+          {}
 
         for (const variant of data.createdVariants) {
           const array = variantMap[variant.product_id!] || []

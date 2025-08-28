@@ -139,7 +139,7 @@ export interface CreateCartDTO {
   /**
    * Holds custom data in key-value pairs.
    */
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown> | null
 
   /**
    * The items of the cart.

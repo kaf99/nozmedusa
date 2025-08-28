@@ -10,6 +10,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common"
 import { updateFulfillmentWorkflow } from "./update-fulfillment"
+import {
+  markFulfillmentAsDeliveredInputSchema,
+  markFulfillmentAsDeliveredOutputSchema,
+  type MarkFulfillmentAsDeliveredInput,
+  type MarkFulfillmentAsDeliveredOutput,
+} from "../utils/schemas"
 
 export const validateFulfillmentDeliverabilityStepId =
   "validate-fulfillment-deliverability"
@@ -51,16 +57,6 @@ export const validateFulfillmentDeliverabilityStep = createStep(
   }
 )
 
-/**
- * The data to mark a fulfillment as delivered.
- */
-export type MarkFulfillmentAsDeliveredInput = {
-  /**
-   * The fulfillment's ID.
-   */
-  id: string
-}
-
 export const markFulfillmentAsDeliveredWorkflowId =
   "mark-fulfillment-as-delivered-workflow"
 /**
@@ -82,8 +78,13 @@ export const markFulfillmentAsDeliveredWorkflowId =
  * Mark a fulfillment as delivered.
  */
 export const markFulfillmentAsDeliveredWorkflow = createWorkflow(
-  markFulfillmentAsDeliveredWorkflowId,
-  ({ id }: WorkflowData<MarkFulfillmentAsDeliveredInput>) => {
+  {
+    name: markFulfillmentAsDeliveredWorkflowId,
+    description: "Mark a fulfillment as delivered",
+    inputSchema: markFulfillmentAsDeliveredInputSchema,
+    outputSchema: markFulfillmentAsDeliveredOutputSchema,
+  },
+  ({ id }: WorkflowData<MarkFulfillmentAsDeliveredInput>): WorkflowResponse<MarkFulfillmentAsDeliveredOutput> => {
     const fulfillment = useRemoteQueryStep({
       entry_point: "fulfillment",
       fields: ["id", "delivered_at", "canceled_at"],

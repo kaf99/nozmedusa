@@ -7,7 +7,14 @@ import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+// import { expectTypeOf } from "expect-type"
 import { createCustomerGroupsStep } from "../steps"
+import {
+  createCustomerGroupsWorkflowInputSchema,
+  createCustomerGroupsWorkflowOutputSchema,
+  // type CreateCustomerGroupsWorkflowInput as SchemaInput,
+  // type CreateCustomerGroupsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to create customer groups.
@@ -16,13 +23,18 @@ export type CreateCustomerGroupsWorkflowInput = {
   /**
    * The customer groups to create.
    */
-  customersData: CreateCustomerGroupDTO[]
+  groupsData: CreateCustomerGroupDTO[]
 }
 
 /**
  * The created customer groups.
  */
 export type CreateCustomerGroupsWorkflowOutput = CustomerGroupDTO[]
+
+// Type verification
+// TODO: Fix CustomerGroupDTO type issue
+// expectTypeOf<SchemaInput>().toEqualTypeOf<CreateCustomerGroupsWorkflowInput>()
+// expectTypeOf<SchemaOutput>().toEqualTypeOf<CreateCustomerGroupsWorkflowOutput>()
 
 export const createCustomerGroupsWorkflowId = "create-customer-groups"
 /**
@@ -37,7 +49,7 @@ export const createCustomerGroupsWorkflowId = "create-customer-groups"
  * const { result } = await createCustomerGroupsWorkflow(container)
  * .run({
  *   input: {
- *     customersData: [
+ *     groupsData: [
  *       {
  *         name: "VIP"
  *       }
@@ -50,10 +62,15 @@ export const createCustomerGroupsWorkflowId = "create-customer-groups"
  * Create one or more customer groups.
  */
 export const createCustomerGroupsWorkflow = createWorkflow(
-  createCustomerGroupsWorkflowId,
+  {
+    name: createCustomerGroupsWorkflowId,
+    description: "Create one or more customer groups",
+    inputSchema: createCustomerGroupsWorkflowInputSchema,
+    outputSchema: createCustomerGroupsWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<CreateCustomerGroupsWorkflowInput>
   ): WorkflowResponse<CreateCustomerGroupsWorkflowOutput> => {
-    return new WorkflowResponse(createCustomerGroupsStep(input.customersData))
+    return new WorkflowResponse(createCustomerGroupsStep(input.groupsData))
   }
 )

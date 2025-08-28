@@ -1,10 +1,15 @@
-import { LinkDefinition } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { dismissRemoteLinkStep } from "../steps/dismiss-remote-links"
+import {
+  dismissLinksWorkflowInputSchema,
+  dismissLinksWorkflowOutputSchema,
+  type DismissLinksWorkflowInput,
+  type DismissLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
 
 export const dismissLinksWorkflowId = "dismiss-link"
 /**
@@ -36,8 +41,14 @@ export const dismissLinksWorkflowId = "dismiss-link"
  * Dismiss links between two records of linked data models.
  */
 export const dismissLinksWorkflow = createWorkflow(
-  dismissLinksWorkflowId,
-  (input: WorkflowData<LinkDefinition[]>) => {
-    return new WorkflowResponse(dismissRemoteLinkStep(input))
+  {
+    name: dismissLinksWorkflowId,
+    description: "Dismiss links between two records of linked data models",
+    inputSchema: dismissLinksWorkflowInputSchema,
+    outputSchema: dismissLinksWorkflowOutputSchema,
+  },
+  (input: WorkflowData<DismissLinksWorkflowInput>): WorkflowResponse<DismissLinksWorkflowOutput> => {
+    dismissRemoteLinkStep(input)
+    return new WorkflowResponse(void 0)
   }
 )

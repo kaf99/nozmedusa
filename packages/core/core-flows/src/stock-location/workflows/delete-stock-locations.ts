@@ -1,17 +1,12 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteStockLocationsStep } from "../steps"
+import {
+  deleteStockLocationsWorkflowInputSchema,
+  deleteStockLocationsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete stock locations.
- */
-export interface DeleteStockLocationWorkflowInput {
-  /**
-   * The IDs of the stock locations to delete.
-   */
-  ids: string[]
-}
 
 export const deleteStockLocationsWorkflowId = "delete-stock-locations-workflow"
 /**
@@ -34,8 +29,13 @@ export const deleteStockLocationsWorkflowId = "delete-stock-locations-workflow"
  * Delete one or more stock locations.
  */
 export const deleteStockLocationsWorkflow = createWorkflow(
-  deleteStockLocationsWorkflowId,
-  (input: WorkflowData<DeleteStockLocationWorkflowInput>) => {
+  {
+    name: deleteStockLocationsWorkflowId,
+    description: "Delete one or more stock locations",
+    inputSchema: deleteStockLocationsWorkflowInputSchema,
+    outputSchema: deleteStockLocationsWorkflowOutputSchema,
+  },
+  (input) => {
     const softDeletedEntities = deleteStockLocationsStep(input.ids)
     removeRemoteLinkStep(softDeletedEntities)
   }

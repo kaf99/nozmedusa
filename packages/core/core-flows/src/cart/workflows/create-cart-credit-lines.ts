@@ -1,14 +1,37 @@
 import {
   CartCreditLineDTO,
-  CreateCartCreditLinesWorkflowInput,
+  CreateCartCreditLinesWorkflowInput as OldCreateCartCreditLinesWorkflowInput,
 } from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createEntitiesStep } from "../../common/steps/create-entities"
+import {
+  createCartCreditLinesWorkflowInputSchema,
+  createCartCreditLinesWorkflowOutputSchema,
+  type CreateCartCreditLinesWorkflowInput as SchemaInput,
+  type CreateCartCreditLinesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreateCartCreditLinesWorkflowInput,
+  type CreateCartCreditLinesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateCartCreditLinesWorkflowInput = schemaInput
+const existingOutput: CartCreditLineDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreateCartCreditLinesWorkflowInput
+const oldOutput = {} as CartCreditLineDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createCartCreditLinesWorkflowId = "create-cart-credit-lines"
 /**
@@ -29,10 +52,12 @@ export const createCartCreditLinesWorkflowId = "create-cart-credit-lines"
  * })
  */
 export const createCartCreditLinesWorkflow = createWorkflow(
-  createCartCreditLinesWorkflowId,
-  (
-    input: WorkflowData<CreateCartCreditLinesWorkflowInput>
-  ): WorkflowResponse<CartCreditLineDTO[]> => {
+  {
+    name: createCartCreditLinesWorkflowId,
+    inputSchema: createCartCreditLinesWorkflowInputSchema,
+    outputSchema: createCartCreditLinesWorkflowOutputSchema,
+  },
+  (input) => {
     const creditLines = createEntitiesStep({
       moduleRegistrationName: Modules.CART,
       invokeMethod: "createCreditLines",

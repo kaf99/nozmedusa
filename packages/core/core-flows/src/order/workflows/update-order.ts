@@ -5,7 +5,6 @@ import {
   validateEmail,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -24,6 +23,12 @@ import {
   updateOrdersStep,
 } from "../steps"
 import { throwIfOrderIsCancelled } from "../utils/order-validation"
+import {
+  updateOrderWorkflowInputSchema,
+  updateOrderWorkflowOutputSchema,
+  type UpdateOrderWorkflowInput as SchemaInput,
+  type UpdateOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate the order update.
@@ -95,6 +100,14 @@ export const updateOrderValidationStep = createStep(
   }
 )
 
+// Type verification
+const _inputSchemaCheck: OrderWorkflow.UpdateOrderWorkflowInput =
+  {} as SchemaInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const updateOrderWorkflowId = "update-order-workflow"
 /**
  * This workflow updates an order's general details, such as its email or addresses. It's used by the
@@ -118,9 +131,13 @@ export const updateOrderWorkflowId = "update-order-workflow"
  * Update an order's details.
  */
 export const updateOrderWorkflow = createWorkflow(
-  updateOrderWorkflowId,
+  {
+    name: updateOrderWorkflowId,
+    inputSchema: updateOrderWorkflowInputSchema,
+    outputSchema: updateOrderWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.UpdateOrderWorkflowInput>
+    input: OrderWorkflow.UpdateOrderWorkflowInput
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderQuery = useQueryGraphStep({
       entity: "order",

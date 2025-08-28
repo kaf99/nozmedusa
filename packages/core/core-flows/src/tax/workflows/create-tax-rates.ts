@@ -1,20 +1,32 @@
 import { CreateTaxRateDTO, TaxRateDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createTaxRatesStep } from "../steps"
+import {
+  createTaxRatesWorkflowInputSchema,
+  createTaxRatesWorkflowOutputSchema,
+  type CreateTaxRatesWorkflowInput as SchemaInput,
+  type CreateTaxRatesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The tax rates to create.
- */
-export type CreateTaxRatesWorkflowInput = CreateTaxRateDTO[]
+export {
+  type CreateTaxRatesWorkflowInput,
+  type CreateTaxRatesWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The created tax rates.
- */
-export type CreateTaxRatesWorkflowOutput = TaxRateDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateTaxRateDTO[] = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRateDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createTaxRatesWorkflowId = "create-tax-rates"
 /**
@@ -40,10 +52,13 @@ export const createTaxRatesWorkflowId = "create-tax-rates"
  * Create one or more tax rates.
  */
 export const createTaxRatesWorkflow = createWorkflow(
-  createTaxRatesWorkflowId,
-  (input: WorkflowData<CreateTaxRatesWorkflowInput>): WorkflowResponse<
-    CreateTaxRatesWorkflowOutput
-  > => {
+  {
+    name: createTaxRatesWorkflowId,
+    description: "Create one or more tax rates",
+    inputSchema: createTaxRatesWorkflowInputSchema,
+    outputSchema: createTaxRatesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(createTaxRatesStep(input))
   }
 )

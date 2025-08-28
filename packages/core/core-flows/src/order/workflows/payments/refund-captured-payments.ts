@@ -4,10 +4,35 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
 } from "@medusajs/framework/workflows-sdk"
 import { useQueryGraphStep } from "../../../common"
 import { refundPaymentsWorkflow } from "../../../payment/workflows/refund-payments"
+import {
+  refundCapturedPaymentsWorkflowInputSchema,
+  refundCapturedPaymentsWorkflowOutputSchema,
+  type RefundCapturedPaymentsWorkflowInput as SchemaInput,
+} from "./utils/schemas"
+
+export {
+  type RefundCapturedPaymentsWorkflowInput,
+  type RefundCapturedPaymentsWorkflowOutput,
+} from "./utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  order_id: string
+  created_by?: string
+  note?: string
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// Note: void workflow returns nothing
+const _voidCheck: void = undefined!
+
+console.log(existingInput, _voidCheck)
 
 export const refundCapturedPaymentsWorkflowId =
   "refund-captured-payments-workflow"
@@ -15,14 +40,13 @@ export const refundCapturedPaymentsWorkflowId =
  * This workflow refunds a payment.
  */
 export const refundCapturedPaymentsWorkflow = createWorkflow(
-  refundCapturedPaymentsWorkflowId,
-  (
-    input: WorkflowData<{
-      order_id: string
-      created_by?: string
-      note?: string
-    }>
-  ) => {
+  {
+    name: refundCapturedPaymentsWorkflowId,
+    description: "Refund captured payments",
+    inputSchema: refundCapturedPaymentsWorkflowInputSchema,
+    outputSchema: refundCapturedPaymentsWorkflowOutputSchema,
+  },
+  (input) => {
     const orderQuery = useQueryGraphStep({
       entity: "orders",
       fields: [

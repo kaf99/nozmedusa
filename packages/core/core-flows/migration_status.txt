@@ -1,0 +1,444 @@
+{} {}
+{} {} {} {}
+{}
+{} {}
+{} {}
+{} undefined
+{} {} {} {}
+{} {} {} {}
+{} {}
+{} {} {} {}
+{} {}
+{} undefined {} undefined
+{} undefined {} undefined
+{} {} {} {}
+{} undefined {} undefined
+{} undefined
+{} undefined
+{} {} {}
+{} {} {} {}
+{} {} {} {}
+{} undefined {} undefined
+{} undefined
+{} {} {}
+{} undefined
+{} {} {}
+{} {}
+{} {}
+{} {} {} {}
+{} {} {}
+{} undefined
+{} undefined
+{} undefined {} undefined
+{} undefined
+{} undefined {} undefined
+{} {} {}
+{} {} {}
+{} {} {} {}
+{} {} {} {}
+{} {} {} {}
+{} {} {}
+{} undefined
+{} undefined
+{} {} {}
+{} undefined
+{} {} {}
+{} undefined undefined
+{} undefined undefined
+{} undefined undefined
+{} undefined undefined
+{} undefined undefined
+{} undefined undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} [] []
+{} {} {}
+{} [] []
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {} {}
+{} {} {} {}
+{} {} {} {}
+{} undefined undefined
+{} undefined undefined
+{} {} {}
+{} undefined undefined
+{} undefined undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} {} {}
+{} {}
+{} {} {} {}
+{} undefined undefined
+{} {}
+{} {}
+{} undefined undefined
+{} [] []
+{} { created: [], updated: [], deleted: [] } { created: [], updated: [], deleted: [] }
+{} undefined undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} { toCreate: 0, toUpdate: 0 } { toCreate: 0, toUpdate: 0 }
+{} { toCreate: 0, toUpdate: 0 } { toCreate: 0, toUpdate: 0 }
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} undefined undefined
+{} {} {}
+{} undefined undefined
+{} undefined
+{} {} {}
+{} {} {}
+{} undefined
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+{} {} {}
+Registered Workflows:
+✅ - create-api-keys (has input schema: true, has output schema: true)
+✅ - delete-api-keys (has input schema: true, has output schema: true)
+✅ - link-sales-channels-to-api-key (has input schema: true, has output schema: true)
+✅ - revoke-api-keys (has input schema: true, has output schema: true)
+✅ - update-api-keys (has input schema: true, has output schema: true)
+✅ - batch-links (has input schema: true, has output schema: true)
+✅ - create-link (has input schema: true, has output schema: true)
+✅ - dismiss-link (has input schema: true, has output schema: true)
+✅ - update-link (has input schema: true, has output schema: true)
+✅ - generate-reset-password-token (has input schema: true, has output schema: true)
+✅ - batch-shipping-option-rules (has input schema: true, has output schema: true)
+✅ - cancel-fulfillment-workflow (has input schema: true, has output schema: true)
+✅ - create-fulfillment-workflow (has input schema: true, has output schema: true)
+✅ - create-return-fulfillment-workflow (has input schema: true, has output schema: true)
+✅ - create-service-zones-workflow (has input schema: true, has output schema: true)
+✅ - update-fulfillment-workflow (has input schema: true, has output schema: true)
+✅ - create-shipment-workflow (has input schema: true, has output schema: true)
+✅ - create-shipping-options-workflow (has input schema: true, has output schema: true)
+✅ - create-shipping-profiles-workflow (has input schema: true, has output schema: true)
+✅ - delete-fulfillment-sets-workflow (has input schema: true, has output schema: true)
+✅ - delete-service-zones-workflow (has input schema: true, has output schema: true)
+✅ - delete-shipping-options-workflow (has input schema: true, has output schema: true)
+✅ - mark-fulfillment-as-delivered-workflow (has input schema: true, has output schema: true)
+✅ - update-service-zones-workflow (has input schema: true, has output schema: true)
+✅ - update-shipping-options-workflow (has input schema: true, has output schema: true)
+✅ - update-shipping-profiles-workflow (has input schema: true, has output schema: true)
+✅ - calculate-shipping-options-prices-workflow (has input schema: true, has output schema: true)
+✅ - list-shipping-options-for-cart-with-pricing (has input schema: true, has output schema: true)
+✅ - refresh-cart-shipping-methods (has input schema: true, has output schema: true)
+✅ - delete-payment-sessions (has input schema: true, has output schema: true)
+✅ - create-payment-sessions (has input schema: true, has output schema: true)
+✅ - create-refund-reasons-workflow (has input schema: true, has output schema: true)
+✅ - delete-refund-reasons-workflow (has input schema: true, has output schema: true)
+✅ - update-refund-reasons (has input schema: true, has output schema: true)
+✅ - refresh-payment-collection-for-cart (has input schema: true, has output schema: true)
+✅ - update-cart-promotions (has input schema: true, has output schema: true)
+✅ - update-tax-lines (has input schema: true, has output schema: true)
+✅ - upsert-tax-lines (has input schema: true, has output schema: true)
+✅ - refresh-cart-items (has input schema: true, has output schema: true)
+✅ - add-shipping-method-to-cart (has input schema: true, has output schema: true)
+✅ - confirm-item-inventory (has input schema: true, has output schema: true)
+✅ - add-to-cart (has input schema: true, has output schema: true)
+✅ - refund-payments-workflow (has input schema: true, has output schema: true)
+✅ - refund-payment-and-recreate-payment-session (has input schema: true, has output schema: true)
+✅ - complete-cart (has input schema: true, has output schema: true)
+✅ - create-cart-credit-lines (has input schema: true, has output schema: true)
+✅ - create-cart (has input schema: true, has output schema: true)
+✅ - create-payment-collection-for-cart (has input schema: true, has output schema: true)
+✅ - delete-cart-credit-lines (has input schema: true, has output schema: true)
+✅ - list-shipping-options-for-cart (has input schema: true, has output schema: true)
+✅ - transfer-cart-customer (has input schema: true, has output schema: true)
+✅ - delete-line-items (has input schema: true, has output schema: true)
+✅ - update-cart (has input schema: true, has output schema: true)
+✅ - update-line-item-in-cart (has input schema: true, has output schema: true)
+✅ - create-customer-addresses (has input schema: true, has output schema: true)
+✅ - create-customers (has input schema: true, has output schema: true)
+✅ - create-customer-account (has input schema: true, has output schema: true)
+✅ - delete-customer-addresses (has input schema: true, has output schema: true)
+✅ - delete-customers (has input schema: true, has output schema: true)
+✅ - remove-customer-account (has input schema: true, has output schema: true)
+✅ - update-customer-addresses (has input schema: true, has output schema: true)
+✅ - update-customers (has input schema: true, has output schema: true)
+✅ - update-customer-groups (has input schema: true, has output schema: true)
+✅ - delete-customer-groups (has input schema: true, has output schema: true)
+✅ - create-customer-groups (has input schema: true, has output schema: true)
+✅ - link-customers-to-customer-group (has input schema: true, has output schema: true)
+✅ - link-customer-groups-to-customer (has input schema: true, has output schema: true)
+✅ - create-price-preferences (has input schema: true, has output schema: true)
+✅ - update-price-preferences (has input schema: true, has output schema: true)
+✅ - delete-price-preferences (has input schema: true, has output schema: true)
+✅ - create-stores (has input schema: true, has output schema: true)
+✅ - delete-stores (has input schema: true, has output schema: true)
+✅ - update-stores (has input schema: true, has output schema: true)
+✅ - link-products-to-sales-channel (has input schema: true, has output schema: true)
+✅ - create-sales-channels (has input schema: true, has output schema: true)
+✅ - delete-sales-channels (has input schema: true, has output schema: true)
+✅ - update-sales-channels (has input schema: true, has output schema: true)
+✅ - create-defaults (has input schema: true, has output schema: true)
+✅ - order-add-line-items (has input schema: true, has output schema: true)
+✅ - archive-order-workflow (has input schema: true, has output schema: true)
+✅ - create-order-change-actions (has input schema: true, has output schema: true)
+✅ - create-order-refund-credit-lines (has input schema: true, has output schema: true)
+✅ - refund-captured-payments-workflow (has input schema: true, has output schema: true)
+✅ - cancel-order (has input schema: true, has output schema: true)
+✅ - cancel-order-change (has input schema: true, has output schema: true)
+✅ - delete-inventory-levels-workflow (has input schema: true, has output schema: true)
+✅ - batch-inventory-item-levels-workflow (has input schema: true, has output schema: true)
+✅ - bulk-create-delete-levels-workflow (has input schema: true, has output schema: true)
+✅ - create-inventory-levels-workflow (has input schema: true, has output schema: true)
+✅ - create-inventory-items-workflow (has input schema: true, has output schema: true)
+✅ - delete-inventory-item-workflow (has input schema: true, has output schema: true)
+✅ - update-inventory-items-workflow (has input schema: true, has output schema: true)
+✅ - update-inventory-levels-workflow (has input schema: true, has output schema: true)
+✅ - create-reservations-workflow (has input schema: true, has output schema: true)
+✅ - delete-reservations (has input schema: true, has output schema: true)
+✅ - delete-reservations-by-line-items (has input schema: true, has output schema: true)
+✅ - update-reservations-workflow (has input schema: true, has output schema: true)
+✅ - cancel-order-fulfillment (has input schema: true, has output schema: true)
+✅ - begin-claim-order (has input schema: true, has output schema: true)
+✅ - cancel-begin-order-claim (has input schema: true, has output schema: true)
+✅ - cancel-return (has input schema: true, has output schema: true)
+✅ - cancel-claim (has input schema: true, has output schema: true)
+✅ - update-order-tax-lines (has input schema: true, has output schema: true)
+✅ - maybe-refresh-shipping-methods (has input schema: true, has output schema: true)
+✅ - refresh-claim-shipping (has input schema: true, has output schema: true)
+✅ - claim-add-new-item (has input schema: true, has output schema: true)
+✅ - claim-item (has input schema: true, has output schema: true)
+✅ - claim-request-item-return (has input schema: true, has output schema: true)
+✅ - create-order-payment-collection (has input schema: true, has output schema: true)
+✅ - cancel-payment-collection (has input schema: true, has output schema: true)
+✅ - create-or-update-order-payment-collection (has input schema: true, has output schema: true)
+✅ - confirm-claim-request (has input schema: true, has output schema: true)
+✅ - fetch-shipping-option (has input schema: true, has output schema: true)
+✅ - create-claim-shipping-method (has input schema: true, has output schema: true)
+✅ - remove-claim-shipping-method (has input schema: true, has output schema: true)
+✅ - remove-item-claim-add-action (has input schema: true, has output schema: true)
+✅ - remove-item-claim-action (has input schema: true, has output schema: true)
+✅ - update-claim-add-item (has input schema: true, has output schema: true)
+❌ - update-claim-item (has input schema: false, has output schema: false)
+❌ - update-claim-shipping-method (has input schema: false, has output schema: false)
+✅ - complete-order-workflow (has input schema: true, has output schema: true)
+❌ - create-order-fulfillment (has input schema: false, has output schema: false)
+✅ - create-orders (has input schema: true, has output schema: true)
+❌ - create-order-change (has input schema: false, has output schema: false)
+✅ - create-order-credit-lines (has input schema: true, has output schema: true)
+❌ - create-order-shipment (has input schema: false, has output schema: false)
+❌ - decline-order-change (has input schema: false, has output schema: false)
+❌ - delete-order-change (has input schema: false, has output schema: false)
+✅ - delete-order-change-actions (has input schema: true, has output schema: true)
+✅ - delete-order-payment-collectionworkflow (has input schema: true, has output schema: true)
+✅ - begin-exchange-order (has input schema: true, has output schema: true)
+✅ - cancel-begin-order-exchange (has input schema: true, has output schema: true)
+✅ - cancel-exchange (has input schema: true, has output schema: true)
+✅ - confirm-exchange-request (has input schema: true, has output schema: true)
+✅ - create-exchange-shipping-method (has input schema: true, has output schema: true)
+❌ - refresh-exchange-shipping (has input schema: false, has output schema: false)
+❌ - exchange-add-new-item (has input schema: false, has output schema: false)
+❌ - exchange-request-item-return (has input schema: false, has output schema: false)
+❌ - remove-exchange-shipping-method (has input schema: false, has output schema: false)
+❌ - remove-item-exchange-action (has input schema: false, has output schema: false)
+❌ - update-exchange-add-item (has input schema: false, has output schema: false)
+❌ - update-exchange-shipping-method (has input schema: false, has output schema: false)
+❌ - get-order-detail (has input schema: false, has output schema: false)
+❌ - get-orders-list (has input schema: false, has output schema: false)
+❌ - mark-order-fulfillment-as-delivered-workflow (has input schema: false, has output schema: false)
+✅ - capture-payment-workflow (has input schema: true, has output schema: true)
+✅ - process-payment-workflow (has input schema: true, has output schema: true)
+✅ - refund-payment-workflow (has input schema: true, has output schema: true)
+✅ - mark-payment-collection-as-paid (has input schema: true, has output schema: true)
+❌ - begin-order-edit-order (has input schema: false, has output schema: false)
+❌ - cancel-begin-order-edit (has input schema: false, has output schema: false)
+❌ - confirm-order-edit-request (has input schema: false, has output schema: false)
+❌ - create-order-edit-shipping-method (has input schema: false, has output schema: false)
+❌ - order-edit-add-new-item (has input schema: false, has output schema: false)
+❌ - order-edit-update-item-quantity (has input schema: false, has output schema: false)
+❌ - remove-item-order edit-action (has input schema: false, has output schema: false)
+❌ - remove-order-edit-shipping-method (has input schema: false, has output schema: false)
+❌ - order-edit-request (has input schema: false, has output schema: false)
+❌ - update-order-edit-add-item (has input schema: false, has output schema: false)
+❌ - update-order-edit-update-quantity (has input schema: false, has output schema: false)
+❌ - update-order-edit-shipping-method (has input schema: false, has output schema: false)
+❌ - begin-receive-return (has input schema: false, has output schema: false)
+✅ - begin-return-order (has input schema: true, has output schema: true)
+❌ - cancel-receive-return (has input schema: false, has output schema: false)
+❌ - cancel-return-request (has input schema: false, has output schema: false)
+❌ - confirm-return-receive (has input schema: false, has output schema: false)
+❌ - confirm-return-request (has input schema: false, has output schema: false)
+❌ - create-complete-return-order (has input schema: false, has output schema: false)
+❌ - create-return-shipping-method (has input schema: false, has output schema: false)
+❌ - dismiss-item-return-request (has input schema: false, has output schema: false)
+❌ - receive-return-order (has input schema: false, has output schema: false)
+❌ - receive-item-return-request (has input schema: false, has output schema: false)
+❌ - remove-item-receive-return-action (has input schema: false, has output schema: false)
+❌ - remove-return-shipping-method (has input schema: false, has output schema: false)
+❌ - update-return (has input schema: false, has output schema: false)
+❌ - refresh-return-shipping (has input schema: false, has output schema: false)
+❌ - remove-item-return-action (has input schema: false, has output schema: false)
+❌ - request-item-return (has input schema: false, has output schema: false)
+❌ - update-receive-item-return-request (has input schema: false, has output schema: false)
+❌ - update-request-item-return (has input schema: false, has output schema: false)
+❌ - update-return-shipping-method (has input schema: false, has output schema: false)
+❌ - accept-order-transfer-workflow (has input schema: false, has output schema: false)
+❌ - cancel-transfer-order-request (has input schema: false, has output schema: false)
+❌ - decline-transfer-order-request (has input schema: false, has output schema: false)
+❌ - request-order-transfer-workflow (has input schema: false, has output schema: false)
+❌ - update-order-workflow (has input schema: false, has output schema: false)
+✅ - update-order-change-actions (has input schema: true, has output schema: true)
+❌ - update-order-change (has input schema: false, has output schema: false)
+❌ - refresh-draft-order-adjustments (has input schema: false, has output schema: false)
+✅ - add-draft-order-items (has input schema: true, has output schema: true)
+❌ - add-draft-order-promotion (has input schema: false, has output schema: false)
+❌ - add-draft-order-shipping-methods (has input schema: false, has output schema: false)
+❌ - begin-draft-order-edit (has input schema: false, has output schema: false)
+❌ - cancel-draft-order-edit (has input schema: false, has output schema: false)
+❌ - confirm-draft-order-edit (has input schema: false, has output schema: false)
+❌ - convert-draft-order (has input schema: false, has output schema: false)
+❌ - remove-draft-order-action-item (has input schema: false, has output schema: false)
+❌ - remove-draft-order-action-shipping-method (has input schema: false, has output schema: false)
+❌ - remove-draft-order-promotions (has input schema: false, has output schema: false)
+❌ - request-draft-order-edit (has input schema: false, has output schema: false)
+❌ - update-draft-order (has input schema: false, has output schema: false)
+❌ - update-draft-order-action-item (has input schema: false, has output schema: false)
+❌ - update-draft-order-action-shipping-method (has input schema: false, has output schema: false)
+❌ - update-draft-order-item (has input schema: false, has output schema: false)
+❌ - update-draft-order-shipping-method (has input schema: false, has output schema: false)
+❌ - remove-draft-order-shipping-method (has input schema: false, has output schema: false)
+❌ - delete-draft-order (has input schema: false, has output schema: false)
+✅ - upload-files (has input schema: true, has output schema: true)
+✅ - delete-files (has input schema: true, has output schema: true)
+✅ - create-invite-step (has input schema: true, has output schema: true)
+✅ - delete-invites-workflow (has input schema: true, has output schema: true)
+✅ - create-users-workflow (has input schema: true, has output schema: true)
+✅ - create-user-account (has input schema: true, has output schema: true)
+✅ - delete-user (has input schema: true, has output schema: true)
+✅ - remove-user-account (has input schema: true, has output schema: true)
+✅ - update-users-workflow (has input schema: true, has output schema: true)
+✅ - accept-invite-workflow (has input schema: true, has output schema: true)
+✅ - refresh-invite-tokens-workflow (has input schema: true, has output schema: true)
+✅ - create-price-list-prices (has input schema: true, has output schema: true)
+✅ - remove-price-list-prices (has input schema: true, has output schema: true)
+✅ - update-price-list-prices (has input schema: true, has output schema: true)
+✅ - batch-price-list-prices (has input schema: true, has output schema: true)
+✅ - create-price-lists (has input schema: true, has output schema: true)
+✅ - delete-price-lists (has input schema: true, has output schema: true)
+✅ - update-price-lists (has input schema: true, has output schema: true)
+✅ - create-product-variants (has input schema: true, has output schema: true)
+✅ - create-products (has input schema: true, has output schema: true)
+✅ - delete-products (has input schema: true, has output schema: true)
+✅ - upsert-variant-prices (has input schema: true, has output schema: true)
+✅ - update-products (has input schema: true, has output schema: true)
+✅ - batch-products (has input schema: true, has output schema: true)
+✅ - batch-link-products-to-collection (has input schema: true, has output schema: true)
+✅ - update-product-variants (has input schema: true, has output schema: true)
+✅ - delete-product-variants (has input schema: true, has output schema: true)
+✅ - batch-product-variants (has input schema: true, has output schema: true)
+✅ - batch-link-products-to-category (has input schema: true, has output schema: true)
+✅ - create-collections (has input schema: true, has output schema: true)
+✅ - create-product-options (has input schema: true, has output schema: true)
+✅ - create-product-types (has input schema: true, has output schema: true)
+✅ - create-product-tags (has input schema: true, has output schema: true)
+✅ - delete-collections (has input schema: true, has output schema: true)
+✅ - delete-product-options (has input schema: true, has output schema: true)
+✅ - delete-product-types (has input schema: true, has output schema: true)
+✅ - delete-product-tags (has input schema: true, has output schema: true)
+✅ - update-collections (has input schema: true, has output schema: true)
+✅ - update-product-options (has input schema: true, has output schema: true)
+✅ - update-product-types (has input schema: true, has output schema: true)
+✅ - update-product-tags (has input schema: true, has output schema: true)
+✅ - export-products (has input schema: true, has output schema: true)
+✅ - import-products (has input schema: true, has output schema: true)
+✅ - import-products-as-chunks (has input schema: true, has output schema: true)
+✅ - create-product-categories (has input schema: true, has output schema: true)
+✅ - update-product-categories (has input schema: true, has output schema: true)
+✅ - delete-product-categories (has input schema: true, has output schema: true)
+✅ - add-or-remove-campaign-promotions (has input schema: true, has output schema: true)
+✅ - delete-promotion-rules-workflow (has input schema: true, has output schema: true)
+✅ - create-promotion-rules-workflow (has input schema: true, has output schema: true)
+✅ - update-promotion-rules-workflow (has input schema: true, has output schema: true)
+✅ - batch-promotion-rules (has input schema: true, has output schema: true)
+✅ - create-campaigns (has input schema: true, has output schema: true)
+✅ - create-promotions (has input schema: true, has output schema: true)
+✅ - delete-campaigns (has input schema: true, has output schema: true)
+✅ - delete-promotions (has input schema: true, has output schema: true)
+✅ - update-campaigns (has input schema: true, has output schema: true)
+✅ - update-promotions-status (has input schema: true, has output schema: true)
+✅ - update-promotions (has input schema: true, has output schema: true)
+✅ - create-regions (has input schema: true, has output schema: true)
+✅ - delete-regions (has input schema: true, has output schema: true)
+✅ - update-regions (has input schema: true, has output schema: true)
+✅ - create-return-reasons (has input schema: true, has output schema: true)
+✅ - delete-return-reasons (has input schema: true, has output schema: true)
+✅ - update-return-reasons (has input schema: true, has output schema: true)
+✅ - create-view-configuration (has input schema: true, has output schema: true)
+✅ - update-view-configuration (has input schema: true, has output schema: true)
+✅ - create-shipping-option-types (has input schema: true, has output schema: true)
+✅ - delete-shipping-option-types (has input schema: true, has output schema: true)
+✅ - update-shipping-option-types (has input schema: true, has output schema: true)
+✅ - delete-shipping-profile-workflow (has input schema: true, has output schema: true)
+✅ - create-location-fulfillment-set (has input schema: true, has output schema: true)
+✅ - create-stock-locations-workflow (has input schema: true, has output schema: true)
+✅ - delete-stock-locations-workflow (has input schema: true, has output schema: true)
+✅ - update-stock-locations-workflow (has input schema: true, has output schema: true)
+✅ - link-sales-channels-to-stock-location (has input schema: true, has output schema: true)
+✅ - create-tax-rate-rules (has input schema: true, has output schema: true)
+✅ - create-tax-rates (has input schema: true, has output schema: true)
+✅ - create-tax-regions (has input schema: true, has output schema: true)
+✅ - delete-tax-rate-rules (has input schema: true, has output schema: true)
+✅ - delete-tax-rates (has input schema: true, has output schema: true)
+✅ - delete-tax-regions (has input schema: true, has output schema: true)
+✅ - set-tax-rate-rules (has input schema: true, has output schema: true)
+✅ - update-tax-rates (has input schema: true, has output schema: true)
+✅ - update-tax-regions (has input schema: true, has output schema: true)
+
+Total Workflows: 292
+Workflows with Schema: 220
+Progress: 75.34%

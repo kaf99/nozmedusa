@@ -2,46 +2,37 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { BatchWorkflowInput, BatchWorkflowOutput, InventoryLevelDTO, InventoryTypes } from "@medusajs/types"
 import { createInventoryLevelsStep, updateInventoryLevelsStep } from "../steps"
 import { deleteInventoryLevelsWorkflow } from "./delete-inventory-levels"
+import {
+  batchInventoryItemLevelsWorkflowInputSchema,
+  batchInventoryItemLevelsWorkflowOutputSchema,
+  type BatchInventoryItemLevelsWorkflowInput as SchemaInput,
+  type BatchInventoryItemLevelsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to manage the inventory levels in bulk.
- * 
- * @property create - The inventory levels to create.
- * @property update - The inventory levels to update.
- * @property delete - The IDs of inventory levels to delete.
- */
-export interface BatchInventoryItemLevelsWorkflowInput
-  extends BatchWorkflowInput<
-    InventoryTypes.CreateInventoryLevelInput,
-    InventoryTypes.UpdateInventoryLevelInput
-  > {
-  /**
-   * If true, the workflow will force the deletion of the inventory levels, even
-   * if they have a non-zero stocked quantity. If false, the workflow will
-   * not delete the inventory levels if they have a non-zero stocked quantity.
-   *
-   * Inventory levels that have reserved or incoming items at the location
-   * will not be deleted even if the force flag is set to true.
-   *
-   * @default false
-   */
-  force?: boolean
-}
+export {
+  type BatchInventoryItemLevelsWorkflowInput,
+  type BatchInventoryItemLevelsWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The result of managing inventory levels in bulk.
- * 
- * @property created - The inventory levels that were created.
- * @property updated - The inventory levels that were updated.
- * @property deleted - The IDs of the inventory levels that were deleted.
- */
-export interface BatchInventoryItemLevelsWorkflowOutput extends BatchWorkflowOutput<InventoryLevelDTO> {}
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: BatchWorkflowInput<
+  InventoryTypes.CreateInventoryLevelInput,
+  InventoryTypes.UpdateInventoryLevelInput
+> & { force?: boolean } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as BatchWorkflowOutput<InventoryLevelDTO>
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const batchInventoryItemLevelsWorkflowId =
   "batch-inventory-item-levels-workflow"
@@ -79,8 +70,13 @@ export const batchInventoryItemLevelsWorkflowId =
  * Manage inventory levels in bulk.
  */
 export const batchInventoryItemLevelsWorkflow = createWorkflow(
-  batchInventoryItemLevelsWorkflowId,
-  (input: WorkflowData<BatchInventoryItemLevelsWorkflowInput>) => {
+  {
+    name: batchInventoryItemLevelsWorkflowId,
+    description: "Manage inventory levels in bulk",
+    inputSchema: batchInventoryItemLevelsWorkflowInputSchema,
+    outputSchema: batchInventoryItemLevelsWorkflowOutputSchema,
+  },
+  (input) => {
     const { createInput, updateInput, deleteInput } = transform(
       input,
       (data) => {
@@ -109,7 +105,7 @@ export const batchInventoryItemLevelsWorkflow = createWorkflow(
           created: data.res[0],
           updated: data.res[1],
           deleted: data.input.delete,
-        } as BatchInventoryItemLevelsWorkflowOutput
+        } as SchemaOutput
       })
     )
   }

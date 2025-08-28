@@ -17,7 +17,6 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
@@ -47,22 +46,25 @@ import {
   PrepareLineItemDataInput,
   prepareTaxLinesData,
 } from "../utils/prepare-line-item-data"
-/**
- * The data to complete a cart and place an order.
- */
-export type CompleteCartWorkflowInput = {
-  /**
-   * The ID of the cart to complete.
-   */
-  id: string
-}
+import {
+  completeCartWorkflowInputSchema,
+  completeCartWorkflowOutputSchema,
+  type CompleteCartWorkflowInput,
+  type CompleteCartWorkflowOutput,
+} from "../utils/schemas"
 
-export type CompleteCartWorkflowOutput = {
-  /**
-   * The ID of the order that was created.
-   */
-  id: string
-}
+// Re-export types from schemas for backward compatibility
+export type { 
+  CompleteCartWorkflowInput,
+  CompleteCartWorkflowOutput 
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as CompleteCartWorkflowInput
+const schemaOutput = {} as CompleteCartWorkflowOutput
+const existingInput: { id: string } = schemaInput
+const existingOutput: { id: string } = schemaOutput
+console.log(existingInput, existingOutput)
 
 const THREE_DAYS = 60 * 60 * 24 * 3
 const THIRTY_SECONDS = 30
@@ -97,8 +99,10 @@ export const completeCartWorkflow = createWorkflow(
     store: true,
     idempotent: false,
     retentionTime: THREE_DAYS,
+    inputSchema: completeCartWorkflowInputSchema,
+    outputSchema: completeCartWorkflowOutputSchema,
   },
-  (input: WorkflowData<CompleteCartWorkflowInput>) => {
+  (input) => {
     acquireLockStep({
       key: input.id,
       timeout: THIRTY_SECONDS,
@@ -422,7 +426,7 @@ export const completeCartWorkflow = createWorkflow(
     })
 
     const result = transform({ order, orderId }, ({ order, orderId }) => {
-      return { id: order?.id ?? orderId } as CompleteCartWorkflowOutput
+      return { id: order?.id ?? orderId }
     })
 
     return new WorkflowResponse(result, {

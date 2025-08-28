@@ -1,15 +1,15 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateShippingProfilesStep } from "../steps/update-shipping-profiles"
-
-/**
- * The updated shipping profiles.
- */
-export type UpdateShippingProfilesWorkflowOutput = FulfillmentWorkflow.CreateShippingProfilesWorkflowOutput
+import {
+  updateShippingProfilesWorkflowInputSchema,
+  updateShippingProfilesWorkflowOutputSchema,
+  type UpdateShippingProfilesWorkflowInput,
+  type UpdateShippingProfilesWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateShippingProfilesWorkflowId =
   "update-shipping-profiles-workflow"
@@ -38,9 +38,14 @@ export const updateShippingProfilesWorkflowId =
  * Update one or more shipping profiles.
  */
 export const updateShippingProfilesWorkflow = createWorkflow(
-  updateShippingProfilesWorkflowId,
+  {
+    name: updateShippingProfilesWorkflowId,
+    description: "Update one or more shipping profiles",
+    inputSchema: updateShippingProfilesWorkflowInputSchema,
+    outputSchema: updateShippingProfilesWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<FulfillmentWorkflow.UpdateShippingProfilesWorkflowInput>
+    input: WorkflowData<UpdateShippingProfilesWorkflowInput>
   ): WorkflowResponse<UpdateShippingProfilesWorkflowOutput> => {
     return new WorkflowResponse(updateShippingProfilesStep(input))
   }

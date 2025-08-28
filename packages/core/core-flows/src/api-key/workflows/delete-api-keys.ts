@@ -1,17 +1,14 @@
-import { createWorkflow, WorkflowData } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteApiKeysStep } from "../steps"
 import { Modules } from "@medusajs/framework/utils"
+import {
+  deleteApiKeysWorkflowInputSchema,
+  deleteApiKeysWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete API keys.
- */
-export type DeleteApiKeysWorkflowInput = { 
-  /**
-   * The IDs of the API keys to delete.
-   */
-  ids: string[]
-}
+// Re-export types from schemas for backward compatibility
+export type { DeleteApiKeysWorkflowInput, DeleteApiKeysWorkflowOutput } from "../utils/schemas"
 
 export const deleteApiKeysWorkflowId = "delete-api-keys"
 /**
@@ -34,8 +31,12 @@ export const deleteApiKeysWorkflowId = "delete-api-keys"
  * Delete secret or publishable API keys.
  */
 export const deleteApiKeysWorkflow = createWorkflow(
-  deleteApiKeysWorkflowId,
-  (input: WorkflowData<DeleteApiKeysWorkflowInput>): WorkflowData<void> => {
+  {
+    name: deleteApiKeysWorkflowId,
+    inputSchema: deleteApiKeysWorkflowInputSchema,
+    outputSchema: deleteApiKeysWorkflowOutputSchema,
+  },
+  (input) => {
     deleteApiKeysStep(input.ids)
 
     // Please note, the ids here should be publishable key IDs

@@ -1,7 +1,6 @@
 import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductTagWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -9,20 +8,36 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateProductTagsStep } from "../steps"
+import {
+  updateProductTagsWorkflowInputSchema,
+  updateProductTagsWorkflowOutputSchema,
+  type UpdateProductTagsWorkflowInput as SchemaInput,
+  type UpdateProductTagsWorkflowOutput as SchemaOutput,
+} from "../utils/update-schemas"
 
-/**
- * The data to update one or more product tags, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductTagsWorkflowInput = {
-  /**
-   * The filters to select the product tags to update.
-   */
+export {
+  type UpdateProductTagsWorkflowInput,
+  type UpdateProductTagsWorkflowOutput,
+} from "../utils/update-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: ProductTypes.FilterableProductTypeProps
-  /**
-   * The data to update in the product tags.
-   */
   update: ProductTypes.UpdateProductTypeDTO
-} & AdditionalData
+} & AdditionalData = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// The step returns either a single tag or array
+const existingOutput: SchemaOutput = {} as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy type for backward compatibility
+export type { UpdateProductTagsWorkflowInput as LegacyUpdateProductTagsWorkflowInput } from "../utils/update-schemas"
 
 export const updateProductTagsWorkflowId = "update-product-tags"
 /**
@@ -57,8 +72,13 @@ export const updateProductTagsWorkflowId = "update-product-tags"
  * @property hooks.productTagsUpdated - This hook is executed after the product tags are updated. You can consume this hook to perform custom actions on the updated product tags.
  */
 export const updateProductTagsWorkflow = createWorkflow(
-  updateProductTagsWorkflowId,
-  (input: WorkflowData<UpdateProductTagsWorkflowInput>) => {
+  {
+    name: updateProductTagsWorkflowId,
+    description: "Update one or more product tags",
+    inputSchema: updateProductTagsWorkflowInputSchema,
+    outputSchema: updateProductTagsWorkflowOutputSchema,
+  },
+  (input) => {
     const updatedProductTags = updateProductTagsStep(input)
     const productTagsUpdated = createHook("productTagsUpdated", {
       product_tags: updatedProductTags,

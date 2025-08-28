@@ -1,13 +1,14 @@
+import { BigNumberValue } from "@medusajs/framework/types"
 import {
-  CartLineItemDTO,
-  CartShippingMethodDTO,
-} from "@medusajs/framework/types"
-import {
-  WorkflowData,
   createWorkflow,
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  upsertTaxLinesWorkflowInputSchema,
+  upsertTaxLinesWorkflowOutputSchema,
+} from "../utils/schemas"
+import { type UpsertTaxLinesWorkflowInput as SchemaInput } from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { getItemTaxLinesStep } from "../../tax/steps/get-item-tax-lines"
 import { upsertTaxLinesForItemsStep } from "../steps/upsert-tax-lines-for-items"
@@ -73,19 +74,96 @@ export type UpsertTaxLinesWorkflowInput = {
   /**
    * The Cart reference.
    */
-  cart?: any
+  cart?: {
+    id: string
+    currency_code: string
+    email?: string
+    region?: {
+      id: string
+      automatic_taxes?: boolean
+    }
+    items?: {
+      id: string
+      variant_id?: string
+      product_id?: string
+      product?: {
+        is_giftcard?: boolean
+      }
+      product_title?: string
+      product_description?: string
+      product_subtitle?: string
+      product_type?: string
+      product_type_id?: string
+      product_collection?: string
+      product_handle?: string
+      variant_sku?: string
+      variant_barcode?: string
+      variant_title?: string
+      title: string
+      quantity: BigNumberValue
+      unit_price: BigNumberValue
+      tax_lines?: {
+        id: string
+        description?: string
+        code: string
+        rate: number
+        provider_id?: string
+      }[]
+    }[]
+    shipping_methods?: {
+      tax_lines?: {
+        id: string
+        description?: string
+        code: string
+        rate: number
+        provider_id?: string
+      }[]
+      shipping_option_id?: string
+      amount: BigNumberValue
+    }[]
+    customer?: {
+      id: string
+      email?: string
+      metadata?: Record<string, unknown>
+      groups?: {
+        id: string
+      }[]
+    }
+    shipping_address?: {
+      id?: string
+      address_1?: string
+      address_2?: string
+      city?: string
+      postal_code?: string
+      country_code?: string
+      region_code?: string
+      province?: string
+      metadata?: Record<string, unknown>
+    }
+  }
   /**
    * The items to upsert their tax lines.
    * If not specified, taxes are upsertd for all of the cart's
    * line items.
    */
-  items: CartLineItemDTO[]
+  items: {
+    id: string
+    product_id?: string
+    product_type_id?: string
+    quantity: BigNumberValue
+    unit_price: BigNumberValue
+    is_giftcard?: boolean
+  }[]
   /**
    * The shipping methods to upsert their tax lines.
    * If not specified, taxes are upsertd for all of the cart's
    * shipping methods.
    */
-  shipping_methods: CartShippingMethodDTO[]
+  shipping_methods: {
+    id: string
+    shipping_option_id?: string
+    amount: BigNumberValue
+  }[]
 
   /**
    * Whether to force re-calculating tax amounts, which
@@ -96,6 +174,10 @@ export type UpsertTaxLinesWorkflowInput = {
    */
   force_tax_calculation?: boolean
 }
+
+const exampleInput = {} as UpsertTaxLinesWorkflowInput
+const newInput: SchemaInput = exampleInput
+console.log(newInput)
 
 export const upsertTaxLinesWorkflowId = "upsert-tax-lines"
 /**
@@ -119,8 +201,13 @@ export const upsertTaxLinesWorkflowId = "upsert-tax-lines"
  * Update a cart's tax lines.
  */
 export const upsertTaxLinesWorkflow = createWorkflow(
-  upsertTaxLinesWorkflowId,
-  (input: WorkflowData<UpsertTaxLinesWorkflowInput>): WorkflowData<void> => {
+  {
+    name: upsertTaxLinesWorkflowId,
+    description: "Update a cart's tax lines",
+    inputSchema: upsertTaxLinesWorkflowInputSchema,
+    outputSchema: upsertTaxLinesWorkflowOutputSchema,
+  },
+  (input) => {
     const fetchCart = when({ input }, ({ input }) => {
       return !input.cart
     }).then(() => {

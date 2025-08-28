@@ -4,7 +4,6 @@ import {
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -13,6 +12,12 @@ import {
 import { useRemoteQueryStep } from "../../../common"
 import { createOrderChangeStep, createReturnsStep } from "../../steps"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
+import {
+  beginOrderReturnWorkflowInputSchema,
+  beginOrderReturnWorkflowOutputSchema,
+  type BeginOrderReturnWorkflowInput as SchemaInput,
+  type BeginOrderReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return can be created for an order.
@@ -50,6 +55,18 @@ export const beginReturnOrderValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.BeginOrderReturnWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderChangeDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const beginReturnOrderWorkflowId = "begin-return-order"
 /**
  * This workflow creates an order return that can be later requested or confirmed.
@@ -73,9 +90,14 @@ export const beginReturnOrderWorkflowId = "begin-return-order"
  * Create a return for an order.
  */
 export const beginReturnOrderWorkflow = createWorkflow(
-  beginReturnOrderWorkflowId,
+  {
+    name: beginReturnOrderWorkflowId,
+    description: "Begin order return",
+    inputSchema: beginOrderReturnWorkflowInputSchema,
+    outputSchema: beginOrderReturnWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.BeginOrderReturnWorkflowInput>
+    input
   ): WorkflowResponse<OrderChangeDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

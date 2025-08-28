@@ -1,8 +1,4 @@
 import {
-  AdditionalData,
-  CreateCartWorkflowInputDTO,
-} from "@medusajs/framework/types"
-import {
   CartWorkflowEvents,
   deduplicate,
   isDefined,
@@ -14,7 +10,6 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
@@ -34,17 +29,34 @@ import {
   prepareLineItemData,
   PrepareLineItemDataInput,
 } from "../utils/prepare-line-item-data"
-import { pricingContextResult } from "../utils/schemas"
+import {
+  pricingContextResult,
+  createCartWorkflowInputSchema,
+  createCartWorkflowOutputSchema,
+  type CreateCartWorkflowInput as SchemaInput,
+  type CreateCartWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
 import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-collection"
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
 import { updateTaxLinesWorkflow } from "./update-tax-lines"
 
-/**
- * The data to create the cart, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateCartWorkflowInput = CreateCartWorkflowInputDTO &
-  AdditionalData
+import {
+  AdditionalData,
+  CartDTO,
+  CreateCartWorkflowInputDTO,
+} from "@medusajs/framework/types"
+
+// Re-export types from schemas for backward compatibility
+export type {
+  CreateCartWorkflowInput,
+  CreateCartWorkflowOutput,
+} from "../utils/schemas"
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _in: SchemaInput = {} as CreateCartWorkflowInputDTO & AdditionalData
+const _out: CartDTO = {} as SchemaOutput
+void _in, _out
 
 export const createCartWorkflowId = "create-cart"
 /**
@@ -115,8 +127,13 @@ export const createCartWorkflowId = "create-cart"
  * :::
  */
 export const createCartWorkflow = createWorkflow(
-  createCartWorkflowId,
-  (input: WorkflowData<CreateCartWorkflowInput>) => {
+  {
+    name: createCartWorkflowId,
+    description: "Create a cart specifying region, items, and more",
+    inputSchema: createCartWorkflowInputSchema,
+    outputSchema: createCartWorkflowOutputSchema,
+  },
+  (input) => {
     const variantIds = transform({ input }, (data) => {
       return (data.input.items ?? []).map((i) => i.variant_id).filter(Boolean)
     })

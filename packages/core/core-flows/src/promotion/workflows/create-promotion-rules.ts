@@ -3,11 +3,33 @@ import {
   PromotionRuleDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { addRulesToPromotionsStep } from "../steps"
+import {
+  createPromotionRulesWorkflowInputSchema,
+  createPromotionRulesWorkflowOutputSchema,
+  type CreatePromotionRulesWorkflowInput as SchemaInput,
+  type CreatePromotionRulesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type CreatePromotionRulesWorkflowInput,
+  type CreatePromotionRulesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: AddPromotionRulesWorkflowDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PromotionRuleDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createPromotionRulesWorkflowId = "create-promotion-rules-workflow"
 /**
@@ -41,10 +63,13 @@ export const createPromotionRulesWorkflowId = "create-promotion-rules-workflow"
  * Create one or more promotion rules.
  */
 export const createPromotionRulesWorkflow = createWorkflow(
-  createPromotionRulesWorkflowId,
-  (
-    input: WorkflowData<AddPromotionRulesWorkflowDTO>
-  ): WorkflowResponse<PromotionRuleDTO[]> => {
+  {
+    name: createPromotionRulesWorkflowId,
+    description: "Create one or more promotion rules",
+    inputSchema: createPromotionRulesWorkflowInputSchema,
+    outputSchema: createPromotionRulesWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(addRulesToPromotionsStep(input))
   }
 )

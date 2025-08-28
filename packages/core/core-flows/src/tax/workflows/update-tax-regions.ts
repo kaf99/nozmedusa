@@ -1,20 +1,32 @@
 import { TaxRegionDTO, UpdateTaxRegionDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateTaxRegionsStep } from "../steps/update-tax-regions"
+import {
+  updateTaxRegionsWorkflowInputSchema,
+  updateTaxRegionsWorkflowOutputSchema,
+  type UpdateTaxRegionsWorkflowInput as SchemaInput,
+  type UpdateTaxRegionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The tax regions to update.
- */
-export type UpdateTaxRegionsWorkflowInput = UpdateTaxRegionDTO[]
+export {
+  type UpdateTaxRegionsWorkflowInput,
+  type UpdateTaxRegionsWorkflowOutput,
+} from "../utils/schemas"
 
-/**
- * The updated tax regions.
- */
-export type UpdateTaxRegionsWorkflowOutput = TaxRegionDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: UpdateTaxRegionDTO[] = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as TaxRegionDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateTaxRegionsWorkflowId = "update-tax-regions"
 /**
@@ -40,10 +52,13 @@ export const updateTaxRegionsWorkflowId = "update-tax-regions"
  * Update one or more tax regions.
  */
 export const updateTaxRegionsWorkflow = createWorkflow(
-  updateTaxRegionsWorkflowId,
-  (
-    input: WorkflowData<UpdateTaxRegionsWorkflowInput>
-  ): WorkflowResponse<UpdateTaxRegionsWorkflowOutput> => {
+  {
+    name: updateTaxRegionsWorkflowId,
+    description: "Update one or more tax regions",
+    inputSchema: updateTaxRegionsWorkflowInputSchema,
+    outputSchema: updateTaxRegionsWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(updateTaxRegionsStep(input))
   }
 )

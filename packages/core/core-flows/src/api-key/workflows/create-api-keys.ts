@@ -6,6 +6,12 @@ import {
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createApiKeysStep } from "../steps"
+import {
+  createApiKeysWorkflowInputSchema,
+  createApiKeysWorkflowOutputSchema,
+  type CreateApiKeysWorkflowInput as SchemaInput,
+  type CreateApiKeysWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to create API keys.
@@ -21,6 +27,14 @@ export type CreateApiKeysWorkflowInput = {
  * The created API keys.
  */
 export type CreateApiKeysWorkflowOutput = ApiKeyDTO[]
+
+// Type verification to ensure schemas match existing types
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: CreateApiKeysWorkflowInput = schemaInput
+const existingOutput: CreateApiKeysWorkflowOutput = schemaOutput
+// To avoid declared but never used errors
+console.log(existingInput, existingOutput)
 
 export const createApiKeysWorkflowId = "create-api-keys"
 /**
@@ -49,7 +63,12 @@ export const createApiKeysWorkflowId = "create-api-keys"
  * Create secret or publishable API keys.
  */
 export const createApiKeysWorkflow = createWorkflow(
-  createApiKeysWorkflowId,
+  {
+    name: createApiKeysWorkflowId,
+    description: "Create secret or publishable API keys",
+    inputSchema: createApiKeysWorkflowInputSchema,
+    outputSchema: createApiKeysWorkflowOutputSchema,
+  },
   (input: WorkflowData<CreateApiKeysWorkflowInput>) => {
     const apiKeys = createApiKeysStep(input)
 

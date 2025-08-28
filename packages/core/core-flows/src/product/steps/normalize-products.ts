@@ -1,7 +1,7 @@
-import { HttpTypes } from "@medusajs/framework/types"
 import { CSVNormalizer, productValidators } from "@medusajs/framework/utils"
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk"
 import { convertCsvToJson } from "../utils"
+import { z } from "zod"
 
 /**
  * The CSV file content to parse.
@@ -9,6 +9,10 @@ import { convertCsvToJson } from "../utils"
 export type NormalizeProductCsvStepInput = string
 
 export const normalizeCsvStepId = "normalize-product-csv"
+
+type CreateType = z.infer<typeof productValidators.CreateProduct>
+type UpdateType = z.infer<typeof productValidators.UpdateProduct>
+
 /**
  * This step parses a CSV file holding products to import, returning the products as
  * objects that can be imported.
@@ -26,25 +30,27 @@ export const normalizeCsvStep = createStep(
     )
     const products = normalizer.proccess()
 
-    const create = Object.keys(products.toCreate).reduce<
-      HttpTypes.AdminCreateProduct[]
-    >((result, toCreateHandle) => {
-      result.push(
-        productValidators.CreateProduct.parse(
-          products.toCreate[toCreateHandle]
-        ) as HttpTypes.AdminCreateProduct
-      )
-      return result
-    }, [])
+    const create = Object.keys(products.toCreate).reduce<CreateType[]>(
+      (result, toCreateHandle) => {
+        result.push(
+          productValidators.CreateProduct.parse(
+            products.toCreate[toCreateHandle]
+          )
+        )
+        return result
+      },
+      []
+    )
 
-    const update = Object.keys(products.toUpdate).reduce<
-      HttpTypes.AdminUpdateProduct & { id: string }[]
-    >((result, toUpdateId) => {
-      result.push(
-        productValidators.UpdateProduct.parse(products.toUpdate[toUpdateId])
-      )
-      return result
-    }, [])
+    const update = Object.keys(products.toUpdate).reduce<UpdateType[]>(
+      (result, toUpdateId) => {
+        result.push(
+          productValidators.UpdateProduct.parse(products.toUpdate[toUpdateId])
+        )
+        return result
+      },
+      []
+    )
 
     return new StepResponse({
       create,

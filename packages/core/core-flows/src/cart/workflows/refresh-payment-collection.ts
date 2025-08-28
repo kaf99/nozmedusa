@@ -1,6 +1,5 @@
 import { MathBN, isPresent } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -11,20 +10,10 @@ import {
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updatePaymentCollectionStep } from "../../payment-collection"
 import { deletePaymentSessionsWorkflow } from "../../payment-collection/workflows/delete-payment-sessions"
-
-/**
- * The details of the cart to refresh.
- */
-export type RefreshPaymentCollectionForCartWorklowInput = {
-  /**
-   * The cart's ID.
-   */
-  cart_id?: string
-  /**
-   * The Cart reference.
-   */
-  cart?: any
-}
+import {
+  refreshPaymentCollectionForCartWorkflowInputSchema,
+  refreshPaymentCollectionForCartWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const refreshPaymentCollectionForCartWorkflowId =
   "refresh-payment-collection-for-cart"
@@ -54,8 +43,13 @@ export const refreshPaymentCollectionForCartWorkflowId =
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
  */
 export const refreshPaymentCollectionForCartWorkflow = createWorkflow(
-  refreshPaymentCollectionForCartWorkflowId,
-  (input: WorkflowData<RefreshPaymentCollectionForCartWorklowInput>) => {
+  {
+    name: refreshPaymentCollectionForCartWorkflowId,
+    description: "Refresh a cart's payment collection details",
+    inputSchema: refreshPaymentCollectionForCartWorkflowInputSchema,
+    outputSchema: refreshPaymentCollectionForCartWorkflowOutputSchema,
+  },
+  (input) => {
     const fetchCart = when({ input }, ({ input }) => {
       return !input.cart
     }).then(() => {

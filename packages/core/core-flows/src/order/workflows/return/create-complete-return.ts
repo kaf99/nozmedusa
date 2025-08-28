@@ -17,7 +17,6 @@ import {
   isDefined,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -39,6 +38,12 @@ import {
 } from "../../utils/order-validation"
 import { validateReturnReasons } from "../../utils/validate-return-reason"
 import { pricingContextResult } from "../../../cart/utils/schemas"
+import {
+  createOrderReturnWorkflowInputSchema,
+  createAndCompleteReturnOrderWorkflowOutputSchema,
+  type CreateOrderReturnWorkflowInput as SchemaInput,
+  type CreateAndCompleteReturnOrderWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 function prepareShippingMethodData({
   orderId,
@@ -284,6 +289,13 @@ export const createCompleteReturnValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput = {} as OrderWorkflow.CreateOrderReturnWorkflowInput & AdditionalData
+const _out: SchemaOutput = {} as ReturnDTO
+
+void _in
+void _out
+
 export const createAndCompleteReturnOrderWorkflowId =
   "create-complete-return-order"
 /**
@@ -348,11 +360,14 @@ export const createAndCompleteReturnOrderWorkflowId =
  * :::
  */
 export const createAndCompleteReturnOrderWorkflow = createWorkflow(
-  createAndCompleteReturnOrderWorkflowId,
+  {
+    name: createAndCompleteReturnOrderWorkflowId,
+    description: "Create and complete a return for an order.",
+    inputSchema: createOrderReturnWorkflowInputSchema,
+    outputSchema: createAndCompleteReturnOrderWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<
-      OrderWorkflow.CreateOrderReturnWorkflowInput & AdditionalData
-    >
+    input: OrderWorkflow.CreateOrderReturnWorkflowInput & AdditionalData
   ) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

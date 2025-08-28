@@ -5,27 +5,16 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../common"
 import { removeShippingMethodFromCartStep } from "../steps"
 import { updateShippingMethodsStep } from "../steps/update-shipping-methods"
 import { listShippingOptionsForCartWithPricingWorkflow } from "./list-shipping-options-for-cart-with-pricing"
-
-/**
- * The details of the cart to refresh.
- */
-export type RefreshCartShippingMethodsWorkflowInput = {
-  /**
-   * The cart's ID.
-   */
-  cart_id?: string
-  /**
-   * The Cart reference.
-   */
-  cart?: any
-}
+import {
+  refreshCartShippingMethodsWorkflowInputSchema,
+  refreshCartShippingMethodsWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const refreshCartShippingMethodsWorkflowId =
   "refresh-cart-shipping-methods"
@@ -50,8 +39,13 @@ export const refreshCartShippingMethodsWorkflowId =
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
  */
 export const refreshCartShippingMethodsWorkflow = createWorkflow(
-  refreshCartShippingMethodsWorkflowId,
-  (input: WorkflowData<RefreshCartShippingMethodsWorkflowInput>) => {
+  {
+    name: refreshCartShippingMethodsWorkflowId,
+    description: "Refresh a cart's shipping methods after an update",
+    inputSchema: refreshCartShippingMethodsWorkflowInputSchema,
+    outputSchema: refreshCartShippingMethodsWorkflowOutputSchema,
+  },
+  (input) => {
     const fetchCart = when({ input }, ({ input }) => {
       return !input.cart
     }).then(() => {
@@ -150,10 +144,10 @@ export const refreshCartShippingMethodsWorkflow = createWorkflow(
               return {
                 id: shippingMethod.id,
                 shipping_option_id: shippingOption.id,
-                amount: shippingOption.calculated_price.calculated_amount,
+                amount: shippingOption.calculated_price?.calculated_amount ?? 0,
                 is_tax_inclusive:
                   shippingOption.calculated_price
-                    .is_calculated_price_tax_inclusive,
+                    ?.is_calculated_price_tax_inclusive ?? false,
               }
             }
           )

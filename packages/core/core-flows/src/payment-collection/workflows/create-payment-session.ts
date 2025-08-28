@@ -9,45 +9,42 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+
 import { createRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import {
   createPaymentAccountHolderStep,
   createPaymentSessionStep,
 } from "../steps"
 import { deletePaymentSessionsWorkflow } from "./delete-payment-sessions"
+import {
+  createPaymentSessionsWorkflowInputSchema,
+  createPaymentSessionsWorkflowOutputSchema,
+  type CreatePaymentSessionsWorkflowInput as SchemaInput,
+  type CreatePaymentSessionsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create payment sessions.
- */
-export interface CreatePaymentSessionsWorkflowInput {
-  /**
-   * The ID of the payment collection to create payment sessions for.
-   */
+type CreatePaymentSessionsWorkflowInput = {
   payment_collection_id: string
-  /**
-   * The ID of the payment provider that the payment sessions are associated with.
-   * This provider is used to later process the payment sessions and their payments.
-   */
   provider_id: string
-  /**
-   * The ID of the customer that the payment session should be associated with.
-   */
-  customer_id?: string
-  /**
-   * Custom data relevant for the payment provider to process the payment session.
-   * Learn more in [this documentation](https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property).
-   */
   data?: Record<string, unknown>
-
-  /**
-   * Additional context that's useful for the payment provider to process the payment session.
-   * Currently all of the context is calculated within the workflow.
-   */
   context?: Record<string, unknown>
+  customer_id?: string
 }
+
+// Type verification to ensure schemas match existing types
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: CreatePaymentSessionsWorkflowInput = schemaInput
+const existingOutput: typeof schemaOutput = schemaOutput
+// To avoid declared but never used errors
+
+const dto = {} as PaymentSessionDTO
+const output: SchemaOutput = dto
+// To avoid declared but never used errors
+
+console.log(output, dto, existingInput, existingOutput)
 
 export const createPaymentSessionsWorkflowId = "create-payment-sessions"
 /**
@@ -71,10 +68,13 @@ export const createPaymentSessionsWorkflowId = "create-payment-sessions"
  * Create payment sessions.
  */
 export const createPaymentSessionsWorkflow = createWorkflow(
-  createPaymentSessionsWorkflowId,
-  (
-    input: WorkflowData<CreatePaymentSessionsWorkflowInput>
-  ): WorkflowResponse<PaymentSessionDTO> => {
+  {
+    name: createPaymentSessionsWorkflowId,
+    description: "Create payment sessions",
+    inputSchema: createPaymentSessionsWorkflowInputSchema,
+    outputSchema: createPaymentSessionsWorkflowOutputSchema,
+  },
+  (input) => {
     const paymentCollection = useRemoteQueryStep({
       entry_point: "payment_collection",
       fields: ["id", "amount", "currency_code", "payment_sessions.*"],

@@ -7,12 +7,17 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateOrderEditItemQuantityWorkflowInputSchema,
+  updateOrderEditItemQuantityWorkflowOutputSchema,
+  type UpdateOrderEditItemQuantityWorkflowInput as SchemaInput,
+  type UpdateOrderEditItemQuantityWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   previewOrderChangeStep,
@@ -100,6 +105,21 @@ export const updateOrderEditItemQuantityValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.UpdateOrderEditItemQuantityWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const updateOrderEditItemQuantityWorkflowId =
   "update-order-edit-update-quantity"
 /**
@@ -125,9 +145,13 @@ export const updateOrderEditItemQuantityWorkflowId =
  * Update an existing order item previously added to an order edit.
  */
 export const updateOrderEditItemQuantityWorkflow = createWorkflow(
-  updateOrderEditItemQuantityWorkflowId,
+  {
+    name: updateOrderEditItemQuantityWorkflowId,
+    inputSchema: updateOrderEditItemQuantityWorkflowInputSchema,
+    outputSchema: updateOrderEditItemQuantityWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.UpdateOrderEditItemQuantityWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

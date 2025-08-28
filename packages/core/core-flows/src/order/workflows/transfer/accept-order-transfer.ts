@@ -4,7 +4,6 @@ import {
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -21,6 +20,12 @@ import { useQueryGraphStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
 import { confirmOrderChanges } from "../../steps/confirm-order-changes"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
+import {
+  acceptOrderTransferWorkflowInputSchema,
+  acceptOrderTransferWorkflowOutputSchema,
+  type AcceptOrderTransferWorkflowInput as SchemaInput,
+  type AcceptOrderTransferWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The details of the order transfer acceptance to validate.
@@ -93,6 +98,14 @@ export const acceptOrderTransferValidationStep = createStep(
   }
 )
 
+// Type verification
+const _inputSchemaCheck: SchemaInput =
+  {} as OrderWorkflow.AcceptOrderTransferWorkflowInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const acceptOrderTransferWorkflowId = "accept-order-transfer-workflow"
 /**
  * This workflow accepts an order transfer, requested previously by the {@link requestOrderTransferWorkflow}. This workflow is used by the
@@ -115,10 +128,13 @@ export const acceptOrderTransferWorkflowId = "accept-order-transfer-workflow"
  * Accept an order transfer request.
  */
 export const acceptOrderTransferWorkflow = createWorkflow(
-  acceptOrderTransferWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.AcceptOrderTransferWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: acceptOrderTransferWorkflowId,
+    description: "Accept an order transfer request",
+    inputSchema: acceptOrderTransferWorkflowInputSchema,
+    outputSchema: acceptOrderTransferWorkflowOutputSchema,
+  },
+  function (input) {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: ["id", "email", "status", "customer_id"],

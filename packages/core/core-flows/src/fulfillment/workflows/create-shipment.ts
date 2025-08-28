@@ -1,4 +1,3 @@
-import { FulfillmentWorkflow } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -7,6 +6,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { validateShipmentStep } from "../steps"
 import { updateFulfillmentWorkflow } from "./update-fulfillment"
+import {
+  createShipmentWorkflowInputSchema,
+  createShipmentWorkflowOutputSchema,
+  type CreateShipmentWorkflowInput,
+  type CreateShipmentWorkflowOutput,
+} from "../utils/schemas"
 
 export const createShipmentWorkflowId = "create-shipment-workflow"
 /**
@@ -36,8 +41,13 @@ export const createShipmentWorkflowId = "create-shipment-workflow"
  * Create a shipment for a fulfillment.
  */
 export const createShipmentWorkflow = createWorkflow(
-  createShipmentWorkflowId,
-  (input: WorkflowData<FulfillmentWorkflow.CreateShipmentWorkflowInput>) => {
+  {
+    name: createShipmentWorkflowId,
+    description: "Create a shipment for a fulfillment",
+    inputSchema: createShipmentWorkflowInputSchema,
+    outputSchema: createShipmentWorkflowOutputSchema,
+  },
+  (input: WorkflowData<CreateShipmentWorkflowInput>): WorkflowResponse<CreateShipmentWorkflowOutput> => {
     validateShipmentStep(input.id)
 
     const update = transform({ input }, (data) => ({

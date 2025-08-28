@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -17,6 +16,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateReturnShippingMethodWorkflowInputSchema,
+  updateReturnShippingMethodWorkflowOutputSchema,
+  type UpdateReturnShippingMethodWorkflowInput as SchemaInput,
+  type UpdateReturnShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   updateOrderChangeActionsStep,
@@ -130,11 +135,11 @@ export const updateReturnShippingMethodWorkflowId =
  * @summary
  *
  * Update the shipping method of a return.
- * 
+ *
  * @property hooks.setPricingContext - This hook is executed before the shipping method is created. You can consume this hook to return any custom context useful for the prices retrieval of the shipping method's option.
- * 
+ *
  * For example, assuming you have the following custom pricing rule:
- * 
+ *
  * ```json
  * {
  *   "attribute": "location_id",
@@ -142,13 +147,13 @@ export const updateReturnShippingMethodWorkflowId =
  *   "value": "sloc_123",
  * }
  * ```
- * 
+ *
  * You can consume the `setPricingContext` hook to add the `location_id` context to the prices calculation:
- * 
+ *
  * ```ts
  * import { updateReturnShippingMethodWorkflow } from "@medusajs/medusa/core-flows";
  * import { StepResponse } from "@medusajs/workflows-sdk";
- * 
+ *
  * updateReturnShippingMethodWorkflow.hooks.setPricingContext((
  *   { order_return, order_change, additional_data }, { container }
  * ) => {
@@ -157,21 +162,32 @@ export const updateReturnShippingMethodWorkflowId =
  *   });
  * });
  * ```
- * 
+ *
  * The price of the shipping method's option will now be retrieved using the context you return.
- * 
+ *
  * :::note
- * 
+ *
  * Learn more about prices calculation context in the [Prices Calculation](https://docs.medusajs.com/resources/commerce-modules/pricing/price-calculation) documentation.
- * 
+ *
  * :::
  */
+
+const _inputSchemaCheck: OrderWorkflow.UpdateReturnShippingMethodWorkflowInput =
+  {} as SchemaInput
+const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
+
+void _inputSchemaCheck
+void _outputSchemaCheck
+
 export const updateReturnShippingMethodWorkflow = createWorkflow(
-  updateReturnShippingMethodWorkflowId,
+  {
+    name: updateReturnShippingMethodWorkflowId,
+    inputSchema: updateReturnShippingMethodWorkflowInputSchema,
+    outputSchema: updateReturnShippingMethodWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<
-      OrderWorkflow.UpdateReturnShippingMethodWorkflowInput & AdditionalData
-    >
+    input: OrderWorkflow.UpdateReturnShippingMethodWorkflowInput &
+      AdditionalData
   ) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",

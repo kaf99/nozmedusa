@@ -3,18 +3,20 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   CalculateShippingOptionPriceDTO,
-  ListShippingOptionsForCartWithPricingWorkflowInput,
 } from "@medusajs/types"
 
 import { useQueryGraphStep, validatePresenceOfStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { calculateShippingOptionsPricesStep } from "../../fulfillment"
 import { cartFieldsForCalculateShippingOptionsPrices } from "../utils/fields"
+import {
+  listShippingOptionsForCartWithPricingWorkflowInputSchema,
+  listShippingOptionsForCartWithPricingWorkflowOutputSchema,
+} from "../utils/schemas"
 
 const COMMON_OPTIONS_FIELDS = [
   "id",
@@ -74,8 +76,13 @@ export const listShippingOptionsForCartWithPricingWorkflowId =
  * List a cart's shipping options with prices.
  */
 export const listShippingOptionsForCartWithPricingWorkflow = createWorkflow(
-  listShippingOptionsForCartWithPricingWorkflowId,
-  (input: WorkflowData<ListShippingOptionsForCartWithPricingWorkflowInput>) => {
+  {
+    name: listShippingOptionsForCartWithPricingWorkflowId,
+    description: "List a cart's shipping options with prices",
+    inputSchema: listShippingOptionsForCartWithPricingWorkflowInputSchema,
+    outputSchema: listShippingOptionsForCartWithPricingWorkflowOutputSchema,
+  },
+  (input) => {
     const optionIds = transform({ input }, ({ input }) =>
       (input.options ?? []).map(({ id }) => id)
     )

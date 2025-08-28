@@ -4,7 +4,14 @@ import {
   createHook,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import { expectTypeOf } from "expect-type"
 import { deleteCustomerAddressesStep } from "../steps"
+import {
+  deleteAddressesWorkflowInputSchema,
+  deleteAddressesWorkflowOutputSchema,
+  type DeleteAddressesWorkflowInput as SchemaInput,
+  type DeleteAddressesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The details of the addresses to delete.
@@ -15,6 +22,12 @@ export type DeleteCustomerAddressesWorkflowInput = {
    */
   ids: string[]
 }
+
+export type DeleteCustomerAddressesWorkflowOutput = void
+
+// Type verification
+expectTypeOf<SchemaInput>().toEqualTypeOf<DeleteCustomerAddressesWorkflowInput>()
+expectTypeOf<SchemaOutput>().toEqualTypeOf<DeleteCustomerAddressesWorkflowOutput>()
 
 export const deleteCustomerAddressesWorkflowId = "delete-customer-addresses"
 /**
@@ -50,7 +63,12 @@ export const deleteCustomerAddressesWorkflowId = "delete-customer-addresses"
  * @property hooks.addressesDeleted - This hook is executed after the addresses are deleted. You can consume this hook to perform custom actions.
  */
 export const deleteCustomerAddressesWorkflow = createWorkflow(
-  deleteCustomerAddressesWorkflowId,
+  {
+    name: deleteCustomerAddressesWorkflowId,
+    description: "Delete one or more customer addresses",
+    inputSchema: deleteAddressesWorkflowInputSchema,
+    outputSchema: deleteAddressesWorkflowOutputSchema,
+  },
   (input: WorkflowData<DeleteCustomerAddressesWorkflowInput>) => {
     const deletedAddresses = deleteCustomerAddressesStep(input.ids)
     const addressesDeleted = createHook("addressesDeleted", {

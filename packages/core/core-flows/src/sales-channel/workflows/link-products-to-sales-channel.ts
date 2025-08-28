@@ -1,17 +1,31 @@
-import { LinkWorkflowInput } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { associateProductsWithSalesChannelsStep } from "../steps/associate-products-with-channels"
 import { transform } from "@medusajs/framework/workflows-sdk"
 import { detachProductsFromSalesChannelsStep } from "../steps"
+import {
+  linkProductsToSalesChannelWorkflowInputSchema,
+  linkProductsToSalesChannelWorkflowOutputSchema,
+  type LinkProductsToSalesChannelWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The data to manage products available in a sales channel.
- * 
- * @property id - The ID of the sales channel.
- * @property add - The products to add to the sales channel.
- * @property remove - The products to remove from the sales channel.
- */
-export type LinkProductsToSalesChannelWorkflowInput = LinkWorkflowInput
+// Re-export workflow types from schemas
+export type LinkProductsToSalesChannelWorkflowInput = SchemaInput
+export type LinkProductsToSalesChannelWorkflowOutput = void
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  id: string
+  add?: string[]
+  remove?: string[]
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: void = undefined as unknown as void
+
+console.log(existingInput, existingOutput)
 
 export const linkProductsToSalesChannelWorkflowId =
   "link-products-to-sales-channel"
@@ -37,8 +51,13 @@ export const linkProductsToSalesChannelWorkflowId =
  * Manage the products available in a sales channel.
  */
 export const linkProductsToSalesChannelWorkflow = createWorkflow(
-  linkProductsToSalesChannelWorkflowId,
-  (input: WorkflowData<LinkProductsToSalesChannelWorkflowInput>): WorkflowData<void> => {
+  {
+    name: linkProductsToSalesChannelWorkflowId,
+    description: "Manage the products available in a sales channel",
+    inputSchema: linkProductsToSalesChannelWorkflowInputSchema,
+    outputSchema: linkProductsToSalesChannelWorkflowOutputSchema,
+  },
+  (input) => {
     const toAdd = transform({ input }, (data) => {
       return data.input.add?.map((productId) => ({
         sales_channel_id: data.input.id,

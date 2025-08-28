@@ -3,18 +3,27 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep, useQueryGraphStep } from "../../common"
 import { updateCartsStep } from "../steps"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
 import { CartWorkflowEvents } from "@medusajs/framework/utils"
+import {
+  transferCartCustomerWorkflowInputSchema,
+  transferCartCustomerWorkflowOutputSchema,
+  type TransferCartCustomerWorkflowInput as SchemaInput,
+  type TransferCartCustomerWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type TransferCartCustomerWorkflowInput,
+  type TransferCartCustomerWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The cart ownership transfer details.
  */
-export type TransferCartCustomerWorkflowInput = {
+type OldTransferCartCustomerWorkflowInput = {
   /**
    * The cart's ID.
    */
@@ -24,6 +33,20 @@ export type TransferCartCustomerWorkflowInput = {
    */
   customer_id: string
 }
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+const existingInput: OldTransferCartCustomerWorkflowInput = schemaInput
+const existingOutput: void = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldTransferCartCustomerWorkflowInput
+const oldOutput = undefined as void
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const transferCartCustomerWorkflowId = "transfer-cart-customer"
 /**
@@ -49,8 +72,12 @@ export const transferCartCustomerWorkflowId = "transfer-cart-customer"
  * @property hooks.validate - This hook is executed before all operations. You can consume this hook to perform any custom validation. If validation fails, you can throw an error to stop the workflow execution.
  */
 export const transferCartCustomerWorkflow = createWorkflow(
-  transferCartCustomerWorkflowId,
-  (input: WorkflowData<TransferCartCustomerWorkflowInput>) => {
+  {
+    name: transferCartCustomerWorkflowId,
+    inputSchema: transferCartCustomerWorkflowInputSchema,
+    outputSchema: transferCartCustomerWorkflowOutputSchema,
+  },
+  (input) => {
     const cartQuery = useQueryGraphStep({
       entity: "cart",
       filters: { id: input.id },

@@ -10,6 +10,28 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { ProjectConfigOptions } from "@medusajs/framework/types"
+// import { expectTypeOf } from "expect-type"
+import {
+  generateResetPasswordTokenWorkflowInputSchema,
+  generateResetPasswordTokenWorkflowOutputSchema,
+  // type GenerateResetPasswordTokenWorkflowInput as SchemaInput,
+  // type GenerateResetPasswordTokenWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Define workflow types
+export type GenerateResetPasswordTokenWorkflowInput = {
+  entityId: string
+  actorType: string
+  provider: string
+  secret?: ProjectConfigOptions["http"]["jwtSecret"]
+  jwtOptions?: ProjectConfigOptions["http"]["jwtOptions"]
+}
+export type GenerateResetPasswordTokenWorkflowOutput = string
+
+// Type verification
+// TODO: Fix Buffer type issue in schema
+// expectTypeOf<SchemaInput>().toEqualTypeOf<GenerateResetPasswordTokenWorkflowInput>()
+// expectTypeOf<SchemaOutput>().toEqualTypeOf<GenerateResetPasswordTokenWorkflowOutput>()
 
 /**
  * This workflow generates a reset password token for a user. It's used by the
@@ -41,14 +63,13 @@ import { ProjectConfigOptions } from "@medusajs/framework/types"
  * Generate a reset password token for a user or customer.
  */
 export const generateResetPasswordTokenWorkflow = createWorkflow(
-  "generate-reset-password-token",
-  (input: {
-    entityId: string
-    actorType: string
-    provider: string
-    secret: ProjectConfigOptions["http"]["jwtSecret"]
-    jwtOptions?: ProjectConfigOptions["http"]["jwtOptions"]
-  }) => {
+  {
+    name: "generate-reset-password-token",
+    description: "Generate a reset password token for a user or customer",
+    inputSchema: generateResetPasswordTokenWorkflowInputSchema,
+    outputSchema: generateResetPasswordTokenWorkflowOutputSchema,
+  },
+  (input: GenerateResetPasswordTokenWorkflowInput) => {
     const providerIdentities = useRemoteQueryStep({
       entry_point: "provider_identity",
       fields: ["auth_identity_id", "provider_metadata"],

@@ -3,7 +3,6 @@ import {
   ProductCollectionWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -12,16 +11,11 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep, removeRemoteLinkStep } from "../../common"
 import { deleteCollectionsStep } from "../steps"
+import {
+  deleteCollectionsWorkflowInputSchema,
+  deleteCollectionsWorkflowOutputSchema,
+} from "../utils/schemas"
 
-/**
- * The data to delete one or more product collections.
- */
-export type DeleteCollectionsWorkflowInput = {
-  /**
-   * The IDs of the collections to delete.
-   */
-  ids: string[]
-}
 
 export const deleteCollectionsWorkflowId = "delete-collections"
 /**
@@ -48,8 +42,13 @@ export const deleteCollectionsWorkflowId = "delete-collections"
  * @property hooks.collectionsDeleted - This hook is executed after the collections are deleted. You can consume this hook to perform custom actions on the deleted collections.
  */
 export const deleteCollectionsWorkflow = createWorkflow(
-  deleteCollectionsWorkflowId,
-  (input: WorkflowData<DeleteCollectionsWorkflowInput>) => {
+  {
+    name: deleteCollectionsWorkflowId,
+    description: "Delete one or more product collections",
+    inputSchema: deleteCollectionsWorkflowInputSchema,
+    outputSchema: deleteCollectionsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedCollections = deleteCollectionsStep(input.ids)
 
     const collectionIdEvents = transform({ input }, ({ input }) => {

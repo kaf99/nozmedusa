@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -26,6 +25,12 @@ import {
 } from "../../utils/order-validation"
 import { removeExchangeShippingMethodWorkflow } from "./remove-exchange-shipping-method"
 import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
+import {
+  deleteOrderExchangeItemActionWorkflowInputSchema,
+  deleteOrderExchangeItemActionWorkflowOutputSchema,
+  type DeleteOrderExchangeItemActionWorkflowInput as SchemaInput,
+  type DeleteOrderExchangeItemActionWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that an outbound item can be removed from an exchange.
@@ -108,6 +113,21 @@ export const removeExchangeItemActionValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.DeleteOrderExchangeItemActionWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const removeItemExchangeActionWorkflowId = "remove-item-exchange-action"
 /**
  * This workflow removes an outbound or new item from an exchange. It's used by
@@ -130,10 +150,12 @@ export const removeItemExchangeActionWorkflowId = "remove-item-exchange-action"
  * Remove an outbound or new item from an exchange.
  */
 export const removeItemExchangeActionWorkflow = createWorkflow(
-  removeItemExchangeActionWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.DeleteOrderExchangeItemActionWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: removeItemExchangeActionWorkflowId,
+    inputSchema: deleteOrderExchangeItemActionWorkflowInputSchema,
+    outputSchema: deleteOrderExchangeItemActionWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "canceled_at"],

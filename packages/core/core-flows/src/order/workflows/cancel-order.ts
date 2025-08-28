@@ -12,7 +12,6 @@ import {
   deepFlatMap,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createStep,
@@ -29,6 +28,16 @@ import { cancelOrdersStep } from "../steps/cancel-orders"
 import { throwIfOrderIsCancelled } from "../utils/order-validation"
 import { createOrderRefundCreditLinesWorkflow } from "./payments/create-order-refund-credit-lines"
 import { refundCapturedPaymentsWorkflow } from "./payments/refund-captured-payments"
+import {
+  cancelOrderWorkflowInputSchema,
+  cancelOrderWorkflowOutputSchema,
+  type CancelOrderWorkflowInput as SchemaInput,
+  type CancelOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CancelOrderWorkflowInput,
+  type CancelOrderWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The data to validate the order's cancelation.
@@ -97,6 +106,22 @@ export const cancelValidateOrder = createStep(
   }
 )
 
+// Type verification
+type OldCancelOrderWorkflowInput = OrderWorkflow.CancelOrderWorkflowInput
+
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+const existingInput: OldCancelOrderWorkflowInput = schemaInput
+const existingOutput: void = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCancelOrderWorkflowInput
+const oldOutput = undefined as void
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
+
 export const cancelOrderWorkflowId = "cancel-order"
 /**
  * This workflow cancels an order. An order can only be canceled if it doesn't have
@@ -125,8 +150,12 @@ export const cancelOrderWorkflowId = "cancel-order"
  * @property hooks.orderCanceled - This hook is executed after the order is canceled. You can consume this hook to perform custom actions on the canceled order.
  */
 export const cancelOrderWorkflow = createWorkflow(
-  cancelOrderWorkflowId,
-  (input: WorkflowData<OrderWorkflow.CancelOrderWorkflowInput>) => {
+  {
+    name: cancelOrderWorkflowId,
+    inputSchema: cancelOrderWorkflowInputSchema,
+    outputSchema: cancelOrderWorkflowOutputSchema,
+  },
+  (input) => {
     const orderQuery = useQueryGraphStep({
       entity: "orders",
       fields: [

@@ -11,6 +11,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  cancelReturnReceiveWorkflowInputSchema,
+  cancelReturnReceiveWorkflowOutputSchema,
+  type CancelReturnReceiveWorkflowInput as SchemaInput,
+  type CancelReturnReceiveWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return receival can be canceled.
@@ -80,6 +86,18 @@ export type CancelReturnReceiveWorkflowInput = {
   return_id: string
 }
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CancelReturnReceiveWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelReturnReceiveWorkflowId = "cancel-receive-return"
 /**
  * This workflow cancels a return receival. It's used by the
@@ -101,8 +119,13 @@ export const cancelReturnReceiveWorkflowId = "cancel-receive-return"
  * Cancel a return receival.
  */
 export const cancelReturnReceiveWorkflow = createWorkflow(
-  cancelReturnReceiveWorkflowId,
-  function (input: CancelReturnReceiveWorkflowInput): WorkflowData<void> {
+  {
+    name: cancelReturnReceiveWorkflowId,
+    description: "Cancel a return receival",
+    inputSchema: cancelReturnReceiveWorkflowInputSchema,
+    outputSchema: cancelReturnReceiveWorkflowOutputSchema,
+  },
+  function (input): WorkflowData<void> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

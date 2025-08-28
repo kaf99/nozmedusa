@@ -13,6 +13,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  cancelOrderExchangeWorkflowInputSchema,
+  cancelOrderExchangeWorkflowOutputSchema,
+  type CancelOrderExchangeWorkflowInput as SchemaInput,
+  type CancelOrderExchangeWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteReservationsByLineItemsStep } from "../../../reservation/steps/delete-reservations-by-line-items"
 import { cancelOrderExchangeStep } from "../../steps"
@@ -108,10 +114,27 @@ export const cancelOrderExchangeWorkflowId = "cancel-exchange"
  *
  * Cancel an exchange for an order.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.CancelOrderExchangeWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const cancelOrderExchangeWorkflow = createWorkflow(
-  cancelOrderExchangeWorkflowId,
+  {
+    name: cancelOrderExchangeWorkflowId,
+    description: "Cancel an exchange for an order",
+    inputSchema: cancelOrderExchangeWorkflowInputSchema,
+    outputSchema: cancelOrderExchangeWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<OrderWorkflow.CancelOrderExchangeWorkflowInput>
+    input
   ): WorkflowData<void> => {
     const orderExchange: OrderExchangeDTO & { fulfillments: FulfillmentDTO[] } =
       useRemoteQueryStep({

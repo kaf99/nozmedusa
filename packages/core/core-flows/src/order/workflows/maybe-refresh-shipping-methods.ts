@@ -9,6 +9,12 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  maybeRefreshShippingMethodsWorkflowInputSchema,
+  maybeRefreshShippingMethodsWorkflowOutputSchema,
+  type MaybeRefreshShippingMethodsWorkflowInput as SchemaInput,
+  type MaybeRefreshShippingMethodsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 import { ShippingOptionPriceType } from "@medusajs/framework/utils"
 import { calculateShippingOptionsPricesStep } from "../../fulfillment/steps"
 import {
@@ -70,10 +76,10 @@ export const maybeRefreshShippingMethodsWorkflowId =
 /**
  * This workflows refreshes shipping method prices of an order and its changes. It's used in Return Merchandise Authorization (RMA) flows. It's used
  * by other workflows, such as {@link refreshExchangeShippingWorkflow}.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * refreshing shipping methods in your custom flows.
- * 
+ *
  * @example
  * const { result } = await maybeRefreshShippingMethodsWorkflow(container)
  * .run({
@@ -92,16 +98,24 @@ export const maybeRefreshShippingMethodsWorkflowId =
  *     }
  *  }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Refreshes the shipping method prices of an order and its changes.
  */
+const _in: SchemaInput = {} as MaybeRefreshShippingMethodsWorkflowInput
+const _out: void = undefined as SchemaOutput
+void _in, _out
+
 export const maybeRefreshShippingMethodsWorkflow = createWorkflow(
-  maybeRefreshShippingMethodsWorkflowId,
-  function (
-    input: MaybeRefreshShippingMethodsWorkflowInput
-  ): WorkflowResponse<void> {
+  {
+    name: maybeRefreshShippingMethodsWorkflowId,
+    description:
+      "Refreshes the shipping method prices of an order and its changes",
+    inputSchema: maybeRefreshShippingMethodsWorkflowInputSchema,
+    outputSchema: maybeRefreshShippingMethodsWorkflowOutputSchema,
+  },
+  function (input): WorkflowResponse<void> {
     const shippingMethodQuery = useQueryGraphStep({
       entity: "order_shipping_method",
       fields: ["id", "shipping_option_id"],

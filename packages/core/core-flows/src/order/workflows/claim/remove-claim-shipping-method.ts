@@ -7,7 +7,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -22,6 +21,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  removeClaimShippingMethodWorkflowInputSchema,
+  removeClaimShippingMethodWorkflowOutputSchema,
+  type RemoveClaimShippingMethodWorkflowInput as SchemaInput,
+  type RemoveClaimShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a claim's shipping method can be removed.
@@ -95,6 +100,18 @@ export const removeClaimShippingMethodValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.DeleteClaimShippingMethodWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const removeClaimShippingMethodWorkflowId =
   "remove-claim-shipping-method"
 /**
@@ -119,9 +136,14 @@ export const removeClaimShippingMethodWorkflowId =
  * Remove an inbound or outbound shipping method from a claim.
  */
 export const removeClaimShippingMethodWorkflow = createWorkflow(
-  removeClaimShippingMethodWorkflowId,
+  {
+    name: removeClaimShippingMethodWorkflowId,
+    description: "Remove an inbound or outbound shipping method from a claim",
+    inputSchema: removeClaimShippingMethodWorkflowInputSchema,
+    outputSchema: removeClaimShippingMethodWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.DeleteClaimShippingMethodWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

@@ -727,6 +727,11 @@ export interface CreateOrderShippingMethodDTO {
   amount: BigNumberInput
 
   /**
+   * Whether the shipping method has a custom amount.
+   */
+  is_custom_amount?: boolean
+
+  /**
    * Whether the shipping method is tax inclusive.
    */
   is_tax_inclusive?: boolean

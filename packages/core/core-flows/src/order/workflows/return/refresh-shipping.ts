@@ -1,12 +1,17 @@
 import { OrderChangeDTO } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  refreshReturnShippingWorkflowInputSchema,
+  refreshReturnShippingWorkflowOutputSchema,
+  type RefreshReturnShippingWorkflowInput as SchemaInput,
+  type RefreshReturnShippingWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 import { maybeRefreshShippingMethodsWorkflow } from "../maybe-refresh-shipping-methods"
 import { useQueryGraphStep } from "../../../common"
@@ -30,18 +35,21 @@ export type RequestItemReturnValidationStepInput = {
 }
 
 export const refreshReturnShippingWorkflowId = "refresh-return-shipping"
-/**
- * This workflow refreshes the shipping method for a return in case the shipping option is calculated.
- *
- * @summary
- *
- * Refresh return shipping.
- */
+
+const _inputCheck: RequestItemReturnValidationStepInput = {} as SchemaInput
+const _outputCheck: void = undefined as SchemaOutput
+
+void _inputCheck
+void _outputCheck
+
 export const refreshReturnShippingWorkflow = createWorkflow(
-  refreshReturnShippingWorkflowId,
-  function (
-    input: WorkflowData<RequestItemReturnValidationStepInput>
-  ): WorkflowResponse<void> {
+  {
+    name: refreshReturnShippingWorkflowId,
+    description: "Refresh return shipping methods",
+    inputSchema: refreshReturnShippingWorkflowInputSchema,
+    outputSchema: refreshReturnShippingWorkflowOutputSchema,
+  },
+  function (input) {
     const orderChangeQuery = useQueryGraphStep({
       entity: "order_change",
       fields: ["id", "status", "order_id", "return_id", "actions.*"],

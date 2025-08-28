@@ -1,15 +1,15 @@
-import { FulfillmentWorkflow, ServiceZoneDTO } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateServiceZonesStep } from "../steps/update-service-zones"
-
-/**
- * The updated service zones.
- */
-export type UpdateServiceZonesWorkflowOutput = ServiceZoneDTO[]
+import {
+  updateServiceZonesWorkflowInputSchema,
+  updateServiceZonesWorkflowOutputSchema,
+  type UpdateServiceZonesWorkflowInput,
+  type UpdateServiceZonesWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateServiceZonesWorkflowId = "update-service-zones-workflow"
 /**
@@ -37,9 +37,14 @@ export const updateServiceZonesWorkflowId = "update-service-zones-workflow"
  * Update one or more service zones.
  */
 export const updateServiceZonesWorkflow = createWorkflow(
-  updateServiceZonesWorkflowId,
+  {
+    name: updateServiceZonesWorkflowId,
+    description: "Update one or more service zones",
+    inputSchema: updateServiceZonesWorkflowInputSchema,
+    outputSchema: updateServiceZonesWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<FulfillmentWorkflow.UpdateServiceZonesWorkflowInput>
+    input: WorkflowData<UpdateServiceZonesWorkflowInput>
   ): WorkflowResponse<UpdateServiceZonesWorkflowOutput> => {
     return new WorkflowResponse(updateServiceZonesStep(input))
   }

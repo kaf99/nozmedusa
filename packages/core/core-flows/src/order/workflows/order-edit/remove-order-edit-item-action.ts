@@ -7,11 +7,16 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  deleteOrderEditItemActionWorkflowInputSchema,
+  deleteOrderEditItemActionWorkflowOutputSchema,
+  type DeleteOrderEditItemActionWorkflowInput as SchemaInput,
+  type DeleteOrderEditItemActionWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   deleteOrderChangeActionsStep,
@@ -98,6 +103,21 @@ export const removeOrderEditItemActionValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.DeleteOrderEditItemActionWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const removeItemOrderEditActionWorkflowId =
   "remove-item-order edit-action"
 /**
@@ -121,9 +141,13 @@ export const removeItemOrderEditActionWorkflowId =
  * Remove an item that was added to an order edit.
  */
 export const removeItemOrderEditActionWorkflow = createWorkflow(
-  removeItemOrderEditActionWorkflowId,
+  {
+    name: removeItemOrderEditActionWorkflowId,
+    inputSchema: deleteOrderEditItemActionWorkflowInputSchema,
+    outputSchema: deleteOrderEditItemActionWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.DeleteOrderEditItemActionWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

@@ -23,7 +23,7 @@ export interface FulfillmentProviderDTO {
   /**
    * The shipping options associated with the fulfillment provider.
    */
-  shipping_options: ShippingOptionDTO[]
+  shipping_options?: ShippingOptionDTO[]
 
   /**
    * The creation date of the fulfillment provider.

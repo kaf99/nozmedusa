@@ -11,7 +11,6 @@ import {
   ProductVariantWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -24,6 +23,12 @@ import { createInventoryItemsWorkflow } from "../../inventory/workflows/create-i
 import { createPriceSetsStep } from "../../pricing"
 import { createProductVariantsStep } from "../steps/create-product-variants"
 import { createVariantPricingLinkStep } from "../steps/create-variant-pricing-link"
+import {
+  createProductVariantsWorkflowInputSchema,
+  createProductVariantsWorkflowOutputSchema,
+  type CreateProductVariantsWorkflowInput as SchemaInput,
+  type CreateProductVariantsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  *
@@ -32,7 +37,7 @@ import { createVariantPricingLinkStep } from "../steps/create-variant-pricing-li
  * @privateRemarks
  * TODO: Create separate typings for the workflow input
  */
-export type CreateProductVariantsWorkflowInput = {
+type OldCreateProductVariantsWorkflowInput = {
   /**
    * The product variants to create.
    */
@@ -60,6 +65,24 @@ export type CreateProductVariantsWorkflowInput = {
     }[]
   })[]
 } & AdditionalData
+
+type OldCreateProductVariantsWorkflowOutput =
+  (ProductTypes.ProductVariantDTO & {
+    prices: any[]
+  })[]
+
+export {
+  type CreateProductVariantsWorkflowInput,
+  type CreateProductVariantsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateProductVariantsWorkflowInput = schemaInput
+const existingOutput: OldCreateProductVariantsWorkflowOutput = schemaOutput
+
+console.log(existingInput, existingOutput)
 
 const buildLink = (
   variant_id: string,
@@ -112,7 +135,7 @@ const validateVariantsDuplicateInventoryItemIds = (
 const buildLinksToCreate = (data: {
   createdVariants: ProductTypes.ProductVariantDTO[]
   inventoryIndexMap: Record<number, InventoryTypes.InventoryItemDTO>
-  input: CreateProductVariantsWorkflowInput
+  input: SchemaInput
 }) => {
   let index = 0
   const linksToCreate: LinkDefinition[] = []
@@ -163,7 +186,7 @@ const buildLinksToCreate = (data: {
 
 const buildVariantItemCreateMap = (data: {
   createdVariants: ProductTypes.ProductVariantDTO[]
-  input: CreateProductVariantsWorkflowInput
+  input: SchemaInput
 }) => {
   let index = 0
   const map: Record<number, InventoryTypes.CreateInventoryItemInput> = {}
@@ -247,8 +270,13 @@ export const createProductVariantsWorkflowId = "create-product-variants"
  * @property hooks.productVariantsCreated - This hook is executed after the product variants are created. You can consume this hook to perform custom actions on the created product variants.
  */
 export const createProductVariantsWorkflow = createWorkflow(
-  createProductVariantsWorkflowId,
-  (input: WorkflowData<CreateProductVariantsWorkflowInput>) => {
+  {
+    name: createProductVariantsWorkflowId,
+    description: "Create one or more product variants",
+    inputSchema: createProductVariantsWorkflowInputSchema,
+    outputSchema: createProductVariantsWorkflowOutputSchema,
+  },
+  (input) => {
     // Passing prices to the product module will fail, we want to keep them for after the variant is created.
     const variantsWithoutPrices = transform({ input }, (data) =>
       data.input.product_variants.map((v) => ({

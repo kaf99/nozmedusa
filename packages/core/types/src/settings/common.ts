@@ -17,7 +17,7 @@ export interface ViewConfigurationDTO {
   /**
    * The name of the configuration.
    */
-  name: string
+  name: string | null
 
   /**
    * The user ID this configuration belongs to.

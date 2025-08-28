@@ -3,7 +3,6 @@ import {
   PricingTypes,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -11,21 +10,35 @@ import {
 import { createPriceListPricesStep } from "../steps/create-price-list-prices"
 import { validatePriceListsStep } from "../steps/validate-price-lists"
 import { validateVariantPriceLinksStep } from "../steps/validate-variant-price-links"
+import {
+  createPriceListPricesWorkflowInputSchema,
+  createPriceListPricesWorkflowOutputSchema,
+  type CreatePriceListPricesWorkflowInput as SchemaInput,
+  type CreatePriceListPricesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create prices for price lists.
- */
-export type CreatePriceListPricesWorkflowInput = {
-  /**
-   * The prices to create.
-   */
+export {
+  type CreatePriceListPricesWorkflowInput,
+  type CreatePriceListPricesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   data: CreatePriceListPricesWorkflowDTO[]
-}
+} = schemaInput
 
-/**
- * The created prices.
- */
-export type CreatePriceListPricesWorkflowOutput = PricingTypes.PriceDTO[]
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as PricingTypes.PriceDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { CreatePriceListPricesWorkflowInput as LegacyCreatePriceListPricesWorkflowInput } from "../utils/schemas"
+export type { CreatePriceListPricesWorkflowOutput as LegacyCreatePriceListPricesWorkflowOutput } from "../utils/schemas"
 
 export const createPriceListPricesWorkflowId = "create-price-list-prices"
 /**
@@ -57,10 +70,13 @@ export const createPriceListPricesWorkflowId = "create-price-list-prices"
  * Create prices in price lists.
  */
 export const createPriceListPricesWorkflow = createWorkflow(
-  createPriceListPricesWorkflowId,
-  (
-    input: WorkflowData<CreatePriceListPricesWorkflowInput>
-  ): WorkflowResponse<CreatePriceListPricesWorkflowOutput> => {
+  {
+    name: createPriceListPricesWorkflowId,
+    description: "Create prices in price lists",
+    inputSchema: createPriceListPricesWorkflowInputSchema,
+    outputSchema: createPriceListPricesWorkflowOutputSchema,
+  },
+  (input) => {
     const [_, variantPriceMap] = parallelize(
       validatePriceListsStep(input.data),
       validateVariantPriceLinksStep(input.data)

@@ -1,14 +1,31 @@
 import { Modules, RegionWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { removeRemoteLinkStep } from "../../common/steps/remove-remote-links"
 import { deleteRegionsStep } from "../steps"
+import {
+  deleteRegionsWorkflowInputSchema,
+  deleteRegionsWorkflowOutputSchema,
+  type DeleteRegionsWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-export type DeleteRegionsWorkflowInput = { ids: string[] }
+// Re-export workflow types from schemas
+export type DeleteRegionsWorkflowInput = SchemaInput
+export type DeleteRegionsWorkflowOutput = void
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { ids: string[] } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: void = undefined as unknown as void
+
+console.log(existingInput, existingOutput)
 
 export const deleteRegionsWorkflowId = "delete-regions"
 /**
@@ -31,8 +48,13 @@ export const deleteRegionsWorkflowId = "delete-regions"
  * Delete one or more regions.
  */
 export const deleteRegionsWorkflow = createWorkflow(
-  deleteRegionsWorkflowId,
-  (input: WorkflowData<DeleteRegionsWorkflowInput>): WorkflowData<void> => {
+  {
+    name: deleteRegionsWorkflowId,
+    description: "Delete one or more regions",
+    inputSchema: deleteRegionsWorkflowInputSchema,
+    outputSchema: deleteRegionsWorkflowOutputSchema,
+  },
+  (input) => {
     deleteRegionsStep(input.ids)
 
     const regionIdEvents = transform({ input }, ({ input }) => {

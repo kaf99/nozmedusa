@@ -1,11 +1,16 @@
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  refreshClaimShippingWorkflowInputSchema,
+  refreshClaimShippingWorkflowOutputSchema,
+  type RefreshClaimShippingWorkflowInput as SchemaInput,
+  type RefreshClaimShippingWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 import { maybeRefreshShippingMethodsWorkflow } from "../maybe-refresh-shipping-methods"
 import { useQueryGraphStep } from "../../../common"
@@ -37,10 +42,27 @@ export const refreshClaimShippingWorkflowId = "refresh-claim-shipping"
  *
  * Refresh claim shipping.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: RefreshClaimShippingWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as void
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const refreshClaimShippingWorkflow = createWorkflow(
-  refreshClaimShippingWorkflowId,
+  {
+    name: refreshClaimShippingWorkflowId,
+    description: "Refresh claim shipping",
+    inputSchema: refreshClaimShippingWorkflowInputSchema,
+    outputSchema: refreshClaimShippingWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<RefreshClaimShippingWorkflowInput>
+    input
   ): WorkflowResponse<void> {
     const orderChangeQuery = useQueryGraphStep({
       entity: "order_change",

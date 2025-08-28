@@ -36,6 +36,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-update-order-payment-collection"
+import {
+  confirmReturnRequestWorkflowInputSchema,
+  confirmReturnRequestWorkflowOutputSchema,
+  type ConfirmReturnRequestWorkflowInput as SchemaInput,
+  type ConfirmReturnRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a return request can be confirmed.
@@ -216,6 +222,18 @@ export type ConfirmReturnRequestWorkflowInput = {
   confirmed_by?: string
 }
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: ConfirmReturnRequestWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const confirmReturnRequestWorkflowId = "confirm-return-request"
 /**
  * This workflow confirms a return request. It's used by the
@@ -237,9 +255,14 @@ export const confirmReturnRequestWorkflowId = "confirm-return-request"
  * Confirm a return request.
  */
 export const confirmReturnRequestWorkflow = createWorkflow(
-  confirmReturnRequestWorkflowId,
+  {
+    name: confirmReturnRequestWorkflowId,
+    description: "Confirm a return request",
+    inputSchema: confirmReturnRequestWorkflowInputSchema,
+    outputSchema: confirmReturnRequestWorkflowOutputSchema,
+  },
   function (
-    input: ConfirmReturnRequestWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",

@@ -8,11 +8,21 @@ import {
 import { BigNumberInput } from "@medusajs/types"
 import { confirmInventoryStep } from "../steps"
 import { prepareConfirmInventoryInput } from "../utils/prepare-confirm-inventory-input"
+import {
+  confirmVariantInventoryWorkflowInputSchema,
+  confirmVariantInventoryWorkflowOutputSchema,
+  type ConfirmVariantInventoryWorkflowInput as SchemaInput,
+  type ConfirmVariantInventoryWorkflowOutput as SchemaOutput,
+} from "../utils/confirm-variant-inventory-schemas"
+export {
+  type ConfirmVariantInventoryWorkflowInput,
+  type ConfirmVariantInventoryWorkflowOutput,
+} from "../utils/confirm-variant-inventory-schemas"
 
 /**
  * The details of the cart items with inventory result computed for the specified input.
  */
-export interface ConfirmVariantInventoryWorkflowOutput {
+export interface OldConfirmVariantInventoryWorkflowOutput {
   /**
    * The cart's line items with the computed inventory result.
    */
@@ -44,6 +54,21 @@ export interface ConfirmVariantInventoryWorkflowOutput {
     location_ids: string[]
   }[]
 }
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: ConfirmVariantInventoryWorkflowInputDTO = schemaInput
+const existingOutput: OldConfirmVariantInventoryWorkflowOutput = schemaOutput
+
+// check reverse too
+const oldInput = {} as ConfirmVariantInventoryWorkflowInputDTO
+const oldOutput = {} as OldConfirmVariantInventoryWorkflowOutput
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput)
+console.log(newInput, newOutput)
 
 export const confirmVariantInventoryWorkflowId = "confirm-item-inventory"
 /**
@@ -145,10 +170,16 @@ export const confirmVariantInventoryWorkflowId = "confirm-item-inventory"
  * Validate that a variant is in-stock before adding to the cart.
  */
 export const confirmVariantInventoryWorkflow = createWorkflow(
-  confirmVariantInventoryWorkflowId,
-  (
-    input: WorkflowData<ConfirmVariantInventoryWorkflowInputDTO>
-  ): WorkflowResponse<ConfirmVariantInventoryWorkflowOutput> => {
+  {
+    name: confirmVariantInventoryWorkflowId,
+    description:
+      "Validate that a variant is in-stock before adding to the cart",
+    // this type is deeply nested and causes: "type instantiation is excessively deep and possibly infinite"
+    // we use 'as any' and then explicit typing here to get around it
+    inputSchema: confirmVariantInventoryWorkflowInputSchema as any,
+    outputSchema: confirmVariantInventoryWorkflowOutputSchema,
+  },
+  (input: WorkflowData<SchemaInput>) => {
     const confirmInventoryInput = transform(
       { input },
       prepareConfirmInventoryInput

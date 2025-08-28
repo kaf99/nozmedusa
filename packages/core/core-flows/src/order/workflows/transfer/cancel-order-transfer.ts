@@ -9,7 +9,6 @@ import {
   OrderChangeStatus,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   transform,
@@ -20,6 +19,12 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
+import {
+  cancelTransferOrderRequestWorkflowInputSchema,
+  cancelTransferOrderRequestWorkflowOutputSchema,
+  type CancelTransferOrderRequestWorkflowInput as SchemaInput,
+  type CancelTransferOrderRequestWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The details of the order transfer cancellation to validate.
@@ -95,6 +100,14 @@ export const cancelTransferOrderRequestValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput =
+  {} as OrderWorkflow.CancelTransferOrderRequestWorkflowInput
+const _out: SchemaOutput = undefined as void
+
+void _in
+void _out
+
 export const cancelTransferOrderRequestWorkflowId =
   "cancel-transfer-order-request"
 /**
@@ -120,10 +133,14 @@ export const cancelTransferOrderRequestWorkflowId =
  * Cancel an order transfer request.
  */
 export const cancelOrderTransferRequestWorkflow = createWorkflow(
-  cancelTransferOrderRequestWorkflowId,
+  {
+    name: cancelTransferOrderRequestWorkflowId,
+    inputSchema: cancelTransferOrderRequestWorkflowInputSchema,
+    outputSchema: cancelTransferOrderRequestWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.CancelTransferOrderRequestWorkflowInput>
-  ): WorkflowData<void> {
+    input: OrderWorkflow.CancelTransferOrderRequestWorkflowInput
+  ): void {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: ["id", "version", "canceled_at"],

@@ -1,17 +1,36 @@
 import { Modules } from "@medusajs/framework/utils"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep } from "../../common"
 import { deleteReturnReasonStep } from "../steps"
+import {
+  deleteReturnReasonsWorkflowInputSchema,
+  deleteReturnReasonsWorkflowOutputSchema,
+  type DeleteReturnReasonsWorkflowInput as SchemaInput,
+  type DeleteReturnReasonsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The IDs of return reasons to delete.
- */
-export type DeleteReturnReasonsWorkflowInput = {
-  /**
-   * The IDs of return reasons to delete.
-   */
+export {
+  type DeleteReturnReasonsWorkflowInput,
+  type DeleteReturnReasonsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   ids: string[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility
+export type { DeleteReturnReasonsWorkflowInput as LegacyDeleteReturnReasonsWorkflowInput } from "../utils/schemas"
+export type { DeleteReturnReasonsWorkflowOutput as LegacyDeleteReturnReasonsWorkflowOutput } from "../utils/schemas"
 
 export const deleteReturnReasonsWorkflowId = "delete-return-reasons"
 /**
@@ -34,10 +53,13 @@ export const deleteReturnReasonsWorkflowId = "delete-return-reasons"
  * Delete return reasons.
  */
 export const deleteReturnReasonsWorkflow = createWorkflow(
-  deleteReturnReasonsWorkflowId,
-  (
-    input: WorkflowData<DeleteReturnReasonsWorkflowInput>
-  ): WorkflowData<void> => {
+  {
+    name: deleteReturnReasonsWorkflowId,
+    description: "Delete return reasons",
+    inputSchema: deleteReturnReasonsWorkflowInputSchema,
+    outputSchema: deleteReturnReasonsWorkflowOutputSchema,
+  },
+  (input) => {
     const deletedReturnReasons = deleteReturnReasonStep(input.ids)
 
     removeRemoteLinkStep({

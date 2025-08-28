@@ -5,12 +5,17 @@ import {
   ReturnDTO,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  beginReceiveOrderReturnWorkflowInputSchema,
+  beginReceiveOrderReturnWorkflowOutputSchema,
+  type BeginReceiveOrderReturnWorkflowInput as SchemaInput,
+  type BeginReceiveOrderReturnWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps"
 import { throwIfIsCancelled } from "../../utils/order-validation"
@@ -66,6 +71,13 @@ export const beginReceiveReturnValidationStep = createStep(
   }
 )
 
+// Type verification
+const _in: SchemaInput = {} as OrderWorkflow.BeginReceiveOrderReturnWorkflowInput
+const _out: SchemaOutput = {} as OrderChangeDTO
+
+void _in
+void _out
+
 export const beginReceiveReturnWorkflowId = "begin-receive-return"
 /**
  * This workflow requests return receival. It's used by the
@@ -89,10 +101,13 @@ export const beginReceiveReturnWorkflowId = "begin-receive-return"
  * Request a return receival.
  */
 export const beginReceiveReturnWorkflow = createWorkflow(
-  beginReceiveReturnWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.BeginReceiveOrderReturnWorkflowInput>
-  ): WorkflowResponse<OrderChangeDTO> {
+  {
+    name: beginReceiveReturnWorkflowId,
+    description: "Request a return receival",
+    inputSchema: beginReceiveOrderReturnWorkflowInputSchema,
+    outputSchema: beginReceiveOrderReturnWorkflowOutputSchema,
+  },
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

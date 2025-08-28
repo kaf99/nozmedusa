@@ -7,10 +7,9 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput, OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import { BigNumberInput, OrderChangeDTO, OrderDTO, OrderPreviewDTO } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -22,6 +21,12 @@ import { prepareShippingMethod } from "../../order/utils/prepare-shipping-method
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  addDraftOrderShippingMethodsWorkflowInputSchema,
+  addDraftOrderShippingMethodsWorkflowOutputSchema,
+  type AddDraftOrderShippingMethodsWorkflowInput as SchemaInput,
+  type AddDraftOrderShippingMethodsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 export const addDraftOrderShippingMethodsWorkflowId =
   "add-draft-order-shipping-methods"
@@ -45,6 +50,13 @@ export interface AddDraftOrderShippingMethodsWorkflowInput {
   custom_amount?: BigNumberInput | null
 }
 
+// Type verification
+const _in: SchemaInput = {} as AddDraftOrderShippingMethodsWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
 /**
  * This workflow adds shipping methods to a draft order. It's used by the
  * [Add Shipping Method to Draft Order Admin API Route](https://docs.medusajs.com/api/admin#draft-orders_postdraftordersideditshippingmethods).
@@ -67,8 +79,13 @@ export interface AddDraftOrderShippingMethodsWorkflowInput {
  * Add shipping methods to a draft order.
  */
 export const addDraftOrderShippingMethodsWorkflow = createWorkflow(
-  addDraftOrderShippingMethodsWorkflowId,
-  function (input: WorkflowData<AddDraftOrderShippingMethodsWorkflowInput>) {
+  {
+    name: addDraftOrderShippingMethodsWorkflowId,
+    description: "Add shipping methods to a draft order.",
+    inputSchema: addDraftOrderShippingMethodsWorkflowInputSchema,
+    outputSchema: addDraftOrderShippingMethodsWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO & {
       promotions: {
         code: string

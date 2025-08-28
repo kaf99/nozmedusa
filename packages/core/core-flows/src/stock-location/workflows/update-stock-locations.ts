@@ -6,7 +6,6 @@ import {
   UpsertStockLocationAddressInput,
 } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -15,20 +14,32 @@ import {
 import { useQueryGraphStep } from "../../common"
 import { updateStockLocationsStep } from "../steps"
 import { upsertStockLocationAddressesStep } from "../steps/upsert-stock-location-addresses"
+import {
+  updateStockLocationsWorkflowInputSchema,
+  updateStockLocationsWorkflowOutputSchema,
+  type UpdateStockLocationsWorkflowInput as SchemaInput,
+  type UpdateStockLocationsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to update the stock locations.
- */
-export interface UpdateStockLocationsWorkflowInput {
-  /**
-   * The filters to select the stock locations to update.
-   */
+export {
+  type UpdateStockLocationsWorkflowInput,
+  type UpdateStockLocationsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   selector: FilterableStockLocationProps
-  /**
-   * The data to update the stock locations with.
-   */
   update: UpdateStockLocationInput
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as StockLocationDTO[]
+
+console.log(existingInput, existingOutput, schemaOutput)
 export const updateStockLocationsWorkflowId = "update-stock-locations-workflow"
 /**
  * This workflow updates stock locations matching the specified filters. It's used by the
@@ -55,10 +66,13 @@ export const updateStockLocationsWorkflowId = "update-stock-locations-workflow"
  * Update stock locations.
  */
 export const updateStockLocationsWorkflow = createWorkflow(
-  updateStockLocationsWorkflowId,
-  (
-    input: WorkflowData<UpdateStockLocationsWorkflowInput>
-  ): WorkflowResponse<StockLocationDTO[]> => {
+  {
+    name: updateStockLocationsWorkflowId,
+    description: "Update stock locations matching specified filters",
+    inputSchema: updateStockLocationsWorkflowInputSchema,
+    outputSchema: updateStockLocationsWorkflowOutputSchema,
+  },
+  (input) => {
     const stockLocationsQuery = useQueryGraphStep({
       entity: "stock_location",
       filters: input.selector as RemoteQueryFilters<"stock_location">,

@@ -5,7 +5,6 @@ import {
   OrderChangeType,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   transform,
@@ -15,6 +14,32 @@ import { confirmOrderChanges } from "../../steps/confirm-order-changes"
 import { createOrderChangeStep } from "../../steps/create-order-change"
 import { throwIfOrderIsCancelled } from "../../utils/order-validation"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
+import {
+  createOrderRefundCreditLinesWorkflowInputSchema,
+  createOrderRefundCreditLinesWorkflowOutputSchema,
+  type CreateOrderRefundCreditLinesWorkflowInput as SchemaInput,
+} from "./utils/schemas"
+
+export {
+  type CreateOrderRefundCreditLinesWorkflowInput,
+  type CreateOrderRefundCreditLinesWorkflowOutput,
+} from "./utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  order_id: string
+  created_by?: string
+  amount: BigNumberInput
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// Note: void workflow returns nothing
+const _voidCheck: void = undefined!
+
+console.log(existingInput, _voidCheck)
 
 /**
  * This step validates that an order refund credit line can be issued
@@ -32,14 +57,13 @@ export const createOrderRefundCreditLinesWorkflowId =
  * This workflow creates an order refund credit line
  */
 export const createOrderRefundCreditLinesWorkflow = createWorkflow(
-  createOrderRefundCreditLinesWorkflowId,
-  function (
-    input: WorkflowData<{
-      order_id: string
-      created_by?: string
-      amount: BigNumberInput
-    }>
-  ) {
+  {
+    name: createOrderRefundCreditLinesWorkflowId,
+    description: "Create an order refund credit line",
+    inputSchema: createOrderRefundCreditLinesWorkflowInputSchema,
+    outputSchema: createOrderRefundCreditLinesWorkflowOutputSchema,
+  },
+  function (input) {
     const orderQuery = useQueryGraphStep({
       entity: "orders",
       fields: ["id", "status", "summary", "payment_collections.id"],

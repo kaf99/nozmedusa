@@ -12,7 +12,6 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { useRemoteQueryStep } from "../../../common"
@@ -25,6 +24,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { removeClaimShippingMethodWorkflow } from "./remove-claim-shipping-method"
+import {
+  removeAddItemClaimActionWorkflowInputSchema,
+  removeAddItemClaimActionWorkflowOutputSchema,
+  type RemoveAddItemClaimActionWorkflowInput as SchemaInput,
+  type RemoveAddItemClaimActionWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that outbound (new) items can be removed from a claim.
@@ -115,6 +120,18 @@ export const removeClaimAddItemActionValidationStep = createStep(
  */
 export type RemoveAddItemClaimActionWorkflowInput = OrderWorkflow.DeleteOrderClaimItemActionWorkflowInput
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: RemoveAddItemClaimActionWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const removeAddItemClaimActionWorkflowId = "remove-item-claim-add-action"
 /**
  * This workflow removes outbound (new) items from a claim. It's used by the
@@ -137,9 +154,14 @@ export const removeAddItemClaimActionWorkflowId = "remove-item-claim-add-action"
  * Remove outbound (new) items from a claim.
  */
 export const removeAddItemClaimActionWorkflow = createWorkflow(
-  removeAddItemClaimActionWorkflowId,
+  {
+    name: removeAddItemClaimActionWorkflowId,
+    description: "Remove outbound (new) items from a claim",
+    inputSchema: removeAddItemClaimActionWorkflowInputSchema,
+    outputSchema: removeAddItemClaimActionWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.DeleteOrderClaimItemActionWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

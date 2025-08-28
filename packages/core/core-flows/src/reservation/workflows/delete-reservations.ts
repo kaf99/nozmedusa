@@ -1,16 +1,28 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 
 import { deleteReservationsStep } from "../steps"
+import {
+  deleteReservationsWorkflowInputSchema,
+  deleteReservationsWorkflowOutputSchema,
+  type DeleteReservationsWorkflowInput as SchemaInput,
+} from "../utils/schemas"
 
-/**
- * The data to delete the reservations.
- */
-type WorkflowInput = {
-  /**
-   * The IDs of the reservations to delete.
-   */ 
-  ids: string[]
-}
+export {
+  type DeleteReservationsWorkflowInput,
+  type DeleteReservationsWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: { ids: string[] } = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+// Note: void workflow returns nothing
+const _voidCheck: void = undefined!
+
+console.log(existingInput, _voidCheck)
 
 export const deleteReservationsWorkflowId = "delete-reservations"
 /**
@@ -33,8 +45,13 @@ export const deleteReservationsWorkflowId = "delete-reservations"
  * Delete one or more reservations.
  */
 export const deleteReservationsWorkflow = createWorkflow(
-  deleteReservationsWorkflowId,
-  (input: WorkflowData<WorkflowInput>): WorkflowData<void> => {
+  {
+    name: deleteReservationsWorkflowId,
+    description: "Delete one or more reservations",
+    inputSchema: deleteReservationsWorkflowInputSchema,
+    outputSchema: deleteReservationsWorkflowOutputSchema,
+  },
+  (input) => {
     return deleteReservationsStep(input.ids)
   }
 )

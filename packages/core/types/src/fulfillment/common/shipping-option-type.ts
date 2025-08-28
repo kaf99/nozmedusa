@@ -1,4 +1,3 @@
-import { ShippingOptionDTO } from "./shipping-option"
 import { BaseFilterable, OperatorMap } from "../../dal"
 
 /**
@@ -24,16 +23,6 @@ export interface ShippingOptionTypeDTO {
    * The code of the shipping option type.
    */
   code: string
-
-  /**
-   * The associated shipping option's ID.
-   */
-  shipping_option_id: string
-
-  /**
-   * The associated shipping option.
-   */
-  shipping_option: ShippingOptionDTO
 
   /**
    * The creation date of the shipping option type.

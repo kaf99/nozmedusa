@@ -2,7 +2,6 @@ import { PromotionActions } from "@medusajs/framework/utils"
 import {
   createWorkflow,
   parallelize,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { OrderDTO } from "@medusajs/types"
@@ -16,6 +15,19 @@ import { createDraftOrderShippingMethodAdjustmentsStep } from "../steps/create-d
 import { removeDraftOrderLineItemAdjustmentsStep } from "../steps/remove-draft-order-line-item-adjustments"
 import { removeDraftOrderShippingMethodAdjustmentsStep } from "../steps/remove-draft-order-shipping-method-adjustments"
 import { updateDraftOrderPromotionsStep } from "../steps/update-draft-order-promotions"
+import {
+  refreshDraftOrderAdjustmentsWorkflowInputSchema,
+  refreshDraftOrderAdjustmentsWorkflowOutputSchema,
+  type RefreshDraftOrderAdjustmentsWorkflowInput as SchemaInput,
+  type RefreshDraftOrderAdjustmentsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification
+const _in: RefreshDraftOrderAdjustmentsWorkflowInput = {} as SchemaInput
+const _out: SchemaOutput = undefined as void
+
+void _in
+void _out
 
 export const refreshDraftOrderAdjustmentsWorkflowId =
   "refresh-draft-order-adjustments"
@@ -35,7 +47,7 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
   /**
    * The action to apply with the promo codes. You can
    * either:
-   * 
+   *
    * - Add the promo codes to the draft order.
    * - Remove the promo codes from the draft order.
    * - Replace the existing promo codes with the new ones.
@@ -47,10 +59,10 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
  * This workflow refreshes the adjustments or promotions for a draft order. It's used by other workflows
  * like {@link addDraftOrderItemsWorkflow} to refresh the promotions whenever changes
  * are made to the draft order.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around
  * refreshing the adjustments or promotions for a draft order.
- * 
+ *
  * @example
  * const { result } = await refreshDraftOrderAdjustmentsWorkflow(container)
  * .run({
@@ -61,14 +73,19 @@ export interface RefreshDraftOrderAdjustmentsWorkflowInput {
  *     action: PromotionActions.ADD,
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Refresh the promotions in a draft order.
  */
 export const refreshDraftOrderAdjustmentsWorkflow = createWorkflow(
-  refreshDraftOrderAdjustmentsWorkflowId,
-  function (input: WorkflowData<RefreshDraftOrderAdjustmentsWorkflowInput>) {
+  {
+    name: refreshDraftOrderAdjustmentsWorkflowId,
+    description: "Refresh the promotions in a draft order.",
+    inputSchema: refreshDraftOrderAdjustmentsWorkflowInputSchema,
+    outputSchema: refreshDraftOrderAdjustmentsWorkflowOutputSchema,
+  },
+  function (input) {
     const promotionCodesToApply = getPromotionCodesToApply({
       cart: input.order,
       promo_codes: input.promo_codes,

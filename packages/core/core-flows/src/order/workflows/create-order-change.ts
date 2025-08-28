@@ -1,10 +1,27 @@
 import { CreateOrderChangeDTO, OrderChangeDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { createOrderChangeStep } from "../steps"
+import {
+  createOrderChangeWorkflowInputSchema,
+  createOrderChangeWorkflowOutputSchema,
+  type CreateOrderChangeWorkflowInput as SchemaInput,
+  type CreateOrderChangeWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateOrderChangeDTO = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderChangeDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createOrderChangeWorkflowId = "create-order-change"
 /**
@@ -18,9 +35,14 @@ export const createOrderChangeWorkflowId = "create-order-change"
  * Create an order change.
  */
 export const createOrderChangeWorkflow = createWorkflow(
-  createOrderChangeWorkflowId,
+  {
+    name: createOrderChangeWorkflowId,
+    description: "Create an order change",
+    inputSchema: createOrderChangeWorkflowInputSchema,
+    outputSchema: createOrderChangeWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<CreateOrderChangeDTO>
+    input
   ): WorkflowResponse<OrderChangeDTO> => {
     return new WorkflowResponse(createOrderChangeStep(input))
   }

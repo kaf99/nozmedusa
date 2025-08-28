@@ -1,4 +1,3 @@
-import { UserDTO, UserWorkflow } from "@medusajs/framework/types"
 import { UserWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -8,6 +7,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateUsersStep } from "../steps"
+import {
+  updateUsersWorkflowInputSchema,
+  updateUsersWorkflowOutputSchema,
+  type UpdateUsersWorkflowInput,
+  type UpdateUsersWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateUsersWorkflowId = "update-users-workflow"
 /**
@@ -35,10 +40,15 @@ export const updateUsersWorkflowId = "update-users-workflow"
  * Update one or more users.
  */
 export const updateUsersWorkflow = createWorkflow(
-  updateUsersWorkflowId,
+  {
+    name: updateUsersWorkflowId,
+    description: "Update one or more users",
+    inputSchema: updateUsersWorkflowInputSchema,
+    outputSchema: updateUsersWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<UserWorkflow.UpdateUsersWorkflowInputDTO>
-  ): WorkflowResponse<UserDTO[]> => {
+    input: WorkflowData<UpdateUsersWorkflowInput>
+  ): WorkflowResponse<UpdateUsersWorkflowOutput> => {
     const updatedUsers = updateUsersStep(input.updates)
 
     const userIdEvents = transform({ updatedUsers }, ({ updatedUsers }) => {

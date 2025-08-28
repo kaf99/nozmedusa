@@ -63,7 +63,7 @@ export interface AdminCreateProductVariantPrice {
      * The ID of the region that the price applies in.
      */
     region_id: string
-  } | null
+  }
 }
 
 export interface AdminCreateProductVariantInventoryKit {

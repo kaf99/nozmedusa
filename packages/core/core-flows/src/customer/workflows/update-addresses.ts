@@ -2,6 +2,7 @@ import {
   FilterableCustomerAddressProps,
   UpdateCustomerAddressDTO,
   AdditionalData,
+  CustomerAddressDTO,
 } from "@medusajs/framework/types"
 import {
   WorkflowData,
@@ -11,11 +12,18 @@ import {
   parallelize,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+// import { expectTypeOf } from "expect-type"
 import {
   maybeUnsetDefaultBillingAddressesStep,
   maybeUnsetDefaultShippingAddressesStep,
   updateCustomerAddressesStep,
 } from "../steps"
+import {
+  updateAddressesWorkflowInputSchema,
+  updateAddressesWorkflowOutputSchema,
+  // type UpdateAddressesWorkflowInput as SchemaInput,
+  // type UpdateAddressesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
 /**
  * The data to update one or more customer addresses, along with custom data that's passed to the workflow's hooks.
@@ -30,6 +38,13 @@ export type UpdateCustomerAddressesWorkflowInput = {
    */
   update: UpdateCustomerAddressDTO
 } & AdditionalData
+
+export type UpdateCustomerAddressesWorkflowOutput = CustomerAddressDTO[]
+
+// Type verification
+// TODO: Fix FilterableCustomerAddressProps type issue
+// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateCustomerAddressesWorkflowInput>()
+// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateCustomerAddressesWorkflowOutput>()
 
 export const updateCustomerAddressesWorkflowId = "update-customer-addresses"
 /**
@@ -64,7 +79,12 @@ export const updateCustomerAddressesWorkflowId = "update-customer-addresses"
  * @property hooks.addressesUpdated - This hook is executed after the addresses are updated. You can consume this hook to perform custom actions on the updated addresses.
  */
 export const updateCustomerAddressesWorkflow = createWorkflow(
-  updateCustomerAddressesWorkflowId,
+  {
+    name: updateCustomerAddressesWorkflowId,
+    description: "Update one or more customer addresses",
+    inputSchema: updateAddressesWorkflowInputSchema,
+    outputSchema: updateAddressesWorkflowOutputSchema,
+  },
   (input: WorkflowData<UpdateCustomerAddressesWorkflowInput>) => {
     const unsetInput = transform(input, (data) => ({
       update: data,

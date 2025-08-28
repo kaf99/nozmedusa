@@ -1,31 +1,46 @@
-import {
-  CreateSalesChannelDTO,
-  SalesChannelDTO,
-} from "@medusajs/framework/types"
 import { SalesChannelWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createSalesChannelsStep } from "../steps/create-sales-channels"
+import {
+  createSalesChannelsWorkflowInputSchema,
+  createSalesChannelsWorkflowOutputSchema,
+  type CreateSalesChannelsWorkflowInput as SchemaInput,
+  type CreateSalesChannelsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create sales channels.
- */
-export type CreateSalesChannelsWorkflowInput = {
-  /**
-   * The sales channels to create.
-   */
-  salesChannelsData: CreateSalesChannelDTO[]
-}
+// Re-export workflow types from schemas
+export type CreateSalesChannelsWorkflowInput = SchemaInput
+export type CreateSalesChannelsWorkflowOutput = SchemaOutput
 
-/**
- * The created sales channels.
- */
-export type CreateSalesChannelsWorkflowOutput = SalesChannelDTO[]
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
+  salesChannelsData: Array<{
+    name: string
+    description?: string | null
+    is_disabled?: boolean
+  }>
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as Array<{
+  id: string
+  name: string
+  description: string | null
+  is_disabled: boolean
+  metadata: Record<string, unknown> | null
+  locations?: any
+}>
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const createSalesChannelsWorkflowId = "create-sales-channels"
 /**
@@ -52,10 +67,13 @@ export const createSalesChannelsWorkflowId = "create-sales-channels"
  * Create sales channels.
  */
 export const createSalesChannelsWorkflow = createWorkflow(
-  createSalesChannelsWorkflowId,
-  (
-    input: WorkflowData<CreateSalesChannelsWorkflowInput>
-  ): WorkflowResponse<CreateSalesChannelsWorkflowOutput> => {
+  {
+    name: createSalesChannelsWorkflowId,
+    description: "Create sales channels",
+    inputSchema: createSalesChannelsWorkflowInputSchema,
+    outputSchema: createSalesChannelsWorkflowOutputSchema,
+  },
+  (input) => {
     const createdSalesChannels = createSalesChannelsStep({
       data: input.salesChannelsData,
     })

@@ -1,6 +1,4 @@
 import {
-  FulfillmentDTO,
-  FulfillmentWorkflow,
   StockLocationDTO,
 } from "@medusajs/framework/types"
 import {
@@ -11,6 +9,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { createReturnFulfillmentStep } from "../steps"
 import { useRemoteQueryStep } from "../../common"
+import {
+  createFulfillmentWorkflowInputSchema,
+  createFulfillmentWorkflowOutputSchema,
+  type CreateFulfillmentWorkflowInput,
+  type CreateFulfillmentWorkflowOutput,
+} from "../utils/schemas"
 
 export const createReturnFulfillmentWorkflowId =
   "create-return-fulfillment-workflow"
@@ -63,10 +67,15 @@ export const createReturnFulfillmentWorkflowId =
  * Create a fulfillment for a return.
  */
 export const createReturnFulfillmentWorkflow = createWorkflow(
-  createReturnFulfillmentWorkflowId,
+  {
+    name: createReturnFulfillmentWorkflowId,
+    description: "Create a fulfillment for a return",
+    inputSchema: createFulfillmentWorkflowInputSchema,
+    outputSchema: createFulfillmentWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<FulfillmentWorkflow.CreateFulfillmentWorkflowInput>
-  ): WorkflowResponse<FulfillmentDTO> => {
+    input: WorkflowData<CreateFulfillmentWorkflowInput>
+  ): WorkflowResponse<CreateFulfillmentWorkflowOutput> => {
     const location: StockLocationDTO = useRemoteQueryStep({
       entry_point: "stock_location",
       fields: [

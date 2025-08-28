@@ -7,10 +7,14 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO, OrderWorkflow } from "@medusajs/types"
+import {
+  OrderChangeDTO,
+  OrderDTO,
+  OrderPreviewDTO,
+  OrderWorkflow,
+} from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   addOrderLineItemsWorkflow,
@@ -21,6 +25,25 @@ import {
 import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-change"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  orderEditAddNewItemWorkflowInputSchema,
+  addDraftOrderItemsWorkflowOutputSchema,
+  type OrderEditAddNewItemWorkflowInput as SchemaInput,
+  type AddDraftOrderItemsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.OrderEditAddNewItemWorkflowInput =
+  schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 export const addDraftOrderItemsWorkflowId = "add-draft-order-items"
 
@@ -48,10 +71,13 @@ export const addDraftOrderItemsWorkflowId = "add-draft-order-items"
  * Add items to a draft order.
  */
 export const addDraftOrderItemsWorkflow = createWorkflow(
-  addDraftOrderItemsWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.OrderEditAddNewItemWorkflowInput>
-  ) {
+  {
+    name: addDraftOrderItemsWorkflowId,
+    description: "Add items to draft order",
+    inputSchema: orderEditAddNewItemWorkflowInputSchema,
+    outputSchema: addDraftOrderItemsWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO & { promotions: { code: string }[] } =
       useRemoteQueryStep({
         entry_point: "orders",

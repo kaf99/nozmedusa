@@ -1,4 +1,3 @@
-import { UserWorkflow } from "@medusajs/framework/types"
 import { Modules, UserWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowData,
@@ -8,6 +7,12 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep, removeRemoteLinkStep } from "../../common"
 import { deleteUsersStep } from "../steps"
+import {
+  deleteUsersWorkflowInputSchema,
+  deleteUsersWorkflowOutputSchema,
+  type DeleteUsersWorkflowInput,
+  type DeleteUsersWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteUsersWorkflowId = "delete-user"
 /**
@@ -33,10 +38,15 @@ export const deleteUsersWorkflowId = "delete-user"
  * Delete one or more users.
  */
 export const deleteUsersWorkflow = createWorkflow(
-  deleteUsersWorkflowId,
+  {
+    name: deleteUsersWorkflowId,
+    description: "Delete one or more users",
+    inputSchema: deleteUsersWorkflowInputSchema,
+    outputSchema: deleteUsersWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<UserWorkflow.DeleteUserWorkflowInput>
-  ): WorkflowData<void> => {
+    input: WorkflowData<DeleteUsersWorkflowInput>
+  ): WorkflowData<DeleteUsersWorkflowOutput> => {
     deleteUsersStep(input.ids)
 
     const userIdEvents = transform({ input }, ({ input }) => {

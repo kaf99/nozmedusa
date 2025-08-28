@@ -8,7 +8,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -24,6 +23,12 @@ import {
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
 import { refreshClaimShippingWorkflow } from "./refresh-shipping"
+import {
+  updateClaimAddItemWorkflowInputSchema,
+  updateClaimAddItemWorkflowOutputSchema,
+  type UpdateClaimAddItemWorkflowInput as SchemaInput,
+  type UpdateClaimAddItemWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a claim's outbound item can be updated.
@@ -111,6 +116,18 @@ export const updateClaimAddItemValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: OrderWorkflow.UpdateClaimAddNewItemWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const updateClaimAddItemWorkflowId = "update-claim-add-item"
 /**
  * This workflow updates a claim's new or outbound item. It's used by the
@@ -136,9 +153,14 @@ export const updateClaimAddItemWorkflowId = "update-claim-add-item"
  * Update a claim's new or outbound item.
  */
 export const updateClaimAddItemWorkflow = createWorkflow(
-  updateClaimAddItemWorkflowId,
+  {
+    name: updateClaimAddItemWorkflowId,
+    description: "Update a claim's new or outbound item",
+    inputSchema: updateClaimAddItemWorkflowInputSchema,
+    outputSchema: updateClaimAddItemWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.UpdateClaimAddNewItemWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",

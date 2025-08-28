@@ -3,14 +3,11 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -21,6 +18,27 @@ import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-chan
 import { validateDraftOrderRemoveActionItemStep } from "../steps/validate-draft-order-remove-action-item"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  deleteOrderEditItemActionWorkflowInputSchema,
+  deleteOrderEditItemActionWorkflowOutputSchema,
+} from "../utils/schemas"
+
+deleteOrderEditItemActionWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
+deleteOrderEditItemActionWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
+
+/**
+ * The details of the item action to remove from a draft order edit.
+ */
+export interface DeleteOrderEditItemActionWorkflowInput {
+  /**
+   * The ID of the draft order to remove the item from.
+   */
+  order_id: string
+  /**
+   * The ID of the action to remove.
+   */
+  action_id: string
+}
 
 export const removeDraftOrderActionItemWorkflowId =
   "remove-draft-order-action-item"
@@ -46,10 +64,13 @@ export const removeDraftOrderActionItemWorkflowId =
  * Remove an item from a draft order edit.
  */
 export const removeDraftOrderActionItemWorkflow = createWorkflow(
-  removeDraftOrderActionItemWorkflowId,
-  function (
-    input: WorkflowData<OrderWorkflow.DeleteOrderEditItemActionWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+  {
+    name: removeDraftOrderActionItemWorkflowId,
+    description: "Remove an item from a draft order edit.",
+    inputSchema: deleteOrderEditItemActionWorkflowInputSchema,
+    outputSchema: deleteOrderEditItemActionWorkflowOutputSchema,
+  },
+  function (input) {
     const order: OrderDTO & {
       promotions: {
         code: string

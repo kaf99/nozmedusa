@@ -23,6 +23,12 @@ import { prepareShippingMethod } from "../../utils/prepare-shipping-method"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { updateOrderTaxLinesWorkflow } from "../update-tax-lines"
 import { fetchShippingOptionForOrderWorkflow } from "../fetch-shipping-option"
+import {
+  createReturnShippingMethodWorkflowInputSchema,
+  createReturnShippingMethodWorkflowOutputSchema,
+  type CreateReturnShippingMethodWorkflowInput as SchemaInput,
+  type CreateReturnShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 
 /**
  * The data to validate that a shipping method can be created for a return.
@@ -109,6 +115,13 @@ export type CreateReturnShippingMethodWorkflowInput = {
   custom_amount?: BigNumberInput | null
 }
 
+// Type verification
+const _in: SchemaInput = {} as CreateReturnShippingMethodWorkflowInput
+const _out: SchemaOutput = {} as OrderPreviewDTO
+
+void _in
+void _out
+
 export const createReturnShippingMethodWorkflowId =
   "create-return-shipping-method"
 /**
@@ -132,7 +145,12 @@ export const createReturnShippingMethodWorkflowId =
  * Create a shipping method for a return.
  */
 export const createReturnShippingMethodWorkflow = createWorkflow(
-  createReturnShippingMethodWorkflowId,
+  {
+    name: createReturnShippingMethodWorkflowId,
+    description: "Create a shipping method for a return.",
+    inputSchema: createReturnShippingMethodWorkflowInputSchema,
+    outputSchema: createReturnShippingMethodWorkflowOutputSchema,
+  },
   function (
     input: CreateReturnShippingMethodWorkflowInput
   ): WorkflowResponse<OrderPreviewDTO> {

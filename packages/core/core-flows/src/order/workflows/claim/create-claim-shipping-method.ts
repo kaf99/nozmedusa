@@ -13,6 +13,12 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  createClaimShippingMethodWorkflowInputSchema,
+  createClaimShippingMethodWorkflowOutputSchema,
+  type CreateClaimShippingMethodWorkflowInput as SchemaInput,
+  type CreateClaimShippingMethodWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
 import { createOrderShippingMethods } from "../../steps/create-order-shipping-methods"
@@ -20,7 +26,6 @@ import {
   throwIfIsCancelled,
   throwIfOrderChangeIsNotActive,
 } from "../../utils/order-validation"
-import { prepareShippingMethod } from "../../utils/prepare-shipping-method"
 import { createOrderChangeActionsWorkflow } from "../create-order-change-actions"
 import { updateOrderTaxLinesWorkflow } from "../update-tax-lines"
 import { fetchShippingOptionForOrderWorkflow } from "../fetch-shipping-option"
@@ -147,10 +152,27 @@ export const createClaimShippingMethodWorkflowId =
  *
  * Create an inbound or outbound shipping method for a claim.
  */
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: CreateClaimShippingMethodWorkflowInput = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+console.log(existingInput, existingOutput, schemaOutput)
+
 export const createClaimShippingMethodWorkflow = createWorkflow(
-  createClaimShippingMethodWorkflowId,
+  {
+    name: createClaimShippingMethodWorkflowId,
+    description: "Create an inbound or outbound shipping method for a claim",
+    inputSchema: createClaimShippingMethodWorkflowInputSchema,
+    outputSchema: createClaimShippingMethodWorkflowOutputSchema,
+  },
   function (
-    input: CreateClaimShippingMethodWorkflowInput
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
@@ -231,13 +253,26 @@ export const createClaimShippingMethodWorkflow = createWorkflow(
 
     const shippingMethodInput = transform(
       {
-        relatedEntity: orderClaim,
         shippingOptions,
         customPrice: input.custom_amount,
         orderChange,
-        input,
-      },
-      prepareShippingMethod("claim_id")
+        orderClaim,
+      } as any,
+      (data) => {
+        const option = data.shippingOptions[0]
+        const isCustomPrice = data.customPrice !== undefined && data.customPrice !== null
+        return {
+          shipping_option_id: option.id,
+          amount: isCustomPrice ? data.customPrice : option.calculated_price.calculated_amount,
+          is_custom_amount: isCustomPrice,
+          is_tax_inclusive: !!option.calculated_price.is_calculated_price_tax_inclusive,
+          data: option.data ?? {},
+          name: option.name,
+          version: data.orderChange.version,
+          order_id: data.orderClaim.order_id,
+          claim_id: data.orderClaim.id,
+        }
+      }
     )
 
     const createdMethods = createOrderShippingMethods({
@@ -265,31 +300,23 @@ export const createClaimShippingMethodWorkflow = createWorkflow(
         customPrice: input.custom_amount,
         orderChange,
         input,
-      },
-      ({
-        shippingOptions,
-        orderClaim,
-        order,
-        createdMethods,
-        customPrice,
-        orderChange,
-        input,
-      }) => {
-        const shippingOption = shippingOptions[0]
-        const createdMethod = createdMethods[0]
+      } as any,
+      (data: any) => {
+        const shippingOption = data.shippingOptions[0]
+        const createdMethod = data.createdMethods[0]
 
         const methodPrice =
-          customPrice ?? shippingOption.calculated_price.calculated_amount
+          data.customPrice ?? shippingOption.calculated_price.calculated_amount
 
         return {
           action: ChangeActionType.SHIPPING_ADD,
           reference: "order_shipping_method",
-          order_change_id: orderChange.id,
+          order_change_id: data.orderChange.id,
           reference_id: createdMethod.id,
           amount: methodPrice,
-          order_id: order.id,
-          return_id: input.return_id,
-          claim_id: orderClaim.id,
+          order_id: data.order.id,
+          return_id: data.input.return_id,
+          claim_id: data.orderClaim.id,
         }
       }
     )

@@ -1,6 +1,5 @@
 import { InventoryLevelDTO, InventoryTypes } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -8,16 +7,40 @@ import {
   createInventoryLevelsStep,
   validateInventoryLocationsStep,
 } from "../steps"
+import {
+  createInventoryLevelsWorkflowInputSchema,
+  createInventoryLevelsWorkflowOutputSchema,
+  type CreateInventoryLevelsWorkflowInput as SchemaInput,
+  type CreateInventoryLevelsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  type CreateInventoryLevelsWorkflowInput,
+  type CreateInventoryLevelsWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The data to create the inventory levels.
  */
-export interface CreateInventoryLevelsWorkflowInput {
+interface OldCreateInventoryLevelsWorkflowInput {
   /**
    * The inventory levels to create.
    */
   inventory_levels: InventoryTypes.CreateInventoryLevelInput[]
 }
+
+// Type verification
+const schemaInput = {} as SchemaInput
+const schemaOutput = {} as SchemaOutput
+const existingInput: OldCreateInventoryLevelsWorkflowInput = schemaInput
+const existingOutput: InventoryLevelDTO[] = schemaOutput
+
+// Check reverse too
+const oldInput = {} as OldCreateInventoryLevelsWorkflowInput
+const oldOutput = {} as InventoryLevelDTO[]
+const newInput: SchemaInput = oldInput
+const newOutput: SchemaOutput = oldOutput
+
+console.log(existingInput, existingOutput, newInput, newOutput)
 export const createInventoryLevelsWorkflowId =
   "create-inventory-levels-workflow"
 /**
@@ -45,10 +68,12 @@ export const createInventoryLevelsWorkflowId =
  * Create one or more inventory levels.
  */
 export const createInventoryLevelsWorkflow = createWorkflow(
-  createInventoryLevelsWorkflowId,
-  (
-    input: WorkflowData<CreateInventoryLevelsWorkflowInput>
-  ): WorkflowResponse<InventoryLevelDTO[]> => {
+  {
+    name: createInventoryLevelsWorkflowId,
+    inputSchema: createInventoryLevelsWorkflowInputSchema,
+    outputSchema: createInventoryLevelsWorkflowOutputSchema,
+  },
+  (input) => {
     validateInventoryLocationsStep(input.inventory_levels)
 
     return new WorkflowResponse(

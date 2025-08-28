@@ -1,23 +1,15 @@
 import {
-  RefundReasonDTO,
-  UpdateRefundReasonDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { updateRefundReasonsStep } from "../steps"
-
-/**
- * The refund reasons to update.
- */
-export type UpdateRefundReasonsWorkflowInput = UpdateRefundReasonDTO[]
-
-/**
- * The updated refund reasons.
- */
-export type UpdateRefundReasonsWorkflowOutput = RefundReasonDTO[]
+import {
+  updateRefundReasonsWorkflowInputSchema,
+  updateRefundReasonsWorkflowOutputSchema,
+  type UpdateRefundReasonsWorkflowInput,
+  type UpdateRefundReasonsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateRefundReasonsWorkflowId = "update-refund-reasons"
 /**
@@ -43,7 +35,12 @@ export const updateRefundReasonsWorkflowId = "update-refund-reasons"
  * Update refund reasons.
  */
 export const updateRefundReasonsWorkflow = createWorkflow(
-  updateRefundReasonsWorkflowId,
+  {
+    name: updateRefundReasonsWorkflowId,
+    description: "Update refund reasons",
+    inputSchema: updateRefundReasonsWorkflowInputSchema,
+    outputSchema: updateRefundReasonsWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<UpdateRefundReasonsWorkflowInput>
   ): WorkflowResponse<UpdateRefundReasonsWorkflowOutput> => {

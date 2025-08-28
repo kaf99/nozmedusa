@@ -6,12 +6,17 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  orderEditAddNewItemWorkflowInputSchema,
+  orderEditAddNewItemWorkflowOutputSchema,
+  type OrderEditAddNewItemWorkflowInput as SchemaInput,
+  type OrderEditAddNewItemWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
 import {
@@ -70,6 +75,21 @@ export const orderEditAddNewItemValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.OrderEditAddNewItemWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const orderEditAddNewItemWorkflowId = "order-edit-add-new-item"
 /**
  * This workflow adds new items to an order edit. It's used by the
@@ -97,9 +117,13 @@ export const orderEditAddNewItemWorkflowId = "order-edit-add-new-item"
  * Add new items to an order edit.
  */
 export const orderEditAddNewItemWorkflow = createWorkflow(
-  orderEditAddNewItemWorkflowId,
+  {
+    name: orderEditAddNewItemWorkflowId,
+    inputSchema: orderEditAddNewItemWorkflowInputSchema,
+    outputSchema: orderEditAddNewItemWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.OrderEditAddNewItemWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

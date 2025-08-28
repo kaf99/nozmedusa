@@ -1,6 +1,9 @@
-import { RemovePromotionRulesWorkflowDTO } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { removeRulesFromPromotionsStep } from "../steps"
+import {
+  deletePromotionRulesWorkflowInputSchema,
+  deletePromotionRulesWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const deletePromotionRulesWorkflowId = "delete-promotion-rules-workflow"
 /**
@@ -27,10 +30,13 @@ export const deletePromotionRulesWorkflowId = "delete-promotion-rules-workflow"
  * Delete one or more promotion rules.
  */
 export const deletePromotionRulesWorkflow = createWorkflow(
-  deletePromotionRulesWorkflowId,
-  (
-    input: WorkflowData<RemovePromotionRulesWorkflowDTO>
-  ): WorkflowData<void> => {
+  {
+    name: deletePromotionRulesWorkflowId,
+    description: "Delete one or more promotion rules",
+    inputSchema: deletePromotionRulesWorkflowInputSchema,
+    outputSchema: deletePromotionRulesWorkflowOutputSchema,
+  },
+  (input) => {
     return removeRulesFromPromotionsStep(input)
   }
 )

@@ -7,12 +7,17 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import {
+  updateOrderEditAddNewItemWorkflowInputSchema,
+  updateOrderEditAddNewItemWorkflowOutputSchema,
+  type UpdateOrderEditAddNewItemWorkflowInput as SchemaInput,
+  type UpdateOrderEditAddNewItemWorkflowOutput as SchemaOutput,
+} from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
   previewOrderChangeStep,
@@ -100,6 +105,21 @@ export const updateOrderEditAddItemValidationStep = createStep(
   }
 )
 
+// Type verification - CORRECT ORDER!
+const _schemaInput = {} as SchemaInput
+const _schemaOutput = {} as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const _existingInput: OrderWorkflow.UpdateOrderEditAddNewItemWorkflowInput = _schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
+
+void _schemaInput
+void _schemaOutput
+void _existingInput
+void _existingOutput
+
 export const updateOrderEditAddItemWorkflowId = "update-order-edit-add-item"
 /**
  * This workflow updates a new item in an order edit. It's used by the
@@ -125,9 +145,13 @@ export const updateOrderEditAddItemWorkflowId = "update-order-edit-add-item"
  * Update a new item in an order edit.
  */
 export const updateOrderEditAddItemWorkflow = createWorkflow(
-  updateOrderEditAddItemWorkflowId,
+  {
+    name: updateOrderEditAddItemWorkflowId,
+    inputSchema: updateOrderEditAddNewItemWorkflowInputSchema,
+    outputSchema: updateOrderEditAddNewItemWorkflowOutputSchema,
+  },
   function (
-    input: WorkflowData<OrderWorkflow.UpdateOrderEditAddNewItemWorkflowInput>
+    input
   ): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",

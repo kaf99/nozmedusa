@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -15,19 +14,41 @@ import {
 import { createProductVariantsWorkflow } from "./create-product-variants"
 import { updateProductVariantsWorkflow } from "./update-product-variants"
 import { deleteProductVariantsWorkflow } from "./delete-product-variants"
+import {
+  batchProductVariantsWorkflowInputSchema,
+  batchProductVariantsWorkflowOutputSchema,
+  type BatchProductVariantsWorkflowInput as SchemaInput,
+  type BatchProductVariantsWorkflowOutput as SchemaOutput,
+} from "../utils/batch-schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = { created: [], updated: [], deleted: [] } as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: BatchWorkflowInput<
+  CreateProductVariantWorkflowInputDTO,
+  UpdateProductVariantWorkflowInputDTO
+> = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = {
+  created: [] as ProductTypes.ProductVariantDTO[],
+  updated: [] as ProductTypes.ProductVariantDTO[],
+  deleted: [],
+} as BatchWorkflowOutput<ProductTypes.ProductVariantDTO>
+
+console.log(existingInput, existingOutput, schemaOutput)
 
 /**
  * The product variants to manage.
  */
-export interface BatchProductVariantsWorkflowInput extends BatchWorkflowInput<
-  CreateProductVariantWorkflowInputDTO,
-  UpdateProductVariantWorkflowInputDTO
-> {}
+export interface BatchProductVariantsWorkflowInput extends SchemaInput {}
 
 /**
  * The result of managing the product variants.
  */
-export interface BatchProductVariantsWorkflowOutput extends BatchWorkflowOutput<ProductTypes.ProductVariantDTO> {}
+export interface BatchProductVariantsWorkflowOutput extends SchemaOutput {}
 
 export const batchProductVariantsWorkflowId = "batch-product-variants"
 /**
@@ -71,9 +92,14 @@ export const batchProductVariantsWorkflowId = "batch-product-variants"
  * Create, update, and delete product variants.
  */
 export const batchProductVariantsWorkflow = createWorkflow(
-  batchProductVariantsWorkflowId,
+  {
+    name: batchProductVariantsWorkflowId,
+    description: "Batch product variants",
+    inputSchema: batchProductVariantsWorkflowInputSchema,
+    outputSchema: batchProductVariantsWorkflowOutputSchema,
+  },
   (
-    input: WorkflowData<BatchProductVariantsWorkflowInput>
+    input
   ): WorkflowResponse<BatchProductVariantsWorkflowOutput> => {
     const normalizedInput = transform({ input }, (data) => {
       return {

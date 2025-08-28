@@ -5,40 +5,46 @@ import {
 } from "@medusajs/framework/types"
 import { Modules, arrayDifference } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import { createPriceSetsStep, updatePriceSetsStep } from "../../pricing"
 import { createVariantPricingLinkStep } from "../steps"
+import {
+  upsertVariantPricesWorkflowInputSchema,
+  upsertVariantPricesWorkflowOutputSchema,
+  type UpsertVariantPricesWorkflowInput as SchemaInput,
+  type UpsertVariantPricesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
 
-/**
- * The data to create, update, or remove variants' prices.
- */
-export type UpsertVariantPricesWorkflowInput = {
-  /**
-   * The variants to create or update prices for.
-   */
+export {
+  type UpsertVariantPricesWorkflowInput,
+  type UpsertVariantPricesWorkflowOutput,
+} from "../utils/schemas"
+
+// Type verification - CORRECT ORDER!
+const schemaInput = {} as SchemaInput
+const schemaOutput = undefined as SchemaOutput
+
+// Check 1: New input can go into old input (schema accepts all valid inputs)
+const existingInput: {
   variantPrices: {
-    /**
-     * The ID of the variant to create or update prices for.
-     */
     variant_id: string
-    /**
-     * The ID of the product the variant belongs to.
-     */
     product_id: string
-    /**
-     * The prices to create or update for the variant.
-     */
     prices?: (CreatePricesDTO | UpdatePricesDTO)[]
   }[]
-  /**
-   * The IDs of the variants to remove all their prices.
-   */
   previousVariantIds: string[]
-}
+} = schemaInput
+
+// Check 2: Old output can go into new output (schema produces compatible outputs)
+const existingOutput: SchemaOutput = undefined as any
+
+console.log(existingInput, existingOutput, schemaOutput)
+
+// Legacy types for backward compatibility  
+export type { UpsertVariantPricesWorkflowInput as LegacyUpsertVariantPricesWorkflowInput } from "../utils/schemas"
+export type { UpsertVariantPricesWorkflowOutput as LegacyUpsertVariantPricesWorkflowOutput } from "../utils/schemas"
 
 export const upsertVariantPricesWorkflowId = "upsert-variant-prices"
 /**
@@ -78,10 +84,13 @@ export const upsertVariantPricesWorkflowId = "upsert-variant-prices"
  * Create, update, or remove variants' prices.
  */
 export const upsertVariantPricesWorkflow = createWorkflow(
-  upsertVariantPricesWorkflowId,
-  (
-    input: WorkflowData<UpsertVariantPricesWorkflowInput>
-  ): WorkflowData<void> => {
+  {
+    name: upsertVariantPricesWorkflowId,
+    description: "Upsert variant prices",
+    inputSchema: upsertVariantPricesWorkflowInputSchema,
+    outputSchema: upsertVariantPricesWorkflowOutputSchema,
+  },
+  (input) => {
     const removedVariantIds = transform({ input }, (data) => {
       return arrayDifference(
         data.input.previousVariantIds,

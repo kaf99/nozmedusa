@@ -1,19 +1,12 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 import { deleteRefundReasonsStep } from "../steps"
-
-/**
- * The data to delete refund reasons.
- */
-export type DeleteRefundReasonsWorkflowInput = {
-  /**
-   * The refund reasons to delete.
-   */
-  ids: string[]
-}
+import {
+  deleteRefundReasonsWorkflowInputSchema,
+  deleteRefundReasonsWorkflowOutputSchema,
+} from "../utils/schemas"
 
 export const deleteRefundReasonsWorkflowId = "delete-refund-reasons-workflow"
 /**
@@ -36,8 +29,13 @@ export const deleteRefundReasonsWorkflowId = "delete-refund-reasons-workflow"
  * Delete refund reasons.
  */
 export const deleteRefundReasonsWorkflow = createWorkflow(
-  deleteRefundReasonsWorkflowId,
-  (input: WorkflowData<DeleteRefundReasonsWorkflowInput>): WorkflowResponse<void> => {
+  {
+    name: deleteRefundReasonsWorkflowId,
+    description: "Delete refund reasons",
+    inputSchema: deleteRefundReasonsWorkflowInputSchema,
+    outputSchema: deleteRefundReasonsWorkflowOutputSchema,
+  },
+  (input) => {
     return new WorkflowResponse(deleteRefundReasonsStep(input.ids))
   }
 )

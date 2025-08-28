@@ -11,8 +11,6 @@ import {
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -25,6 +23,15 @@ import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-chan
 import { validateDraftOrderShippingMethodActionStep } from "../steps/validate-draft-order-shipping-method-action"
 import { draftOrderFieldsForRefreshSteps } from "../utils/fields"
 import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adjustments"
+import {
+  deleteOrderEditShippingMethodWorkflowInputSchema,
+  deleteOrderEditShippingMethodWorkflowOutputSchema,
+  type DeleteOrderEditShippingMethodWorkflowInput,
+  type DeleteOrderEditShippingMethodWorkflowOutput,
+} from "../utils/schemas"
+
+deleteOrderEditShippingMethodWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
+deleteOrderEditShippingMethodWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const removeDraftOrderActionShippingMethodWorkflowId =
   "remove-draft-order-action-shipping-method"
@@ -50,10 +57,15 @@ export const removeDraftOrderActionShippingMethodWorkflowId =
  * Remove a shipping method from an edited draft order.
  */
 export const removeDraftOrderActionShippingMethodWorkflow = createWorkflow(
-  removeDraftOrderActionShippingMethodWorkflowId,
+  {
+    name: removeDraftOrderActionShippingMethodWorkflowId,
+    inputSchema: deleteOrderEditShippingMethodWorkflowInputSchema,
+    outputSchema: deleteOrderEditShippingMethodWorkflowOutputSchema,
+    description: "Remove a shipping method from an edited draft order",
+  },
   function (
-    input: WorkflowData<OrderWorkflow.DeleteOrderEditShippingMethodWorkflowInput>
-  ): WorkflowResponse<OrderPreviewDTO> {
+    input: WorkflowData<DeleteOrderEditShippingMethodWorkflowInput>
+  ): WorkflowResponse<DeleteOrderEditShippingMethodWorkflowOutput> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,

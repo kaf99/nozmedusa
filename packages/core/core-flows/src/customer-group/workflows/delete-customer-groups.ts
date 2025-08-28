@@ -1,5 +1,9 @@
 import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteCustomerGroupStep } from "../steps"
+import {
+  deleteCustomerGroupsWorkflowInputSchema,
+  deleteCustomerGroupsWorkflowOutputSchema,
+} from "../utils/schemas"
 
 /**
  * The data to delete customer groups.
@@ -10,6 +14,8 @@ export type DeleteCustomerGroupsWorkflowInput = {
    */
   ids: string[]
 }
+
+export type DeleteCustomerGroupsWorkflowOutput = void
 
 export const deleteCustomerGroupsWorkflowId = "delete-customer-groups"
 /**
@@ -32,7 +38,12 @@ export const deleteCustomerGroupsWorkflowId = "delete-customer-groups"
  * Delete one or more customer groups.
  */
 export const deleteCustomerGroupsWorkflow = createWorkflow(
-  deleteCustomerGroupsWorkflowId,
+  {
+    name: deleteCustomerGroupsWorkflowId,
+    description: "Delete one or more customer groups",
+    inputSchema: deleteCustomerGroupsWorkflowInputSchema,
+    outputSchema: deleteCustomerGroupsWorkflowOutputSchema,
+  },
   (
     input: WorkflowData<DeleteCustomerGroupsWorkflowInput>
   ): WorkflowData<void> => {
