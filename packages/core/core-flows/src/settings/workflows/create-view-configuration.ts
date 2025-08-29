@@ -1,8 +1,4 @@
 import {
-  CreateViewConfigurationDTO,
-  ViewConfigurationDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   when,
@@ -14,19 +10,13 @@ import {
 import {
   createViewConfigurationWorkflowInputSchema,
   createViewConfigurationWorkflowOutputSchema,
-  type CreateViewConfigurationWorkflowInput as SchemaInput,
-  type CreateViewConfigurationWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreateViewConfigurationWorkflowInput,
   type CreateViewConfigurationWorkflowOutput,
-} from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as CreateViewConfigurationDTO
-const _out: ViewConfigurationDTO = {} as SchemaOutput
-void _in, _out
+} from "../utils/schemas"
 
 export const createViewConfigurationWorkflowId = "create-view-configuration"
 

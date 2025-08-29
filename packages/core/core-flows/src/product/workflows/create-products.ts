@@ -1,8 +1,6 @@
 import {
-  AdditionalData,
   CreateProductWorkflowInputDTO,
   LinkDefinition,
-  ProductTypes,
 } from "@medusajs/framework/types"
 import {
   ProductWorkflowEvents,
@@ -26,8 +24,10 @@ import {
   createProductsWorkflowOutputSchema,
   CreateProductVariantsWorkflowInput,
   CreateProductVariantsWorkflowOutput,
-  type CreateProductsWorkflowInput as SchemaInput,
-  type CreateProductsWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+export {
+  CreateProductVariantsWorkflowInput,
+  CreateProductVariantsWorkflowOutput,
 } from "../utils/schemas"
 
 /**
@@ -95,37 +95,6 @@ export const validateProductInputStep = createStep(
     }
   }
 )
-
-/**
- * The data to create one or more products, along with custom data that's passed to the workflow's hooks.
- */
-type OldCreateProductsWorkflowInput = {
-  /**
-   * The products to create.
-   */
-  products: CreateProductWorkflowInputDTO[]
-} & AdditionalData
-
-type OldCreateProductsWorkflowOutput = ProductTypes.ProductDTO[]
-
-export {
-  type CreateProductsWorkflowInput,
-  type CreateProductsWorkflowOutput,
-} from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCreateProductsWorkflowInput = schemaInput
-const existingOutput: OldCreateProductsWorkflowOutput = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCreateProductsWorkflowInput
-const oldOutput = {} as OldCreateProductsWorkflowOutput
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createProductsWorkflowId = "create-products"
 /**

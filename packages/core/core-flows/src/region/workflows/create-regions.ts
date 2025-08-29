@@ -13,34 +13,20 @@ import { setRegionsPaymentProvidersStep } from "../steps/set-regions-payment-pro
 import {
   createRegionsWorkflowInputSchema,
   createRegionsWorkflowOutputSchema,
-  type CreateRegionsWorkflowInput as SchemaInput,
-  type CreateRegionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-// Re-export workflow types from schemas
-export type CreateRegionsWorkflowInput = SchemaInput
-export type CreateRegionsWorkflowOutput = SchemaOutput
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as WorkflowTypes.RegionWorkflow.CreateRegionsWorkflowOutput
-
-console.log(existingInput, existingOutput, schemaOutput)
+export {
+  type CreateRegionsWorkflowInput,
+  type CreateRegionsWorkflowOutput,
+} from "../utils/schemas"
 
 export const createRegionsWorkflowId = "create-regions"
 /**
  * This workflow creates one or more regions. It's used by the
  * [Create Region Admin API Route](https://docs.medusajs.com/api/admin#regions_postregions).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to create regions in your custom flows.
- * 
+ *
  * @example
  * const { result } = await createRegionsWorkflow(container)
  * .run({
@@ -54,9 +40,9 @@ export const createRegionsWorkflowId = "create-regions"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more regions.
  */
 export const createRegionsWorkflow = createWorkflow(

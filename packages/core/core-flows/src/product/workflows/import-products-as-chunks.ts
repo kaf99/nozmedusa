@@ -1,4 +1,3 @@
-import { WorkflowTypes } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -7,8 +6,6 @@ import {
 import {
   importProductsAsChunksWorkflowInputSchema,
   importProductsAsChunksWorkflowOutputSchema,
-  type ImportProductsAsChunksWorkflowInput as SchemaInput,
-  type ImportProductsAsChunksWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import {
@@ -16,6 +13,11 @@ import {
   processImportChunksStep,
   waitConfirmationProductImportStep,
 } from "../steps"
+export {
+  type ImportProductsAsChunksWorkflowInput as SchemaInput,
+  type ImportProductsAsChunksWorkflowOutput as SchemaOutput,
+
+} from "../utils/schemas"
 
 export const importProductsAsChunksWorkflowId = "import-products-as-chunks"
 
@@ -93,21 +95,6 @@ export const importProductsAsChunksWorkflowId = "import-products-as-chunks"
  *
  * Import products from a CSV file.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = { toCreate: 0, toUpdate: 0 } as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: { fileKey: string; filename: string } = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {
-  toCreate: 0,
-  toUpdate: 0,
-} as WorkflowTypes.ProductWorkflow.ImportProductsSummary
-
-console.log(existingInput, existingOutput, schemaOutput)
-
 export const importProductsAsChunksWorkflow = createWorkflow(
   {
     name: importProductsAsChunksWorkflowId,
@@ -115,9 +102,7 @@ export const importProductsAsChunksWorkflow = createWorkflow(
     inputSchema: importProductsAsChunksWorkflowInputSchema,
     outputSchema: importProductsAsChunksWorkflowOutputSchema,
   },
-  (
-    input
-  ): WorkflowResponse<WorkflowTypes.ProductWorkflow.ImportProductsSummary> => {
+  (input) => {
     const batchRequest = normalizeCsvToChunksStep(input.fileKey)
 
     waitConfirmationProductImportStep()

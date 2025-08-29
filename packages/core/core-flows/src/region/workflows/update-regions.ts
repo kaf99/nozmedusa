@@ -14,34 +14,20 @@ import { setRegionsPaymentProvidersStep } from "../steps/set-regions-payment-pro
 import {
   updateRegionsWorkflowInputSchema,
   updateRegionsWorkflowOutputSchema,
-  type UpdateRegionsWorkflowInput as SchemaInput,
-  type UpdateRegionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-// Re-export workflow types from schemas
-export type UpdateRegionsWorkflowInput = SchemaInput
-export type UpdateRegionsWorkflowOutput = SchemaOutput
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as WorkflowTypes.RegionWorkflow.UpdateRegionsWorkflowOutput
-
-console.log(existingInput, existingOutput, schemaOutput)
+export {
+  type UpdateRegionsWorkflowInput,
+  type UpdateRegionsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateRegionsWorkflowId = "update-regions"
 /**
  * This workflow updates regions matching the specified filters. It's used by the
  * [Update Region Admin API Route](https://docs.medusajs.com/api/admin#regions_postregionsid).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to update regions in your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateRegionsWorkflow(container)
  * .run({
@@ -54,9 +40,9 @@ export const updateRegionsWorkflowId = "update-regions"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update regions.
  */
 export const updateRegionsWorkflow = createWorkflow(

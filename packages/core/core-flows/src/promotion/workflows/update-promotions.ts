@@ -1,9 +1,4 @@
-import {
-  AdditionalData,
-  PromotionDTO,
-  PromotionStatusValues,
-  UpdatePromotionDTO,
-} from "@medusajs/framework/types"
+import { PromotionDTO, PromotionStatusValues } from "@medusajs/framework/types"
 import { isString } from "@medusajs/framework/utils"
 import {
   createHook,
@@ -19,27 +14,14 @@ import {
   updatePromotionsWorkflowInputSchema,
   updatePromotionsWorkflowOutputSchema,
   type UpdatePromotionsWorkflowInput as SchemaInput,
-  type UpdatePromotionsWorkflowOutput as SchemaOutput,
+
 } from "../utils/schemas"
 
 export {
   type UpdatePromotionsWorkflowInput,
   type UpdatePromotionsWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  promotionsData: UpdatePromotionDTO[]
-} & AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PromotionDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const updatePromotionsWorkflowId = "update-promotions"
 /**
@@ -96,8 +78,7 @@ export const updatePromotionsWorkflow = createWorkflow(
       { promotions, input },
       ({ promotions, input }) => {
         const promotionMap: Record<string, PromotionDTO> = {}
-        const promotionsUpdateInput: SchemaInput["promotionsData"] =
-          []
+        const promotionsUpdateInput: SchemaInput["promotionsData"] = []
         const promotionsStatusUpdateInput: {
           id: string
           status: PromotionStatusValues

@@ -9,10 +9,10 @@ export const deletePromotionRulesWorkflowId = "delete-promotion-rules-workflow"
 /**
  * This workflow deletes one or more promotion rules. It's used by other workflows,
  * such as {@link batchPromotionRulesWorkflow} that manages the rules of a promotion.
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you to
  * delete promotion rules within your custom flows.
- * 
+ *
  * @example
  * const { result } = await deletePromotionRulesWorkflow(container)
  * .run({
@@ -24,9 +24,9 @@ export const deletePromotionRulesWorkflowId = "delete-promotion-rules-workflow"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Delete one or more promotion rules.
  */
 export const deletePromotionRulesWorkflow = createWorkflow(

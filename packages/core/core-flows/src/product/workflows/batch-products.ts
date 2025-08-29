@@ -1,11 +1,4 @@
 import {
-  BatchWorkflowInput,
-  BatchWorkflowOutput,
-  CreateProductWorkflowInputDTO,
-  ProductTypes,
-  UpdateProductWorkflowInputDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -19,30 +12,13 @@ import {
   batchProductWorkflowInputSchema,
   batchProductsWorkflowOutputSchema,
   type BatchProductWorkflowInput as SchemaInput,
-  type BatchProductsWorkflowOutput as SchemaOutput,
+
 } from "../utils/schemas"
-
-/**
- * The products to manage.
- */
-interface OldBatchProductWorkflowInput
-  extends BatchWorkflowInput<
-    CreateProductWorkflowInputDTO,
-    UpdateProductWorkflowInputDTO
-  > {}
-
-type OldBatchProductsWorkflowOutput =
-  BatchWorkflowOutput<ProductTypes.ProductDTO>
-
 export {
   type BatchProductWorkflowInput,
   type BatchProductsWorkflowOutput,
-} from "../utils/schemas"
 
-// Type verification
-const _in: SchemaInput = {} as OldBatchProductWorkflowInput
-const _out: SchemaOutput = {} as OldBatchProductsWorkflowOutput
-void _in, _out
+} from "../utils/schemas"
 
 const conditionallyCreateProducts = (input: SchemaInput) =>
   when({ input }, ({ input }) => !!input.create?.length).then(() =>

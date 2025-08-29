@@ -5,32 +5,13 @@ import { deletePriceListsStep } from "../steps"
 import {
   deletePriceListsWorkflowInputSchema,
   deletePriceListsWorkflowOutputSchema,
-  type DeletePriceListsWorkflowInput as SchemaInput,
-  type DeletePriceListsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type DeletePriceListsWorkflowInput,
   type DeletePriceListsWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as any as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  ids: string[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { DeletePriceListsWorkflowInput as LegacyDeletePriceListsWorkflowInput } from "../utils/schemas"
-export type { DeletePriceListsWorkflowOutput as LegacyDeletePriceListsWorkflowOutput } from "../utils/schemas"
 
 export const deletePriceListsWorkflowId = "delete-price-lists"
 /**

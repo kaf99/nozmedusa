@@ -1,4 +1,3 @@
-import { TaxRegionDTO, UpdateTaxRegionDTO } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -7,19 +6,13 @@ import { updateTaxRegionsStep } from "../steps/update-tax-regions"
 import {
   updateTaxRegionsWorkflowInputSchema,
   updateTaxRegionsWorkflowOutputSchema,
-  type UpdateTaxRegionsWorkflowInput as SchemaInput,
-  type UpdateTaxRegionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type UpdateTaxRegionsWorkflowInput,
   type UpdateTaxRegionsWorkflowOutput,
-} from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as UpdateTaxRegionDTO[]
-const _out: SchemaOutput = {} as TaxRegionDTO[]
-void _in, _out
+} from "../utils/schemas"
 
 export const updateTaxRegionsWorkflowId = "update-tax-regions"
 /**

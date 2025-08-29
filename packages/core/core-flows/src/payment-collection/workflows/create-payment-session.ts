@@ -1,8 +1,4 @@
-import {
-  AccountHolderDTO,
-  CustomerDTO,
-  PaymentSessionDTO,
-} from "@medusajs/framework/types"
+import { AccountHolderDTO, CustomerDTO } from "@medusajs/framework/types"
 import { isPresent, Modules } from "@medusajs/framework/utils"
 import {
   createWorkflow,
@@ -21,30 +17,11 @@ import { deletePaymentSessionsWorkflow } from "./delete-payment-sessions"
 import {
   createPaymentSessionsWorkflowInputSchema,
   createPaymentSessionsWorkflowOutputSchema,
-  type CreatePaymentSessionsWorkflowInput as SchemaInput,
-  type CreatePaymentSessionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-type CreatePaymentSessionsWorkflowInput = {
-  payment_collection_id: string
-  provider_id: string
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
-  customer_id?: string
-}
-
-// Type verification to ensure schemas match existing types
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: CreatePaymentSessionsWorkflowInput = schemaInput
-const existingOutput: typeof schemaOutput = schemaOutput
-// To avoid declared but never used errors
-
-const dto = {} as PaymentSessionDTO
-const output: SchemaOutput = dto
-// To avoid declared but never used errors
-
-console.log(output, dto, existingInput, existingOutput)
+export {
+  type CreatePaymentSessionsWorkflowInput,
+  type CreatePaymentSessionsWorkflowOutput,
+} from "../utils/schemas"
 
 export const createPaymentSessionsWorkflowId = "create-payment-sessions"
 /**

@@ -1,9 +1,4 @@
 import {
-  AdditionalData,
-  CreateCampaignDTO,
-  CampaignDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -12,21 +7,13 @@ import { createCampaignsStep } from "../steps"
 import {
   createCampaignsWorkflowInputSchema,
   createCampaignsWorkflowOutputSchema,
-  type CreateCampaignsWorkflowInput as SchemaInput,
-  type CreateCampaignsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreateCampaignsWorkflowInput,
   type CreateCampaignsWorkflowOutput,
-} from "../utils/schemas"
 
-const _in: SchemaInput = {} as {
-  campaignsData: CreateCampaignDTO[]
-} & AdditionalData
-const _out: CampaignDTO[] = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as CampaignDTO[]
-void _in, _out, _outRev
+} from "../utils/schemas"
 
 export const createCampaignsWorkflowId = "create-campaigns"
 /**

@@ -1,6 +1,5 @@
 import { Modules, UserWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createWorkflow,
   parallelize,
   transform,
@@ -10,8 +9,12 @@ import { deleteUsersStep } from "../steps"
 import {
   deleteUsersWorkflowInputSchema,
   deleteUsersWorkflowOutputSchema,
+} from "../utils/schemas"
+
+export {
   type DeleteUsersWorkflowInput,
   type DeleteUsersWorkflowOutput,
+
 } from "../utils/schemas"
 
 export const deleteUsersWorkflowId = "delete-user"
@@ -44,9 +47,7 @@ export const deleteUsersWorkflow = createWorkflow(
     inputSchema: deleteUsersWorkflowInputSchema,
     outputSchema: deleteUsersWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<DeleteUsersWorkflowInput>
-  ): WorkflowData<DeleteUsersWorkflowOutput> => {
+  (input) => {
     deleteUsersStep(input.ids)
 
     const userIdEvents = transform({ input }, ({ input }) => {

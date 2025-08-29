@@ -1,11 +1,5 @@
 import { updateProductsStep } from "../steps/update-products"
-
-import {
-  AdditionalData,
-  CreateMoneyAmountDTO,
-  ProductTypes,
-  UpdateProductVariantWorkflowInputDTO,
-} from "@medusajs/framework/types"
+import { CreateMoneyAmountDTO, ProductTypes } from "@medusajs/framework/types"
 import {
   Modules,
   ProductWorkflowEvents,
@@ -30,80 +24,13 @@ import {
   updateProductWorkflowInputSchema,
   updateProductsWorkflowOutputSchema,
   type UpdateProductWorkflowInput as SchemaInput,
-  type UpdateProductsWorkflowOutput as SchemaOutput,
+
 } from "../utils/schemas"
-
-/**
- * Update products that match a specified selector, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductsWorkflowInputSelector = {
-  /**
-   * The filters to find products to update.
-   */
-  selector: ProductTypes.FilterableProductProps
-  /**
-   * The data to update the products with.
-   */
-  update: Omit<ProductTypes.UpdateProductDTO, "variants"> & {
-    /**
-     * The sales channels that the products are available in.
-     */
-    sales_channels?: { id: string }[]
-    /**
-     * The variants to update.
-     */
-    variants?: UpdateProductVariantWorkflowInputDTO[]
-    /**
-     * The shipping profile to set.
-     */
-    shipping_profile_id?: string | null
-  }
-} & AdditionalData
-
-/**
- * Update one or more products, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductsWorkflowInputProducts = {
-  /**
-   * The products to update.
-   */
-  products: (Omit<ProductTypes.UpsertProductDTO, "variants"> & {
-    /**
-     * The sales channels that the products are available in.
-     */
-    sales_channels?: { id: string }[]
-    /**
-     * The variants to update.
-     */
-    variants?: UpdateProductVariantWorkflowInputDTO[]
-    /**
-     * The shipping profile to set.
-     */
-    shipping_profile_id?: string | null
-  })[]
-} & AdditionalData
-
-/**
- * The data to update one or more products, along with custom data that's passed to the workflow's hooks.
- */
-type OldUpdateProductWorkflowInput =
-  | UpdateProductsWorkflowInputSelector
-  | UpdateProductsWorkflowInputProducts
-
-type OldUpdateProductsWorkflowOutput = ProductTypes.ProductDTO[]
-
 export {
   type UpdateProductWorkflowInput,
   type UpdateProductsWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldUpdateProductWorkflowInput = schemaInput
-const existingOutput: OldUpdateProductsWorkflowOutput = schemaOutput
-
-console.log(existingInput, existingOutput)
 
 function prepareUpdateProductInput({
   input,

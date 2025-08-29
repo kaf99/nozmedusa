@@ -1,6 +1,5 @@
 import { UserWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -10,18 +9,21 @@ import { updateUsersStep } from "../steps"
 import {
   updateUsersWorkflowInputSchema,
   updateUsersWorkflowOutputSchema,
+} from "../utils/schemas"
+export {
   type UpdateUsersWorkflowInput,
   type UpdateUsersWorkflowOutput,
+
 } from "../utils/schemas"
 
 export const updateUsersWorkflowId = "update-users-workflow"
 /**
  * This workflow updates one or more users. It's used by the
  * [Update User Admin API Route](https://docs.medusajs.com/api/admin#users_postusersid).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * update users within your custom flows.
- * 
+ *
  * @example
  * const { result } = await updateUsersWorkflow(container)
  * .run({
@@ -34,9 +36,9 @@ export const updateUsersWorkflowId = "update-users-workflow"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update one or more users.
  */
 export const updateUsersWorkflow = createWorkflow(
@@ -46,9 +48,7 @@ export const updateUsersWorkflow = createWorkflow(
     inputSchema: updateUsersWorkflowInputSchema,
     outputSchema: updateUsersWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<UpdateUsersWorkflowInput>
-  ): WorkflowResponse<UpdateUsersWorkflowOutput> => {
+  (input) => {
     const updatedUsers = updateUsersStep(input.updates)
 
     const userIdEvents = transform({ updatedUsers }, ({ updatedUsers }) => {

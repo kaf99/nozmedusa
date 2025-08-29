@@ -1,11 +1,4 @@
 import {
-  BatchWorkflowInput,
-  BatchWorkflowOutput,
-  CreatePromotionRuleDTO,
-  PromotionRuleDTO,
-  UpdatePromotionRuleDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -17,24 +10,13 @@ import { updatePromotionRulesWorkflow } from "./update-promotion-rules"
 import {
   batchPromotionRulesWorkflowInputSchema,
   batchPromotionRulesWorkflowOutputSchema,
-  type BatchPromotionRulesWorkflowInput as SchemaInput,
-  type BatchPromotionRulesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type BatchPromotionRulesWorkflowInput,
   type BatchPromotionRulesWorkflowOutput,
-} from "../utils/schemas"
 
-const _in: SchemaInput = {} as BatchWorkflowInput<
-  CreatePromotionRuleDTO,
-  UpdatePromotionRuleDTO
-> & {
-  id: string
-  rule_type: "buy_rules" | "target_rules" | "rules"
-}
-const _out: SchemaOutput = {} as BatchWorkflowOutput<PromotionRuleDTO>
-void _in, _out
+} from "../utils/schemas"
 
 export const batchPromotionRulesWorkflowId = "batch-promotion-rules"
 /**

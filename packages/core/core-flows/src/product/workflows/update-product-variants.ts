@@ -1,8 +1,4 @@
-import {
-  AdditionalData,
-  PricingTypes,
-  ProductTypes,
-} from "@medusajs/framework/types"
+import { PricingTypes } from "@medusajs/framework/types"
 import { ProductVariantWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -17,39 +13,13 @@ import { getVariantPricingLinkStep } from "../steps/get-variant-pricing-link"
 import {
   updateProductVariantsWorkflowInputSchema,
   updateProductVariantsWorkflowOutputSchema,
-  type UpdateProductVariantsWorkflowInput as SchemaInput,
-  type UpdateProductVariantsWorkflowOutput as SchemaOutput,
 } from "../utils/update-schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = [] as SchemaOutput
+export {
+  type UpdateProductVariantsWorkflowInput,
+  type UpdateProductVariantsWorkflowOutput,
 
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: (
-  | {
-      selector: ProductTypes.FilterableProductVariantProps
-      update: ProductTypes.UpdateProductVariantDTO & {
-        prices?: Partial<PricingTypes.CreateMoneyAmountDTO>[]
-      }
-    }
-  | {
-      product_variants: (ProductTypes.UpsertProductVariantDTO & {
-        prices?: Partial<PricingTypes.CreateMoneyAmountDTO>[]
-      })[]
-    }
-) &
-  AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = [] as ProductTypes.ProductVariantDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-/**
- * The data to update one or more product variants, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateProductVariantsWorkflowInput = SchemaInput
+} from "../utils/update-schemas"
 
 export const updateProductVariantsWorkflowId = "update-product-variants"
 /**
@@ -59,12 +29,12 @@ export const updateProductVariantsWorkflowId = "update-product-variants"
  * allows you to update custom data models linked to the product variants.
  *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around product-variant update.
- * 
+ *
  * :::note
- * 
- * Learn more about adding rules to the product variant's prices in the Pricing Module's 
+ *
+ * Learn more about adding rules to the product variant's prices in the Pricing Module's
  * [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules) documentation.
- * 
+ *
  * :::
  *
  * @example

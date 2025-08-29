@@ -13,7 +13,6 @@ import {
   refundPaymentsWorkflowInputSchema,
   refundPaymentsWorkflowOutputSchema,
   type RefundPaymentsWorkflowInput as SchemaInput,
-  type RefundPaymentsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 export {
   type RefundPaymentsWorkflowInput,
@@ -90,42 +89,6 @@ export const validatePaymentsRefundStep = createStep(
     }
   }
 )
-
-/**
- * The data to refund a payment.
- */
-type OldRefundPaymentsWorkflowInput = {
-  /**
-   * The ID of the payment to refund.
-   */
-  payment_id: string
-  /**
-   * The amount to refund. Must be less than the refundable amount of the payment.
-   */
-  amount: BigNumberInput
-  /**
-   * The ID of the user that's refunding the payment.
-   */
-  created_by?: string
-  /**
-   * The note to attach to the refund.
-   */
-  note?: string
-}[]
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldRefundPaymentsWorkflowInput = schemaInput
-const existingOutput: PaymentDTO[] = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldRefundPaymentsWorkflowInput
-const oldOutput = {} as PaymentDTO[]
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const refundPaymentsWorkflowId = "refund-payments-workflow"
 /**

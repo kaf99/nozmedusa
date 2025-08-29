@@ -16,7 +16,6 @@ import {
   deleteCollectionsWorkflowOutputSchema,
 } from "../utils/schemas"
 
-
 export const deleteCollectionsWorkflowId = "delete-collections"
 /**
  * This workflow deletes one or more product collections. It's used by the

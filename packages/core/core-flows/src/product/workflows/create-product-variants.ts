@@ -1,8 +1,6 @@
 import {
-  AdditionalData,
   InventoryTypes,
   LinkDefinition,
-  PricingTypes,
   ProductTypes,
 } from "@medusajs/framework/types"
 import {
@@ -27,62 +25,11 @@ import {
   createProductVariantsWorkflowInputSchema,
   createProductVariantsWorkflowOutputSchema,
   type CreateProductVariantsWorkflowInput as SchemaInput,
-  type CreateProductVariantsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-
-/**
- *
- * The data to create one or more product variants, along with custom data that's passed to the workflow's hooks.
- *
- * @privateRemarks
- * TODO: Create separate typings for the workflow input
- */
-type OldCreateProductVariantsWorkflowInput = {
-  /**
-   * The product variants to create.
-   */
-  product_variants: (ProductTypes.CreateProductVariantDTO & {
-    /**
-     * The product variant's prices.
-     */
-    prices?: PricingTypes.CreateMoneyAmountDTO[]
-  } & {
-    /**
-     * The inventory items to associate with managed product variants.
-     */
-    inventory_items?: {
-      /**
-       * The inventory item's ID.
-       */
-      inventory_item_id: string
-      /**
-       * The number of units a single quantity is equivalent to. For example, if a customer orders one quantity of the variant,
-       * Medusa checks the availability of the quantity multiplied by the value set for `required_quantity`.
-       * When the customer orders the quantity, Medusa reserves the ordered quantity multiplied by the value
-       * set for `required_quantity`.
-       */
-      required_quantity?: number
-    }[]
-  })[]
-} & AdditionalData
-
-type OldCreateProductVariantsWorkflowOutput =
-  (ProductTypes.ProductVariantDTO & {
-    prices: any[]
-  })[]
-
 export {
   type CreateProductVariantsWorkflowInput,
   type CreateProductVariantsWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCreateProductVariantsWorkflowInput = schemaInput
-const existingOutput: OldCreateProductVariantsWorkflowOutput = schemaOutput
-
-console.log(existingInput, existingOutput)
 
 const buildLink = (
   variant_id: string,

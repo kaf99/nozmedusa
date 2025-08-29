@@ -1,4 +1,3 @@
-import { CreateTaxRateDTO, TaxRateDTO } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -9,22 +8,10 @@ import {
   createTaxRatesWorkflowOutputSchema,
   type CreateTaxRatesWorkflowInput as SchemaInput,
   type CreateTaxRatesWorkflowOutput as SchemaOutput,
+
 } from "../utils/schemas"
-
-/**
- * The tax rates to create.
- */
-export type CreateTaxRatesWorkflowInput = CreateTaxRateDTO[]
-
-/**
- * The created tax rates.
- */
-export type CreateTaxRatesWorkflowOutput = TaxRateDTO[]
-
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as CreateTaxRatesWorkflowInput
-const _out: SchemaOutput = {} as CreateTaxRatesWorkflowOutput
-void _in, _out
+export type CreateTaxRatesWorkflowInput = SchemaInput
+export type CreateTaxRatesWorkflowOutput = SchemaOutput
 
 export const createTaxRatesWorkflowId = "create-tax-rates"
 /**

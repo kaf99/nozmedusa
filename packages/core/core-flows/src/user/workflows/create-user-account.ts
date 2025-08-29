@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -9,21 +8,26 @@ import { createUsersWorkflow } from "./create-users"
 import {
   createUserAccountWorkflowInputSchema,
   createUserAccountWorkflowOutputSchema,
+  type CreateUsersWorkflowOutput,
+
+} from "../utils/schemas"
+
+export {
   type CreateUserAccountWorkflowInput,
   type CreateUserAccountWorkflowOutput,
-  type CreateUsersWorkflowOutput,
+
 } from "../utils/schemas"
 
 export const createUserAccountWorkflowId = "create-user-account"
 /**
  * This workflow creates a user and attaches it to an auth identity.
- * 
+ *
  * You can create an auth identity first using the [Retrieve Registration JWT Token API Route](https://docs.medusajs.com/api/admin#auth_postactor_typeauth_provider_register).
  * Learn more about basic authentication flows in [this documentation](https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route).
- * 
- * You can use this workflow within your customizations or your own custom workflows, allowing you to 
+ *
+ * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * register or create user accounts within your custom flows.
- * 
+ *
  * @example
  * const { result } = await createUserAccountWorkflow(container)
  * .run({
@@ -36,9 +40,9 @@ export const createUserAccountWorkflowId = "create-user-account"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create a user account and attach an auth identity.
  */
 export const createUserAccountWorkflow = createWorkflow(
@@ -48,16 +52,17 @@ export const createUserAccountWorkflow = createWorkflow(
     inputSchema: createUserAccountWorkflowInputSchema,
     outputSchema: createUserAccountWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<CreateUserAccountWorkflowInput>
-  ): WorkflowResponse<CreateUserAccountWorkflowOutput> => {
+  (input) => {
     const users = createUsersWorkflow.runAsStep({
       input: {
         users: [input.userData],
       },
     })
 
-    const user = transform(users, (users: CreateUsersWorkflowOutput) => users[0])
+    const user = transform(
+      users,
+      (users: CreateUsersWorkflowOutput) => users[0]
+    )
 
     setAuthAppMetadataStep({
       authIdentityId: input.authIdentityId,

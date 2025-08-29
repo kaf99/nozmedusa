@@ -1,7 +1,4 @@
-import {
-  createStep,
-  createWorkflow,
-} from "@medusajs/framework/workflows-sdk"
+import { createStep, createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 
 import { deleteShippingProfilesStep } from "../steps"
@@ -9,8 +6,12 @@ import { removeRemoteLinkStep, useQueryGraphStep } from "../../common"
 import {
   deleteShippingProfilesWorkflowInputSchema,
   deleteShippingProfilesWorkflowOutputSchema,
-  type DeleteShippingProfilesWorkflowInput as SchemaInput,
-  type DeleteShippingProfilesWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export {
+  type DeleteShippingProfilesWorkflowInput,
+  type DeleteShippingProfilesWorkflowOutput,
+
 } from "../utils/schemas"
 
 /**
@@ -20,7 +21,7 @@ export type ValidateStepShippingProfileDeleteInput = {
   /**
    * The links between products and shipping profiles.
    */
-  links: { 
+  links: {
     /**
      * The ID of the product linked to the shipping profile.
      */
@@ -35,7 +36,7 @@ export type ValidateStepShippingProfileDeleteInput = {
 /**
  * This step validates that the shipping profiles to delete are not linked to any products.
  * Otherwise, an error is thrown.
- * 
+ *
  * @example
  * validateStepShippingProfileDelete({
  *   links: [
@@ -48,7 +49,7 @@ export type ValidateStepShippingProfileDeleteInput = {
  */
 export const validateStepShippingProfileDelete = createStep(
   "validate-step-shipping-profile-delete",
-  (data: ValidateStepShippingProfileDeleteInput ) => {
+  (data: ValidateStepShippingProfileDeleteInput) => {
     const { links } = data
 
     if (links.length > 0) {
@@ -61,29 +62,6 @@ export const validateStepShippingProfileDelete = createStep(
     }
   }
 )
-
-export {
-  type DeleteShippingProfilesWorkflowInput,
-  type DeleteShippingProfilesWorkflowOutput,
-} from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  ids: string[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { DeleteShippingProfilesWorkflowInput as LegacyDeleteShippingProfilesWorkflowInput } from "../utils/schemas"
-export type { DeleteShippingProfilesWorkflowOutput as LegacyDeleteShippingProfilesWorkflowOutput } from "../utils/schemas"
 
 export const deleteShippingProfileWorkflowId =
   "delete-shipping-profile-workflow"

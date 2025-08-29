@@ -1,8 +1,4 @@
 import {
-  UpdatePriceListWorkflowInputDTO,
-  PriceListDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -10,28 +6,13 @@ import { updatePriceListsStep, validatePriceListsStep } from "../steps"
 import {
   updatePriceListsWorkflowInputSchema,
   updatePriceListsWorkflowOutputSchema,
-  type UpdatePriceListsWorkflowInput as SchemaInput,
-  type UpdatePriceListsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type UpdatePriceListsWorkflowInput,
   type UpdatePriceListsWorkflowOutput,
+
 } from "../utils/schemas"
-
-/**
- * The data to update price lists.
- */
-export type OldUpdatePriceListsWorkflowInput = {
-  /**
-   * The price lists to update.
-   */
-  price_lists_data: UpdatePriceListWorkflowInputDTO[]
-}
-
-const _in: SchemaInput = {} as OldUpdatePriceListsWorkflowInput
-const _out: SchemaOutput = {} as PriceListDTO[]
-void _in, _out
 
 export const updatePriceListsWorkflowId = "update-price-lists"
 /**

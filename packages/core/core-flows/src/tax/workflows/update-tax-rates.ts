@@ -1,9 +1,4 @@
-import {
-  FilterableTaxRateProps,
-  ITaxModuleService,
-  TaxRateDTO,
-  UpdateTaxRateDTO,
-} from "@medusajs/framework/types"
+import { ITaxModuleService, UpdateTaxRateDTO } from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
 import {
   StepResponse,
@@ -20,23 +15,13 @@ import {
 import {
   updateTaxRatesWorkflowInputSchema,
   updateTaxRatesWorkflowOutputSchema,
-  type UpdateTaxRatesWorkflowInput as SchemaInput,
-  type UpdateTaxRatesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-// import { setTaxRateRulesWorkflow } from "./set-tax-rate-rules"
 
 export {
   type UpdateTaxRatesWorkflowInput,
   type UpdateTaxRatesWorkflowOutput,
-} from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as {
-  selector: FilterableTaxRateProps
-  update: UpdateTaxRateDTO
-}
-const _out: SchemaOutput = {} as TaxRateDTO[]
-void _in, _out
+} from "../utils/schemas"
 
 /**
  * The data to retrieve the IDs of tax rate rules.

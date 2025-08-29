@@ -9,12 +9,15 @@ import {
 import {
   cancelPaymentCollectionWorkflowInputSchema,
   cancelPaymentCollectionWorkflowOutputSchema,
-  type CancelPaymentCollectionWorkflowInput as SchemaInput,
-  type CancelPaymentCollectionWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { useQueryGraphStep } from "../../common"
 import { updatePaymentCollectionStep } from "../steps/update-payment-collection"
 import { cancelPaymentStep } from "../steps/cancel-payment"
+export {
+  type CancelPaymentCollectionWorkflowInput,
+  type CancelPaymentCollectionWorkflowOutput,
+
+} from "../utils/schemas"
 
 const validatePaymentCollectionCancellationStep = createStep(
   "validate-payment-collection-cancellation",
@@ -37,7 +40,6 @@ const validatePaymentCollectionCancellationStep = createStep(
   }
 )
 
-
 export const cancelPaymentCollectionWorkflowId = "cancel-payment-collection"
 /**
  * This workflow cancels a payment collection that is either not paid or authorized.
@@ -49,18 +51,6 @@ export const cancelPaymentCollectionWorkflowId = "cancel-payment-collection"
  *   payment_collection_id: "paycol_123",
  * })
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: { payment_collection_id: string } = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PaymentCollectionDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
-
 export const cancelPaymentCollectionWorkflow = createWorkflow(
   {
     name: cancelPaymentCollectionWorkflowId,

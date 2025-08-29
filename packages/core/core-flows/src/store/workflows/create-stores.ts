@@ -11,16 +11,20 @@ import {
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
-export type { CreateStoresWorkflowInput, CreateStoresWorkflowOutput } from "../utils/schemas"
+export type {
+  CreateStoresWorkflowInput,
+  CreateStoresWorkflowOutput,
+
+} from "../utils/schemas"
 
 export const createStoresWorkflowId = "create-stores"
 /**
  * This workflow creates one or more stores. By default, Medusa uses a single store. This is useful
  * if you're building a multi-tenant application or a marketplace where each tenant has its own store.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * create stores within your custom flows.
- * 
+ *
  * @example
  * const { result } = await createStoresWorkflow(container)
  * .run({
@@ -36,9 +40,9 @@ export const createStoresWorkflowId = "create-stores"
  *     ]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more stores.
  */
 export const createStoresWorkflow = createWorkflow(

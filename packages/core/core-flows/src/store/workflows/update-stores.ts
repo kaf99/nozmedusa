@@ -12,7 +12,8 @@ import {
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
-export type { UpdateStoresWorkflowInput, UpdateStoresWorkflowOutput } from "../utils/schemas"
+export type { UpdateStoresWorkflowInput, UpdateStoresWorkflowOutput 
+} from "../utils/schemas"
 
 export const updateStoresWorkflowId = "update-stores"
 /**

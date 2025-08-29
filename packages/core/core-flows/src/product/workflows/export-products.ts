@@ -1,46 +1,32 @@
-import {
-  WorkflowData,
-  createWorkflow,
-  transform,
-} from "@medusajs/framework/workflows-sdk"
-import { WorkflowTypes } from "@medusajs/framework/types"
+import { createWorkflow, transform } from "@medusajs/framework/workflows-sdk"
 import { generateProductCsvStep, getAllProductsStep } from "../steps"
 import { useRemoteQueryStep } from "../../common"
 import { notifyOnFailureStep, sendNotificationsStep } from "../../notification"
 import {
   exportProductsDTOSchema,
   exportProductsWorkflowOutputSchema,
-  type ExportProductsDTO as SchemaInput,
-  type ExportProductsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
+export {
+  type ExportProductsDTO,
+  type ExportProductsWorkflowOutput,
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as unknown as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: WorkflowTypes.ProductWorkflow.ExportProductsDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
+} from "../utils/schemas"
 
 export const exportProductsWorkflowId = "export-products"
 /**
- * This workflow exports products matching the specified filters. It's used by the 
+ * This workflow exports products matching the specified filters. It's used by the
  * [Export Products Admin API Route](https://docs.medusajs.com/api/admin#products_postproductsexport).
- * 
+ *
  * :::note
- * 
+ *
  * This workflow doesn't return the exported products. Instead, it sends a notification to the admin
  * users that they can download the exported products. Learn more in the [API Reference](https://docs.medusajs.com/api/admin#products_postproductsexport).
- * 
+ *
  * :::
- * 
+ *
  * @example
  * To export all products:
- * 
+ *
  * ```ts
  * const { result } = await exportProductsWorkflow(container)
  * .run({
@@ -49,9 +35,9 @@ export const exportProductsWorkflowId = "export-products"
  *   }
  * })
  * ```
- * 
+ *
  * To export products matching a criteria:
- * 
+ *
  * ```ts
  * const { result } = await exportProductsWorkflow(container)
  * .run({
@@ -63,9 +49,9 @@ export const exportProductsWorkflowId = "export-products"
  *   }
  * })
  * ```
- * 
+ *
  * @summary
- * 
+ *
  * Export products with filtering capabilities.
  */
 export const exportProductsWorkflow = createWorkflow(
@@ -75,9 +61,7 @@ export const exportProductsWorkflow = createWorkflow(
     inputSchema: exportProductsDTOSchema,
     outputSchema: exportProductsWorkflowOutputSchema,
   },
-  (
-    input
-  ): WorkflowData<void> => {
+  (input) => {
     const products = getAllProductsStep(input).config({
       async: true,
       backgroundExecution: true,

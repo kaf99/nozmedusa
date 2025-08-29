@@ -1,8 +1,4 @@
 import {
-  CreatePriceListPricesWorkflowDTO,
-  PricingTypes,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -13,41 +9,22 @@ import { validateVariantPriceLinksStep } from "../steps/validate-variant-price-l
 import {
   createPriceListPricesWorkflowInputSchema,
   createPriceListPricesWorkflowOutputSchema,
-  type CreatePriceListPricesWorkflowInput as SchemaInput,
-  type CreatePriceListPricesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreatePriceListPricesWorkflowInput,
   type CreatePriceListPricesWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  data: CreatePriceListPricesWorkflowDTO[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PricingTypes.PriceDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { CreatePriceListPricesWorkflowInput as LegacyCreatePriceListPricesWorkflowInput } from "../utils/schemas"
-export type { CreatePriceListPricesWorkflowOutput as LegacyCreatePriceListPricesWorkflowOutput } from "../utils/schemas"
 
 export const createPriceListPricesWorkflowId = "create-price-list-prices"
 /**
- * This workflow creates prices in price lists. It's used by other workflows, such as 
+ * This workflow creates prices in price lists. It's used by other workflows, such as
  * {@link batchPriceListPricesWorkflow}.
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * create prices in price lists in your custom flows.
- * 
+ *
  * @example
  * const { result } = await createPriceListPricesWorkflow(container)
  * .run({
@@ -64,9 +41,9 @@ export const createPriceListPricesWorkflowId = "create-price-list-prices"
  *     }]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create prices in price lists.
  */
 export const createPriceListPricesWorkflow = createWorkflow(

@@ -1,8 +1,4 @@
 import {
-  BatchPriceListPricesWorkflowDTO,
-  BatchPriceListPricesWorkflowResult,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -14,19 +10,13 @@ import { updatePriceListPricesWorkflow } from "./update-price-list-prices"
 import {
   batchPriceListPricesWorkflowInputSchema,
   batchPriceListPricesWorkflowOutputSchema,
-  type BatchPriceListPricesWorkflowInput as SchemaInput,
-  type BatchPriceListPricesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type BatchPriceListPricesWorkflowInput,
   type BatchPriceListPricesWorkflowOutput,
-} from "../utils/schemas"
 
-const _in: SchemaInput = {} as { data: BatchPriceListPricesWorkflowDTO }
-const _out: BatchPriceListPricesWorkflowResult = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as BatchPriceListPricesWorkflowResult
-void _in, _out, _outRev
+} from "../utils/schemas"
 
 export const batchPriceListPricesWorkflowId = "batch-price-list-prices"
 /**

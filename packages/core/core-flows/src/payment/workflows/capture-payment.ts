@@ -1,4 +1,3 @@
-import { BigNumberInput, PaymentDTO } from "@medusajs/framework/types"
 import { PaymentEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -12,30 +11,12 @@ import { capturePaymentStep } from "../steps/capture-payment"
 import {
   capturePaymentWorkflowInputSchema,
   capturePaymentWorkflowOutputSchema,
-  type CapturePaymentWorkflowInput as SchemaInput,
-  type CapturePaymentWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
+export {
+  type CapturePaymentWorkflowInput,
+  type CapturePaymentWorkflowOutput,
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  payment_id: string
-  captured_by?: string
-  amount?: BigNumberInput
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as PaymentDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-/**
- * The data to capture a payment.
- */
-export type CapturePaymentWorkflowInput = SchemaInput
+} from "../utils/schemas"
 
 export const capturePaymentWorkflowId = "capture-payment-workflow"
 /**
@@ -64,9 +45,7 @@ export const capturePaymentWorkflow = createWorkflow(
     inputSchema: capturePaymentWorkflowInputSchema,
     outputSchema: capturePaymentWorkflowOutputSchema,
   },
-  (
-    input
-  ): WorkflowResponse<PaymentDTO> => {
+  (input) => {
     const payment = capturePaymentStep(input)
 
     const orderPayment = useRemoteQueryStep({

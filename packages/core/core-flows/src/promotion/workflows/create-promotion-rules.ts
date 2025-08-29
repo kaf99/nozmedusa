@@ -1,8 +1,4 @@
 import {
-  AddPromotionRulesWorkflowDTO,
-  PromotionRuleDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -10,19 +6,13 @@ import { addRulesToPromotionsStep } from "../steps"
 import {
   createPromotionRulesWorkflowInputSchema,
   createPromotionRulesWorkflowOutputSchema,
-  type CreatePromotionRulesWorkflowInput as SchemaInput,
-  type CreatePromotionRulesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreatePromotionRulesWorkflowInput,
   type CreatePromotionRulesWorkflowOutput,
-} from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as AddPromotionRulesWorkflowDTO
-const _out: SchemaOutput = {} as PromotionRuleDTO[]
-void _in, _out
+} from "../utils/schemas"
 
 export const createPromotionRulesWorkflowId = "create-promotion-rules-workflow"
 /**

@@ -1,58 +1,27 @@
-import {
-  CreatePricesDTO,
-  UpdatePricesDTO,
-  CreatePriceSetDTO,
-} from "@medusajs/framework/types"
+import { CreatePriceSetDTO } from "@medusajs/framework/types"
 import { Modules, arrayDifference } from "@medusajs/framework/utils"
-import {
-  createWorkflow,
-  transform,
-} from "@medusajs/framework/workflows-sdk"
+import { createWorkflow, transform } from "@medusajs/framework/workflows-sdk"
 import { removeRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import { createPriceSetsStep, updatePriceSetsStep } from "../../pricing"
 import { createVariantPricingLinkStep } from "../steps"
 import {
   upsertVariantPricesWorkflowInputSchema,
   upsertVariantPricesWorkflowOutputSchema,
-  type UpsertVariantPricesWorkflowInput as SchemaInput,
-  type UpsertVariantPricesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type UpsertVariantPricesWorkflowInput,
   type UpsertVariantPricesWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  variantPrices: {
-    variant_id: string
-    product_id: string
-    prices?: (CreatePricesDTO | UpdatePricesDTO)[]
-  }[]
-  previousVariantIds: string[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { UpsertVariantPricesWorkflowInput as LegacyUpsertVariantPricesWorkflowInput } from "../utils/schemas"
-export type { UpsertVariantPricesWorkflowOutput as LegacyUpsertVariantPricesWorkflowOutput } from "../utils/schemas"
 
 export const upsertVariantPricesWorkflowId = "upsert-variant-prices"
 /**
  * This workflow creates, updates, or removes variants' prices. It's used by the {@link updateProductsWorkflow}
  * when updating a variant's prices.
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows to manage the prices of a variant.
- * 
+ *
  * @example
  * const { result } = await upsertVariantPricesWorkflow(container)
  * .run({
@@ -78,9 +47,9 @@ export const upsertVariantPricesWorkflowId = "upsert-variant-prices"
  *     previousVariantIds: ["variant_321"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create, update, or remove variants' prices.
  */
 export const upsertVariantPricesWorkflow = createWorkflow(

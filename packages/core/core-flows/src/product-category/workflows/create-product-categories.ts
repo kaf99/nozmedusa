@@ -1,7 +1,3 @@
-import {
-  ProductCategoryDTO,
-  ProductCategoryWorkflow,
-} from "@medusajs/framework/types"
 import { ProductCategoryWorkflowEvents } from "@medusajs/framework/utils"
 import {
   createHook,
@@ -14,30 +10,13 @@ import { createProductCategoriesStep } from "../steps"
 import {
   createProductCategoriesWorkflowInputSchema,
   createProductCategoriesWorkflowOutputSchema,
-  type CreateProductCategoriesWorkflowInput as SchemaInput,
-  type CreateProductCategoriesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreateProductCategoriesWorkflowInput,
   type CreateProductCategoriesWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ProductCategoryWorkflow.CreateProductCategoriesWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as ProductCategoryDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { CreateProductCategoriesWorkflowInput as LegacyCreateProductCategoriesWorkflowInput } from "../utils/schemas"
-export type { CreateProductCategoriesWorkflowOutput as LegacyCreateProductCategoriesWorkflowOutput } from "../utils/schemas"
 
 export const createProductCategoriesWorkflowId = "create-product-categories"
 /**

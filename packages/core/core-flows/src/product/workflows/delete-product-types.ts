@@ -14,7 +14,6 @@ import {
   deleteProductTypesWorkflowOutputSchema,
 } from "../utils/schemas"
 
-
 export const deleteProductTypesWorkflowId = "delete-product-types"
 /**
  * This workflow deletes one or more product types. It's used by the

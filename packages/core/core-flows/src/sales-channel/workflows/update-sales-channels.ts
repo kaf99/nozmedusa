@@ -1,8 +1,3 @@
-import {
-  FilterableSalesChannelProps,
-  SalesChannelDTO,
-  UpdateSalesChannelDTO,
-} from "@medusajs/framework/types"
 import { SalesChannelWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -14,33 +9,12 @@ import { updateSalesChannelsStep } from "../steps/update-sales-channels"
 import {
   updateSalesChannelsWorkflowInputSchema,
   updateSalesChannelsWorkflowOutputSchema,
-  type UpdateSalesChannelsWorkflowInput as SchemaInput,
-  type UpdateSalesChannelsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
+export {
+  type UpdateSalesChannelsWorkflowInput,
+  type UpdateSalesChannelsWorkflowOutput,
 
-/**
- * The data to update sales channels.
- */
-export type UpdateSalesChannelsWorkflowInput = {
-  /**
-   * The filters to select the sales channels to update.
-   */
-  selector: FilterableSalesChannelProps
-  /**
-   * The data to update the sales channels.
-   */
-  update: UpdateSalesChannelDTO
-}
-
-/**
- * The updated sales channels.
- */
-export type UpdateSalesChannelsWorkflowOutput = SalesChannelDTO[]
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _in: SchemaInput = {} as UpdateSalesChannelsWorkflowInput
-const _out: SchemaOutput = {} as UpdateSalesChannelsWorkflowOutput
-void _in, _out
+} from "../utils/schemas"
 
 export const updateSalesChannelsWorkflowId = "update-sales-channels"
 /**

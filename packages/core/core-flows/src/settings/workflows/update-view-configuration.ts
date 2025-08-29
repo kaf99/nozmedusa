@@ -1,8 +1,4 @@
 import {
-  UpdateViewConfigurationDTO,
-  ViewConfigurationDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
   when,
@@ -15,33 +11,13 @@ import {
 import {
   updateViewConfigurationWorkflowInputSchema,
   updateViewConfigurationWorkflowOutputSchema,
-  type UpdateViewConfigurationWorkflowInput as SchemaInput,
-  type UpdateViewConfigurationWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type UpdateViewConfigurationWorkflowInput,
   type UpdateViewConfigurationWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  id: string
-  set_active?: boolean
-} & UpdateViewConfigurationDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as ViewConfigurationDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { UpdateViewConfigurationWorkflowInput as LegacyUpdateViewConfigurationWorkflowInput } from "../utils/schemas"
-export type { UpdateViewConfigurationWorkflowOutput as LegacyUpdateViewConfigurationWorkflowOutput } from "../utils/schemas"
 
 export const updateViewConfigurationWorkflowId = "update-view-configuration"
 

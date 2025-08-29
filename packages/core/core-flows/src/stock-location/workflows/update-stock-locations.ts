@@ -1,8 +1,5 @@
 import {
-  FilterableStockLocationProps,
   RemoteQueryFilters,
-  StockLocationDTO,
-  UpdateStockLocationInput,
   UpsertStockLocationAddressInput,
 } from "@medusajs/framework/types"
 import {
@@ -17,21 +14,13 @@ import { upsertStockLocationAddressesStep } from "../steps/upsert-stock-location
 import {
   updateStockLocationsWorkflowInputSchema,
   updateStockLocationsWorkflowOutputSchema,
-  type UpdateStockLocationsWorkflowInput as SchemaInput,
-  type UpdateStockLocationsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type UpdateStockLocationsWorkflowInput,
   type UpdateStockLocationsWorkflowOutput,
-} from "../utils/schemas"
 
-const _in: SchemaInput = {} as {
-  selector: FilterableStockLocationProps
-  update: UpdateStockLocationInput
-}
-const _out: SchemaOutput = {} as StockLocationDTO[]
-void _in, _out
+} from "../utils/schemas"
 
 export const updateStockLocationsWorkflowId = "update-stock-locations-workflow"
 /**

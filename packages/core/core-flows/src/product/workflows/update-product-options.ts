@@ -1,4 +1,3 @@
-import { AdditionalData, ProductTypes } from "@medusajs/framework/types"
 import { ProductOptionWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -11,43 +10,23 @@ import { updateProductOptionsStep } from "../steps"
 import {
   updateProductOptionsWorkflowInputSchema,
   updateProductOptionsWorkflowOutputSchema,
-  type UpdateProductOptionsWorkflowInput as SchemaInput,
-  type UpdateProductOptionsWorkflowOutput as SchemaOutput,
 } from "../utils/update-schemas"
 
 export {
   type UpdateProductOptionsWorkflowInput,
   type UpdateProductOptionsWorkflowOutput,
+
 } from "../utils/update-schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  selector: ProductTypes.FilterableProductOptionProps
-  update: ProductTypes.UpdateProductOptionDTO
-} & AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as ProductTypes.ProductOptionDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { UpdateProductOptionsWorkflowInput as LegacyUpdateProductOptionsWorkflowInput } from "../utils/update-schemas"
-export type { UpdateProductOptionsWorkflowOutput as LegacyUpdateProductOptionsWorkflowOutput } from "../utils/update-schemas"
 
 export const updateProductOptionsWorkflowId = "update-product-options"
 /**
  * This workflow updates one or more product options. It's used by the [Update Product Option Admin API Route](https://docs.medusajs.com/api/admin#products_postproductsidvariantsvariant_id).
- * 
- * This workflow has a hook that allows you to perform custom actions on the updated product options. For example, you can pass under `additional_data` custom data that 
+ *
+ * This workflow has a hook that allows you to perform custom actions on the updated product options. For example, you can pass under `additional_data` custom data that
  * allows you to update custom data models linked to the product options.
- * 
+ *
  * You can also use this workflow within your customizations or your own custom workflows, allowing you to wrap custom logic around product-option update.
- * 
+ *
  * @example
  * const { result } = await updateProductOptionsWorkflow(container)
  * .run({
@@ -63,11 +42,11 @@ export const updateProductOptionsWorkflowId = "update-product-options"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Update one or more product options.
- * 
+ *
  * @property hooks.productOptionsUpdated - This hook is executed after the product options are updated. You can consume this hook to perform custom actions on the updated product options.
  */
 export const updateProductOptionsWorkflow = createWorkflow(

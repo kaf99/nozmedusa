@@ -1,21 +1,18 @@
-import { WebhookActionResult } from "@medusajs/types"
 import { PaymentActions } from "@medusajs/utils"
 import { createWorkflow, when } from "@medusajs/workflows-sdk"
 import {
   processPaymentWorkflowInputSchema,
   processPaymentWorkflowOutputSchema,
-  type ProcessPaymentWorkflowInput as SchemaInput,
-  type ProcessPaymentWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { useQueryGraphStep } from "../../common"
 import { authorizePaymentSessionStep } from "../steps"
 import { completeCartAfterPaymentStep } from "../steps/complete-cart-after-payment"
 import { capturePaymentWorkflow } from "./capture-payment"
+export {
+  type ProcessPaymentWorkflowInput,
+  type ProcessPaymentWorkflowOutput,
 
-/**
- * The data to process a payment from a webhook action.
- */
-export interface ProcessPaymentWorkflowInput extends WebhookActionResult {}
+} from "../utils/schemas"
 
 export const processPaymentWorkflowId = "process-payment-workflow"
 /**
@@ -42,18 +39,6 @@ export const processPaymentWorkflowId = "process-payment-workflow"
  *
  * Process a payment based on a webhook event.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ProcessPaymentWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as void
-
-console.log(existingInput, existingOutput, schemaOutput)
-
 export const processPaymentWorkflow = createWorkflow(
   {
     name: processPaymentWorkflowId,

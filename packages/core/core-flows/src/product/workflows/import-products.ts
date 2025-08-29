@@ -1,4 +1,3 @@
-import { WorkflowTypes } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -10,25 +9,12 @@ import { batchProductsWorkflow } from "./batch-products"
 import {
   importProductsDTOSchema,
   importProductsSummarySchema,
-  type ImportProductsDTO as SchemaInput,
-  type ImportProductsSummary as SchemaOutput,
 } from "../utils/schemas"
+export {
+  type ImportProductsDTO,
+  type ImportProductsSummary,
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = { toCreate: 0, toUpdate: 0 } as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: WorkflowTypes.ProductWorkflow.ImportProductsDTO =
-  schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {
-  toCreate: 0,
-  toUpdate: 0,
-} as WorkflowTypes.ProductWorkflow.ImportProductsSummary
-
-console.log(existingInput, existingOutput, schemaOutput)
+} from "../utils/schemas"
 
 export const importProductsWorkflowId = "import-products"
 /**
@@ -113,9 +99,7 @@ export const importProductsWorkflow = createWorkflow(
     inputSchema: importProductsDTOSchema,
     outputSchema: importProductsSummarySchema,
   },
-  (
-    input
-  ): WorkflowResponse<WorkflowTypes.ProductWorkflow.ImportProductsSummary> => {
+  (input) => {
     const batchRequest = normalizeCsvStep(input.fileContent)
 
     const summary = transform({ batchRequest }, (data) => {

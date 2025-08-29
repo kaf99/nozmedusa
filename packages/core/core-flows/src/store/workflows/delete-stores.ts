@@ -8,7 +8,8 @@ import {
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
-export type { DeleteStoresWorkflowInput, DeleteStoresWorkflowOutput } from "../utils/schemas"
+export type { DeleteStoresWorkflowInput, DeleteStoresWorkflowOutput 
+} from "../utils/schemas"
 
 export const deleteStoresWorkflowId = "delete-stores"
 /**

@@ -1,28 +1,16 @@
-import { CreateLocationFulfillmentSetWorkflowInputDTO } from "@medusajs/framework/types"
 import { createWorkflow, transform } from "@medusajs/framework/workflows-sdk"
 import { createFulfillmentSets } from "../../fulfillment"
 import { associateFulfillmentSetsWithLocationStep } from "../steps/associate-locations-with-fulfillment-sets"
 import {
   createLocationFulfillmentSetWorkflowInputSchema,
   createLocationFulfillmentSetWorkflowOutputSchema,
-  type CreateLocationFulfillmentSetWorkflowInput as SchemaInput,
 } from "../utils/schemas"
 
 export {
   type CreateLocationFulfillmentSetWorkflowInput,
   type CreateLocationFulfillmentSetWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateLocationFulfillmentSetWorkflowInputDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: void = undefined as unknown as void
-
-console.log(existingInput, existingOutput)
 
 export const createLocationFulfillmentSetWorkflowId =
   "create-location-fulfillment-set"

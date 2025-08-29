@@ -10,41 +10,24 @@ import { createProductTypesStep } from "../steps"
 import {
   createProductTypesWorkflowInputSchema,
   createProductTypesWorkflowOutputSchema,
-  type CreateProductTypesWorkflowInput as SchemaInput,
-  type CreateProductTypesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type CreateProductTypesWorkflowInput,
   type CreateProductTypesWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: SchemaInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as SchemaOutput
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility  
-export type { CreateProductTypesWorkflowInput as LegacyCreateProductTypesWorkflowInput } from "../utils/schemas"
-export type { CreateProductTypesWorkflowOutput as LegacyCreateProductTypesWorkflowOutput } from "../utils/schemas"
 
 export const createProductTypesWorkflowId = "create-product-types"
 /**
- * This workflow creates one or more product types. It's used by the 
+ * This workflow creates one or more product types. It's used by the
  * [Create Product Type Admin API Route](https://docs.medusajs.com/api/admin#product-types_postproducttypes).
- * 
- * This workflow has a hook that allows you to perform custom actions on the created product types. For example, you can pass under `additional_data` custom data that 
+ *
+ * This workflow has a hook that allows you to perform custom actions on the created product types. For example, you can pass under `additional_data` custom data that
  * allows you to create custom data models linked to the product types.
- * 
+ *
  * You can also use this workflow within your own custom workflows, allowing you to wrap custom logic around product-type creation.
- * 
+ *
  * @example
  * const { result } = await createProductTypesWorkflow(container)
  * .run({
@@ -59,11 +42,11 @@ export const createProductTypesWorkflowId = "create-product-types"
  *     }
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Create one or more product types.
- * 
+ *
  * @property hooks.productTypesCreated - This hook is executed after the product types are created. You can consume this hook to perform custom actions on the created product types.
  */
 export const createProductTypesWorkflow = createWorkflow(

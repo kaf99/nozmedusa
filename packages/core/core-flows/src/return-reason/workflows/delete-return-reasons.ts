@@ -5,32 +5,13 @@ import { deleteReturnReasonStep } from "../steps"
 import {
   deleteReturnReasonsWorkflowInputSchema,
   deleteReturnReasonsWorkflowOutputSchema,
-  type DeleteReturnReasonsWorkflowInput as SchemaInput,
-  type DeleteReturnReasonsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type DeleteReturnReasonsWorkflowInput,
   type DeleteReturnReasonsWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  ids: string[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility
-export type { DeleteReturnReasonsWorkflowInput as LegacyDeleteReturnReasonsWorkflowInput } from "../utils/schemas"
-export type { DeleteReturnReasonsWorkflowOutput as LegacyDeleteReturnReasonsWorkflowOutput } from "../utils/schemas"
 
 export const deleteReturnReasonsWorkflowId = "delete-return-reasons"
 /**

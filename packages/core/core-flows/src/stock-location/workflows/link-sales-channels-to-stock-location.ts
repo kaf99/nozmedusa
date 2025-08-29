@@ -1,4 +1,3 @@
-import { LinkWorkflowInput } from "@medusajs/framework/types"
 import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { transform } from "@medusajs/framework/workflows-sdk"
 import {
@@ -8,35 +7,24 @@ import {
 import {
   linkSalesChannelsToStockLocationWorkflowInputSchema,
   linkSalesChannelsToStockLocationWorkflowOutputSchema,
-  type LinkSalesChannelsToStockLocationWorkflowInput as SchemaInput,
 } from "../utils/schemas"
 
 export {
   type LinkSalesChannelsToStockLocationWorkflowInput,
   type LinkSalesChannelsToStockLocationWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: LinkWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: void = undefined as unknown as void
-
-console.log(existingInput, existingOutput)
 
 export const linkSalesChannelsToStockLocationWorkflowId =
   "link-sales-channels-to-stock-location"
 /**
  * This workflow manages the sales channels of a stock location. It's used by the
  * [Manage Sales Channels Admin API Route](https://docs.medusajs.com/api/admin#stock-locations_poststocklocationsidsaleschannels).
- * 
+ *
  * You can use this workflow within your own customizations or custom workflows, allowing you
  * to manage the sales channels of a stock location in your custom flows.
- * 
- * @example 
+ *
+ * @example
  * const { result } = await linkSalesChannelsToStockLocationWorkflow(container)
  * .run({
  *   input: {
@@ -45,9 +33,9 @@ export const linkSalesChannelsToStockLocationWorkflowId =
  *     remove: ["sc_321"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Manage the sales channels of a stock location.
  */
 export const linkSalesChannelsToStockLocationWorkflow = createWorkflow(

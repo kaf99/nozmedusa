@@ -15,32 +15,13 @@ import { deleteShippingOptionTypesStep } from "../steps"
 import {
   deleteShippingOptionTypesWorkflowInputSchema,
   deleteShippingOptionTypesWorkflowOutputSchema,
-  type DeleteShippingOptionTypesWorkflowInput as SchemaInput,
-  type DeleteShippingOptionTypesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export {
   type DeleteShippingOptionTypesWorkflowInput,
   type DeleteShippingOptionTypesWorkflowOutput,
+
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  ids: string[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-// Legacy types for backward compatibility
-export type { DeleteShippingOptionTypesWorkflowInput as LegacyDeleteShippingOptionTypesWorkflowInput } from "../utils/schemas"
-export type { DeleteShippingOptionTypesWorkflowOutput as LegacyDeleteShippingOptionTypesWorkflowOutput } from "../utils/schemas"
 
 export const deleteShippingOptionTypesWorkflowId =
   "delete-shipping-option-types"
