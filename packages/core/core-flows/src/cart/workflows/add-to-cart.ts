@@ -1,6 +1,4 @@
 import {
-  AdditionalData,
-  AddToCartWorkflowInputDTO,
   ConfirmVariantInventoryWorkflowInputDTO,
 } from "@medusajs/framework/types"
 import {
@@ -40,8 +38,6 @@ import {
   pricingContextResult,
   addToCartWorkflowInputSchema,
   addToCartWorkflowOutputSchema,
-  type AddToCartWorkflowInput,
-  type AddToCartWorkflowOutput,
 } from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
@@ -51,13 +47,6 @@ export type {
   AddToCartWorkflowInput,
   AddToCartWorkflowOutput 
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as AddToCartWorkflowInput
-const schemaOutput = undefined as AddToCartWorkflowOutput
-const existingInput: AddToCartWorkflowInputDTO & AdditionalData = schemaInput
-const existingOutput: void = schemaOutput!
-console.log(existingInput, existingOutput)
 
 const cartFields = ["completed_at"].concat(cartFieldsForPricingContext)
 

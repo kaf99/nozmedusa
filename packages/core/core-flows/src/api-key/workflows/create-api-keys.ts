@@ -1,4 +1,3 @@
-import { ApiKeyDTO, CreateApiKeyDTO } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -9,32 +8,10 @@ import { createApiKeysStep } from "../steps"
 import {
   createApiKeysWorkflowInputSchema,
   createApiKeysWorkflowOutputSchema,
-  type CreateApiKeysWorkflowInput as SchemaInput,
-  type CreateApiKeysWorkflowOutput as SchemaOutput,
+  type CreateApiKeysWorkflowInput,
 } from "../utils/schemas"
 
-/**
- * The data to create API keys.
- */
-export type CreateApiKeysWorkflowInput = {
-  /**
-   * The API keys to create.
-   */
-  api_keys: CreateApiKeyDTO[]
-}
-
-/**
- * The created API keys.
- */
-export type CreateApiKeysWorkflowOutput = ApiKeyDTO[]
-
-// Type verification to ensure schemas match existing types
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: CreateApiKeysWorkflowInput = schemaInput
-const existingOutput: CreateApiKeysWorkflowOutput = schemaOutput
-// To avoid declared but never used errors
-console.log(existingInput, existingOutput)
+export type { CreateApiKeysWorkflowInput, CreateApiKeysWorkflowOutput } from "../utils/schemas"
 
 export const createApiKeysWorkflowId = "create-api-keys"
 /**

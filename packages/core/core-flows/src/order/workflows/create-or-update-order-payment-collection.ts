@@ -13,13 +13,16 @@ import {
 import {
   createOrUpdateOrderPaymentCollectionWorkflowInputSchema,
   createOrUpdateOrderPaymentCollectionWorkflowOutputSchema,
-  type CreateOrUpdateOrderPaymentCollectionWorkflowInput as SchemaInput,
-  type CreateOrUpdateOrderPaymentCollectionWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { updatePaymentCollectionStep } from "../../payment-collection"
 import { createOrderPaymentCollectionWorkflow } from "./create-order-payment-collection"
 import { cancelPaymentCollectionWorkflow } from "../../payment-collection/workflows/cancel-payment-collection"
+
+export type {
+  CreateOrUpdateOrderPaymentCollectionWorkflowInput,
+  CreateOrUpdateOrderPaymentCollectionWorkflowOutput,
+} from "../utils/schemas"
 
 /**
  * The details of the order payment collection to create or update.
@@ -60,17 +63,6 @@ export const createOrUpdateOrderPaymentCollectionWorkflowId =
  *
  * Create or update payment collection for an order.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = [] as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateOrUpdateOrderPaymentCollectionInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = [] as PaymentCollectionDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createOrUpdateOrderPaymentCollectionWorkflow = createWorkflow(
   {

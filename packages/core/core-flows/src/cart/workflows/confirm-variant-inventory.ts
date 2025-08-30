@@ -1,4 +1,3 @@
-import { ConfirmVariantInventoryWorkflowInputDTO } from "@medusajs/framework/types"
 import {
   WorkflowData,
   WorkflowResponse,
@@ -11,12 +10,7 @@ import { prepareConfirmInventoryInput } from "../utils/prepare-confirm-inventory
 import {
   confirmVariantInventoryWorkflowInputSchema,
   confirmVariantInventoryWorkflowOutputSchema,
-  type ConfirmVariantInventoryWorkflowInput as SchemaInput,
-  type ConfirmVariantInventoryWorkflowOutput as SchemaOutput,
-} from "../utils/confirm-variant-inventory-schemas"
-export {
   type ConfirmVariantInventoryWorkflowInput,
-  type ConfirmVariantInventoryWorkflowOutput,
 } from "../utils/confirm-variant-inventory-schemas"
 
 /**
@@ -55,20 +49,6 @@ export interface OldConfirmVariantInventoryWorkflowOutput {
   }[]
 }
 
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: ConfirmVariantInventoryWorkflowInputDTO = schemaInput
-const existingOutput: OldConfirmVariantInventoryWorkflowOutput = schemaOutput
-
-// check reverse too
-const oldInput = {} as ConfirmVariantInventoryWorkflowInputDTO
-const oldOutput = {} as OldConfirmVariantInventoryWorkflowOutput
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput)
-console.log(newInput, newOutput)
 
 export const confirmVariantInventoryWorkflowId = "confirm-item-inventory"
 /**
@@ -179,7 +159,7 @@ export const confirmVariantInventoryWorkflow = createWorkflow(
     inputSchema: confirmVariantInventoryWorkflowInputSchema as any,
     outputSchema: confirmVariantInventoryWorkflowOutputSchema,
   },
-  (input: WorkflowData<SchemaInput>) => {
+  (input: WorkflowData<ConfirmVariantInventoryWorkflowInput>) => {
     const confirmInventoryInput = transform(
       { input },
       prepareConfirmInventoryInput

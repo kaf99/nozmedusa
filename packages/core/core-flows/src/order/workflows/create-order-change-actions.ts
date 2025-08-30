@@ -1,7 +1,3 @@
-import {
-  CreateOrderChangeActionDTO,
-  OrderChangeActionDTO,
-} from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -11,26 +7,13 @@ import { createEntitiesStep } from "../../common/steps/create-entities"
 import {
   createOrderChangeActionsWorkflowInputSchema,
   createOrderChangeActionsWorkflowOutputSchema,
-  type CreateOrderChangeActionsWorkflowInput as SchemaInput,
-  type CreateOrderChangeActionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type CreateOrderChangeActionsWorkflowInput,
-  type CreateOrderChangeActionsWorkflowOutput,
+export type {
+  CreateOrderChangeActionsWorkflowInput,
+  CreateOrderChangeActionsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateOrderChangeActionDTO[] = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderChangeActionDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createOrderChangeActionsWorkflowId = "create-order-change-actions"
 /**

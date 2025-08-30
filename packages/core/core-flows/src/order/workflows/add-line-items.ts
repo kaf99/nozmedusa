@@ -1,8 +1,3 @@
-import {
-  AdditionalData,
-  OrderLineItemDTO,
-  OrderWorkflow,
-} from "@medusajs/framework/types"
 import { deduplicate, isDefined, MedusaError } from "@medusajs/framework/utils"
 import {
   createHook,
@@ -15,8 +10,7 @@ import {
 import {
   orderAddLineItemWorkflowInputSchema,
   orderAddLineItemWorkflowOutputSchema,
-  type OrderAddLineItemWorkflowInput as SchemaInput,
-  type OrderAddLineItemWorkflowOutput as SchemaOutput,
+  type OrderAddLineItemWorkflowOutput,
 } from "../utils/schemas"
 import { findOneOrAnyRegionStep } from "../../cart/steps/find-one-or-any-region"
 import { findOrCreateCustomerStep } from "../../cart/steps/find-or-create-customer"
@@ -33,6 +27,10 @@ import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-va
 import { useRemoteQueryStep } from "../../common"
 import { createOrderLineItemsStep } from "../steps"
 import { productVariantsFields } from "../utils/fields"
+export type {
+  OrderAddLineItemWorkflowInput,
+  OrderAddLineItemWorkflowOutput,
+} from "../utils/schemas"
 
 function prepareLineItems(data) {
   const items = (data.input.items ?? []).map((item) => {
@@ -59,19 +57,6 @@ function prepareLineItems(data) {
 
   return items
 }
-
-export {
-  type OrderAddLineItemWorkflowInput,
-  type OrderAddLineItemWorkflowOutput,
-} from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OrderWorkflow.OrderAddLineItemWorkflowInput & AdditionalData = schemaInput
-const existingOutput: OrderLineItemDTO[] = schemaOutput
-
-console.log(existingInput, existingOutput)
 
 export const addOrderLineItemsWorkflowId = "order-add-line-items"
 /**
@@ -242,7 +227,7 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     return new WorkflowResponse(
       createOrderLineItemsStep({
         items: lineItems,
-      }) satisfies SchemaOutput,
+      }) satisfies OrderAddLineItemWorkflowOutput,
       {
         hooks: [setPricingContext] as const,
       }

@@ -7,8 +7,6 @@ import {
 import {
   createOrderPaymentCollectionWorkflowInputSchema,
   createOrderPaymentCollectionWorkflowOutputSchema,
-  type CreateOrderPaymentCollectionWorkflowInput as SchemaInput,
-  type CreateOrderPaymentCollectionWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { createRemoteLinkStep, useRemoteQueryStep } from "../../common"
 import { createPaymentCollectionsStep } from "../../cart"
@@ -49,17 +47,6 @@ export const createOrderPaymentCollectionWorkflowId =
  * 
  * Create a payment collection for an order.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = [] as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateOrderPaymentCollectionWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = [] as any[] // Payment collections array
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createOrderPaymentCollectionWorkflow = createWorkflow(
   {

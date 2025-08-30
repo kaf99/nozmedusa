@@ -12,8 +12,6 @@ import {
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/types"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -28,22 +26,13 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   orderEditAddNewItemWorkflowInputSchema,
   addDraftOrderItemsWorkflowOutputSchema,
-  type OrderEditAddNewItemWorkflowInput as SchemaInput,
-  type AddDraftOrderItemsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.OrderEditAddNewItemWorkflowInput =
-  schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
+// Re-export types from schemas for backward compatibility
+export type {
+  OrderEditAddNewItemWorkflowInput,
+  AddDraftOrderItemsWorkflowOutput,
+} from "../utils/schemas"
 
 export const addDraftOrderItemsWorkflowId = "add-draft-order-items"
 

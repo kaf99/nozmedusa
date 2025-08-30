@@ -1,8 +1,4 @@
 import {
-  AdditionalData,
-  UpdateLineItemInCartWorkflowInputDTO,
-} from "@medusajs/framework/types"
-import {
   CartWorkflowEvents,
   deduplicate,
   isDefined,
@@ -30,8 +26,6 @@ import {
   pricingContextResult,
   updateLineItemInCartWorkflowInputSchema,
   updateLineItemInCartWorkflowOutputSchema,
-  type UpdateLineItemInCartWorkflowInput,
-  type UpdateLineItemInCartWorkflowOutput,
 } from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
@@ -41,13 +35,6 @@ export type {
   UpdateLineItemInCartWorkflowInput,
   UpdateLineItemInCartWorkflowOutput 
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as UpdateLineItemInCartWorkflowInput
-const schemaOutput = undefined as UpdateLineItemInCartWorkflowOutput
-const existingInput: UpdateLineItemInCartWorkflowInputDTO & AdditionalData = schemaInput
-const existingOutput: void = schemaOutput!
-console.log(existingInput, existingOutput)
 
 const cartFields = cartFieldsForPricingContext.concat(["items.*"])
 

@@ -1,4 +1,3 @@
-import { AdditionalData, OrderDTO } from "@medusajs/framework/types"
 import { OrderWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -11,37 +10,13 @@ import { completeOrdersStep } from "../steps"
 import {
   completeOrdersWorkflowInputSchema,
   completeOrdersWorkflowOutputSchema,
-  type CompleteOrdersWorkflowInput as SchemaInput,
-  type CompleteOrdersWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type CompleteOrdersWorkflowInput,
-  type CompleteOrdersWorkflowOutput,
+export type {
+  CompleteOrdersWorkflowInput,
+  CompleteOrdersWorkflowOutput,
 } from "../utils/schemas"
 
-/**
- * The orders to complete, along with custom data that's passed to the workflow's hooks.
- */
-type OldCompleteOrdersWorkflowInput = {
-  /**
-   * The IDs of the orders to complete.
-   */
-  orderIds: string[]
-} & AdditionalData
 
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCompleteOrdersWorkflowInput = schemaInput
-const existingOutput: OrderDTO[] = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCompleteOrdersWorkflowInput
-const oldOutput = {} as OrderDTO[]
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const completeOrderWorkflowId = "complete-order-workflow"
 /**

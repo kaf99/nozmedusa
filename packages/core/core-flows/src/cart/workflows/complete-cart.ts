@@ -49,8 +49,6 @@ import {
 import {
   completeCartWorkflowInputSchema,
   completeCartWorkflowOutputSchema,
-  type CompleteCartWorkflowInput,
-  type CompleteCartWorkflowOutput,
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
@@ -58,13 +56,6 @@ export type {
   CompleteCartWorkflowInput,
   CompleteCartWorkflowOutput 
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as CompleteCartWorkflowInput
-const schemaOutput = {} as CompleteCartWorkflowOutput
-const existingInput: { id: string } = schemaInput
-const existingOutput: { id: string } = schemaOutput
-console.log(existingInput, existingOutput)
 
 const THREE_DAYS = 60 * 60 * 24 * 3
 const THIRTY_SECONDS = 30

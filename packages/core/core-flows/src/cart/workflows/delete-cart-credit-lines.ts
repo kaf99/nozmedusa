@@ -7,34 +7,8 @@ import { deleteEntitiesStep } from "../../common/steps/delete-entities"
 import {
   deleteCartCreditLinesWorkflowInputSchema,
   deleteCartCreditLinesWorkflowOutputSchema,
-  type DeleteCartCreditLinesWorkflowInput as SchemaInput,
-  type DeleteCartCreditLinesWorkflowOutput as SchemaOutput,
-} from "../utils/schemas"
-export {
-  type DeleteCartCreditLinesWorkflowInput,
-  type DeleteCartCreditLinesWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification
-type OldDeleteCartCreditLinesWorkflowInput = {
-  /**
-   * The IDs of the credit lines to delete.
-   */ 
-  id: string[]
-}
-
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-const existingInput: OldDeleteCartCreditLinesWorkflowInput = schemaInput
-const existingOutput: void = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldDeleteCartCreditLinesWorkflowInput
-const oldOutput = undefined as void
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const deleteCartCreditLinesWorkflowId = "delete-cart-credit-lines"
 /**

@@ -1,7 +1,6 @@
 import {
   CreateOrderCreditLineDTO,
   OrderDTO,
-  OrderCreditLineDTO,
 } from "@medusajs/framework/types"
 import {
   ChangeActionType,
@@ -24,8 +23,6 @@ import { createOrderChangeActionsWorkflow } from "./create-order-change-actions"
 import {
   createOrderCreditLinesWorkflowInputSchema,
   createOrderCreditLinesWorkflowOutputSchema,
-  type CreateOrderCreditLinesWorkflowInput as SchemaInput,
-  type CreateOrderCreditLinesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 export {
   type CreateOrderCreditLinesWorkflowInput,
@@ -92,24 +89,6 @@ export const validateOrderCreditLinesStep = createStep(
   }
 )
 
-// Type verification
-type OldInput = {
-  id: string
-  credit_lines: Omit<CreateOrderCreditLineDTO, "order_id">[]
-}
-
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldInput = schemaInput
-const existingOutput: OrderCreditLineDTO[] = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldInput
-const oldOutput = {} as OrderCreditLineDTO[]
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createOrderCreditLinesWorkflowId = "create-order-credit-lines"
 export const createOrderCreditLinesWorkflow = createWorkflow(

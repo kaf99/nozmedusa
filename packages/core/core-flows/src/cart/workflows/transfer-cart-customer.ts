@@ -12,41 +12,13 @@ import { CartWorkflowEvents } from "@medusajs/framework/utils"
 import {
   transferCartCustomerWorkflowInputSchema,
   transferCartCustomerWorkflowOutputSchema,
-  type TransferCartCustomerWorkflowInput as SchemaInput,
-  type TransferCartCustomerWorkflowOutput as SchemaOutput,
-} from "../utils/schemas"
-export {
-  type TransferCartCustomerWorkflowInput,
-  type TransferCartCustomerWorkflowOutput,
 } from "../utils/schemas"
 
-/**
- * The cart ownership transfer details.
- */
-type OldTransferCartCustomerWorkflowInput = {
-  /**
-   * The cart's ID.
-   */
-  id: string
-  /**
-   * The ID of the customer to transfer the cart to.
-   */
-  customer_id: string
-}
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-const existingInput: OldTransferCartCustomerWorkflowInput = schemaInput
-const existingOutput: void = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldTransferCartCustomerWorkflowInput
-const oldOutput = undefined as void
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
+// Re-export types from schemas for backward compatibility
+export type {
+  TransferCartCustomerWorkflowInput,
+  TransferCartCustomerWorkflowOutput,
+} from "../utils/schemas"
 
 export const transferCartCustomerWorkflowId = "transfer-cart-customer"
 /**

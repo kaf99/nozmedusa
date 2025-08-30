@@ -31,12 +31,10 @@ import { refundCapturedPaymentsWorkflow } from "./payments/refund-captured-payme
 import {
   cancelOrderWorkflowInputSchema,
   cancelOrderWorkflowOutputSchema,
-  type CancelOrderWorkflowInput as SchemaInput,
-  type CancelOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type CancelOrderWorkflowInput,
-  type CancelOrderWorkflowOutput,
+export type {
+  CancelOrderWorkflowInput,
+  CancelOrderWorkflowOutput,
 } from "../utils/schemas"
 
 /**
@@ -106,21 +104,6 @@ export const cancelValidateOrder = createStep(
   }
 )
 
-// Type verification
-type OldCancelOrderWorkflowInput = OrderWorkflow.CancelOrderWorkflowInput
-
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-const existingInput: OldCancelOrderWorkflowInput = schemaInput
-const existingOutput: void = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCancelOrderWorkflowInput
-const oldOutput = undefined as void
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const cancelOrderWorkflowId = "cancel-order"
 /**

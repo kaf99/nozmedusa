@@ -1,4 +1,3 @@
-import { OrderDTO } from "@medusajs/framework/types"
 import { OrderWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -10,42 +9,12 @@ import { archiveOrdersStep } from "../steps"
 import {
   archiveOrdersWorkflowInputSchema,
   archiveOrdersWorkflowOutputSchema,
-  type ArchiveOrdersWorkflowInput as SchemaInput,
-  type ArchiveOrdersWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type ArchiveOrdersWorkflowInput,
-  type ArchiveOrdersWorkflowOutput,
+export type {
+  ArchiveOrdersWorkflowInput,
+  ArchiveOrdersWorkflowOutput,
 } from "../utils/schemas"
 
-/**
- * The details of the orders to archive.
- */
-type OldArchiveOrdersWorkflowInput = {
-  /**
-   * The IDs of the orders to archive.
-   */
-  orderIds: string[]
-}
-
-/**
- * The archived orders.
- */
-type OldArchiveOrdersWorkflowOutput = OrderDTO[]
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldArchiveOrdersWorkflowInput = schemaInput
-const existingOutput: OldArchiveOrdersWorkflowOutput = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldArchiveOrdersWorkflowInput
-const oldOutput = {} as OldArchiveOrdersWorkflowOutput
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const archiveOrderWorkflowId = "archive-order-workflow"
 /**

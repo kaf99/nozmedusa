@@ -1,9 +1,4 @@
 import {
-  AdditionalData,
-  CreateCustomerAddressDTO,
-  CustomerAddressDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -18,28 +13,13 @@ import {
 import {
   createCustomerAddressesWorkflowInputSchema,
   createCustomerAddressesWorkflowOutputSchema,
-  type CreateCustomerAddressesWorkflowInput as SchemaInput,
-  type CreateCustomerAddressesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type CreateCustomerAddressesWorkflowInput,
-  type CreateCustomerAddressesWorkflowOutput,
+// Re-export types from schemas for backward compatibility
+export type {
+  CreateCustomerAddressesWorkflowInput,
+  CreateCustomerAddressesWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  addresses: CreateCustomerAddressDTO[]
-} & AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as CustomerAddressDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createCustomerAddressesWorkflowId = "create-customer-addresses"
 /**
