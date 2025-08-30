@@ -1,4 +1,3 @@
-import { AdditionalData, CreateOrderDTO, OrderDTO } from "@medusajs/framework/types"
 import {
   MedusaError,
   deduplicate,
@@ -32,12 +31,10 @@ import { updateOrderTaxLinesWorkflow } from "./update-tax-lines"
 import {
   createOrderWorkflowInputSchema,
   createOrderWorkflowOutputSchema,
-  type CreateOrderWorkflowInput as SchemaInput,
-  type CreateOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type CreateOrderWorkflowInput,
-  type CreateOrderWorkflowOutput,
+export type {
+  CreateOrderWorkflowInput,
+  CreateOrderWorkflowOutput,
 } from "../utils/schemas"
 
 function prepareLineItems(data) {
@@ -93,24 +90,6 @@ function getOrderInput(data) {
   return data_
 }
 
-/**
- * The data to create an order, along with custom data that's passed to the workflow's hooks.
- */
-type OldCreateOrderWorkflowInput = CreateOrderDTO & AdditionalData
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCreateOrderWorkflowInput = schemaInput
-const existingOutput: OrderDTO = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCreateOrderWorkflowInput
-const oldOutput = {} as OrderDTO
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createOrdersWorkflowId = "create-orders"
 /**

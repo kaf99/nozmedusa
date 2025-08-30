@@ -1,12 +1,15 @@
-import { createWorkflow, WorkflowData } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteFulfillmentSetsStep } from "../steps"
 import { removeRemoteLinkStep } from "../../common"
 import { Modules } from "@medusajs/framework/utils"
 import {
   deleteFulfillmentSetsWorkflowInputSchema,
   deleteFulfillmentSetsWorkflowOutputSchema,
-  type DeleteFulfillmentSetsWorkflowInput,
-  type DeleteFulfillmentSetsWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  DeleteFulfillmentSetsWorkflowInput,
+  DeleteFulfillmentSetsWorkflowOutput,
 } from "../utils/schemas"
 
 export const deleteFulfillmentSetsWorkflowId =
@@ -37,7 +40,7 @@ export const deleteFulfillmentSetsWorkflow = createWorkflow(
     inputSchema: deleteFulfillmentSetsWorkflowInputSchema,
     outputSchema: deleteFulfillmentSetsWorkflowOutputSchema,
   },
-  (input: WorkflowData<DeleteFulfillmentSetsWorkflowInput>): WorkflowData<DeleteFulfillmentSetsWorkflowOutput> => {
+  (input) => {
     deleteFulfillmentSetsStep(input.ids)
 
     removeRemoteLinkStep({

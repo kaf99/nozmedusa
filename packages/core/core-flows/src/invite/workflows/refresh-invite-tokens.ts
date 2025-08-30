@@ -1,4 +1,3 @@
-import { InviteDTO, InviteWorkflow } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -11,26 +10,12 @@ import { refreshInviteTokensStep } from "../steps/refresh-invite-tokens"
 import {
   refreshInviteTokensWorkflowInputSchema,
   refreshInviteTokensWorkflowOutputSchema,
-  type RefreshInviteTokensWorkflowInput as SchemaInput,
-  type RefreshInviteTokensWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type RefreshInviteTokensWorkflowInput,
-  type RefreshInviteTokensWorkflowOutput,
+export type {
+  RefreshInviteTokensWorkflowInput,
+  RefreshInviteTokensWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: InviteWorkflow.ResendInvitesWorkflowInputDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as InviteDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const refreshInviteTokensWorkflowId = "refresh-invite-tokens-workflow"
 /**

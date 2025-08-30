@@ -1,8 +1,4 @@
 import {
-  AdditionalData,
-  UpdateCartWorkflowInputDTO,
-} from "@medusajs/framework/types"
-import {
   CartWorkflowEvents,
   isDefined,
   MedusaError,
@@ -31,8 +27,6 @@ import { refreshCartItemsWorkflow } from "./refresh-cart-items"
 import {
   updateCartWorkflowInputSchema,
   updateCartWorkflowOutputSchema,
-  type UpdateCartWorkflowInput as SchemaInput,
-  type UpdateCartWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
@@ -40,11 +34,6 @@ export type {
   UpdateCartWorkflowInput,
   UpdateCartWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification
-const _in: SchemaInput = {} as UpdateCartWorkflowInputDTO & AdditionalData
-const _out: void = undefined as SchemaOutput
-void _in, _out
 
 export const updateCartWorkflowId = "update-cart"
 /**

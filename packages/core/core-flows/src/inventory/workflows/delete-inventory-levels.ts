@@ -6,7 +6,6 @@ import {
 } from "@medusajs/framework/workflows-sdk"
 
 import {
-  FilterableInventoryLevelProps,
   InventoryLevelDTO,
 } from "@medusajs/framework/types"
 import { deduplicate, MedusaError, Modules } from "@medusajs/framework/utils"
@@ -15,12 +14,11 @@ import { deleteEntitiesStep } from "../../common/steps/delete-entities"
 import {
   deleteInventoryLevelsWorkflowInputSchema,
   deleteInventoryLevelsWorkflowOutputSchema,
-  type DeleteInventoryLevelsWorkflowInput as SchemaInput,
-  type DeleteInventoryLevelsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type DeleteInventoryLevelsWorkflowInput,
-  type DeleteInventoryLevelsWorkflowOutput,
+
+export type {
+  DeleteInventoryLevelsWorkflowInput,
+  DeleteInventoryLevelsWorkflowOutput,
 } from "../utils/schemas"
 
 /**
@@ -99,32 +97,6 @@ export const validateInventoryLevelsDelete = createStep(
     }
   }
 )
-
-/**
- * The data to delete inventory levels. The inventory levels to be deleted
- * are selected based on the filters that you specify.
- */
-interface OldDeleteInventoryLevelsWorkflowInput
-  extends FilterableInventoryLevelProps {
-  /**
-   * If true, the inventory levels will be deleted even if they have stocked items.
-   */
-  force?: boolean
-}
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-const existingInput: OldDeleteInventoryLevelsWorkflowInput = schemaInput
-const existingOutput: void = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldDeleteInventoryLevelsWorkflowInput
-const oldOutput = undefined as void
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const deleteInventoryLevelsWorkflowId =
   "delete-inventory-levels-workflow"

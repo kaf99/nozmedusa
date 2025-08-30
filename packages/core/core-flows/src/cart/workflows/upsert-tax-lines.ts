@@ -8,7 +8,6 @@ import {
   upsertTaxLinesWorkflowInputSchema,
   upsertTaxLinesWorkflowOutputSchema,
 } from "../utils/schemas"
-import { type UpsertTaxLinesWorkflowInput as SchemaInput } from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { getItemTaxLinesStep } from "../../tax/steps/get-item-tax-lines"
 import { upsertTaxLinesForItemsStep } from "../steps/upsert-tax-lines-for-items"
@@ -174,10 +173,6 @@ export type UpsertTaxLinesWorkflowInput = {
    */
   force_tax_calculation?: boolean
 }
-
-const exampleInput = {} as UpsertTaxLinesWorkflowInput
-const newInput: SchemaInput = exampleInput
-console.log(newInput)
 
 export const upsertTaxLinesWorkflowId = "upsert-tax-lines"
 /**

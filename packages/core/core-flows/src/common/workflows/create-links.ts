@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -7,8 +6,11 @@ import { createRemoteLinkStep } from "../steps/create-remote-links"
 import {
   createLinksWorkflowInputSchema,
   createLinksWorkflowOutputSchema,
-  type CreateLinksWorkflowInput,
-  type CreateLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
+
+export type {
+  CreateLinksWorkflowInput,
+  CreateLinksWorkflowOutput,
 } from "../utils/batch-links-schemas"
 
 export const createLinksWorkflowId = "create-link"
@@ -47,7 +49,7 @@ export const createLinksWorkflow = createWorkflow(
     inputSchema: createLinksWorkflowInputSchema,
     outputSchema: createLinksWorkflowOutputSchema,
   },
-  (input: WorkflowData<CreateLinksWorkflowInput>): WorkflowResponse<CreateLinksWorkflowOutput> => {
+  (input) => {
     return new WorkflowResponse(createRemoteLinkStep(input))
   }
 )

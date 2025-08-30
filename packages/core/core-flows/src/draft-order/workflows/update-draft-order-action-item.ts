@@ -3,14 +3,13 @@ import {
   createWorkflow,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   previewOrderChangeStep,
@@ -24,12 +23,12 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   updateOrderEditAddNewItemWorkflowInputSchema,
   updateOrderEditAddNewItemWorkflowOutputSchema,
-  type UpdateOrderEditAddNewItemWorkflowInput,
-  type UpdateOrderEditAddNewItemWorkflowOutput,
 } from "../utils/schemas"
 
-updateOrderEditAddNewItemWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-updateOrderEditAddNewItemWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
+export type {
+  UpdateOrderEditAddNewItemWorkflowInput,
+  UpdateOrderEditAddNewItemWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateDraftOrderActionItemId = "update-draft-order-action-item"
 
@@ -63,9 +62,7 @@ export const updateDraftOrderActionItemWorkflow = createWorkflow(
     outputSchema: updateOrderEditAddNewItemWorkflowOutputSchema,
     description: "Update a new item in a draft order edit",
   },
-  function (
-    input: WorkflowData<UpdateOrderEditAddNewItemWorkflowInput>
-  ): WorkflowResponse<UpdateOrderEditAddNewItemWorkflowOutput> {
+  function (input) {
     const order: OrderDTO & {
       promotions: {
         code: string

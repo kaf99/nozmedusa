@@ -2,7 +2,6 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
@@ -13,8 +12,11 @@ import { updateShippingOptionRulesStep } from "../steps/update-shipping-option-r
 import {
   batchShippingOptionRulesWorkflowInputSchema,
   batchShippingOptionRulesWorkflowOutputSchema,
-  type BatchShippingOptionRulesWorkflowInput,
-  type BatchShippingOptionRulesWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  BatchShippingOptionRulesWorkflowInput,
+  BatchShippingOptionRulesWorkflowOutput,
 } from "../utils/schemas"
 
 export const batchShippingOptionRulesWorkflowId = "batch-shipping-option-rules"
@@ -58,9 +60,7 @@ export const batchShippingOptionRulesWorkflow = createWorkflow(
     inputSchema: batchShippingOptionRulesWorkflowInputSchema,
     outputSchema: batchShippingOptionRulesWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<BatchShippingOptionRulesWorkflowInput>
-  ): WorkflowResponse<BatchShippingOptionRulesWorkflowOutput> => {
+  (input) => {
     const actionInputs = transform({ input }, (data) => {
       const { create, update, delete: del } = data.input
       return {

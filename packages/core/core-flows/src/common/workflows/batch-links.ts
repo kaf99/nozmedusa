@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   parallelize,
@@ -10,8 +9,11 @@ import { updateRemoteLinksStep } from "../steps/update-remote-links"
 import {
   batchLinksWorkflowInputSchema,
   batchLinksWorkflowOutputSchema,
-  type BatchLinksWorkflowInput,
-  type BatchLinksWorkflowOutput,
+} from "../utils/batch-links-schemas"
+
+export type {
+  BatchLinksWorkflowInput,
+  BatchLinksWorkflowOutput,
 } from "../utils/batch-links-schemas"
 
 export const batchLinksWorkflowId = "batch-links"
@@ -76,9 +78,7 @@ export const batchLinksWorkflow = createWorkflow(
     inputSchema: batchLinksWorkflowInputSchema,
     outputSchema: batchLinksWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<BatchLinksWorkflowInput>
-  ): WorkflowResponse<BatchLinksWorkflowOutput> => {
+  (input) => {
     const [created, updated, deleted] = parallelize(
       createRemoteLinkStep(input.create || []),
       updateRemoteLinksStep(input.update || []),

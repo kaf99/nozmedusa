@@ -1,4 +1,3 @@
-import { InventoryLevelDTO, InventoryTypes } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -8,42 +7,12 @@ import { updateInventoryLevelsStep } from "../steps/update-inventory-levels"
 import {
   updateInventoryLevelsWorkflowInputSchema,
   updateInventoryLevelsWorkflowOutputSchema,
-  type UpdateInventoryLevelsWorkflowInput as SchemaInput,
-  type UpdateInventoryLevelsWorkflowOutput as SchemaOutput,
-} from "../utils/schemas"
-export {
-  type UpdateInventoryLevelsWorkflowInput,
-  type UpdateInventoryLevelsWorkflowOutput,
 } from "../utils/schemas"
 
-/**
- * The data to update the inventory levels.
- */
-interface OldUpdateInventoryLevelsWorkflowInput {
-  /**
-   * The inventory levels to update.
-   */
-  updates: InventoryTypes.UpdateInventoryLevelInput[]
-}
-
-/**
- * The updated inventory levels.
- */
-type OldUpdateInventoryLevelsWorkflowOutput = InventoryLevelDTO[]
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldUpdateInventoryLevelsWorkflowInput = schemaInput
-const existingOutput: OldUpdateInventoryLevelsWorkflowOutput = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldUpdateInventoryLevelsWorkflowInput
-const oldOutput = {} as OldUpdateInventoryLevelsWorkflowOutput
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
+export type {
+  UpdateInventoryLevelsWorkflowInput,
+  UpdateInventoryLevelsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateInventoryLevelsWorkflowId =
   "update-inventory-levels-workflow"

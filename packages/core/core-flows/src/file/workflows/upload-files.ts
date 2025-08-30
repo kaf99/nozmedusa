@@ -1,4 +1,3 @@
-import { FileDTO } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -7,33 +6,12 @@ import { uploadFilesStep } from "../steps"
 import {
   uploadFilesWorkflowInputSchema,
   uploadFilesWorkflowOutputSchema,
-  type UploadFilesWorkflowInput as SchemaInput,
-  type UploadFilesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type UploadFilesWorkflowInput,
-  type UploadFilesWorkflowOutput,
+export type {
+  UploadFilesWorkflowInput,
+  UploadFilesWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  files: {
-    filename: string
-    mimeType: string
-    content: string
-    access: "public" | "private"
-  }[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as FileDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const uploadFilesWorkflowId = "upload-files"
 /**

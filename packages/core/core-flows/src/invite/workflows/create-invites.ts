@@ -1,4 +1,3 @@
-import { InviteDTO, InviteWorkflow } from "@medusajs/framework/types"
 import { InviteWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -10,26 +9,12 @@ import { createInviteStep } from "../steps"
 import {
   createInvitesWorkflowInputSchema,
   createInvitesWorkflowOutputSchema,
-  type CreateInvitesWorkflowInput as SchemaInput,
-  type CreateInvitesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type CreateInvitesWorkflowInput,
-  type CreateInvitesWorkflowOutput,
+export type {
+  CreateInvitesWorkflowInput,
+  CreateInvitesWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: InviteWorkflow.CreateInvitesWorkflowInputDTO = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as InviteDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 export const createInvitesWorkflowId = "create-invite-step"
 /**
  * This workflow creates one or more user invites. It's used by the

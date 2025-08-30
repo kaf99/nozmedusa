@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -8,7 +7,6 @@ import { createApiKeysStep } from "../steps"
 import {
   createApiKeysWorkflowInputSchema,
   createApiKeysWorkflowOutputSchema,
-  type CreateApiKeysWorkflowInput,
 } from "../utils/schemas"
 
 export type { CreateApiKeysWorkflowInput, CreateApiKeysWorkflowOutput } from "../utils/schemas"
@@ -46,7 +44,7 @@ export const createApiKeysWorkflow = createWorkflow(
     inputSchema: createApiKeysWorkflowInputSchema,
     outputSchema: createApiKeysWorkflowOutputSchema,
   },
-  (input: WorkflowData<CreateApiKeysWorkflowInput>) => {
+  (input) => {
     const apiKeys = createApiKeysStep(input)
 
     const apiKeysCreated = createHook("apiKeysCreated", {

@@ -1,21 +1,14 @@
-import { LinkWorkflowInput } from "@medusajs/framework/types"
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { linkCustomersToCustomerGroupStep } from "../steps"
 import {
   linkCustomersCustomerGroupWorkflowInputSchema,
   linkCustomersCustomerGroupWorkflowOutputSchema,
 } from "../utils/schemas"
 
-/**
- * The data to manage the customers of a group.
- * 
- * @property id - The ID of the customer group to manage its customers.
- * @property add - The IDs of the customers to add to the customer group.
- * @property remove - The IDs of the customers to remove from the customer group.
- */
-export type LinkCustomersToCustomerGroupWorkflow = LinkWorkflowInput
-
-export type LinkCustomersToCustomerGroupWorkflowOutput = void
+export type {
+  LinkCustomersCustomerGroupWorkflowInput as LinkCustomersToCustomerGroupWorkflow,
+  LinkCustomersCustomerGroupWorkflowOutput as LinkCustomersToCustomerGroupWorkflowOutput,
+} from "../utils/schemas"
 
 export const linkCustomersToCustomerGroupWorkflowId =
   "link-customers-to-customer-group"
@@ -47,7 +40,7 @@ export const linkCustomersToCustomerGroupWorkflow = createWorkflow(
     inputSchema: linkCustomersCustomerGroupWorkflowInputSchema,
     outputSchema: linkCustomersCustomerGroupWorkflowOutputSchema,
   },
-  (input: WorkflowData<LinkCustomersToCustomerGroupWorkflow>): WorkflowData<void> => {
+  (input) => {
     return linkCustomersToCustomerGroupStep(input)
   }
 )

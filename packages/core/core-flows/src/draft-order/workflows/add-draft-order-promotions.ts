@@ -8,7 +8,7 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO, PromotionDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO, PromotionDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -21,33 +21,14 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   addDraftOrderPromotionWorkflowInputSchema,
   addDraftOrderPromotionWorkflowOutputSchema,
-  type AddDraftOrderPromotionWorkflowInput as SchemaInput,
-  type AddDraftOrderPromotionWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-import { OrderPreviewDTO } from "@medusajs/types"
+
+export type {
+  AddDraftOrderPromotionWorkflowInput,
+  AddDraftOrderPromotionWorkflowOutput,
+} from "../utils/schemas"
 
 export const addDraftOrderPromotionWorkflowId = "add-draft-order-promotion"
-
-/**
- * The details of the promotions to add to a draft order.
- */
-export interface AddDraftOrderPromotionWorkflowInput {
-  /**
-   * The ID of the draft order to add the promotions to.
-   */
-  order_id: string
-  /**
-   * The codes of the promotions to add to the draft order.
-   */
-  promo_codes: string[]
-}
-
-// Type verification
-const _in: SchemaInput = {} as AddDraftOrderPromotionWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 /**
  * This workflow adds promotions to a draft order. It's used by the

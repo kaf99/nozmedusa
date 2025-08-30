@@ -1,10 +1,4 @@
 import {
-  FilterableCustomerAddressProps,
-  UpdateCustomerAddressDTO,
-  AdditionalData,
-  CustomerAddressDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createHook,
   createWorkflow,
@@ -19,32 +13,12 @@ import {
 import {
   updateAddressesWorkflowInputSchema,
   updateAddressesWorkflowOutputSchema,
-  type UpdateAddressesWorkflowInput as SchemaInput,
-  type UpdateAddressesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to update one or more customer addresses, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateCustomerAddressesWorkflowInput = {
-  /**
-   * The filters to select the addresses to update.
-   */
-  selector: FilterableCustomerAddressProps
-  /**
-   * The data to update in the addresses.
-   */
-  update: UpdateCustomerAddressDTO
-} & AdditionalData
-
-export type UpdateCustomerAddressesWorkflowOutput = CustomerAddressDTO[]
-
-// Type verification
-const _in: SchemaInput = {} as UpdateCustomerAddressesWorkflowInput
-const _inRev: UpdateCustomerAddressesWorkflowInput = {} as SchemaInput
-const _out: SchemaOutput = {} as UpdateCustomerAddressesWorkflowOutput
-const _outRev: SchemaOutput = {} as UpdateCustomerAddressesWorkflowOutput
-void _in, _out, _outRev, _inRev
+export type {
+  UpdateAddressesWorkflowInput as UpdateCustomerAddressesWorkflowInput,
+  UpdateAddressesWorkflowOutput as UpdateCustomerAddressesWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateCustomerAddressesWorkflowId = "update-customer-addresses"
 /**

@@ -1,45 +1,17 @@
 import {
-  CustomerGroupDTO,
-  FilterableCustomerGroupProps,
-  CustomerGroupUpdatableFields,
-} from "@medusajs/framework/types"
-import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
-// import { expectTypeOf } from "expect-type"
 import { updateCustomerGroupsStep } from "../steps"
 import {
   updateCustomerGroupsWorkflowInputSchema,
   updateCustomerGroupsWorkflowOutputSchema,
-  // type UpdateCustomerGroupsWorkflowInput as SchemaInput,
-  // type UpdateCustomerGroupsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to update customer groups.
- */
-export type UpdateCustomerGroupsWorkflowInput = {
-  /**
-   * The filter to select the customer groups to update.
-   */
-  selector: FilterableCustomerGroupProps
-  /**
-   * The data to update in the customer group.
-   */
-  update: CustomerGroupUpdatableFields
-}
-
-/**
- * The updated customer groups.
- */
-export type UpdateCustomerGroupsWorkflowOutput = CustomerGroupDTO[]
-
-// Type verification
-// TODO: Fix FilterableCustomerGroupProps type issue
-// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateCustomerGroupsWorkflowInput>()
-// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateCustomerGroupsWorkflowOutput>()
+export type {
+  UpdateCustomerGroupsWorkflowInput,
+  UpdateCustomerGroupsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateCustomerGroupsWorkflowId = "update-customer-groups"
 /**
@@ -73,9 +45,7 @@ export const updateCustomerGroupsWorkflow = createWorkflow(
     inputSchema: updateCustomerGroupsWorkflowInputSchema,
     outputSchema: updateCustomerGroupsWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<UpdateCustomerGroupsWorkflowInput>
-  ): WorkflowResponse<UpdateCustomerGroupsWorkflowOutput> => {
+  (input) => {
     return new WorkflowResponse(updateCustomerGroupsStep(input))
   }
 )

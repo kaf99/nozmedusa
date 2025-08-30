@@ -4,14 +4,13 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   previewOrderChangeStep,
@@ -27,12 +26,12 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   updateOrderEditShippingMethodWorkflowInputSchema,
   updateOrderEditShippingMethodWorkflowOutputSchema,
-  type UpdateOrderEditShippingMethodWorkflowInput,
-  type UpdateOrderEditShippingMethodWorkflowOutput,
 } from "../utils/schemas"
 
-updateOrderEditShippingMethodWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-updateOrderEditShippingMethodWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
+export type {
+  UpdateOrderEditShippingMethodWorkflowInput,
+  UpdateOrderEditShippingMethodWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateDraftOrderActionShippingMethodWorkflowId =
   "update-draft-order-action-shipping-method"
@@ -67,9 +66,7 @@ export const updateDraftOrderActionShippingMethodWorkflow = createWorkflow(
     outputSchema: updateOrderEditShippingMethodWorkflowOutputSchema,
     description: "Update a new shipping method in a draft order edit",
   },
-  function (
-    input: WorkflowData<UpdateOrderEditShippingMethodWorkflowInput>
-  ): WorkflowResponse<UpdateOrderEditShippingMethodWorkflowOutput> {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,

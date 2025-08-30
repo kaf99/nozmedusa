@@ -1,6 +1,5 @@
 import {
   CartDTO,
-  CreatePaymentCollectionForCartWorkflowInputDTO as OldCreatePaymentCollectionForCartWorkflowInputDTO,
 } from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
 import {
@@ -16,17 +15,11 @@ import { validateCartStep } from "../steps/validate-cart"
 import {
   createPaymentCollectionForCartWorkflowInputSchema,
   createPaymentCollectionForCartWorkflowOutputSchema,
-  type CreatePaymentCollectionForCartWorkflowInput as SchemaInput,
-  type CreatePaymentCollectionForCartWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type CreatePaymentCollectionForCartWorkflowInput,
-  type CreatePaymentCollectionForCartWorkflowOutput,
+export type {
+  CreatePaymentCollectionForCartWorkflowInput,
+  CreatePaymentCollectionForCartWorkflowOutput,
 } from "../utils/schemas"
-
-const _in: SchemaInput = {} as OldCreatePaymentCollectionForCartWorkflowInputDTO
-const _out: void = undefined as SchemaOutput
-void _in, _out
 
 /**
  * The details of the cart to validate its payment collection.

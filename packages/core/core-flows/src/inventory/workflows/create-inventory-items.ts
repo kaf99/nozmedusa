@@ -10,12 +10,11 @@ import { createInventoryLevelsWorkflow } from "./create-inventory-levels"
 import {
   createInventoryItemsWorkflowInputSchema,
   createInventoryItemsWorkflowOutputSchema,
-  type CreateInventoryItemsWorkflowInput as SchemaInput,
-  type CreateInventoryItemsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-export {
-  type CreateInventoryItemsWorkflowInput,
-  type CreateInventoryItemsWorkflowOutput,
+
+export type {
+  CreateInventoryItemsWorkflowInput,
+  CreateInventoryItemsWorkflowOutput,
 } from "../utils/schemas"
 
 /**
@@ -25,25 +24,8 @@ type LocationLevelWithoutInventory = Omit<
   InventoryTypes.CreateInventoryLevelInput,
   "inventory_item_id"
 >
-/**
- * The data to create the inventory items.
- */
-interface OldCreateInventoryItemsWorkflowInput {
-  /**
-   * The items to create.
-   */
-  items: (InventoryTypes.CreateInventoryItemInput & {
-    /**
-     * The inventory levels of the inventory item.
-     */
-    location_levels?: LocationLevelWithoutInventory[]
-  })[]
-}
 
-export type OldCreateInventoryItemsWorkflowOutput =
-  InventoryTypes.InventoryItemDTO[]
-
-const buildLocationLevelMapAndItemData = (data: SchemaInput) => {
+const buildLocationLevelMapAndItemData = (data) => {
   data.items = data.items ?? []
   const inventoryItems: InventoryTypes.CreateInventoryItemInput[] = []
   // Keep an index to location levels mapping to inject the created inventory item
@@ -87,20 +69,6 @@ const buildInventoryLevelsInput = (data: {
     },
   }
 }
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCreateInventoryItemsWorkflowInput = schemaInput
-const existingOutput: InventoryTypes.InventoryItemDTO[] = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCreateInventoryItemsWorkflowInput
-const oldOutput = {} as OldCreateInventoryItemsWorkflowOutput
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
 
 export const createInventoryItemsWorkflowId = "create-inventory-items-workflow"
 /**

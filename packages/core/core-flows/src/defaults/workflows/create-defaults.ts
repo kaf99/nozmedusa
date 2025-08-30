@@ -7,22 +7,12 @@ import { createDefaultStoreStep } from "../steps/create-default-store"
 import {
   createDefaultsWorkflowInputSchema,
   createDefaultsWorkflowOutputSchema,
-  type CreateDefaultsWorkflowInput as SchemaInput,
-  type CreateDefaultsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type CreateDefaultsWorkflowInput,
-  type CreateDefaultsWorkflowOutput,
+export type {
+  CreateDefaultsWorkflowInput,
+  CreateDefaultsWorkflowOutput,
 } from "../utils/schemas"
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: {} = schemaInput
-const existingOutput: import("@medusajs/framework/types").StoreDTO = schemaOutput
-
-console.log(existingInput, existingOutput)
 
 export const createDefaultsWorkflowID = "create-defaults"
 /**

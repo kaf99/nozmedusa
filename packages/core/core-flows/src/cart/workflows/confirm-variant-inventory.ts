@@ -4,51 +4,20 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput } from "@medusajs/types"
 import { confirmInventoryStep } from "../steps"
 import { prepareConfirmInventoryInput } from "../utils/prepare-confirm-inventory-input"
 import {
+  ConfirmVariantInventoryWorkflowInput,
   confirmVariantInventoryWorkflowInputSchema,
   confirmVariantInventoryWorkflowOutputSchema,
-  type ConfirmVariantInventoryWorkflowInput,
 } from "../utils/confirm-variant-inventory-schemas"
 
-/**
- * The details of the cart items with inventory result computed for the specified input.
- */
-export interface OldConfirmVariantInventoryWorkflowOutput {
-  /**
-   * The cart's line items with the computed inventory result.
-   */
-  items: {
-    /**
-     * The line item's ID.
-     */
-    id?: string
-    /**
-     * The ID of the inventory item used to retrieve the item's available quantity.
-     */
-    inventory_item_id: string
-    /**
-     * The number of units a single quantity is equivalent to. For example, if a customer orders one quantity of the variant, Medusa checks the availability of the quantity multiplied by the
-     * value set for `required_quantity`. When the customer orders the quantity, Medusa reserves the ordered quantity multiplied by the value set for `required_quantity`.
-     */
-    required_quantity: number
-    /**
-     * Whether the variant can be ordered even if it's out of stock. If a variant has this enabled, the workflow doesn't throw an error.
-     */
-    allow_backorder: boolean
-    /**
-     * The quantity in the cart. If you provided `itemsToUpdate` in the input, this will be the updated quantity.
-     */
-    quantity: BigNumberInput
-    /**
-     * The ID of the stock locations that the computed inventory quantity is available in.
-     */
-    location_ids: string[]
-  }[]
-}
+export type {
+  ConfirmVariantInventoryWorkflowInput,
+  ConfirmVariantInventoryWorkflowOutput,
+} from "../utils/confirm-variant-inventory-schemas"
 
+// const _in: Input = {} as ConfirmVa
 
 export const confirmVariantInventoryWorkflowId = "confirm-item-inventory"
 /**
@@ -154,8 +123,6 @@ export const confirmVariantInventoryWorkflow = createWorkflow(
     name: confirmVariantInventoryWorkflowId,
     description:
       "Validate that a variant is in-stock before adding to the cart",
-    // this type is deeply nested and causes: "type instantiation is excessively deep and possibly infinite"
-    // we use 'as any' and then explicit typing here to get around it
     inputSchema: confirmVariantInventoryWorkflowInputSchema as any,
     outputSchema: confirmVariantInventoryWorkflowOutputSchema,
   },

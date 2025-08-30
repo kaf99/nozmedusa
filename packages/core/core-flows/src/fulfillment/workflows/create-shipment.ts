@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
@@ -9,8 +8,11 @@ import { updateFulfillmentWorkflow } from "./update-fulfillment"
 import {
   createShipmentWorkflowInputSchema,
   createShipmentWorkflowOutputSchema,
-  type CreateShipmentWorkflowInput,
-  type CreateShipmentWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  CreateShipmentWorkflowInput,
+  CreateShipmentWorkflowOutput,
 } from "../utils/schemas"
 
 export const createShipmentWorkflowId = "create-shipment-workflow"
@@ -47,7 +49,7 @@ export const createShipmentWorkflow = createWorkflow(
     inputSchema: createShipmentWorkflowInputSchema,
     outputSchema: createShipmentWorkflowOutputSchema,
   },
-  (input: WorkflowData<CreateShipmentWorkflowInput>): WorkflowResponse<CreateShipmentWorkflowOutput> => {
+  (input) => {
     validateShipmentStep(input.id)
 
     const update = transform({ input }, (data) => ({

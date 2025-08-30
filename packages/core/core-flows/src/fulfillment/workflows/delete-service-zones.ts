@@ -1,10 +1,13 @@
-import { WorkflowData, createWorkflow } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteServiceZonesStep } from "../steps"
 import {
   deleteServiceZonesWorkflowInputSchema,
   deleteServiceZonesWorkflowOutputSchema,
-  type DeleteServiceZonesWorkflowInput,
-  type DeleteServiceZonesWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  DeleteServiceZonesWorkflowInput,
+  DeleteServiceZonesWorkflowOutput,
 } from "../utils/schemas"
 
 export const deleteServiceZonesWorkflowId = "delete-service-zones-workflow"
@@ -34,7 +37,7 @@ export const deleteServiceZonesWorkflow = createWorkflow(
     inputSchema: deleteServiceZonesWorkflowInputSchema,
     outputSchema: deleteServiceZonesWorkflowOutputSchema,
   },
-  (input: WorkflowData<DeleteServiceZonesWorkflowInput>): WorkflowData<DeleteServiceZonesWorkflowOutput> => {
+  (input) => {
     deleteServiceZonesStep(input.ids)
   }
 )

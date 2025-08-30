@@ -1,4 +1,3 @@
-import { InventoryLevelDTO, InventoryTypes } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -10,37 +9,12 @@ import {
 import {
   createInventoryLevelsWorkflowInputSchema,
   createInventoryLevelsWorkflowOutputSchema,
-  type CreateInventoryLevelsWorkflowInput as SchemaInput,
-  type CreateInventoryLevelsWorkflowOutput as SchemaOutput,
-} from "../utils/schemas"
-export {
-  type CreateInventoryLevelsWorkflowInput,
-  type CreateInventoryLevelsWorkflowOutput,
 } from "../utils/schemas"
 
-/**
- * The data to create the inventory levels.
- */
-interface OldCreateInventoryLevelsWorkflowInput {
-  /**
-   * The inventory levels to create.
-   */
-  inventory_levels: InventoryTypes.CreateInventoryLevelInput[]
-}
-
-// Type verification
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-const existingInput: OldCreateInventoryLevelsWorkflowInput = schemaInput
-const existingOutput: InventoryLevelDTO[] = schemaOutput
-
-// Check reverse too
-const oldInput = {} as OldCreateInventoryLevelsWorkflowInput
-const oldOutput = {} as InventoryLevelDTO[]
-const newInput: SchemaInput = oldInput
-const newOutput: SchemaOutput = oldOutput
-
-console.log(existingInput, existingOutput, newInput, newOutput)
+export type {
+  CreateInventoryLevelsWorkflowInput,
+  CreateInventoryLevelsWorkflowOutput,
+} from "../utils/schemas"
 export const createInventoryLevelsWorkflowId =
   "create-inventory-levels-workflow"
 /**

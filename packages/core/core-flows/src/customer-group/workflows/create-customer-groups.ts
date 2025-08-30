@@ -1,8 +1,4 @@
 import {
-  CustomerGroupDTO,
-  CreateCustomerGroupDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -10,30 +6,12 @@ import { createCustomerGroupsStep } from "../steps"
 import {
   createCustomerGroupsWorkflowInputSchema,
   createCustomerGroupsWorkflowOutputSchema,
-  type CreateCustomerGroupsWorkflowInput as SchemaInput,
-  type CreateCustomerGroupsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to create customer groups.
- */
-export type CreateCustomerGroupsWorkflowInput = {
-  /**
-   * The customer groups to create.
-   */
-  customersData: CreateCustomerGroupDTO[]
-}
-
-/**
- * The created customer groups.
- */
-export type CreateCustomerGroupsWorkflowOutput = CustomerGroupDTO[]
-
-const _in: SchemaInput = {} as CreateCustomerGroupsWorkflowInput
-const _inRev: CreateCustomerGroupsWorkflowInput = {} as SchemaInput
-const _out: SchemaOutput = {} as CreateCustomerGroupsWorkflowOutput
-const _outRev: CreateCustomerGroupsWorkflowOutput = {} as SchemaOutput
-void _in, _out, _outRev, _inRev
+export type {
+  CreateCustomerGroupsWorkflowInput,
+  CreateCustomerGroupsWorkflowOutput,
+} from "../utils/schemas"
 
 export const createCustomerGroupsWorkflowId = "create-customer-groups"
 /**

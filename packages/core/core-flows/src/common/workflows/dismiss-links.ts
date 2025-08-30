@@ -1,4 +1,3 @@
-import { LinkDefinition } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -7,13 +6,7 @@ import { dismissRemoteLinkStep } from "../steps/dismiss-remote-links"
 import {
   dismissLinksWorkflowInputSchema,
   dismissLinksWorkflowOutputSchema,
-  type DismissLinksWorkflowInput as SchemaInput,
-  type DismissLinksWorkflowOutput as SchemaOutput,
 } from "../utils/batch-links-schemas"
-
-const _in: SchemaInput = {} as LinkDefinition[]
-const _out: SchemaOutput = {} as LinkDefinition[]
-void _in, _out
 
 export const dismissLinksWorkflowId = "dismiss-link"
 /**

@@ -1,6 +1,4 @@
-import { OrderWorkflowDTO } from "@medusajs/framework/types"
 import {
-  WorkflowData,
   createWorkflow,
   transform,
   when,
@@ -8,8 +6,6 @@ import {
 import {
   updateOrderTaxLinesWorkflowInputSchema,
   updateOrderTaxLinesWorkflowOutputSchema,
-  type UpdateOrderTaxLinesWorkflowInput as SchemaInput,
-  type UpdateOrderTaxLinesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import { getItemTaxLinesStep } from "../../tax/steps/get-item-tax-lines"
@@ -129,37 +125,10 @@ const lineItemFields = [
   "tax_lines.rate",
   "tax_lines.provider_id",
 ]
-/**
- * The data to update the order's tax lines.
- */
-export type UpdateOrderTaxLinesWorkflowInput = {
-  /**
-   * The ID of the order to update.
-   */
-  order_id: string
-  /**
-   * The IDs of the items to update the tax lines for.
-   */
-  item_ids?: string[]
-  /**
-   * The IDs of the shipping methods to update the tax lines for.
-   */
-  shipping_method_ids?: string[]
-  /**
-   * Whether to force the tax calculation. If enabled, the tax provider
-   * may send request to a third-party service to retrieve the calculated
-   * tax rates. This depends on the chosen tax provider in the order's tax region.
-   */
-  force_tax_calculation?: boolean
-  /**
-   * Whether to calculate the tax lines for a return.
-   */
-  is_return?: boolean
-  /**
-   * The shipping address to use for the tax calculation.
-   */
-  shipping_address?: OrderWorkflowDTO["shipping_address"]
-}
+export type {
+  UpdateOrderTaxLinesWorkflowInput,
+  UpdateOrderTaxLinesWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateOrderTaxLinesWorkflowId = "update-order-tax-lines"
 /**
@@ -183,17 +152,6 @@ export const updateOrderTaxLinesWorkflowId = "update-order-tax-lines"
  *
  * Update the tax lines of items and shipping methods in an order.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: UpdateOrderTaxLinesWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as void
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateOrderTaxLinesWorkflow = createWorkflow(
   {
@@ -202,9 +160,7 @@ export const updateOrderTaxLinesWorkflow = createWorkflow(
     inputSchema: updateOrderTaxLinesWorkflowInputSchema,
     outputSchema: updateOrderTaxLinesWorkflowOutputSchema,
   },
-  (
-    input
-  ): WorkflowData<void> => {
+  (input) => {
     const isFullOrder = transform(input, (data) => {
       return !data.item_ids && !data.shipping_method_ids
     })

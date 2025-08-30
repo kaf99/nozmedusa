@@ -4,14 +4,13 @@ import {
   parallelize,
   transform,
   when,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   deleteOrderChangeActionsStep,
@@ -26,12 +25,13 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   deleteOrderEditShippingMethodWorkflowInputSchema,
   deleteOrderEditShippingMethodWorkflowOutputSchema,
-  type DeleteOrderEditShippingMethodWorkflowInput,
-  type DeleteOrderEditShippingMethodWorkflowOutput,
 } from "../utils/schemas"
 
-deleteOrderEditShippingMethodWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-deleteOrderEditShippingMethodWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
+export type {
+  DeleteOrderEditShippingMethodWorkflowInput,
+  DeleteOrderEditShippingMethodWorkflowOutput,
+} from "../utils/schemas"
+
 
 export const removeDraftOrderActionShippingMethodWorkflowId =
   "remove-draft-order-action-shipping-method"
@@ -63,9 +63,7 @@ export const removeDraftOrderActionShippingMethodWorkflow = createWorkflow(
     outputSchema: deleteOrderEditShippingMethodWorkflowOutputSchema,
     description: "Remove a shipping method from an edited draft order",
   },
-  function (
-    input: WorkflowData<DeleteOrderEditShippingMethodWorkflowInput>
-  ): WorkflowResponse<DeleteOrderEditShippingMethodWorkflowOutput> {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: draftOrderFieldsForRefreshSteps,
