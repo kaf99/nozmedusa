@@ -1,33 +1,18 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
-import { expectTypeOf } from "expect-type"
 import { deleteCustomerAddressesStep } from "../steps"
 import {
   deleteAddressesWorkflowInputSchema,
   deleteAddressesWorkflowOutputSchema,
-  type DeleteAddressesWorkflowInput as SchemaInput,
-  type DeleteAddressesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The details of the addresses to delete.
- */
-export type DeleteCustomerAddressesWorkflowInput = { 
-  /**
-   * The IDs of the addresses to delete.
-   */
-  ids: string[]
-}
-
-export type DeleteCustomerAddressesWorkflowOutput = void
-
-// Type verification
-expectTypeOf<SchemaInput>().toEqualTypeOf<DeleteCustomerAddressesWorkflowInput>()
-expectTypeOf<SchemaOutput>().toEqualTypeOf<DeleteCustomerAddressesWorkflowOutput>()
+export type {
+  DeleteAddressesWorkflowInput as DeleteCustomerAddressesWorkflowInput,
+  DeleteAddressesWorkflowOutput as DeleteCustomerAddressesWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteCustomerAddressesWorkflowId = "delete-customer-addresses"
 /**
@@ -69,7 +54,7 @@ export const deleteCustomerAddressesWorkflow = createWorkflow(
     inputSchema: deleteAddressesWorkflowInputSchema,
     outputSchema: deleteAddressesWorkflowOutputSchema,
   },
-  (input: WorkflowData<DeleteCustomerAddressesWorkflowInput>) => {
+  (input) => {
     const deletedAddresses = deleteCustomerAddressesStep(input.ids)
     const addressesDeleted = createHook("addressesDeleted", {
       ids: input.ids,

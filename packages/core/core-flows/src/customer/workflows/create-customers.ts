@@ -1,41 +1,21 @@
-import {
-  AdditionalData,
-  CreateCustomerDTO,
-  CustomerDTO,
-} from "@medusajs/framework/types"
 import { CustomerWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { expectTypeOf } from "expect-type"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { createCustomersStep } from "../steps"
 import {
   createCustomersWorkflowInputSchema,
   createCustomersWorkflowOutputSchema,
-  type CreateCustomersWorkflowInput as SchemaInput,
-  type CreateCustomersWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to create one or more customers, along with custom data that's passed to the workflow's hooks.
- */
-export type CreateCustomersWorkflowInput = {
-  /**
-   * The customers to create.
-   */
-  customersData: CreateCustomerDTO[]
-} & AdditionalData
-
-export type CreateCustomersWorkflowOutput = CustomerDTO[]
-
-// Type verification
-expectTypeOf<SchemaInput>().toEqualTypeOf<CreateCustomersWorkflowInput>()
-expectTypeOf<SchemaOutput>().toEqualTypeOf<CreateCustomersWorkflowOutput>()
+export type {
+  CreateCustomersWorkflowInput,
+  CreateCustomersWorkflowOutput,
+} from "../utils/schemas"
 
 export const createCustomersWorkflowId = "create-customers"
 /**
@@ -75,7 +55,7 @@ export const createCustomersWorkflow = createWorkflow(
     inputSchema: createCustomersWorkflowInputSchema,
     outputSchema: createCustomersWorkflowOutputSchema,
   },
-  (input: WorkflowData<CreateCustomersWorkflowInput>) => {
+  (input) => {
     const createdCustomers = createCustomersStep(input.customersData)
     const customersCreated = createHook("customersCreated", {
       customers: createdCustomers,

@@ -1,40 +1,21 @@
-import { CreateCustomerDTO, CustomerDTO } from "@medusajs/framework/types"
+import { CustomerDTO } from "@medusajs/framework/types"
 import {
   createWorkflow,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { expectTypeOf } from "expect-type"
 import { setAuthAppMetadataStep } from "../../auth"
 import { validateCustomerAccountCreation } from "../steps/validate-customer-account-creation"
 import { createCustomersWorkflow } from "./create-customers"
 import {
   createCustomerAccountWorkflowInputSchema,
   createCustomerAccountWorkflowOutputSchema,
-  type CreateCustomerAccountWorkflowInput as SchemaInput,
-  type CreateCustomerAccountWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The details of the customer account to create.
- */
-export type CreateCustomerAccountWorkflowInput = {
-  /**
-   * The ID of the auth identity to attach the customer to.
-   */
-  authIdentityId: string
-  /**
-   * The details of the customer to create.
-   */
-  customerData: CreateCustomerDTO
-}
-
-export type CreateCustomerAccountWorkflowOutput = CustomerDTO
-
-// Type verification
-expectTypeOf<SchemaInput>().toEqualTypeOf<CreateCustomerAccountWorkflowInput>()
-expectTypeOf<SchemaOutput>().toEqualTypeOf<CreateCustomerAccountWorkflowOutput>()
+export type {
+  CreateCustomerAccountWorkflowInput,
+  CreateCustomerAccountWorkflowOutput,
+} from "../utils/schemas"
 
 export const createCustomerAccountWorkflowId = "create-customer-account"
 /**
@@ -71,9 +52,7 @@ export const createCustomerAccountWorkflow = createWorkflow(
     inputSchema: createCustomerAccountWorkflowInputSchema,
     outputSchema: createCustomerAccountWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<CreateCustomerAccountWorkflowInput>
-  ): WorkflowResponse<CustomerDTO> => {
+  (input) => {
     validateCustomerAccountCreation(input)
 
     const customerData = transform({ input }, (data) => {

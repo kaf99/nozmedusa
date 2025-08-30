@@ -1,11 +1,14 @@
-import { createWorkflow, WorkflowData } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow } from "@medusajs/framework/workflows-sdk"
 import { deleteShippingOptionsStep } from "../steps"
 import { removeRemoteLinkStep } from "../../common"
 import {
   deleteShippingOptionsWorkflowInputSchema,
   deleteShippingOptionsWorkflowOutputSchema,
-  type DeleteShippingOptionsWorkflowInput,
-  type DeleteShippingOptionsWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  DeleteShippingOptionsWorkflowInput,
+  DeleteShippingOptionsWorkflowOutput,
 } from "../utils/schemas"
 
 export const deleteShippingOptionsWorkflowId =
@@ -36,9 +39,7 @@ export const deleteShippingOptionsWorkflow = createWorkflow(
     inputSchema: deleteShippingOptionsWorkflowInputSchema,
     outputSchema: deleteShippingOptionsWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<DeleteShippingOptionsWorkflowInput>
-  ): WorkflowData<DeleteShippingOptionsWorkflowOutput> => {
+  (input) => {
     const softDeletedEntities = deleteShippingOptionsStep(input.ids)
 
     removeRemoteLinkStep(softDeletedEntities)

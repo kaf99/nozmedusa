@@ -2,7 +2,6 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
@@ -15,8 +14,11 @@ import { ShippingOptionPriceType } from "@medusajs/framework/utils"
 import {
   updateShippingOptionsWorkflowInputSchema,
   updateShippingOptionsWorkflowOutputSchema,
-  type UpdateShippingOptionsWorkflowInput,
-  type UpdateShippingOptionsWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  UpdateShippingOptionsWorkflowInput,
+  UpdateShippingOptionsWorkflowOutput,
 } from "../utils/schemas"
 
 export const updateShippingOptionsWorkflowId =
@@ -57,9 +59,7 @@ export const updateShippingOptionsWorkflow = createWorkflow(
     inputSchema: updateShippingOptionsWorkflowInputSchema,
     outputSchema: updateShippingOptionsWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<UpdateShippingOptionsWorkflowInput>
-  ): WorkflowResponse<UpdateShippingOptionsWorkflowOutput> => {
+  (input) => {
     parallelize(
       validateFulfillmentProvidersStep(input),
       validateShippingOptionPricesStep(input)

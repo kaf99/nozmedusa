@@ -1,47 +1,21 @@
-import {
-  AdditionalData,
-  CustomerUpdatableFields,
-  FilterableCustomerProps,
-  CustomerDTO,
-} from "@medusajs/framework/types"
 import { CustomerWorkflowEvents } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createHook,
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-// import { expectTypeOf } from "expect-type"
 import { emitEventStep } from "../../common/steps/emit-event"
 import { updateCustomersStep } from "../steps"
 import {
   updateCustomersWorkflowInputSchema,
   updateCustomersWorkflowOutputSchema,
-  // type UpdateCustomersWorkflowInput as SchemaInput,
-  // type UpdateCustomersWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to update one or more customers, along with custom data that's passed to the workflow's hooks.
- */
-export type UpdateCustomersWorkflowInput = {
-  /**
-   * The filters to select the customers to update.
-   */
-  selector: FilterableCustomerProps
-  /**
-   * The data to update in the customers.
-   */
-  update: CustomerUpdatableFields
-} & AdditionalData
-
-export type UpdateCustomersWorkflowOutput = CustomerDTO[]
-
-// Type verification
-// TODO: Fix FilterableCustomerProps type issue
-// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateCustomersWorkflowInput>()
-// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateCustomersWorkflowOutput>()
+export type {
+  UpdateCustomersWorkflowInput,
+  UpdateCustomersWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateCustomersWorkflowId = "update-customers"
 /**
@@ -79,7 +53,7 @@ export const updateCustomersWorkflow = createWorkflow(
     inputSchema: updateCustomersWorkflowInputSchema,
     outputSchema: updateCustomersWorkflowOutputSchema,
   },
-  (input: WorkflowData<UpdateCustomersWorkflowInput>) => {
+  (input) => {
     const updatedCustomers = updateCustomersStep(input)
     const customersUpdated = createHook("customersUpdated", {
       customers: updatedCustomers,

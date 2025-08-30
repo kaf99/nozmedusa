@@ -2,7 +2,6 @@ import {
   createWorkflow,
   parallelize,
   transform,
-  WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { createShippingOptionsPriceSetsStep, upsertShippingOptionsStep, } from "../steps"
@@ -12,8 +11,11 @@ import { validateShippingOptionPricesStep } from "../steps/validate-shipping-opt
 import {
   createShippingOptionsWorkflowInputSchema,
   createShippingOptionsWorkflowOutputSchema,
-  type CreateShippingOptionsWorkflowInput,
-  type CreateShippingOptionsWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  CreateShippingOptionsWorkflowInput,
+  CreateShippingOptionsWorkflowOutput,
 } from "../utils/schemas"
 
 export const createShippingOptionsWorkflowId =
@@ -100,9 +102,7 @@ export const createShippingOptionsWorkflow = createWorkflow(
     inputSchema: createShippingOptionsWorkflowInputSchema,
     outputSchema: createShippingOptionsWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<CreateShippingOptionsWorkflowInput>
-  ): WorkflowResponse<CreateShippingOptionsWorkflowOutput> => {
+  (input) => {
     parallelize(
       validateFulfillmentProvidersStep(input),
       validateShippingOptionPricesStep(input)

@@ -1,5 +1,4 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -7,8 +6,11 @@ import { createShippingProfilesStep } from "../steps"
 import {
   createShippingProfilesWorkflowInputSchema,
   createShippingProfilesWorkflowOutputSchema,
-  type CreateShippingProfilesWorkflowInput,
-  type CreateShippingProfilesWorkflowOutput,
+} from "../utils/schemas"
+
+export type {
+  CreateShippingProfilesWorkflowInput,
+  CreateShippingProfilesWorkflowOutput,
 } from "../utils/schemas"
 
 export const createShippingProfilesWorkflowId =
@@ -44,9 +46,7 @@ export const createShippingProfilesWorkflow = createWorkflow(
     inputSchema: createShippingProfilesWorkflowInputSchema,
     outputSchema: createShippingProfilesWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<CreateShippingProfilesWorkflowInput>
-  ): WorkflowResponse<CreateShippingProfilesWorkflowOutput> => {
+  (input) => {
     return new WorkflowResponse(createShippingProfilesStep(input.data))
   }
 )

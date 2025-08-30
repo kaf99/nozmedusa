@@ -2,7 +2,6 @@ import { FulfillmentDTO } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import {
   StepResponse,
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -13,8 +12,11 @@ import { updateFulfillmentWorkflow } from "./update-fulfillment"
 import {
   markFulfillmentAsDeliveredInputSchema,
   markFulfillmentAsDeliveredOutputSchema,
-  type MarkFulfillmentAsDeliveredInput,
-  type MarkFulfillmentAsDeliveredOutput,
+} from "../utils/schemas"
+
+export type {
+  MarkFulfillmentAsDeliveredInput,
+  MarkFulfillmentAsDeliveredOutput,
 } from "../utils/schemas"
 
 export const validateFulfillmentDeliverabilityStepId =
@@ -84,7 +86,7 @@ export const markFulfillmentAsDeliveredWorkflow = createWorkflow(
     inputSchema: markFulfillmentAsDeliveredInputSchema,
     outputSchema: markFulfillmentAsDeliveredOutputSchema,
   },
-  ({ id }: WorkflowData<MarkFulfillmentAsDeliveredInput>): WorkflowResponse<MarkFulfillmentAsDeliveredOutput> => {
+  ({ id }) => {
     const fulfillment = useRemoteQueryStep({
       entry_point: "fulfillment",
       fields: ["id", "delivered_at", "canceled_at"],

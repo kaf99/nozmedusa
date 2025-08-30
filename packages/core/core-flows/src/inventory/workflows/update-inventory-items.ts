@@ -1,38 +1,18 @@
 import {
-  WorkflowData,
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
 
-import { InventoryTypes } from "@medusajs/framework/types"
 import { updateInventoryItemsStep } from "../steps"
 import {
   updateInventoryItemsWorkflowInputSchema,
   updateInventoryItemsWorkflowOutputSchema,
-  // type UpdateInventoryItemsWorkflowInput as SchemaInput,
-  // type UpdateInventoryItemsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-// import { expectTypeOf } from "expect-type"
 
-/**
- * The data to update the inventory items.
- */
-export interface UpdateInventoryItemsWorkflowInput {
-  /**
-   * The items to update.
-   */
-  updates: InventoryTypes.UpdateInventoryItemInput[]
-}
-
-/**
- * The updated inventory items.
- */
-export type UpdateInventoryItemsWorkflowOutput = InventoryTypes.InventoryItemDTO[]
-
-// Type verification
-// TODO: Fix InventoryItemDTO type issue
-// expectTypeOf<SchemaInput>().toEqualTypeOf<UpdateInventoryItemsWorkflowInput>()
-// expectTypeOf<SchemaOutput>().toEqualTypeOf<UpdateInventoryItemsWorkflowOutput>()
+export type {
+  UpdateInventoryItemsWorkflowInput,
+  UpdateInventoryItemsWorkflowOutput,
+} from "../utils/schemas"
 
 export const updateInventoryItemsWorkflowId = "update-inventory-items-workflow"
 /**
@@ -66,9 +46,7 @@ export const updateInventoryItemsWorkflow = createWorkflow(
     inputSchema: updateInventoryItemsWorkflowInputSchema,
     outputSchema: updateInventoryItemsWorkflowOutputSchema,
   },
-  (
-    input: WorkflowData<UpdateInventoryItemsWorkflowInput>
-  ): WorkflowResponse<UpdateInventoryItemsWorkflowOutput> => {
+  (input) => {
     return new WorkflowResponse(updateInventoryItemsStep(input.updates))
   }
 )
