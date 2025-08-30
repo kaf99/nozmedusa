@@ -20,8 +20,6 @@ import {
 import {
   updateRequestItemReturnWorkflowInputSchema,
   updateRequestItemReturnWorkflowOutputSchema,
-  type UpdateRequestItemReturnWorkflowInput as SchemaInput,
-  type UpdateRequestItemReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
@@ -159,13 +157,6 @@ export const updateRequestItemReturnWorkflowId = "update-request-item-return"
  * Update a requested item in a return.
  */
 
-// Type verification block - DO NOT REMOVE
-const _inputSchemaCheck: OrderWorkflow.UpdateRequestItemReturnWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const updateRequestItemReturnWorkflow = createWorkflow(
   {

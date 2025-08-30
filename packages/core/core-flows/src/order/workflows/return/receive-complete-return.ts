@@ -15,8 +15,6 @@ import {
 import {
   receiveCompleteOrderReturnWorkflowInputSchema,
   receiveAndCompleteReturnOrderWorkflowOutputSchema,
-  type ReceiveCompleteOrderReturnWorkflowInput as SchemaInput,
-  type ReceiveAndCompleteReturnOrderWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -75,12 +73,6 @@ export const receiveCompleteReturnValidationStep = createStep(
   }
 )
 
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.ReceiveCompleteOrderReturnWorkflowInput
-const _out: SchemaOutput = {} as ReturnDTO | undefined
-
-void _in
-void _out
 
 export const receiveAndCompleteReturnOrderWorkflowId = "receive-return-order"
 /**

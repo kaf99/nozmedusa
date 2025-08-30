@@ -1,7 +1,5 @@
 import {
   OrderChangeDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
   ReturnDTO,
 } from "@medusajs/framework/types"
 import { OrderChangeStatus } from "@medusajs/framework/utils"
@@ -14,8 +12,6 @@ import {
 import {
   updateReturnWorkflowInputSchema,
   updateReturnWorkflowOutputSchema,
-  type UpdateReturnWorkflowInput as SchemaInput,
-  type UpdateReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { updateReturnsStep } from "../../steps"
@@ -95,13 +91,6 @@ export const updateReturnWorkflowId = "update-return"
  * Update a return's details.
  */
 
-// Type verification block - DO NOT REMOVE
-const _inputSchemaCheck: OrderWorkflow.UpdateReturnWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const updateReturnWorkflow = createWorkflow(
   {

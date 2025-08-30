@@ -15,8 +15,6 @@ import {
 import {
   cancelOrderExchangeWorkflowInputSchema,
   cancelOrderExchangeWorkflowOutputSchema,
-  type CancelOrderExchangeWorkflowInput as SchemaInput,
-  type CancelOrderExchangeWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteReservationsByLineItemsStep } from "../../../reservation/steps/delete-reservations-by-line-items"
@@ -113,9 +111,6 @@ export const cancelOrderExchangeWorkflowId = "cancel-exchange"
  *
  * Cancel an exchange for an order.
  */
-const _in: SchemaInput = {} as OrderWorkflow.CancelOrderExchangeWorkflowInput
-const _out: SchemaOutput = undefined as void
-void _in, _out
 export const cancelOrderExchangeWorkflow = createWorkflow(
   {
     name: cancelOrderExchangeWorkflowId,

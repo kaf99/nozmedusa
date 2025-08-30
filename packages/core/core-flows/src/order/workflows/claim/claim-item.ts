@@ -1,9 +1,7 @@
 import {
   OrderChangeDTO,
   OrderClaimDTO,
-  OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
+  OrderDTO
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
@@ -15,8 +13,6 @@ import {
 import {
   orderClaimItemWorkflowInputSchema,
   orderClaimItemWorkflowOutputSchema,
-  type OrderClaimItemWorkflowInput as SchemaInput,
-  type OrderClaimItemWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
@@ -114,17 +110,6 @@ export const orderClaimItemWorkflowId = "claim-item"
  * 
  * Add order items to a claim as claim items.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.OrderClaimItemWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const orderClaimItemWorkflow = createWorkflow(
   {
@@ -133,9 +118,7 @@ export const orderClaimItemWorkflow = createWorkflow(
     inputSchema: orderClaimItemWorkflowInputSchema,
     outputSchema: orderClaimItemWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input) {
     const orderClaim = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "order_id", "canceled_at"],

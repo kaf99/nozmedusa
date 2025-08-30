@@ -1,5 +1,4 @@
 import {
-  AdditionalData,
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderExchangeDTO,
@@ -31,8 +30,6 @@ import { pricingContextResult } from "../../../cart/utils/schemas"
 import {
   updateExchangeShippingMethodWorkflowInputSchema,
   updateExchangeShippingMethodWorkflowOutputSchema,
-  type UpdateExchangeShippingMethodWorkflowInput as SchemaInput,
-  type UpdateExchangeShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -114,20 +111,6 @@ export const updateExchangeShippingMethodValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.UpdateExchangeShippingMethodWorkflowInput & AdditionalData = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const updateExchangeShippingMethodWorkflowId =
   "update-exchange-shipping-method"

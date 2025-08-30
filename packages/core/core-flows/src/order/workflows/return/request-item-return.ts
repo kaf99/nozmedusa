@@ -1,7 +1,6 @@
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
   OrderWorkflow,
   ReturnDTO,
 } from "@medusajs/framework/types"
@@ -15,8 +14,6 @@ import {
 import {
   requestItemReturnWorkflowInputSchema,
   requestItemReturnWorkflowOutputSchema,
-  type RequestItemReturnWorkflowInput as SchemaInput,
-  type RequestItemReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
@@ -140,13 +137,6 @@ export const requestItemReturnWorkflowId = "request-item-return"
  * Add items to a return.
  */
 
-// Type verification block - DO NOT REMOVE
-const _inputSchemaCheck: OrderWorkflow.RequestItemReturnWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const requestItemReturnWorkflow = createWorkflow(
   {

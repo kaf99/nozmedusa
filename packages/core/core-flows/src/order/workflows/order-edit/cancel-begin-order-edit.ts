@@ -5,7 +5,6 @@ import {
   OrderEditWorkflowEvents,
 } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   parallelize,
@@ -20,8 +19,6 @@ import {
 import {
   cancelBeginOrderEditWorkflowInputSchema,
   cancelBeginOrderEditWorkflowOutputSchema,
-  type CancelBeginOrderEditWorkflowInput as SchemaInput,
-  type CancelBeginOrderEditWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -72,31 +69,6 @@ export const cancelBeginOrderEditValidationStep = createStep(
   }
 )
 
-/**
- * The data to cancel a requested order edit.
- */
-export type CancelBeginOrderEditWorkflowInput = {
-  /**
-   * The ID of the order to cancel the edit for.
-   */
-  order_id: string
-}
-
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: CancelBeginOrderEditWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-// For void outputs, we don't need to check compatibility
-const _existingOutput = undefined as SchemaOutput
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const cancelBeginOrderEditWorkflowId = "cancel-begin-order-edit"
 /**
@@ -124,8 +96,8 @@ export const cancelBeginOrderEditWorkflow = createWorkflow(
     inputSchema: cancelBeginOrderEditWorkflowInputSchema,
     outputSchema: cancelBeginOrderEditWorkflowOutputSchema,
   },
-  function (input): WorkflowData<void> {
-    const order: OrderDTO = useRemoteQueryStep({
+  function (input) {
+    const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "version", "canceled_at"],
       variables: { id: input.order_id },
@@ -133,7 +105,7 @@ export const cancelBeginOrderEditWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     }).config({ name: "order-query" })
 
-    const orderChange: OrderChangeDTO = useRemoteQueryStep({
+    const orderChange = useRemoteQueryStep({
       entry_point: "order_change",
       fields: ["id", "status", "version", "actions.*"],
       variables: {

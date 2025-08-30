@@ -10,7 +10,7 @@ import {
   when,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import { deleteOrderChangesStep, deleteOrderShippingMethods, previewOrderChangeStep } from "../../order"
 import { restoreDraftOrderShippingMethodsStep } from "../steps/restore-draft-order-shipping-methods"
@@ -20,10 +20,7 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   cancelDraftOrderEditWorkflowInputSchema,
   cancelDraftOrderEditWorkflowOutputSchema,
-  type CancelDraftOrderEditWorkflowInput as SchemaInput,
-  type CancelDraftOrderEditWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
-import { OrderPreviewDTO } from "@medusajs/types"
 
 /**
  * The details of the draft order edit to cancel.
@@ -35,12 +32,6 @@ export interface CancelDraftOrderEditWorkflowInput {
   order_id: string
 }
 
-// Type verification
-const _in: SchemaInput = {} as CancelDraftOrderEditWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const cancelDraftOrderEditWorkflowId = "cancel-draft-order-edit"
 

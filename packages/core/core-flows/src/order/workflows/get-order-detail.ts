@@ -1,4 +1,4 @@
-import { OrderDTO, OrderDetailDTO } from "@medusajs/framework/types"
+import { OrderDetailDTO } from "@medusajs/framework/types"
 import { deduplicate } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -13,49 +13,8 @@ import {
 import {
   getOrderDetailWorkflowInputSchema,
   getOrderDetailWorkflowOutputSchema,
-  type GetOrderDetailWorkflowInput as SchemaInput,
-  type GetOrderDetailWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The data to retrieve an order's details.
- */
-export type GetOrderDetailWorkflowInput = {
-  /**
-   * Additional filters to apply on the retrieved order.
-   */
-  filters?: {
-    /**
-     * Whether to retrieve a draft order.
-     */
-    is_draft_order?: boolean
-    /**
-     * The ID of the customer that the order belongs to.
-     */
-    customer_id?: string
-  }
-  /**
-   * The fields and relations to retrieve in the order. These fields
-   * are passed to [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
-   * so you can pass names of custom models linked to the order.
-   */
-  fields: string[]
-  /**
-   * The ID of the order to retrieve.
-   */
-  order_id: string
-  /**
-   * The version of the order to retrieve. If not provided, the latest version
-   * of the order will be retrieved.
-   */
-  version?: number
-}
-
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as GetOrderDetailWorkflowInput
-const _out: SchemaOutput = {} as OrderDetailDTO
-const _outRev: OrderDetailDTO = {} as SchemaOutput
-void _in, _out, _outRev
 
 export const getOrderDetailWorkflowId = "get-order-detail"
 /**
@@ -101,7 +60,7 @@ export const getOrderDetailWorkflow = createWorkflow(
       return { ...input.filters, id: input.order_id, version: input.version }
     })
 
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
       fields,
       variables,

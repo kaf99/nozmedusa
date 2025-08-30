@@ -4,7 +4,7 @@ import {
   parallelize,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderDTO } from "@medusajs/types"
+import { OrderDTO } from "@medusajs/framework/types"
 import {
   getActionsToComputeFromPromotionsStep,
   getPromotionCodesToApply,
@@ -18,16 +18,8 @@ import { updateDraftOrderPromotionsStep } from "../steps/update-draft-order-prom
 import {
   refreshDraftOrderAdjustmentsWorkflowInputSchema,
   refreshDraftOrderAdjustmentsWorkflowOutputSchema,
-  type RefreshDraftOrderAdjustmentsWorkflowInput as SchemaInput,
-  type RefreshDraftOrderAdjustmentsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification
-const _in: RefreshDraftOrderAdjustmentsWorkflowInput = {} as SchemaInput
-const _out: SchemaOutput = undefined as void
-
-void _in
-void _out
 
 export const refreshDraftOrderAdjustmentsWorkflowId =
   "refresh-draft-order-adjustments"

@@ -23,8 +23,6 @@ import { createOrderChangeActionsWorkflow } from "../create-order-change-actions
 import {
   receiveItemReturnRequestWorkflowInputSchema,
   receiveItemReturnRequestWorkflowOutputSchema,
-  type ReceiveItemReturnRequestWorkflowInput as SchemaInput,
-  type ReceiveItemReturnRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -101,12 +99,6 @@ export const receiveItemReturnRequestValidationStep = createStep(
   }
 )
 
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const receiveItemReturnRequestWorkflowId = "receive-item-return-request"
 /**

@@ -5,7 +5,6 @@ import {
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
   parallelize,
@@ -14,8 +13,6 @@ import {
 import {
   cancelBeginOrderClaimWorkflowInputSchema,
   cancelBeginOrderClaimWorkflowOutputSchema,
-  type CancelBeginOrderClaimWorkflowInput as SchemaInput,
-  type CancelBeginOrderClaimWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
@@ -117,17 +114,6 @@ export const cancelBeginOrderClaimWorkflowId = "cancel-begin-order-claim"
  * 
  * Cancel a requested order claim.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CancelBeginOrderClaimWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as void
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const cancelBeginOrderClaimWorkflow = createWorkflow(
   {
@@ -136,7 +122,7 @@ export const cancelBeginOrderClaimWorkflow = createWorkflow(
     inputSchema: cancelBeginOrderClaimWorkflowInputSchema,
     outputSchema: cancelBeginOrderClaimWorkflowOutputSchema,
   },
-  function (input): WorkflowData<void> {
+  function (input) {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "status", "order_id", "return_id", "canceled_at"],

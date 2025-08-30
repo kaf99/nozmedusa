@@ -1,7 +1,6 @@
 import { OrderChangeDTO, OrderDTO, ReturnDTO } from "@medusajs/framework/types"
 import { OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   createStep,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -14,8 +13,6 @@ import {
 import {
   cancelReturnReceiveWorkflowInputSchema,
   cancelReturnReceiveWorkflowOutputSchema,
-  type CancelReturnReceiveWorkflowInput as SchemaInput,
-  type CancelReturnReceiveWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -86,17 +83,6 @@ export type CancelReturnReceiveWorkflowInput = {
   return_id: string
 }
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CancelReturnReceiveWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as void
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const cancelReturnReceiveWorkflowId = "cancel-receive-return"
 /**
@@ -125,7 +111,7 @@ export const cancelReturnReceiveWorkflow = createWorkflow(
     inputSchema: cancelReturnReceiveWorkflowInputSchema,
     outputSchema: cancelReturnReceiveWorkflowOutputSchema,
   },
-  function (input): WorkflowData<void> {
+  function (input) {
     const orderReturn: ReturnDTO = useRemoteQueryStep({
       entry_point: "return",
       fields: ["id", "status", "order_id", "canceled_at"],

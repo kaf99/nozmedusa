@@ -2,7 +2,6 @@ import {
   OrderChangeDTO,
   OrderDTO,
   OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
@@ -14,8 +13,8 @@ import {
 import {
   orderEditAddNewItemWorkflowInputSchema,
   orderEditAddNewItemWorkflowOutputSchema,
-  type OrderEditAddNewItemWorkflowInput as SchemaInput,
-  type OrderEditAddNewItemWorkflowOutput as SchemaOutput,
+  
+  
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
@@ -75,9 +74,6 @@ export const orderEditAddNewItemValidationStep = createStep(
   }
 )
 
-const _in: SchemaInput = {} as OrderWorkflow.OrderEditAddNewItemWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-void _in, _out
 
 export const orderEditAddNewItemWorkflowId = "order-edit-add-new-item"
 /**

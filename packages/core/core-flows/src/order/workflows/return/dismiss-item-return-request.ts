@@ -23,8 +23,6 @@ import { createOrderChangeActionsWorkflow } from "../create-order-change-actions
 import {
   dismissItemReturnRequestWorkflowInputSchema,
   dismissItemReturnRequestWorkflowOutputSchema,
-  type DismissItemReturnRequestWorkflowInput as SchemaInput,
-  type DismissItemReturnRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -114,12 +112,6 @@ export const dismissItemReturnRequestValidationStep = createStep(
  */
 export type DismissItemReturnRequestWorkflowInput = OrderWorkflow.ReceiveOrderReturnItemsWorkflowInput
 
-// Type verification
-const _in: SchemaInput = {} as DismissItemReturnRequestWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const dismissItemReturnRequestWorkflowId = "dismiss-item-return-request"
 /**

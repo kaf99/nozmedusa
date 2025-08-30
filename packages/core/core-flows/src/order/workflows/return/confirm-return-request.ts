@@ -39,8 +39,6 @@ import { createOrUpdateOrderPaymentCollectionWorkflow } from "../create-or-updat
 import {
   confirmReturnRequestWorkflowInputSchema,
   confirmReturnRequestWorkflowOutputSchema,
-  type ConfirmReturnRequestWorkflowInput as SchemaInput,
-  type ConfirmReturnRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -222,17 +220,6 @@ export type ConfirmReturnRequestWorkflowInput = {
   confirmed_by?: string
 }
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ConfirmReturnRequestWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const confirmReturnRequestWorkflowId = "confirm-return-request"
 /**

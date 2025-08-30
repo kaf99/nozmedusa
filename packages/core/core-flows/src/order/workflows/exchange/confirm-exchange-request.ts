@@ -27,8 +27,6 @@ import {
 import {
   confirmExchangeRequestWorkflowInputSchema,
   confirmExchangeRequestWorkflowOutputSchema,
-  type ConfirmExchangeRequestWorkflowInput as SchemaInput,
-  type ConfirmExchangeRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import { prepareConfirmInventoryInput } from "../../../cart/utils/prepare-confirm-inventory-input"
@@ -288,17 +286,6 @@ export const confirmExchangeRequestWorkflowId = "confirm-exchange-request"
  *
  * Confirm an exchange request.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ConfirmExchangeRequestWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const confirmExchangeRequestWorkflow = createWorkflow(
   {

@@ -13,8 +13,7 @@ import {
   BigNumberInput,
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -28,15 +27,8 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   updateDraftOrderShippingMethodWorkflowInputSchema,
   updateDraftOrderShippingMethodWorkflowOutputSchema,
-  type UpdateDraftOrderShippingMethodWorkflowInput as SchemaInput,
-  type UpdateDraftOrderShippingMethodWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification
-const _in: SchemaInput = {} as UpdateDraftOrderShippingMethodWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-void _in
-void _out
 
 /**
  * The identifier of the update draft order shipping method workflow.
@@ -102,7 +94,7 @@ export const updateDraftOrderShippingMethodWorkflow = createWorkflow(
     inputSchema: updateDraftOrderShippingMethodWorkflowInputSchema,
     outputSchema: updateDraftOrderShippingMethodWorkflowOutputSchema,
   },
-  function (input: UpdateDraftOrderShippingMethodWorkflowInput) {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "is_draft_order"],

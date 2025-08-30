@@ -16,8 +16,6 @@ import {
 import {
   createClaimShippingMethodWorkflowInputSchema,
   createClaimShippingMethodWorkflowOutputSchema,
-  type CreateClaimShippingMethodWorkflowInput as SchemaInput,
-  type CreateClaimShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps"
@@ -152,17 +150,6 @@ export const createClaimShippingMethodWorkflowId =
  *
  * Create an inbound or outbound shipping method for a claim.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateClaimShippingMethodWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createClaimShippingMethodWorkflow = createWorkflow(
   {
@@ -171,9 +158,7 @@ export const createClaimShippingMethodWorkflow = createWorkflow(
     inputSchema: createClaimShippingMethodWorkflowInputSchema,
     outputSchema: createClaimShippingMethodWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "status", "order_id", "canceled_at"],

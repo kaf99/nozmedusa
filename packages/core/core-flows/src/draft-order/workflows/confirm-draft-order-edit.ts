@@ -12,8 +12,7 @@ import {
   BigNumberInput,
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { reserveInventoryStep } from "../../cart"
 import {
   prepareConfirmInventoryInput,
@@ -30,16 +29,8 @@ import { validateDraftOrderChangeStep } from "../steps/validate-draft-order-chan
 import {
   confirmDraftOrderEditWorkflowInputSchema,
   confirmDraftOrderEditWorkflowOutputSchema,
-  type ConfirmDraftOrderEditWorkflowInput as SchemaInput,
-  type ConfirmDraftOrderEditWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification
-const _in: SchemaInput = {} as ConfirmDraftOrderEditWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const confirmDraftOrderEditWorkflowId = "confirm-draft-order-edit"
 
@@ -80,7 +71,7 @@ export const confirmDraftOrderEditWorkflow = createWorkflow(
     inputSchema: confirmDraftOrderEditWorkflowInputSchema,
     outputSchema: confirmDraftOrderEditWorkflowOutputSchema,
   },
-  function (input: ConfirmDraftOrderEditWorkflowInput) {
+  function (input) {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: [

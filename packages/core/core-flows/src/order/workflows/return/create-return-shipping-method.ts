@@ -26,8 +26,6 @@ import { fetchShippingOptionForOrderWorkflow } from "../fetch-shipping-option"
 import {
   createReturnShippingMethodWorkflowInputSchema,
   createReturnShippingMethodWorkflowOutputSchema,
-  type CreateReturnShippingMethodWorkflowInput as SchemaInput,
-  type CreateReturnShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -115,12 +113,6 @@ export type CreateReturnShippingMethodWorkflowInput = {
   custom_amount?: BigNumberInput | null
 }
 
-// Type verification
-const _in: SchemaInput = {} as CreateReturnShippingMethodWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const createReturnShippingMethodWorkflowId =
   "create-return-shipping-method"

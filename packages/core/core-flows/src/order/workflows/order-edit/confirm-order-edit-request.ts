@@ -2,7 +2,6 @@ import {
   BigNumberInput,
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
 } from "@medusajs/framework/types"
 import {
   ChangeActionType,
@@ -19,8 +18,6 @@ import {
 import {
   confirmOrderEditRequestWorkflowInputSchema,
   confirmOrderEditRequestWorkflowOutputSchema,
-  type ConfirmOrderEditRequestWorkflowInput as SchemaInput,
-  type ConfirmOrderEditRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import {
@@ -85,34 +82,6 @@ export const confirmOrderEditRequestValidationStep = createStep(
   }
 )
 
-/**
- * The data to confirm an order edit request.
- */
-export type ConfirmOrderEditRequestWorkflowInput = {
-  /**
-   * The ID of the order to confirm the edit for.
-   */
-  order_id: string
-  /**
-   * The ID of the user confirming the edit.
-   */
-  confirmed_by?: string
-}
-
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: ConfirmOrderEditRequestWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const confirmOrderEditRequestWorkflowId = "confirm-order-edit-request"
 /**
@@ -140,8 +109,8 @@ export const confirmOrderEditRequestWorkflow = createWorkflow(
     inputSchema: confirmOrderEditRequestWorkflowInputSchema,
     outputSchema: confirmOrderEditRequestWorkflowOutputSchema,
   },
-  function (input): WorkflowResponse<OrderPreviewDTO> {
-    const order: OrderDTO = useRemoteQueryStep({
+  function (input) {
+    const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: [
         "id",
@@ -159,7 +128,7 @@ export const confirmOrderEditRequestWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     }).config({ name: "order-query" })
 
-    const orderChange: OrderChangeDTO = useRemoteQueryStep({
+    const orderChange = useRemoteQueryStep({
       entry_point: "order_change",
       fields: [
         "id",

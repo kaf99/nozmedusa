@@ -1,7 +1,6 @@
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
@@ -16,8 +15,6 @@ import { throwIfOrderIsCancelled } from "../../utils/order-validation"
 import {
   beginOrderExchangeWorkflowInputSchema,
   beginOrderExchangeWorkflowOutputSchema,
-  type BeginOrderExchangeWorkflowInput as SchemaInput,
-  type BeginOrderExchangeWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -56,17 +53,6 @@ export const beginOrderExchangeValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.BeginOrderExchangeWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderChangeDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const beginExchangeOrderWorkflowId = "begin-exchange-order"
 /**

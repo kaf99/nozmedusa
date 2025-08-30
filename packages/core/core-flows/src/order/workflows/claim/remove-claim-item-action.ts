@@ -26,8 +26,6 @@ import { refreshClaimShippingWorkflow } from "./refresh-shipping"
 import {
   removeItemClaimActionWorkflowInputSchema,
   removeItemClaimActionWorkflowOutputSchema,
-  type RemoveItemClaimActionWorkflowInput as SchemaInput,
-  type RemoveItemClaimActionWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -120,17 +118,6 @@ export const removeClaimItemActionValidationStep = createStep(
 export type RemoveItemClaimActionWorkflowInput =
   OrderWorkflow.DeleteOrderClaimItemActionWorkflowInput
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: RemoveItemClaimActionWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const removeItemClaimActionWorkflowId = "remove-item-claim-action"
 /**
@@ -160,9 +147,7 @@ export const removeItemClaimActionWorkflow = createWorkflow(
     inputSchema: removeItemClaimActionWorkflowInputSchema,
     outputSchema: removeItemClaimActionWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "status", "order_id", "canceled_at"],

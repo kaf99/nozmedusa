@@ -26,8 +26,6 @@ import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
 import {
   updateExchangeAddNewItemWorkflowInputSchema,
   updateExchangeAddNewItemWorkflowOutputSchema,
-  type UpdateExchangeAddNewItemWorkflowInput as SchemaInput,
-  type UpdateExchangeAddNewItemWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -116,20 +114,6 @@ export const updateExchangeAddItemValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.UpdateExchangeAddNewItemWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const updateExchangeAddItemWorkflowId = "update-exchange-add-item"
 /**

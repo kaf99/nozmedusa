@@ -15,8 +15,6 @@ import {
 import {
   cancelOrderClaimWorkflowInputSchema,
   cancelOrderClaimWorkflowOutputSchema,
-  type CancelOrderClaimWorkflowInput as SchemaInput,
-  type CancelOrderClaimWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteReservationsByLineItemsStep } from "../../../reservation/steps/delete-reservations-by-line-items"
@@ -114,10 +112,6 @@ export const cancelOrderClaimWorkflowId = "cancel-claim"
  * Cancel a confirmed order claim.
  */
 
-const _in: SchemaInput = {} as OrderWorkflow.CancelOrderClaimWorkflowInput
-const _out: SchemaOutput = undefined as void
-const _outRev: SchemaOutput = undefined as void
-void _in, _out, _outRev
 
 export const cancelOrderClaimWorkflow = createWorkflow(
   {

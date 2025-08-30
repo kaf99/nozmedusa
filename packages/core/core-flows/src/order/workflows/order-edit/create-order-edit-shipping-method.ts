@@ -1,5 +1,4 @@
 import {
-  AdditionalData,
   BigNumberInput,
   OrderChangeDTO,
   OrderDTO,
@@ -27,8 +26,6 @@ import { pricingContextResult } from "../../../cart/utils/schemas"
 import {
   createOrderEditShippingMethodWorkflowInputSchema,
   createOrderEditShippingMethodWorkflowOutputSchema,
-  type CreateOrderEditShippingMethodWorkflowInput as SchemaInput,
-  type CreateOrderEditShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -79,40 +76,6 @@ export const createOrderEditShippingMethodValidationStep = createStep(
   }
 )
 
-/**
- * The data to create a shipping method for an order edit.
- */
-export type CreateOrderEditShippingMethodWorkflowInput = {
-  /**
-   * The ID of the order to create the shipping method for.
-   */
-  order_id: string
-  /**
-   * The ID of the shipping option to create the shipping method from.
-   */
-  shipping_option_id: string
-  /**
-   * The custom amount to create the shipping method with.
-   * If not provided, the shipping option's amount is used.
-   */
-  custom_amount?: BigNumberInput | null
-}
-
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: CreateOrderEditShippingMethodWorkflowInput &
-  AdditionalData = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const createOrderEditShippingMethodWorkflowId =
   "create-order-edit-shipping-method"
@@ -179,7 +142,7 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
     outputSchema: createOrderEditShippingMethodWorkflowOutputSchema,
   },
   function (input) {
-    const order: OrderDTO = useRemoteQueryStep({
+    const order = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "currency_code", "canceled_at"],
       variables: { id: input.order_id },
@@ -226,7 +189,7 @@ export const createOrderEditShippingMethodWorkflow = createWorkflow(
       },
     }).config({ name: "fetch-shipping-option" })
 
-    const orderChange: OrderChangeDTO = useRemoteQueryStep({
+    const orderChange = useRemoteQueryStep({
       entry_point: "order_change",
       fields: ["id", "status", "version"],
       variables: {

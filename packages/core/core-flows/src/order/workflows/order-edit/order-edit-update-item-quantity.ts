@@ -2,7 +2,6 @@ import {
   OrderChangeDTO,
   OrderDTO,
   OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
   BigNumber,
@@ -19,8 +18,8 @@ import {
 import {
   orderEditUpdateItemQuantityWorkflowInputSchema,
   orderEditUpdateItemQuantityWorkflowOutputSchema,
-  type OrderEditUpdateItemQuantityWorkflowInput as SchemaInput,
-  type OrderEditUpdateItemQuantityWorkflowOutput as SchemaOutput,
+  
+  
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { previewOrderChangeStep } from "../../steps/preview-order-change"
@@ -78,20 +77,6 @@ export const orderEditUpdateItemQuantityValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.OrderEditUpdateItemQuantityWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const orderEditUpdateItemQuantityWorkflowId =
   "order-edit-update-item-quantity"

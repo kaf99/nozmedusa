@@ -1,6 +1,5 @@
 // TODO: Remove this workflow in a future release.
 
-import { InventoryLevelDTO, InventoryTypes } from "@medusajs/framework/types"
 import {
   createWorkflow,
   when,
@@ -11,29 +10,13 @@ import { deleteInventoryLevelsWorkflow } from "./delete-inventory-levels"
 import {
   bulkCreateDeleteLevelsWorkflowInputSchema,
   bulkCreateDeleteLevelsWorkflowOutputSchema,
-  type BulkCreateDeleteLevelsWorkflowInput as SchemaInput,
-  type BulkCreateDeleteLevelsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type BulkCreateDeleteLevelsWorkflowInput,
-  type BulkCreateDeleteLevelsWorkflowOutput,
+export type {
+  BulkCreateDeleteLevelsWorkflowInput,
+  BulkCreateDeleteLevelsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  creates: InventoryTypes.CreateInventoryLevelInput[]
-  deletes: { inventory_item_id: string; location_id: string }[]
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as InventoryLevelDTO[]
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const bulkCreateDeleteLevelsWorkflowId =
   "bulk-create-delete-levels-workflow"

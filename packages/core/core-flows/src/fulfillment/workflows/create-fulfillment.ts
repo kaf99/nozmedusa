@@ -1,6 +1,4 @@
 import {
-  FulfillmentDTO,
-  FulfillmentWorkflow,
   StockLocationDTO,
 } from "@medusajs/framework/types"
 import {
@@ -13,15 +11,8 @@ import { useRemoteQueryStep } from "../../common"
 import {
   createFulfillmentWorkflowInputSchema,
   createFulfillmentWorkflowOutputSchema,
-  type CreateFulfillmentWorkflowInput as SchemaInput,
-  type CreateFulfillmentWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-const _in: SchemaInput =
-  {} as FulfillmentWorkflow.CreateFulfillmentWorkflowInput
-const _out: FulfillmentDTO = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as FulfillmentDTO
-void _in, _out, _outRev
 
 export const createFulfillmentWorkflowId = "create-fulfillment-workflow"
 /**

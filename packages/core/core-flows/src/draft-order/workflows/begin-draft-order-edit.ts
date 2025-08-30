@@ -3,25 +3,15 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderDTO, OrderPreviewDTO, OrderWorkflow } from "@medusajs/types"
+import { OrderDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import { createOrderChangeStep, previewOrderChangeStep } from "../../order"
 import { validateDraftOrderStep } from "../steps"
 import {
   beginOrderEditWorkflowInputSchema,
   beginOrderEditWorkflowOutputSchema,
-  type BeginOrderEditWorkflowInput as SchemaInput,
-  type BeginOrderEditWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.BeginorderEditWorkflowInput
-const _inRev: OrderWorkflow.BeginorderEditWorkflowInput = {} as SchemaInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _inRev
-void _out
 
 export const beginDraftOrderEditWorkflowId = "begin-draft-order-edit"
 

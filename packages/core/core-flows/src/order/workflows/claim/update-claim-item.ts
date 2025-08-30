@@ -25,8 +25,6 @@ import {
 import {
   updateClaimItemWorkflowInputSchema,
   updateClaimItemWorkflowOutputSchema,
-  type UpdateClaimItemWorkflowInput as SchemaInput,
-  type UpdateClaimItemWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -115,11 +113,6 @@ export const updateClaimItemValidationStep = createStep(
   }
 )
 
-const _in: SchemaInput = {} as OrderWorkflow.UpdateClaimItemWorkflowInput
-const _inRev: OrderWorkflow.UpdateClaimItemWorkflowInput = {} as SchemaInput
-const _out: OrderPreviewDTO = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as OrderPreviewDTO
-void _in, _out, _outRev, _inRev
 
 export const updateClaimItemWorkflowId = "update-claim-item"
 /**

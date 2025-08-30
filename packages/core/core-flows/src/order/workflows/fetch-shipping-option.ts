@@ -1,10 +1,5 @@
 import {
-  AdditionalData,
-  BigNumberInput,
-  BigNumberValue,
-  CalculatedRMAShippingContext,
   CalculateShippingOptionPriceDTO,
-  ShippingOptionDTO,
 } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
@@ -20,8 +15,6 @@ import { pricingContextResult } from "../../cart/utils/schemas"
 import {
   fetchShippingOptionForOrderWorkflowInputSchema,
   fetchShippingOptionForOrderWorkflowOutputSchema,
-  type FetchShippingOptionForOrderWorkflowInput as SchemaInput,
-  type FetchShippingOptionForOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 const COMMON_OPTIONS_FIELDS = [
@@ -50,57 +43,6 @@ const COMMON_OPTIONS_FIELDS = [
   "rules.operator",
 ]
 
-/**
- * The data to create a shipping method for an order edit.
- */
-export type FetchShippingOptionForOrderWorkflowInput = AdditionalData & {
-  /**
-   * The ID of the shipping option to fetch.
-   */
-  shipping_option_id: string
-  /**
-   * The custom amount of the shipping option.
-   * If not provided, the shipping option's amount is used.
-   */
-  custom_amount?: BigNumberInput | null
-  /**
-   * The currency code of the order.
-   */
-  currency_code: string
-  /**
-   * The ID of the order.
-   */
-  order_id: string
-  /**
-   * The context of the RMA flow, which can be useful for retrieving the shipping option's price.
-   */
-  context: CalculatedRMAShippingContext
-}
-
-/**
- * The output of the fetch shipping option for order workflow.
- */
-export type FetchShippingOptionForOrderWorkflowOutput = ShippingOptionDTO & {
-  /**
-   * The shipping option's price.
-   */
-  calculated_price: {
-    /**
-     * The shipping option's price based on its type and provided context.
-     */
-    calculated_amount: BigNumberValue
-    /**
-     * Whether the amount includes taxes.
-     */
-    is_calculated_price_tax_inclusive: boolean
-  }
-}
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _in: SchemaInput = {} as FetchShippingOptionForOrderWorkflowInput
-const _out: FetchShippingOptionForOrderWorkflowOutput = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as FetchShippingOptionForOrderWorkflowOutput
-void _in, _out, _outRev
 
 export const fetchShippingOptionsForOrderWorkflowId = "fetch-shipping-option"
 /**
@@ -301,7 +243,7 @@ export const fetchShippingOptionForOrderWorkflow = createWorkflow(
       return shippingOption
     })
 
-    const result: FetchShippingOptionForOrderWorkflowOutput = transform(
+    const result = transform(
       {
         calculatedPriceShippingOption,
         flatRateShippingOption,

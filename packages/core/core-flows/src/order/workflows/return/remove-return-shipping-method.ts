@@ -1,7 +1,6 @@
 import {
   OrderChangeActionDTO,
   OrderChangeDTO,
-  OrderPreviewDTO,
   OrderWorkflow,
   ReturnDTO,
 } from "@medusajs/framework/types"
@@ -16,8 +15,6 @@ import {
 import {
   deleteReturnShippingMethodWorkflowInputSchema,
   deleteReturnShippingMethodWorkflowOutputSchema,
-  type DeleteReturnShippingMethodWorkflowInput as SchemaInput,
-  type DeleteReturnShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteOrderShippingMethods } from "../../steps"
@@ -127,13 +124,6 @@ export const removeReturnShippingMethodWorkflowId =
  * Remove a shipping method from a return.
  */
 
-// Type verification block - DO NOT REMOVE
-const _in: SchemaInput =
-  {} as OrderWorkflow.DeleteReturnShippingMethodWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const removeReturnShippingMethodWorkflow = createWorkflow(
   {

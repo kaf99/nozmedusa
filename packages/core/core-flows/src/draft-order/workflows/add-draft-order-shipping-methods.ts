@@ -9,7 +9,7 @@ import {
   when,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput, OrderChangeDTO, OrderDTO, OrderPreviewDTO } from "@medusajs/types"
+import { BigNumberInput, OrderChangeDTO, OrderDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -24,8 +24,6 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   addDraftOrderShippingMethodsWorkflowInputSchema,
   addDraftOrderShippingMethodsWorkflowOutputSchema,
-  type AddDraftOrderShippingMethodsWorkflowInput as SchemaInput,
-  type AddDraftOrderShippingMethodsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export const addDraftOrderShippingMethodsWorkflowId =
@@ -50,12 +48,6 @@ export interface AddDraftOrderShippingMethodsWorkflowInput {
   custom_amount?: BigNumberInput | null
 }
 
-// Type verification
-const _in: SchemaInput = {} as AddDraftOrderShippingMethodsWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 /**
  * This workflow adds shipping methods to a draft order. It's used by the

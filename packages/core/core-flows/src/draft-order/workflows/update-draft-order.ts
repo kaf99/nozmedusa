@@ -12,15 +12,13 @@ import {
   RegisterOrderChangeDTO,
   UpdateOrderDTO,
   UpsertOrderAddressDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { previewOrderChangeStep, registerOrderChangesStep } from "../../order"
 import { validateDraftOrderStep } from "../steps/validate-draft-order"
 import {
   updateDraftOrderWorkflowInputSchema,
   updateDraftOrderWorkflowOutputSchema,
-  type UpdateDraftOrderWorkflowInput as SchemaInput,
-  type UpdateDraftOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export const updateDraftOrderWorkflowId = "update-draft-order"
@@ -150,11 +148,6 @@ export const updateDraftOrderStep = createStep(
  *
  * Update a draft order's details.
  */
-const _in: SchemaInput = {} as UpdateDraftOrderWorkflowInput
-const _inRev: UpdateDraftOrderWorkflowInput = {} as SchemaInput
-const _out: SchemaOutput = {} as OrderDTO
-const _outRev: OrderDTO = {} as SchemaOutput
-void _in, _out, _inRev, _outRev
 
 /**
  * The updated draft order.

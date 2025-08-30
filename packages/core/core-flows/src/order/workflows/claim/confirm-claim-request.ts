@@ -27,8 +27,6 @@ import {
 import {
   confirmClaimRequestWorkflowInputSchema,
   confirmClaimRequestWorkflowOutputSchema,
-  type ConfirmClaimRequestWorkflowInput as SchemaInput,
-  type ConfirmClaimRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { reserveInventoryStep } from "../../../cart/steps/reserve-inventory"
 import { prepareConfirmInventoryInput } from "../../../cart/utils/prepare-confirm-inventory-input"
@@ -294,17 +292,6 @@ export const confirmClaimRequestWorkflowId = "confirm-claim-request"
  *
  * Confirm a requested claim.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ConfirmClaimRequestWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const confirmClaimRequestWorkflow = createWorkflow(
   {
@@ -313,9 +300,7 @@ export const confirmClaimRequestWorkflow = createWorkflow(
     inputSchema: confirmClaimRequestWorkflowInputSchema,
     outputSchema: confirmClaimRequestWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: [

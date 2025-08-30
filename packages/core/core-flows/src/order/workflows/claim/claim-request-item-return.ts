@@ -17,8 +17,6 @@ import {
 import {
   orderClaimRequestItemReturnWorkflowInputSchema,
   orderClaimRequestItemReturnWorkflowOutputSchema,
-  type OrderClaimRequestItemReturnWorkflowInput as SchemaInput,
-  type OrderClaimRequestItemReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { updateOrderClaimsStep } from "../../steps/claim/update-order-claims"
@@ -141,18 +139,6 @@ export const orderClaimRequestItemReturnWorkflowId = "claim-request-item-return"
  *
  * Request one or more items to be returned as part of a claim.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.OrderClaimRequestItemReturnWorkflowInput =
-  schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const orderClaimRequestItemReturnWorkflow = createWorkflow(
   {
@@ -161,9 +147,7 @@ export const orderClaimRequestItemReturnWorkflow = createWorkflow(
     inputSchema: orderClaimRequestItemReturnWorkflowInputSchema,
     outputSchema: orderClaimRequestItemReturnWorkflowOutputSchema,
   },
-  function (
-    input
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const orderClaim = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: ["id", "order_id", "return_id", "canceled_at"],

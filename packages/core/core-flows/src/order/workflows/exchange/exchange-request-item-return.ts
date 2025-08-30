@@ -29,8 +29,6 @@ import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
 import {
   orderExchangeRequestItemReturnWorkflowInputSchema,
   orderExchangeRequestItemReturnWorkflowOutputSchema,
-  type OrderExchangeRequestItemReturnWorkflowInput as SchemaInput,
-  type OrderExchangeRequestItemReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -114,20 +112,6 @@ export const exchangeRequestItemReturnValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.OrderExchangeRequestItemReturnWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const orderExchangeRequestItemReturnWorkflowId =
   "exchange-request-item-return"

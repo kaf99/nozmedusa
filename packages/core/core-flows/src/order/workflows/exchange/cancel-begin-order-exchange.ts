@@ -24,8 +24,6 @@ import {
 import {
   cancelBeginOrderExchangeWorkflowInputSchema,
   cancelBeginOrderExchangeWorkflowOutputSchema,
-  type CancelBeginOrderExchangeWorkflowInput as SchemaInput,
-  type CancelBeginOrderExchangeWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -86,24 +84,7 @@ export const cancelBeginOrderExchangeValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as unknown as SchemaOutput
 
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  exchange_id: string
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = undefined as any
-
-console.log(existingInput, existingOutput, schemaOutput)
-
-/**
- * The details to cancel a requested order exchange.
- */
-export type CancelBeginOrderExchangeWorkflowInput = SchemaInput
 
 export const cancelBeginOrderExchangeWorkflowId = "cancel-begin-order-exchange"
 /**

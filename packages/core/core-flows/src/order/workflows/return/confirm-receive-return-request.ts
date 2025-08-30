@@ -37,8 +37,6 @@ import {
 import {
   confirmReceiveReturnRequestWorkflowInputSchema,
   confirmReceiveReturnRequestWorkflowOutputSchema,
-  type ConfirmReceiveReturnRequestWorkflowInput as SchemaInput,
-  type ConfirmReceiveReturnRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -184,17 +182,6 @@ export type ConfirmReceiveReturnRequestWorkflowInput = {
   confirmed_by?: string
 }
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: ConfirmReceiveReturnRequestWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const confirmReturnReceiveWorkflowId = "confirm-return-receive"
 /**

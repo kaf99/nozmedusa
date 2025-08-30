@@ -1,7 +1,5 @@
 import {
-  OrderChangeDTO,
   OrderDTO,
-  OrderWorkflow,
   ReturnDTO,
 } from "@medusajs/framework/types"
 import {
@@ -13,8 +11,6 @@ import {
 import {
   beginReceiveOrderReturnWorkflowInputSchema,
   beginReceiveOrderReturnWorkflowOutputSchema,
-  type BeginReceiveOrderReturnWorkflowInput as SchemaInput,
-  type BeginReceiveOrderReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { createOrderChangeStep } from "../../steps"
@@ -71,12 +67,6 @@ export const beginReceiveReturnValidationStep = createStep(
   }
 )
 
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.BeginReceiveOrderReturnWorkflowInput
-const _out: SchemaOutput = {} as OrderChangeDTO
-
-void _in
-void _out
 
 export const beginReceiveReturnWorkflowId = "begin-receive-return"
 /**

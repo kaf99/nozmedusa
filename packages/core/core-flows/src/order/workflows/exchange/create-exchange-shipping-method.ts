@@ -4,11 +4,9 @@ import {
   OrderChangeDTO,
   OrderDTO,
   OrderExchangeDTO,
-  OrderPreviewDTO,
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
-  WorkflowData,
   WorkflowResponse,
   createStep,
   createWorkflow,
@@ -28,8 +26,6 @@ import { fetchShippingOptionForOrderWorkflow } from "../fetch-shipping-option"
 import {
   createExchangeShippingMethodWorkflowInputSchema,
   createExchangeShippingMethodWorkflowOutputSchema,
-  type CreateExchangeShippingMethodWorkflowInput as SchemaInput,
-  type CreateExchangeShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -115,17 +111,6 @@ export type CreateExchangeShippingMethodWorkflowInput = {
   custom_amount?: BigNumberInput | null
 }
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateExchangeShippingMethodWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createExchangeShippingMethodWorkflowId =
   "create-exchange-shipping-method"
@@ -176,7 +161,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
     outputSchema: createExchangeShippingMethodWorkflowOutputSchema,
   },
   function (input) {
-    const orderExchange: WorkflowData<OrderExchangeDTO> = useRemoteQueryStep({
+    const orderExchange: OrderExchangeDTO = useRemoteQueryStep({
       entry_point: "order_exchange",
       fields: ["id", "status", "order_id", "canceled_at"],
       variables: { id: input.exchange_id },
@@ -184,7 +169,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
       throw_if_key_not_found: true,
     })
 
-    const order: WorkflowData<OrderDTO> = useRemoteQueryStep({
+    const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "status", "currency_code", "canceled_at"],
       variables: { id: orderExchange.order_id },
@@ -196,7 +181,7 @@ export const createExchangeShippingMethodWorkflow = createWorkflow(
       return !!data.return_id
     })
 
-    const orderChange: WorkflowData<OrderChangeDTO> = useRemoteQueryStep({
+    const orderChange: OrderChangeDTO = useRemoteQueryStep({
       entry_point: "order_change",
       fields: ["id", "status", "version", "actions.*"],
       variables: {

@@ -8,7 +8,7 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO, PromotionDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO, PromotionDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -21,8 +21,6 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   removeDraftOrderPromotionsWorkflowInputSchema,
   removeDraftOrderPromotionsWorkflowOutputSchema,
-  type RemoveDraftOrderPromotionsWorkflowInput as SchemaInput,
-  type RemoveDraftOrderPromotionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 export const removeDraftOrderPromotionsWorkflowId =
@@ -42,9 +40,6 @@ export interface RemoveDraftOrderPromotionsWorkflowInput {
   promo_codes: string[]
 }
 
-const _in: SchemaInput = {} as RemoveDraftOrderPromotionsWorkflowInput
-const _out: SchemaOutput = {} as OrderDTO
-void _in, _out
 
 /**
  * This workflow removes promotions from a draft order edit. It's used by the

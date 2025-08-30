@@ -8,7 +8,7 @@ import {
 import {
   OrderChangeDTO,
   OrderDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   deleteOrderChangeActionsStep,

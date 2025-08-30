@@ -1,7 +1,6 @@
 import {
   AdditionalData,
   BigNumberInput,
-  FulfillmentDTO,
   FulfillmentWorkflow,
   InventoryItemDTO,
   OrderDTO,
@@ -47,8 +46,6 @@ import {
 import {
   createOrderFulfillmentWorkflowInputSchema,
   createOrderFulfillmentWorkflowOutputSchema,
-  type CreateOrderFulfillmentWorkflowInput as SchemaInput,
-  type CreateOrderFulfillmentWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
@@ -363,11 +360,6 @@ function prepareInventoryUpdate({
 export type CreateOrderFulfillmentWorkflowInput =
   OrderWorkflow.CreateOrderFulfillmentWorkflowInput & AdditionalData
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as CreateOrderFulfillmentWorkflowInput
-const _out: FulfillmentDTO = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as FulfillmentDTO
-void _in, _out, _outRev
 
 export const createOrderFulfillmentWorkflowId = "create-order-fulfillment"
 /**

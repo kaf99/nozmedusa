@@ -1,5 +1,4 @@
 import {
-  AdditionalData,
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderClaimDTO,
@@ -31,8 +30,6 @@ import { pricingContextResult } from "../../../cart/utils/schemas"
 import {
   updateClaimShippingMethodWorkflowInputSchema,
   updateClaimShippingMethodWorkflowOutputSchema,
-  type UpdateClaimShippingMethodWorkflowInput as SchemaInput,
-  type UpdateClaimShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -110,17 +107,6 @@ export const updateClaimShippingMethodValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: OrderWorkflow.UpdateClaimShippingMethodWorkflowInput & AdditionalData = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const updateClaimShippingMethodWorkflowId =
   "update-claim-shipping-method"
@@ -190,9 +176,7 @@ export const updateClaimShippingMethodWorkflow = createWorkflow(
     inputSchema: updateClaimShippingMethodWorkflowInputSchema,
     outputSchema: updateClaimShippingMethodWorkflowOutputSchema,
   },
-  function (
-    input
-  ) {
+  function (input) {
     const orderClaim: OrderClaimDTO = useRemoteQueryStep({
       entry_point: "order_claim",
       fields: [

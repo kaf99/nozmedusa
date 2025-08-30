@@ -12,8 +12,6 @@ import { useQueryGraphStep } from "../../../common"
 import {
   refreshExchangeShippingWorkflowInputSchema,
   refreshExchangeShippingWorkflowOutputSchema,
-  type RefreshExchangeShippingWorkflowInput as SchemaInput,
-  type RefreshExchangeShippingWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -34,21 +32,6 @@ export type RefreshExchangeShippingWorkflowInput = {
   order_id: string
 }
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: RefreshExchangeShippingWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-// For void outputs, we don't need to check compatibility
-const _existingOutput = undefined as SchemaOutput
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const refreshExchangeShippingWorkflowId = "refresh-exchange-shipping"
 /**

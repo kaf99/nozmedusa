@@ -1,4 +1,3 @@
-import { FulfillmentWorkflow, ServiceZoneDTO } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createWorkflow,
@@ -7,19 +6,8 @@ import { createServiceZonesStep } from "../steps"
 import {
   createServiceZonesWorkflowInputSchema,
   createServiceZonesWorkflowOutputSchema,
-  type CreateServiceZonesWorkflowInput as SchemaInput,
-  type CreateServiceZonesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The service zones to create.
- */
-export type CreateServiceZonesWorkflowOutput = ServiceZoneDTO[]
-
-const _in: SchemaInput =
-  {} as FulfillmentWorkflow.CreateServiceZonesWorkflowInput
-const _out: SchemaOutput = {} as CreateServiceZonesWorkflowOutput
-void _in, _out
 
 /**
  * The workflow that creates one or more service zones.

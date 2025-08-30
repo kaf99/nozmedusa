@@ -31,8 +31,6 @@ import {
 import {
   createOrderShipmentWorkflowInputSchema,
   createOrderShipmentWorkflowOutputSchema,
-  type CreateOrderShipmentWorkflowInput as SchemaInput,
-  type CreateOrderShipmentWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
@@ -171,18 +169,6 @@ function prepareRegisterShipmentData({
 export type CreateOrderShipmentWorkflowInput =
   OrderWorkflow.CreateOrderShipmentWorkflowInput & AdditionalData
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: CreateOrderShipmentWorkflowInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-// For void outputs, we don't need to check compatibility
-const existingOutput = undefined as SchemaOutput
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const createOrderShipmentWorkflowId = "create-order-shipment"
 /**

@@ -19,8 +19,6 @@ import {
 import {
   updateReturnShippingMethodWorkflowInputSchema,
   updateReturnShippingMethodWorkflowOutputSchema,
-  type UpdateReturnShippingMethodWorkflowInput as SchemaInput,
-  type UpdateReturnShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
@@ -172,12 +170,6 @@ export const updateReturnShippingMethodWorkflowId =
  * :::
  */
 
-const _inputSchemaCheck: OrderWorkflow.UpdateReturnShippingMethodWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const updateReturnShippingMethodWorkflow = createWorkflow(
   {

@@ -3,7 +3,6 @@ import {
   OrderDTO,
   OrderExchangeDTO,
   OrderPreviewDTO,
-  OrderWorkflow,
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
 import {
@@ -25,8 +24,6 @@ import { refreshExchangeShippingWorkflow } from "./refresh-shipping"
 import {
   orderExchangeAddNewItemWorkflowInputSchema,
   orderExchangeAddNewItemWorkflowOutputSchema,
-  type OrderExchangeAddNewItemWorkflowInput as SchemaInput,
-  type OrderExchangeAddNewItemWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -87,20 +84,6 @@ export const exchangeAddNewItemValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.OrderExchangeAddNewItemWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const orderExchangeAddNewItemWorkflowId = "exchange-add-new-item"
 /**

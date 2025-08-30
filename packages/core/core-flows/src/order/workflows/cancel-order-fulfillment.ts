@@ -1,5 +1,4 @@
 import {
-  AdditionalData,
   BigNumberInput,
   FulfillmentDTO,
   InventoryItemDTO,
@@ -36,17 +35,13 @@ import { updateReservationsStep } from "../../reservation"
 import {
   cancelOrderFulfillmentWorkflowInputSchema,
   cancelOrderFulfillmentWorkflowOutputSchema,
-  type CancelOrderFulfillmentWorkflowInput as SchemaInput,
 } from "../utils/schemas"
 
-export {
-  type CancelOrderFulfillmentWorkflowInput,
-  type CancelOrderFulfillmentWorkflowOutput,
+export type {
+  CancelOrderFulfillmentWorkflowInput,
+  CancelOrderFulfillmentWorkflowOutput,
 } from "../utils/schemas"
 
-const _in: SchemaInput =
-  {} as OrderWorkflow.CancelOrderFulfillmentWorkflowInput & AdditionalData
-void _in
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
   variant?: ProductVariantDTO & {

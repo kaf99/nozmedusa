@@ -3,7 +3,6 @@ import {
   OrderChangeDTO,
   OrderClaimDTO,
   OrderDTO,
-  OrderPreviewDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
 import { ChangeActionType, OrderChangeStatus } from "@medusajs/framework/utils"
@@ -26,8 +25,6 @@ import { refreshClaimShippingWorkflow } from "./refresh-shipping"
 import {
   updateClaimAddItemWorkflowInputSchema,
   updateClaimAddItemWorkflowOutputSchema,
-  type UpdateClaimAddItemWorkflowInput as SchemaInput,
-  type UpdateClaimAddItemWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -116,12 +113,6 @@ export const updateClaimAddItemValidationStep = createStep(
   }
 )
 
-const _in: SchemaInput = {} as OrderWorkflow.UpdateClaimAddNewItemWorkflowInput
-const _inRev: OrderWorkflow.UpdateClaimAddNewItemWorkflowInput =
-  {} as SchemaInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-const _outRev: OrderPreviewDTO = {} as SchemaOutput
-void _in, _out, _outRev, _inRev
 
 export const updateClaimAddItemWorkflowId = "update-claim-add-item"
 /**

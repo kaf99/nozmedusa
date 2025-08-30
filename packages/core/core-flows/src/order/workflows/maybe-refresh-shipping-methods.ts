@@ -1,5 +1,4 @@
 import {
-  CalculatedRMAShippingContext,
   CalculateShippingOptionPriceDTO,
 } from "@medusajs/framework/types"
 import {
@@ -12,8 +11,6 @@ import {
 import {
   maybeRefreshShippingMethodsWorkflowInputSchema,
   maybeRefreshShippingMethodsWorkflowOutputSchema,
-  type MaybeRefreshShippingMethodsWorkflowInput as SchemaInput,
-  type MaybeRefreshShippingMethodsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 import { ShippingOptionPriceType } from "@medusajs/framework/utils"
 import { calculateShippingOptionsPricesStep } from "../../fulfillment/steps"
@@ -49,27 +46,6 @@ const COMMON_OPTIONS_FIELDS = [
   "rules.operator",
 ]
 
-/**
- * The data to create a shipping method for an order edit.
- */
-export type MaybeRefreshShippingMethodsWorkflowInput = {
-  /**
-   * The ID of the shipping method to refresh.
-   */
-  shipping_method_id: string
-  /**
-   * The ID of the order.
-   */
-  order_id: string
-  /**
-   * The ID of the ADD SHIPPING action to update.
-   */
-  action_id: string
-  /**
-   * Data to pass for the shipping calculation.
-   */
-  context: CalculatedRMAShippingContext
-}
 
 export const maybeRefreshShippingMethodsWorkflowId =
   "maybe-refresh-shipping-methods"
@@ -103,9 +79,6 @@ export const maybeRefreshShippingMethodsWorkflowId =
  *
  * Refreshes the shipping method prices of an order and its changes.
  */
-const _in: SchemaInput = {} as MaybeRefreshShippingMethodsWorkflowInput
-const _out: void = undefined as SchemaOutput
-void _in, _out
 
 export const maybeRefreshShippingMethodsWorkflow = createWorkflow(
   {
@@ -115,7 +88,7 @@ export const maybeRefreshShippingMethodsWorkflow = createWorkflow(
     inputSchema: maybeRefreshShippingMethodsWorkflowInputSchema,
     outputSchema: maybeRefreshShippingMethodsWorkflowOutputSchema,
   },
-  function (input): WorkflowResponse<void> {
+  function (input) {
     const shippingMethodQuery = useQueryGraphStep({
       entity: "order_shipping_method",
       fields: ["id", "shipping_option_id"],

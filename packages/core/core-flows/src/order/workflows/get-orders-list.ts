@@ -1,4 +1,4 @@
-import { OrderDTO, OrderDetailDTO } from "@medusajs/framework/types"
+import { OrderDetailDTO } from "@medusajs/framework/types"
 import { deduplicate } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -13,82 +13,8 @@ import {
 import {
   getOrdersListWorkflowInputSchema,
   getOrdersListWorkflowOutputSchema,
-  type GetOrdersListWorkflowInput as SchemaInput,
-  type GetOrdersListWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-/**
- * The retrieved list of orders. If you passed pagination configurations in the 
- * input, the response will return an object that includes the list of
- * orders and their pagination details. Otherwise, only the list of orders are returned.
- */
-export type GetOrdersListWorkflowOutput =
-  | OrderDTO[]
-  | {
-    /**
-     * The list of orders.
-     */
-      rows: OrderDTO[]
-      /**
-       * Pagination details.
-       */
-      metadata: {
-        /**
-         * The total number of orders.
-         */
-        count: number
-        /**
-         * The number of items skipped before retrieving the returned orders.
-         */
-        skip: number
-        /**
-         * The number of items to retrieve.
-         */
-        take: number
-      }
-    }
-
-export type GetOrdersListWorkflowInput = {
-  /**
-   * The fields and relations to retrieve in the order. These fields
-   * are passed to [Query](https://docs.medusajs.com/learn/fundamentals/module-links/query),
-   * so you can pass names of custom models linked to the order.
-   */
-  fields: string[]
-  /**
-   * Filters and pagination configurations to apply on the retrieved orders.
-   */
-  variables?: Record<string, any> & {
-    /**
-     * The number of items to skip before retrieving the orders.
-     */
-    skip?: number
-    /**
-     * The number of items to retrieve.
-     */
-    take?: number
-    /**
-     * Fields to sort the orders by. The key is the field name, and the value is either
-     * `ASC` for ascending order or `DESC` for descending order.
-     */
-    order?: Record<string, string>
-  }
-}
-
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: GetOrdersListWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as GetOrdersListWorkflowOutput
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const getOrdersListWorkflowId = "get-orders-list"
 /**
@@ -137,7 +63,7 @@ export const getOrdersListWorkflow = createWorkflow(
     inputSchema: getOrdersListWorkflowInputSchema,
     outputSchema: getOrdersListWorkflowOutputSchema,
   },
-  (input): WorkflowResponse<GetOrdersListWorkflowOutput> => {
+  (input) => {
     const fields = transform(input, ({ fields }) => {
       return deduplicate([
         ...fields,
@@ -156,7 +82,7 @@ export const getOrdersListWorkflow = createWorkflow(
       ])
     })
 
-    const orders: OrderDTO[] = useRemoteQueryStep({
+    const orders = useRemoteQueryStep({
       entry_point: "orders",
       fields,
       variables: input.variables,

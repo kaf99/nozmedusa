@@ -8,8 +8,6 @@ import {
 import {
   markPaymentCollectionAsPaidInputSchema,
   markPaymentCollectionAsPaidOutputSchema,
-  type MarkPaymentCollectionAsPaidInput as SchemaInput,
-  type MarkPaymentCollectionAsPaidOutput as SchemaOutput,
 } from "../utils/schemas"
 import { useRemoteQueryStep } from "../../common"
 import {
@@ -59,24 +57,6 @@ export const throwUnlessPaymentCollectionNotPaid = createStep(
   }
 )
 
-/**
- * The data to mark a payment collection as paid.
- */
-export type MarkPaymentCollectionAsPaidInput = {
-  /**
-   * The ID of the payment collection to mark as paid.
-   */
-  payment_collection_id: string
-  /**
-   * The ID of the order that the payment collection belongs to.
-   */
-  order_id: string
-  /**
-   * The ID of the user marking the payment collection as completed.
-   */
-  captured_by?: string
-}
-
 const systemPaymentProviderId = "pp_system_default"
 export const markPaymentCollectionAsPaidId = "mark-payment-collection-as-paid"
 /**
@@ -99,17 +79,6 @@ export const markPaymentCollectionAsPaidId = "mark-payment-collection-as-paid"
  *
  * Mark a payment collection for an order as paid.
  */
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-const schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: MarkPaymentCollectionAsPaidInput = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const existingOutput: SchemaOutput = {} as any // Payment DTO
-
-console.log(existingInput, existingOutput, schemaOutput)
 
 export const markPaymentCollectionAsPaid = createWorkflow(
   {

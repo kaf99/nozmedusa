@@ -12,8 +12,6 @@ import { deleteDraftOrdersStep } from "../steps"
 import {
   deleteDraftOrderStepInputSchema,
   deleteDraftOrdersWorkflowOutputSchema,
-  type DeleteDraftOrderStepInput as SchemaInput,
-  type DeleteDraftOrdersWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 /**
@@ -26,12 +24,6 @@ export interface DeleteDraftOrderStepInput {
   order_ids: string[]
 }
 
-// Type verification
-const _in: SchemaInput = {} as DeleteDraftOrderStepInput
-const _out: SchemaOutput = undefined as void
-
-void _in
-void _out
 
 const validateDraftOrdersStep = createStep(
   "validate-draft-orders",

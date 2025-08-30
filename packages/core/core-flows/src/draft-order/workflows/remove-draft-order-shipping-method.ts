@@ -9,7 +9,7 @@ import {
   when,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderChangeDTO, OrderDTO, OrderPreviewDTO } from "@medusajs/types"
+import { OrderChangeDTO, OrderDTO } from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -21,16 +21,8 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   removeDraftOrderShippingMethodWorkflowInputSchema,
   removeDraftOrderShippingMethodWorkflowOutputSchema,
-  type RemoveDraftOrderShippingMethodWorkflowInput as SchemaInput,
-  type RemoveDraftOrderShippingMethodWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-// Type verification
-const _in: SchemaInput = {} as RemoveDraftOrderShippingMethodWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
 
 export const removeDraftOrderShippingMethodWorkflowId =
   "remove-draft-order-shipping-method"
@@ -75,7 +67,7 @@ export const removeDraftOrderShippingMethodWorkflow = createWorkflow(
     inputSchema: removeDraftOrderShippingMethodWorkflowInputSchema,
     outputSchema: removeDraftOrderShippingMethodWorkflowOutputSchema,
   },
-  function (input: RemoveDraftOrderShippingMethodWorkflowInput) {
+  function (input) {
     const order: OrderDTO & {
       promotions: {
         code: string

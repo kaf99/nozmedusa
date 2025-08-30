@@ -1,4 +1,3 @@
-import { InviteWorkflow, UserDTO } from "@medusajs/framework/types"
 import { InviteWorkflowEvents } from "@medusajs/framework/utils"
 import {
   WorkflowResponse,
@@ -14,19 +13,13 @@ import { validateTokenStep } from "../steps/validate-token"
 import {
   acceptInviteWorkflowInputSchema,
   acceptInviteWorkflowOutputSchema,
-  type AcceptInviteWorkflowInput as SchemaInput,
-  type AcceptInviteWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type AcceptInviteWorkflowInput,
-  type AcceptInviteWorkflowOutput,
+export type {
+  AcceptInviteWorkflowInput,
+  AcceptInviteWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as InviteWorkflow.AcceptInviteWorkflowInputDTO
-const _out: SchemaOutput = {} as UserDTO[]
-void _in, _out
 
 export const acceptInviteWorkflowId = "accept-invite-workflow"
 /**

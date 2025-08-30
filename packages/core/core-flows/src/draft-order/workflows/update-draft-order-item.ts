@@ -14,9 +14,7 @@ import {
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
-  OrderWorkflow,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { useRemoteQueryStep } from "../../common"
 import {
   createOrderChangeActionsWorkflow,
@@ -29,20 +27,8 @@ import { refreshDraftOrderAdjustmentsWorkflow } from "./refresh-draft-order-adju
 import {
   orderEditUpdateItemQuantityWorkflowInputSchema,
   orderEditUpdateItemQuantityWorkflowOutputSchema,
-  type OrderEditUpdateItemQuantityWorkflowInput as SchemaInput,
-  type OrderEditUpdateItemQuantityWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-const _in: SchemaInput =
-  {} as OrderWorkflow.OrderEditUpdateItemQuantityWorkflowInput
-const _out: OrderPreviewDTO = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as OrderPreviewDTO
-
-export type OrderEditUpdateItemQuantityWorkflowInput = SchemaInput
-export type OrderEditUpdateItemQuantityWorkflowOutput = SchemaOutput
-
-// This is to ensure that the types are not tree-shaken away
-void _in, _out, _outRev
 
 export const updateDraftOrderItemWorkflowId = "update-draft-order-item"
 

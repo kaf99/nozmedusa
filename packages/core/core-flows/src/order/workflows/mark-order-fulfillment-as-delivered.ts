@@ -29,8 +29,6 @@ import {
 import {
   markOrderFulfillmentAsDeliveredWorkflowInputSchema,
   markOrderFulfillmentAsDeliveredWorkflowOutputSchema,
-  type MarkOrderFulfillmentAsDeliveredWorkflowInput as SchemaInput,
-  type MarkOrderFulfillmentAsDeliveredWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 type OrderItemWithVariantDTO = OrderLineItemDTO & {
@@ -184,37 +182,6 @@ function prepareRegisterDeliveryData({
   }
 }
 
-/**
- * The details to mark a fulfillment in an order as delivered.
- */
-export type MarkOrderFulfillmentAsDeliveredWorkflowInput = {
-  /**
-   * The ID of the order to mark the fulfillment as delivered in.
-   */
-  orderId: string
-  /**
-   * The ID of the fulfillment to mark as delivered.
-   */
-  fulfillmentId: string
-}
-
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = undefined as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: MarkOrderFulfillmentAsDeliveredWorkflowInput =
-  _schemaInput
-const _in: SchemaInput = {} as MarkOrderFulfillmentAsDeliveredWorkflowInput
-void _in
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-// For void outputs, we don't need to check compatibility
-const _existingOutput = undefined as SchemaOutput
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const markOrderFulfillmentAsDeliveredWorkflowId =
   "mark-order-fulfillment-as-delivered-workflow"

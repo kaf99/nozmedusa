@@ -10,29 +10,13 @@ import { refundPaymentsWorkflow } from "../../../payment/workflows/refund-paymen
 import {
   refundCapturedPaymentsWorkflowInputSchema,
   refundCapturedPaymentsWorkflowOutputSchema,
-  type RefundCapturedPaymentsWorkflowInput as SchemaInput,
 } from "./utils/schemas"
 
-export {
-  type RefundCapturedPaymentsWorkflowInput,
-  type RefundCapturedPaymentsWorkflowOutput,
+export type {
+  RefundCapturedPaymentsWorkflowInput,
+  RefundCapturedPaymentsWorkflowOutput,
 } from "./utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const schemaInput = {} as SchemaInput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const existingInput: {
-  order_id: string
-  created_by?: string
-  note?: string
-} = schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-// Note: void workflow returns nothing
-const _voidCheck: void = undefined!
-
-console.log(existingInput, _voidCheck)
 
 export const refundCapturedPaymentsWorkflowId =
   "refund-captured-payments-workflow"

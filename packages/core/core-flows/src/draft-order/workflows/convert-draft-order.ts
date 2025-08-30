@@ -9,14 +9,12 @@ import {
   StepResponse,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { IOrderModuleService, OrderDTO } from "@medusajs/types"
+import { IOrderModuleService } from "@medusajs/framework/types"
 import { emitEventStep, useRemoteQueryStep } from "../../common"
 import { validateDraftOrderStep } from "../steps/validate-draft-order"
 import {
   convertDraftOrderWorkflowInputSchema,
   convertDraftOrderWorkflowOutputSchema,
-  type ConvertDraftOrderWorkflowInput as SchemaInput,
-  type ConvertDraftOrderWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
 /**
@@ -29,11 +27,6 @@ export interface ConvertDraftOrderWorkflowInput {
   id: string
 }
 
-// Type verification
-const _in: SchemaInput = {} as ConvertDraftOrderWorkflowInput
-const _out: SchemaOutput = {} as OrderDTO
-void _in
-void _out
 
 export const convertDraftOrderWorkflowId = "convert-draft-order"
 
