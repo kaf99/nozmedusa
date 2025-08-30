@@ -52,7 +52,8 @@ export const updateCartPromotionsWorkflowId = "update-cart-promotions"
 export const updateCartPromotionsWorkflow = createWorkflow(
   {
     name: updateCartPromotionsWorkflowId,
-    description: "Update a cart's applied promotions to add, replace, or remove them",
+    description:
+      "Update a cart's applied promotions to add, replace, or remove them",
     inputSchema: updateCartPromotionsWorkflowInputSchema,
     outputSchema: updateCartPromotionsWorkflowOutputSchema,
   },

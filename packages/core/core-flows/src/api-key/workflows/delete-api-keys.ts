@@ -8,16 +8,19 @@ import {
 } from "../utils/schemas"
 
 // Re-export types from schemas for backward compatibility
-export type { DeleteApiKeysWorkflowInput, DeleteApiKeysWorkflowOutput } from "../utils/schemas"
+export type {
+  DeleteApiKeysWorkflowInput,
+  DeleteApiKeysWorkflowOutput,
+} from "../utils/schemas"
 
 export const deleteApiKeysWorkflowId = "delete-api-keys"
 /**
  * This workflow deletes one or more secret or publishable API keys. It's used by the
  * [Delete API Key Admin API Route](https://docs.medusajs.com/api/admin#api-keys_deleteapikeysid).
- * 
+ *
  * You can use this workflow within your customizations or your own custom workflows, allowing you to
  * delete API keys within your custom flows.
- * 
+ *
  * @example
  * const { result } = await deleteApiKeysWorkflow(container)
  * .run({
@@ -25,9 +28,9 @@ export const deleteApiKeysWorkflowId = "delete-api-keys"
  *     ids: ["apk_123"]
  *   }
  * })
- * 
+ *
  * @summary
- * 
+ *
  * Delete secret or publishable API keys.
  */
 export const deleteApiKeysWorkflow = createWorkflow(

@@ -5,9 +5,7 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import {
-  CalculateShippingOptionPriceDTO,
-} from "@medusajs/types"
+import { CalculateShippingOptionPriceDTO } from "@medusajs/types"
 
 import { useQueryGraphStep, validatePresenceOfStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"

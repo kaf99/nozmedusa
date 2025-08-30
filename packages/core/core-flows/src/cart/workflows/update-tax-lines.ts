@@ -60,7 +60,6 @@ const cartFields = [
   "shipping_address.metadata",
 ]
 
-
 export const updateTaxLinesWorkflowId = "update-tax-lines"
 /**
  * This workflow updates a cart's tax lines that are applied on line items and shipping methods. You can update the line item's quantity, unit price, and more. This workflow is executed
