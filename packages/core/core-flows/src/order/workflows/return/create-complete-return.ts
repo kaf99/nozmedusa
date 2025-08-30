@@ -41,8 +41,6 @@ import { pricingContextResult } from "../../../cart/utils/schemas"
 import {
   createOrderReturnWorkflowInputSchema,
   createAndCompleteReturnOrderWorkflowOutputSchema,
-  type CreateOrderReturnWorkflowInput as SchemaInput,
-  type CreateAndCompleteReturnOrderWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 function prepareShippingMethodData({
@@ -288,13 +286,6 @@ export const createCompleteReturnValidationStep = createStep(
     validateCustomRefundAmount({ order, refundAmount: input.refund_amount })
   }
 )
-
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.CreateOrderReturnWorkflowInput & AdditionalData
-const _out: SchemaOutput = {} as ReturnDTO
-
-void _in
-void _out
 
 export const createAndCompleteReturnOrderWorkflowId =
   "create-complete-return-order"

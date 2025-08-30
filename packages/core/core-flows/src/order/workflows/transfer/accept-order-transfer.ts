@@ -1,7 +1,6 @@
 import {
   OrderChangeDTO,
   OrderDTO,
-  OrderWorkflow,
 } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
@@ -9,7 +8,6 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { OrderPreviewDTO } from "@medusajs/types"
 import {
   ChangeActionType,
   MedusaError,
@@ -23,8 +21,6 @@ import { throwIfOrderIsCancelled } from "../../utils/order-validation"
 import {
   acceptOrderTransferWorkflowInputSchema,
   acceptOrderTransferWorkflowOutputSchema,
-  type AcceptOrderTransferWorkflowInput as SchemaInput,
-  type AcceptOrderTransferWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -98,13 +94,6 @@ export const acceptOrderTransferValidationStep = createStep(
   }
 )
 
-// Type verification
-const _inputSchemaCheck: SchemaInput =
-  {} as OrderWorkflow.AcceptOrderTransferWorkflowInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const acceptOrderTransferWorkflowId = "accept-order-transfer-workflow"
 /**

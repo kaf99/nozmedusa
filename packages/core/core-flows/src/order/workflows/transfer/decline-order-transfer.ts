@@ -23,8 +23,6 @@ import {
 import {
   declineTransferOrderRequestWorkflowInputSchema,
   declineTransferOrderRequestWorkflowOutputSchema,
-  type DeclineTransferOrderRequestWorkflowInput as SchemaInput,
-  type DeclineTransferOrderRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -93,13 +91,6 @@ export const declineTransferOrderRequestValidationStep = createStep(
   }
 )
 
-// Type verification
-const _in: SchemaInput =
-  {} as OrderWorkflow.DeclineTransferOrderRequestWorkflowInput
-const _out: SchemaOutput = undefined as void
-
-void _in
-void _out
 
 export const declineTransferOrderRequestWorkflowId =
   "decline-transfer-order-request"
@@ -128,9 +119,7 @@ export const declineOrderTransferRequestWorkflow = createWorkflow(
     inputSchema: declineTransferOrderRequestWorkflowInputSchema,
     outputSchema: declineTransferOrderRequestWorkflowOutputSchema,
   },
-  function (
-    input: OrderWorkflow.DeclineTransferOrderRequestWorkflowInput
-  ): void {
+  function (input): void {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: ["id", "version", "declined_at"],

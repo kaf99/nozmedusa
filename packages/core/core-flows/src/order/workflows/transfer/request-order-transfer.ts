@@ -1,4 +1,4 @@
-import { OrderDTO, OrderWorkflow } from "@medusajs/framework/types"
+import { OrderDTO } from "@medusajs/framework/types"
 import {
   WorkflowResponse,
   createStep,
@@ -22,8 +22,6 @@ import { previewOrderChangeStep, updateOrderChangesStep } from "../../steps"
 import {
   requestOrderTransferWorkflowInputSchema,
   requestOrderTransferWorkflowOutputSchema,
-  type RequestOrderTransferWorkflowOutput as SchemaOutput,
-  type RequestOrderTransferWorkflowInput as SchemaInput,
 } from "../../utils/schemas"
 
 /**
@@ -88,13 +86,6 @@ export const requestOrderTransferValidationStep = createStep(
   }
 )
 
-// Type verification
-const _inputSchemaCheck: OrderWorkflow.RequestOrderTransferWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const requestOrderTransferWorkflowId = "request-order-transfer-workflow"
 /**
@@ -126,9 +117,7 @@ export const requestOrderTransferWorkflow = createWorkflow(
     inputSchema: requestOrderTransferWorkflowInputSchema,
     outputSchema: requestOrderTransferWorkflowOutputSchema,
   },
-  function (
-    input: OrderWorkflow.RequestOrderTransferWorkflowInput
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input): WorkflowResponse<OrderPreviewDTO> {
     const order: OrderDTO = useRemoteQueryStep({
       entry_point: "orders",
       fields: ["id", "email", "status", "customer_id"],

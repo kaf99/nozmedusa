@@ -11,9 +11,9 @@ import {
   deleteInventoryItemsWorkflowInputSchema,
   deleteInventoryItemsWorkflowOutputSchema,
 } from "../utils/schemas"
-export {
-  type DeleteInventoryItemsWorkflowInput,
-  type DeleteInventoryItemsWorkflowOutput,
+export type {
+  DeleteInventoryItemsWorkflowInput,
+  DeleteInventoryItemsWorkflowOutput,
 } from "../utils/schemas"
 
 export const deleteInventoryItemWorkflowId = "delete-inventory-item-workflow"

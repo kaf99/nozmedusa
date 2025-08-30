@@ -2,7 +2,6 @@ import {
   OrderChangeActionDTO,
   OrderChangeDTO,
   OrderDTO,
-  OrderPreviewDTO,
   OrderWorkflow,
   ReturnDTO,
 } from "@medusajs/framework/types"
@@ -15,8 +14,6 @@ import {
 import {
   deleteRequestItemReceiveReturnWorkflowInputSchema,
   deleteRequestItemReceiveReturnWorkflowOutputSchema,
-  type DeleteRequestItemReceiveReturnWorkflowInput as SchemaInput,
-  type DeleteRequestItemReceiveReturnWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import {
@@ -138,14 +135,6 @@ export const removeItemReceiveReturnActionWorkflowId =
  * 
  * Remove an item from a return receival.
  */
-
-// Type verification
-const _in: SchemaInput = {} as OrderWorkflow.DeleteRequestItemReceiveReturnWorkflowInput
-const _out: SchemaOutput = {} as OrderPreviewDTO
-
-void _in
-void _out
-
 export const removeItemReceiveReturnActionWorkflow = createWorkflow(
   {
     name: removeItemReceiveReturnActionWorkflowId,

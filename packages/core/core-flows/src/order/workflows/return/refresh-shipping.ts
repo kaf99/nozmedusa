@@ -9,8 +9,6 @@ import {
 import {
   refreshReturnShippingWorkflowInputSchema,
   refreshReturnShippingWorkflowOutputSchema,
-  type RefreshReturnShippingWorkflowInput as SchemaInput,
-  type RefreshReturnShippingWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 import { maybeRefreshShippingMethodsWorkflow } from "../maybe-refresh-shipping-methods"
@@ -35,12 +33,6 @@ export type RequestItemReturnValidationStepInput = {
 }
 
 export const refreshReturnShippingWorkflowId = "refresh-return-shipping"
-
-const _inputCheck: RequestItemReturnValidationStepInput = {} as SchemaInput
-const _outputCheck: void = undefined as SchemaOutput
-
-void _inputCheck
-void _outputCheck
 
 export const refreshReturnShippingWorkflow = createWorkflow(
   {

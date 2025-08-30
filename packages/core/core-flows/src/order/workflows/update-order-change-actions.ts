@@ -1,8 +1,4 @@
 import {
-  OrderChangeActionDTO,
-  UpdateOrderChangeActionDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -10,21 +6,13 @@ import { updateOrderChangeActionsStep } from "../steps"
 import {
   updateOrderChangeActionsWorkflowInputSchema,
   updateOrderChangeActionsWorkflowOutputSchema,
-  type UpdateOrderChangeActionsWorkflowInput as SchemaInput,
-  type UpdateOrderChangeActionsWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-export {
-  type UpdateOrderChangeActionsWorkflowInput,
-  type UpdateOrderChangeActionsWorkflowOutput,
+export type {
+  UpdateOrderChangeActionsWorkflowInput,
+  UpdateOrderChangeActionsWorkflowOutput,
 } from "../utils/schemas"
 
-// Type verification - CORRECT ORDER!
-const _in: SchemaInput = {} as UpdateOrderChangeActionDTO[]
-const _inRev: UpdateOrderChangeActionDTO[] = {} as SchemaInput
-const _out: OrderChangeActionDTO[] = {} as SchemaOutput
-const _outRev: SchemaOutput = {} as OrderChangeActionDTO[]
-void _in, _out, _outRev, _inRev
 
 export const updateOrderChangeActionsWorkflowId = "update-order-change-actions"
 /**

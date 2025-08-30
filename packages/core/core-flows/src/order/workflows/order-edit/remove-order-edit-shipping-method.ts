@@ -15,8 +15,6 @@ import {
 import {
   deleteOrderEditShippingMethodWorkflowInputSchema,
   deleteOrderEditShippingMethodWorkflowOutputSchema,
-  type DeleteOrderEditShippingMethodWorkflowInput as SchemaInput,
-  type DeleteOrderEditShippingMethodWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 import { useRemoteQueryStep } from "../../../common"
 import { deleteOrderShippingMethods } from "../../steps"
@@ -86,20 +84,6 @@ export const removeOrderEditShippingMethodValidationStep = createStep(
   }
 )
 
-// Type verification - CORRECT ORDER!
-const _schemaInput = {} as SchemaInput
-const _schemaOutput = {} as SchemaOutput
-
-// Check 1: New input can go into old input (schema accepts all valid inputs)
-const _existingInput: OrderWorkflow.DeleteOrderEditShippingMethodWorkflowInput = _schemaInput
-
-// Check 2: Old output can go into new output (schema produces compatible outputs)
-const _existingOutput: SchemaOutput = {} as OrderPreviewDTO
-
-void _schemaInput
-void _schemaOutput
-void _existingInput
-void _existingOutput
 
 export const removeOrderEditShippingMethodWorkflowId =
   "remove-order-edit-shipping-method"

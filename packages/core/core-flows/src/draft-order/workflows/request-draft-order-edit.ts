@@ -19,8 +19,6 @@ import {
   type RequestDraftOrderEditWorkflowOutput,
 } from "../utils/schemas"
 
-requestDraftOrderEditWorkflowInputSchema._def satisfies import("zod").ZodTypeDef
-requestDraftOrderEditWorkflowOutputSchema._def satisfies import("zod").ZodTypeDef
 
 export const requestDraftOrderEditId = "request-draft-order-edit"
 

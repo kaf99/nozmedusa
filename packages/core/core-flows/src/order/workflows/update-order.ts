@@ -11,7 +11,6 @@ import {
   transform,
 } from "@medusajs/framework/workflows-sdk"
 import {
-  OrderPreviewDTO,
   RegisterOrderChangeDTO,
   UpdateOrderDTO,
 } from "@medusajs/types"
@@ -26,8 +25,11 @@ import { throwIfOrderIsCancelled } from "../utils/order-validation"
 import {
   updateOrderWorkflowInputSchema,
   updateOrderWorkflowOutputSchema,
-  type UpdateOrderWorkflowInput as SchemaInput,
-  type UpdateOrderWorkflowOutput as SchemaOutput,
+} from "../utils/schemas"
+
+export type {
+  UpdateOrderWorkflowInput,
+  UpdateOrderWorkflowOutput,
 } from "../utils/schemas"
 
 /**
@@ -100,13 +102,6 @@ export const updateOrderValidationStep = createStep(
   }
 )
 
-// Type verification
-const _inputSchemaCheck: OrderWorkflow.UpdateOrderWorkflowInput =
-  {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderPreviewDTO
-
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const updateOrderWorkflowId = "update-order-workflow"
 /**
@@ -136,9 +131,7 @@ export const updateOrderWorkflow = createWorkflow(
     inputSchema: updateOrderWorkflowInputSchema,
     outputSchema: updateOrderWorkflowOutputSchema,
   },
-  function (
-    input: OrderWorkflow.UpdateOrderWorkflowInput
-  ): WorkflowResponse<OrderPreviewDTO> {
+  function (input) {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: [

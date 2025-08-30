@@ -1,8 +1,4 @@
 import {
-  OrderChangeDTO,
-  UpdateOrderChangeActionDTO,
-} from "@medusajs/framework/types"
-import {
   WorkflowResponse,
   createWorkflow,
 } from "@medusajs/framework/workflows-sdk"
@@ -10,15 +6,13 @@ import { updateOrderChangesStep } from "../steps"
 import {
   updateOrderChangesWorkflowInputSchema,
   updateOrderChangesWorkflowOutputSchema,
-  type UpdateOrderChangesWorkflowInput as SchemaInput,
-  type UpdateOrderChangesWorkflowOutput as SchemaOutput,
 } from "../utils/schemas"
 
-const _inputSchemaCheck: UpdateOrderChangeActionDTO[] = {} as SchemaInput
-const _outputSchemaCheck: SchemaOutput = {} as OrderChangeDTO[]
+export type {
+  UpdateOrderChangesWorkflowInput,
+  UpdateOrderChangesWorkflowOutput,
+} from "../utils/schemas"
 
-void _inputSchemaCheck
-void _outputSchemaCheck
 
 export const updateOrderChangesWorkflowId = "update-order-change"
 
@@ -39,7 +33,7 @@ export const updateOrderChangesWorkflow = createWorkflow(
     inputSchema: updateOrderChangesWorkflowInputSchema,
     outputSchema: updateOrderChangesWorkflowOutputSchema,
   },
-  (input: UpdateOrderChangeActionDTO[]): WorkflowResponse<OrderChangeDTO[]> => {
+  (input) => {
     return new WorkflowResponse(updateOrderChangesStep(input))
   }
 )

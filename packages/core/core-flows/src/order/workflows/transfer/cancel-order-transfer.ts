@@ -22,8 +22,6 @@ import {
 import {
   cancelTransferOrderRequestWorkflowInputSchema,
   cancelTransferOrderRequestWorkflowOutputSchema,
-  type CancelTransferOrderRequestWorkflowInput as SchemaInput,
-  type CancelTransferOrderRequestWorkflowOutput as SchemaOutput,
 } from "../../utils/schemas"
 
 /**
@@ -100,13 +98,6 @@ export const cancelTransferOrderRequestValidationStep = createStep(
   }
 )
 
-// Type verification
-const _in: SchemaInput =
-  {} as OrderWorkflow.CancelTransferOrderRequestWorkflowInput
-const _out: SchemaOutput = undefined as void
-
-void _in
-void _out
 
 export const cancelTransferOrderRequestWorkflowId =
   "cancel-transfer-order-request"
@@ -138,9 +129,7 @@ export const cancelOrderTransferRequestWorkflow = createWorkflow(
     inputSchema: cancelTransferOrderRequestWorkflowInputSchema,
     outputSchema: cancelTransferOrderRequestWorkflowOutputSchema,
   },
-  function (
-    input: OrderWorkflow.CancelTransferOrderRequestWorkflowInput
-  ): void {
+  function (input): void {
     const orderQuery = useQueryGraphStep({
       entity: "order",
       fields: ["id", "version", "canceled_at"],
