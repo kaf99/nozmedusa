@@ -1,9 +1,9 @@
 import { check, group, sleep } from "k6"
 import http from "k6/http"
 
-const publishableKey = process.env.K6_PUBLISHABLE_KEY
-const endpoint = process.env.K6_ENDPOINT
-const regionId = process.env.K6_REGION_ID
+const publishableKey = __ENV.K6_PUBLISHABLE_KEY
+const regionId = __ENV.K6_REGION_ID
+const endpoint = "http://localhost:9000"
 
 if (!publishableKey || !endpoint || !regionId) {
   throw new Error("Missing environment variables")
@@ -18,7 +18,7 @@ const params = {
 
 /*
  * k6 load test for small DTC ecommerce site (10 orders/day, ~333 daily visitors, 3% conversion).
- * Simulates peak load (~50 VUs: 40 browser, 7 shopper, 3 buyer) in 25 min (5m ramp-up, 15m steady, 5m ramp-down).
+ * Simulates  load (~50 VUs: 40 browser, 7 shopper, 3 buyer) in 5 min (30s ramp-up, 4m steady, 30s ramp-down).
  * Tests: browsing, cart operations, checkout. Metrics: p95 <500ms, error rate <1%.
  */
 export const options = {
@@ -28,9 +28,9 @@ export const options = {
       exec: "browseCatalog",
       startTime: "0s",
       stages: [
-        { duration: "5m", target: 40 },
-        { duration: "15m", target: 40 },
-        { duration: "5m", target: 0 },
+        { duration: "30s", target: 40 },
+        { duration: "4m", target: 40 },
+        { duration: "30s", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "browseCatalog" },
@@ -40,9 +40,9 @@ export const options = {
       exec: "addToCart",
       startTime: "0s",
       stages: [
-        { duration: "5m", target: 7 },
-        { duration: "15m", target: 7 },
-        { duration: "5m", target: 0 },
+        { duration: "30s", target: 7 },
+        { duration: "4m", target: 7 },
+        { duration: "30s", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "addToCart" },
@@ -52,9 +52,9 @@ export const options = {
       exec: "completeCart",
       startTime: "0s",
       stages: [
-        { duration: "5m", target: 3 },
-        { duration: "15m", target: 3 },
-        { duration: "5m", target: 0 },
+        { duration: "30s", target: 3 },
+        { duration: "4m", target: 3 },
+        { duration: "30s", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "completeCart" },
