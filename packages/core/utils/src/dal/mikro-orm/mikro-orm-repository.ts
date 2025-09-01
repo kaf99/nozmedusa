@@ -11,7 +11,6 @@ import {
   RepositoryTransformOptions,
   UpsertWithReplaceConfig,
 } from "@medusajs/types"
-import rfdc from "rfdc"
 import {
   EntityClass,
   EntityManager,
@@ -662,8 +661,7 @@ export function mikroOrmBaseRepositoryFactory<const T extends object>(
       // Create only the top-level entity without the relations first
       const toUpsert = normalizedData.map((entry) => {
         // Make a copy of the data and remove undefined fields. The data is already a POJO due to the serialization above
-        const clone = rfdc()
-        const entryCopy = clone(entry)
+        const entryCopy = JSON.parse(JSON.stringify(entry))
         const reconstructedEntry: any = {}
 
         allRelations?.forEach((relation) => {
