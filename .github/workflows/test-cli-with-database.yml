@@ -1,6 +1,7 @@
 name: Performance tests
 on:
   pull_request:
+  push:
 
 jobs:
   simple-performance-test:
@@ -40,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -59,16 +60,16 @@ jobs:
       - name: Create Medusa project
         working-directory: ..
         run: |
-          medusa new cli-test --skip-db --skip-migrations --v2 --branch ci-custom
+          medusa new cli-test --skip-db --skip-migrations --v2 --branch chore/ci-perf-tests
 
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Install new app dependencies (via resolutions)
-        run: rm package-lock.json && yarn install --no-immutable
-        env:
-          YARN_ENABLE_IMMUTABLE_INSTALLS: false
-        working-directory: ../cli-test
+      # - name: Install new app dependencies (via resolutions)
+      #   run: rm package-lock.json && yarn install --no-immutable
+      #   env:
+      #     YARN_ENABLE_IMMUTABLE_INSTALLS: false
+      #   working-directory: ../cli-test
 
       - name: Run migrations
         run: npx medusa db:migrate
@@ -92,43 +93,16 @@ jobs:
       - name: Testing server
         uses: ./.github/actions/test-server
 
-      - name: Wait for server
-        run: sleep 5
+      - name: Wait for live server response
+        shell: "bash"
+        run: ./integration-tests/scripts/cli/wait-for-server-live.sh
 
-      - name: Authenticate as user
-        run: |
-          RESPONSE=$(curl -s -X POST http://localhost:9000/auth/user/emailpass \
-            -H "Content-Type: application/json" \
-            -d '{"email":"test@test.com","password":"password"}')
-
-          # Extract JWT token from response (assuming the token is in a 'token' field)
-          TOKEN=$(echo $RESPONSE | jq -r '.token')
-
-          # Store token in environment variable for subsequent steps
-          echo "JWT_TOKEN=$TOKEN" >> $GITHUB_ENV
-
-      - name: Get region ID and publishable api key
-        run: |
-          REGION_RESPONSE=$(curl -s -X GET http://localhost:9000/admin/regions \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $JWT_TOKEN" \
-
-          PUB_KEY_RESPONSE=$(curl -s -X GET http://localhost:9000/admin/api-keys?type=publishable \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $JWT_TOKEN" \
-
-          # Extract region ID and publishable api key from response; they are both the first element of the array
-          REGION_ID=$(echo $REGION_RESPONSE | jq -r '.api_keys[0].id')
-          PUB_KEY=$(echo $PUB_KEY_RESPONSE | jq -r '.api_keys[0].key')
-
-          echo "REGION_ID=$REGION_ID" >> $GITHUB_ENV  
-          echo "PUB_KEY=$PUB_KEY" >> $GITHUB_ENV
       - name: Run local k6 test
         uses: grafana/run-k6-action@v1
+        env:
+          K6_REGION_ID: "reg_europe"
+          K6_PUBLISHABLE_KEY: "pk_123456789"
         with:
-          env:
-            K6_REGION_ID: ${{ env.REGION_ID }}
-            K6_PUBLISHABLE_KEY: ${{ env.PUB_KEY }}
           path: scripts/tests/load/small-dtc-local.js
           flags: --out json=k6_results.json
         continue-on-error: true # Continue to post results even if test fails
@@ -163,11 +137,11 @@ jobs:
             ] | .[] | join("|")' k6_results.json >> k6_results.txt
           cat k6_results.txt
 
-      - name: Post PR comment
-        if: always()
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            **Local Load Test Results**:
-            $(cat k6_results.txt)
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Post PR comment
+      #   if: always()
+      #   uses: thollander/actions-comment-pull-request@v2
+      #   with:
+      #     message: |
+      #       **Local Load Test Results**:
+      #       $(cat k6_results.txt)
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

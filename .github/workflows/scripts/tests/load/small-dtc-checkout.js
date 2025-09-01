@@ -1,12 +1,22 @@
 import { check, group, sleep } from "k6"
 import http from "k6/http"
 
-const publishableKey = __ENV.K6_PUBLISHABLE_KEY
-const regionId = __ENV.K6_REGION_ID
-const endpoint = "http://localhost:9000"
+let publishableKey = __ENV.K6_PUBLISHABLE_KEY
+let regionId = __ENV.K6_REGION_ID
+let endpoint = __ENV.K6_ENDPOINT
 
-if (!publishableKey || !endpoint || !regionId) {
-  throw new Error("Missing environment variables")
+const isLocal = false
+
+if (isLocal) {
+  publishableKey =
+    "pk_50d624e919cfa298e85386577373ae4ebeb5c2d0a5a7588e1e7cb67536ae7f36"
+  regionId = "reg_01K3RNJ7YR58VKM0WXJHHJBMQX"
+  endpoint = "http://localhost:9000"
+} else {
+  publishableKey =
+    "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
+  regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
+  endpoint = "https://dtc-starter.medusajs.app"
 }
 
 const params = {
