@@ -13,12 +13,12 @@ import {
 } from "./api/views"
 
 // Re-export the type for convenience
-export type ViewConfiguration = HttpTypes.AdminViewConfiguration
+export type ViewConfiguration = HttpTypes.AdminViewConfigurationResponse
 
 // Common error handler
 const handleError = (error: Error, message?: string) => {
   console.error("View configuration error:", error)
-  
+
   let errorMessage = message
   if (!errorMessage) {
     if (error instanceof FetchError) {
@@ -29,34 +29,26 @@ const handleError = (error: Error, message?: string) => {
       errorMessage = "An error occurred"
     }
   }
-  
+
   toast.error(errorMessage)
 }
 
 export const useViewConfigurations = (entity: string) => {
   const isViewConfigEnabled = useFeatureFlag("view_configurations")
-  
-  // List views
+
   const listViews = useViewConfigurationsBase(entity, { limit: 100 }, {
     enabled: isViewConfigEnabled && !!entity,
-    onError: (error) => {
-      handleError(error, "Failed to load view configurations")
-    },
+
   })
 
-  // Active view
   const activeView = useActiveViewConfigurationBase(entity, {
     enabled: isViewConfigEnabled && !!entity,
-    onError: (error) => {
-      // Don't show error toast for active view fetch - it's expected to fail sometimes
-      console.error("Failed to fetch active view configuration:", error)
-    },
   })
 
   // Create view mutation
   const createView = useCreateViewConfigurationBase(entity, {
-    onSuccess: (data) => {
-      toast.success(`View "${data.view_configuration.name}" created successfully`)
+    onSuccess: () => {
+      toast.success(`View created`)
     },
     onError: (error) => {
       handleError(error, "Failed to create view")
@@ -65,27 +57,18 @@ export const useViewConfigurations = (entity: string) => {
 
   // Set active view mutation
   const setActiveView = useSetActiveViewConfigurationBase(entity, {
-    onSuccess: () => {
-      toast.success("Active view updated")
-    },
+    onSuccess: () => { },
     onError: (error) => {
       handleError(error, "Failed to update active view")
     },
   })
 
   return useMemo(() => ({
-    // Feature flag state
     isViewConfigEnabled,
-    
-    // Query results
     listViews,
     activeView,
-    
-    // Mutations
     createView,
     setActiveView,
-    
-    // Helper to check if default view is active
     isDefaultViewActive: activeView.data?.is_default_active ?? true,
   }), [
     isViewConfigEnabled,
@@ -96,11 +79,10 @@ export const useViewConfigurations = (entity: string) => {
   ])
 }
 
-// Hook for update/delete operations on a specific view
 export const useViewConfiguration = (entity: string, viewId: string) => {
   const updateView = useUpdateViewConfigurationBase(entity, viewId, {
-    onSuccess: (data) => {
-      toast.success(`View "${data.view_configuration.name}" updated successfully`)
+    onSuccess: () => {
+      toast.success(`View updated`)
     },
     onError: (error) => {
       handleError(error, "Failed to update view")
@@ -109,7 +91,7 @@ export const useViewConfiguration = (entity: string, viewId: string) => {
 
   const deleteView = useDeleteViewConfigurationBase(entity, viewId, {
     onSuccess: () => {
-      toast.success("View deleted successfully")
+      toast.success("View deleted")
     },
     onError: (error) => {
       handleError(error, "Failed to delete view")

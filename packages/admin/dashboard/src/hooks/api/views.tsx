@@ -1,11 +1,11 @@
 import { FetchError } from "@medusajs/js-sdk"
 import { HttpTypes } from "@medusajs/types"
-import { 
+import {
   QueryKey,
-  useMutation, 
+  useMutation,
   UseMutationOptions,
   useQuery,
-  UseQueryOptions 
+  UseQueryOptions
 } from "@tanstack/react-query"
 
 import { sdk } from "../../lib/client"
@@ -18,9 +18,9 @@ export const viewsQueryKeys = queryKeysFactory(VIEWS_QUERY_KEY)
 // Generic hook to get columns for any entity
 export const useEntityColumns = (entity: string, options?: Omit<
   UseQueryOptions<
-    HttpTypes.AdminOrderColumnsResponse,
+    HttpTypes.AdminViewsEntityColumnsResponse,
     FetchError,
-    HttpTypes.AdminOrderColumnsResponse,
+    HttpTypes.AdminViewsEntityColumnsResponse,
     QueryKey
   >,
   "queryFn" | "queryKey"
@@ -82,7 +82,7 @@ export const useActiveViewConfiguration = (
 ) => {
   const { data, ...rest } = useQuery({
     queryFn: () => sdk.admin.views.retrieveActiveConfiguration(entity),
-    queryKey: [...viewsQueryKeys.detail(entity, "active")],
+    queryKey: [viewsQueryKeys.detail(entity), "active"],
     ...options,
   })
 
@@ -113,7 +113,6 @@ export const useViewConfiguration = (
   return { ...data, ...rest }
 }
 
-// Create view configuration with toast notifications
 export const useCreateViewConfiguration = (
   entity: string,
   options?: UseMutationOptions<
@@ -129,8 +128,8 @@ export const useCreateViewConfiguration = (
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.list(entity) })
       // If set_active was true, also invalidate the active configuration
       if ((variables as any).set_active) {
-        queryClient.invalidateQueries({ 
-          queryKey: [...viewsQueryKeys.detail(entity, "active")] 
+        queryClient.invalidateQueries({
+          queryKey: [...viewsQueryKeys.detail(entity, "active")]
         })
       }
       options?.onSuccess?.(data, variables, context)
@@ -139,7 +138,6 @@ export const useCreateViewConfiguration = (
   })
 }
 
-// Update view configuration
 export const useUpdateViewConfiguration = (
   entity: string,
   id: string,
@@ -177,8 +175,8 @@ export const useDeleteViewConfiguration = (
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.list(entity) })
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.detail(id) })
       // Also invalidate active configuration as it might have changed
-      queryClient.invalidateQueries({ 
-        queryKey: [...viewsQueryKeys.detail(entity, "active")] 
+      queryClient.invalidateQueries({
+        queryKey: [...viewsQueryKeys.detail(entity, "active")]
       })
       options?.onSuccess?.(data, variables, context)
     },
@@ -186,7 +184,6 @@ export const useDeleteViewConfiguration = (
   })
 }
 
-// Set active view configuration
 export const useSetActiveViewConfiguration = (
   entity: string,
   options?: UseMutationOptions<
@@ -197,15 +194,13 @@ export const useSetActiveViewConfiguration = (
 ) => {
   return useMutation({
     mutationFn: (viewConfigurationId: string | null) =>
-      sdk.admin.views.setActiveConfiguration(entity, { 
-        view_configuration_id: viewConfigurationId 
+      sdk.admin.views.setActiveConfiguration(entity, {
+        view_configuration_id: viewConfigurationId
       }),
     onSuccess: (data, variables, context) => {
-      // Invalidate active configuration
-      queryClient.invalidateQueries({ 
-        queryKey: [...viewsQueryKeys.detail(entity, "active")] 
+      queryClient.invalidateQueries({
+        queryKey: [...viewsQueryKeys.detail(entity, "active")]
       })
-      // Also invalidate the list as the active status might be shown there
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.list(entity) })
       options?.onSuccess?.(data, variables, context)
     },
