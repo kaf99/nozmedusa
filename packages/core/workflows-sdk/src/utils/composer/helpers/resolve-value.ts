@@ -1,9 +1,4 @@
-import {
-  deepCopy,
-  isDefined,
-  OrchestrationUtils,
-  promiseAll,
-} from "@medusajs/utils"
+import { deepCopy, OrchestrationUtils, promiseAll } from "@medusajs/utils"
 import rfdc from "rfdc"
 
 async function resolveProperty(property, transactionContext) {
