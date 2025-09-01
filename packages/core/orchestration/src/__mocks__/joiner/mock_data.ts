@@ -1,4 +1,5 @@
 import { JoinerServiceConfig } from "@medusajs/types"
+import rfdc from "rfdc"
 import { remoteJoinerData } from "./../../__fixtures__/joiner/data"
 
 export const serviceConfigs: JoinerServiceConfig[] = [
@@ -117,7 +118,8 @@ export const mockServiceList = (serviceName) => {
       orderService: remoteJoinerData.order,
     }
 
-    let resultset = JSON.parse(JSON.stringify(src[serviceName]))
+    const clone = rfdc()
+    let resultset = clone(src[serviceName])
 
     if (
       serviceName === "userService" &&

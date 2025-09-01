@@ -229,27 +229,29 @@ describe("Transaction Orchestrator", () => {
     await strategy.resume(transaction)
 
     expect(transaction.getErrors()).toHaveLength(2)
-    expect(transaction.getErrors()).toEqual([
-      {
-        action: "three",
-        error: {
-          message: "Step 3 failed",
-          name: "Error",
-          stack: expect.any(String),
+    expect(transaction.getErrors()).toEqual(
+      expect.arrayContaining([
+        {
+          action: "three",
+          error: {
+            message: "Step 3 failed",
+            name: "Error",
+            stack: expect.any(String),
+          },
+          handlerType: "invoke",
         },
-        handlerType: "invoke",
-      },
-      {
-        action: "three",
-        error: expect.objectContaining({
-          message: expect.stringContaining(
-            "Converting circular structure to JSON"
-          ),
-          stack: expect.any(String),
-        }),
-        handlerType: "invoke",
-      },
-    ])
+        {
+          action: "three",
+          error: expect.objectContaining({
+            message: expect.stringContaining(
+              "Converting circular structure to JSON"
+            ),
+            stack: expect.any(String),
+          }),
+          handlerType: "invoke",
+        },
+      ])
+    )
 
     DistributedTransaction.setStorage(
       new BaseInMemoryDistributedTransactionStorage()

@@ -4,6 +4,7 @@ import {
   OrchestrationUtils,
   promiseAll,
 } from "@medusajs/utils"
+import rfdc from "rfdc"
 
 async function resolveProperty(property, transactionContext) {
   const { invoke: invokeRes } = transactionContext
@@ -83,8 +84,6 @@ export async function resolveValue(input, transactionContext) {
     ? await resolveProperty(copiedInput, transactionContext)
     : await unwrapInput(copiedInput, {})
 
-  const strResult = JSON.stringify(result) // Symbols return undefined
-  if (isDefined(strResult)) {
-    return JSON.parse(strResult)
-  }
+  const clone = rfdc()
+  return clone(result)
 }

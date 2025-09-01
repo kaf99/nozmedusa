@@ -8,6 +8,7 @@ import {
   RemoteJoinerQuery,
   RemoteNestedExpands,
 } from "@medusajs/types"
+import rfdc from "rfdc"
 import {
   deduplicate,
   FilterOperatorMap,
@@ -171,14 +172,22 @@ export class RemoteJoiner {
       )
     }
 
-    this.buildReferences(
-      JSON.parse(JSON.stringify(serviceConfigs), (key, value) => {
-        if (key === "schema") {
-          return
+    const clone = rfdc()
+    const cloneWithoutSchemas = (obj: any): any => {
+      const cloned = clone(obj)
+      const removeSchemas = (o: any) => {
+        if (Array.isArray(o)) {
+          o.forEach(removeSchemas)
+        } else if (o && typeof o === 'object') {
+          delete o.schema
+          Object.values(o).forEach(removeSchemas)
         }
-        return value
-      })
-    )
+      }
+      removeSchemas(cloned)
+      return cloned
+    }
+    
+    this.buildReferences(cloneWithoutSchemas(serviceConfigs))
   }
 
   public setFetchDataCallback(remoteFetchData: RemoteFetchDataCallback): void {

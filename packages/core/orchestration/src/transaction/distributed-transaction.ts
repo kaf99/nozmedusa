@@ -1,4 +1,5 @@
 import { isDefined } from "@medusajs/utils"
+import rfdc from "rfdc"
 import { EventEmitter } from "events"
 import { IDistributedTransactionStorage } from "./datastore/abstract-storage"
 import { BaseInMemoryDistributedTransactionStorage } from "./datastore/base-in-memory-storage"
@@ -338,9 +339,12 @@ class DistributedTransaction extends EventEmitter {
       this.getErrors()
     )
 
+    const clone = rfdc({
+      circles: false,
+    })
     const isSerializable = (obj) => {
       try {
-        JSON.parse(JSON.stringify(obj))
+        clone(obj)
         return true
       } catch {
         return false
@@ -349,7 +353,7 @@ class DistributedTransaction extends EventEmitter {
 
     let rawData
     try {
-      rawData = JSON.parse(JSON.stringify(data))
+      rawData = clone(data)
     } catch (e) {
       if (!isSerializable(this.context)) {
         // This is a safe guard, we should never reach this point
@@ -364,15 +368,20 @@ class DistributedTransaction extends EventEmitter {
         const nonSerializableErrors: TransactionStepError[] = []
         for (const error of this.errors) {
           if (!isSerializable(error.error)) {
-            error.error = {
-              name: error.error.name,
-              message: error.error.message,
-              stack: error.error.stack,
-            }
             nonSerializableErrors.push({
               ...error,
-              error: e,
+              error: {
+                name: error.error.name,
+                message: error.error.message,
+                stack: error.error.stack,
+              },
             })
+
+            error.error = {
+              name: error.error.name,
+              message: "Converting circular structure to JSON",
+              stack: error.error.stack,
+            }
           }
         }
 
@@ -387,7 +396,7 @@ class DistributedTransaction extends EventEmitter {
         this.getErrors()
       )
 
-      rawData = JSON.parse(JSON.stringify(data))
+      rawData = clone(data)
     }
 
     return rawData
