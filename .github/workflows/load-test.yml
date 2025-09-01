@@ -1,0 +1,25 @@
+name: Load test, mid-sized DTC
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mid-sized-dtc-load-test:
+    env:
+      NODE_ENV: CI
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up K6
+        uses: grafana/setup-k6-action@v1
+      - name: Run local k6 test
+        uses: grafana/run-k6-action@v1
+        env:
+          K6_REGION_ID: ${{ secrets.K6_REGION_ID }}
+          K6_PUBLISHABLE_KEY: ${{ secrets.K6_PUBLISHABLE_KEY }}
+          K6_ENDPOINT: ${{ secrets.K6_ENDPOINT }}
+          K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
+          K6_CLOUD_PROJECT_ID: ${{ secrets.K6_CLOUD_PROJECT_ID }}
+        with:
+          path: scripts/load/mid-sized-dtc-checkout.js

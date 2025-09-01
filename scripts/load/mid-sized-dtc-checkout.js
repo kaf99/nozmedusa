@@ -4,20 +4,7 @@ import http from "k6/http"
 let publishableKey = __ENV.K6_PUBLISHABLE_KEY
 let regionId = __ENV.K6_REGION_ID
 let endpoint = __ENV.K6_ENDPOINT
-
-const isLocal = false
-
-if (isLocal) {
-  publishableKey =
-    "pk_50d624e919cfa298e85386577373ae4ebeb5c2d0a5a7588e1e7cb67536ae7f36"
-  regionId = "reg_01K3RNJ7YR58VKM0WXJHHJBMQX"
-  endpoint = "http://localhost:9000"
-} else {
-  publishableKey =
-    "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
-  regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
-  endpoint = "https://dtc-starter.medusajs.app"
-}
+let projectID = __ENV.K6_PROJECT_ID
 
 const params = {
   headers: {
@@ -27,20 +14,26 @@ const params = {
 }
 
 /*
- * k6 load test for small DTC ecommerce site (10 orders/day, ~333 daily visitors, 3% conversion).
- * Simulates  load (~50 VUs: 40 browser, 7 shopper, 3 buyer) in 5 min (30s ramp-up, 4m steady, 30s ramp-down).
- * Tests: browsing, cart operations, checkout. Metrics: p95 <500ms, error rate <1%.
+ * k6 load test for mid-sized DTC ecommerce site (100 orders/day, ~3333 daily visitors, 3% conversion).
+ * Simulates  load (~400 VUs: 320 browser, 60 shopper, 20 buyer) in 15 min (2m ramp-up, 10m steady, 3m ramp-down).
+ * Tests: browsing, cart operations, checkout
  */
 export const options = {
+  cloud: {
+    // Project: Load tests
+    projectID: projectID,
+    // Test runs with the same name groups test runs together.
+    name: `Load test, mid-sized DTC, checkout ${new Date().toLocaleString()}`,
+  },
   scenarios: {
     browseCatalog: {
       executor: "ramping-vus",
       exec: "browseCatalog",
       startTime: "0s",
       stages: [
-        { duration: "30s", target: 40 },
-        { duration: "4m", target: 40 },
-        { duration: "30s", target: 0 },
+        { duration: "2m", target: 320 },
+        { duration: "10m", target: 320 },
+        { duration: "3m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "browseCatalog" },
@@ -50,9 +43,9 @@ export const options = {
       exec: "addToCart",
       startTime: "0s",
       stages: [
-        { duration: "30s", target: 7 },
-        { duration: "4m", target: 7 },
-        { duration: "30s", target: 0 },
+        { duration: "2m", target: 60 },
+        { duration: "10m", target: 60 },
+        { duration: "3m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "addToCart" },
@@ -62,18 +55,18 @@ export const options = {
       exec: "completeCart",
       startTime: "0s",
       stages: [
-        { duration: "30s", target: 3 },
-        { duration: "4m", target: 3 },
-        { duration: "30s", target: 0 },
+        { duration: "2m", target: 20 },
+        { duration: "10m", target: 20 },
+        { duration: "3m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "completeCart" },
     },
   },
   thresholds: {
-    "http_req_duration{scenario:browseCatalog}": ["p(95)<600"],
-    "http_req_duration{scenario:addToCart}": ["p(95)<800"],
-    "http_req_duration{scenario:completeCart}": ["p(95)<1200"],
+    "http_req_duration{scenario:browseCatalog}": ["p(95)<400"],
+    "http_req_duration{scenario:addToCart}": ["p(95)<600"],
+    "http_req_duration{scenario:completeCart}": ["p(95)<1000"],
     http_req_failed: ["rate<0.01"],
   },
 }
@@ -252,9 +245,6 @@ export function completeCart() {
       "create payment session ok": (r) => r.status === 200,
     })
     sleep(2 + Math.random() * 3)
-
-    const paymentSession = JSON.parse(paymentSessionRes.body).payment_session
-    sleep(Math.random() * 3)
 
     let orderRes = http.post(
       `${endpoint}/store/carts/${updatedCart.id}/complete`,
