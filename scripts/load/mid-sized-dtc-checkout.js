@@ -1,10 +1,16 @@
 import { check, group, sleep } from "k6"
 import http from "k6/http"
 
-let publishableKey = __ENV.K6_PUBLISHABLE_KEY
-let regionId = __ENV.K6_REGION_ID
-let endpoint = __ENV.K6_ENDPOINT
-let projectID = __ENV.K6_PROJECT_ID
+// let publishableKey = __ENV.K6_PUBLISHABLE_KEY
+// let regionId = __ENV.K6_REGION_ID
+// let endpoint = __ENV.K6_ENDPOINT
+// let projectID = __ENV.K6_PROJECT_ID
+
+let publishableKey =
+  "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
+let regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
+let endpoint = "https://dtc-starter.medusajs.app"
+let projectId = 4182986
 
 const params = {
   headers: {
@@ -15,13 +21,13 @@ const params = {
 
 /*
  * k6 load test for mid-sized DTC ecommerce site (100 orders/day, ~3333 daily visitors, 3% conversion).
- * Simulates  load (~400 VUs: 320 browser, 60 shopper, 20 buyer) in 15 min (2m ramp-up, 10m steady, 3m ramp-down).
+ * Simulates  load (~400 VUs: 320 browser, 60 shopper, 20 buyer) in 12 min (2m ramp-up, 8m steady, 2m ramp-down).
  * Tests: browsing, cart operations, checkout
  */
 export const options = {
   cloud: {
     // Project: Load tests
-    projectID: projectID,
+    projectID: projectId,
     // Test runs with the same name groups test runs together.
     name: `Load test, mid-sized DTC, checkout ${new Date().toLocaleString()}`,
   },
@@ -32,8 +38,8 @@ export const options = {
       startTime: "0s",
       stages: [
         { duration: "2m", target: 320 },
-        { duration: "10m", target: 320 },
-        { duration: "3m", target: 0 },
+        { duration: "8m", target: 320 },
+        { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "browseCatalog" },
@@ -44,8 +50,8 @@ export const options = {
       startTime: "0s",
       stages: [
         { duration: "2m", target: 60 },
-        { duration: "10m", target: 60 },
-        { duration: "3m", target: 0 },
+        { duration: "8m", target: 60 },
+        { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "addToCart" },
@@ -56,8 +62,8 @@ export const options = {
       startTime: "0s",
       stages: [
         { duration: "2m", target: 20 },
-        { duration: "10m", target: 20 },
-        { duration: "3m", target: 0 },
+        { duration: "8m", target: 20 },
+        { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "30s",
       tags: { scenario: "completeCart" },
