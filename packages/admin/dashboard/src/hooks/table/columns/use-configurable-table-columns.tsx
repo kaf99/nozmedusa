@@ -67,16 +67,36 @@ export function useConfigurableTableColumns<TData = any>(
 }
 
 function getDefaultColumnAlignment(column: HttpTypes.AdminViewColumn): "left" | "center" | "right" {
-  // Center align for specific semantic types
-  if (column.semantic_type === "currency") {
+  // Currency columns should be right-aligned
+  if (column.semantic_type === "currency" || column.data_type === "currency") {
     return "right"
   }
   
+  // Number columns should be right-aligned (except identifiers)
+  if (column.data_type === "number" && column.context !== "identifier") {
+    return "right"
+  }
+  
+  // Total/amount/price columns should be right-aligned
+  if (
+    column.field.includes("total") ||
+    column.field.includes("amount") ||
+    column.field.includes("price") ||
+    column.field.includes("quantity") ||
+    column.field.includes("count")
+  ) {
+    return "right"
+  }
+  
+  // Status columns should be center-aligned
   if (column.semantic_type === "status") {
     return "center"
   }
   
-  if (column.computed?.type === "country_code") {
+  // Country columns should be center-aligned
+  if (column.computed?.type === "country_code" || 
+      column.field === "country" || 
+      column.field.includes("country_code")) {
     return "center"
   }
   

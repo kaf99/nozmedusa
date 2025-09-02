@@ -14,7 +14,7 @@ import { TableAdapter } from "../../../lib/table/table-adapters"
 export interface ConfigurableDataTableProps<TData> {
   // Use adapter pattern for entity-specific configuration
   adapter: TableAdapter<TData>
-  
+
   // Optional overrides
   heading?: string
   subHeading?: string
@@ -29,30 +29,30 @@ export interface LegacyConfigurableDataTableProps<TData> {
   // Entity configuration
   entity: string
   entityName?: string
-  
+
   // Data and columns
   data: TData[]
   columns: DataTableColumnDef<TData, any>[]
   filters?: DataTableFilter[]
-  
+
   // Table configuration
   pageSize?: number
   queryPrefix?: string
   getRowId: (row: TData) => string
   rowHref?: (row: TData) => string
-  
+
   // UI configuration
   heading?: string
   subHeading?: string
   emptyState?: DataTableEmptyStateProps
-  
+
   // Loading and counts
   isLoading?: boolean
   rowCount?: number
-  
+
   // Additional content
   actions?: ReactNode
-  
+
   // Layout
   layout?: "fill" | "auto"
 }
@@ -70,13 +70,13 @@ function ConfigurableDataTableWithAdapter<TData>({
   const { t } = useTranslation()
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [editingView, setEditingView] = useState<any>(null)
-  
+
   const entity = adapter.entity
   const entityName = adapter.entityName
   const filters = adapter.filters || []
   const pageSize = pageSizeProp || adapter.pageSize || 20
   const queryPrefix = queryPrefixProp || adapter.queryPrefix || ""
-  
+
   // Get table configuration (single source of truth)
   const {
     activeView,
@@ -100,34 +100,29 @@ function ConfigurableDataTableWithAdapter<TData>({
     queryPrefix,
     filters,
   })
-  
+
   // Get query params for data fetching
   const { searchParams } = useOrderTableQuery({
     pageSize,
     prefix: queryPrefix,
   })
-  
+
   // Fetch data using adapter
   const fetchResult = adapter.useData(requiredFields, searchParams)
-  
+
   // Generate columns
-  const entityAdapter = getEntityAdapter(entity)
-  const generatedColumns = useConfigurableTableColumns(entity, apiColumns || [], entityAdapter)
-  const columns = (adapter.getColumns && apiColumns) 
+  // Use adapter's column adapter if provided, otherwise fall back to entity adapter
+  const columnAdapter = adapter.columnAdapter || getEntityAdapter(entity)
+  const generatedColumns = useConfigurableTableColumns(entity, apiColumns || [], columnAdapter)
+  const columns = (adapter.getColumns && apiColumns)
     ? adapter.getColumns(apiColumns)
     : generatedColumns
-  
-  // Debug: Log when required fields change
-  React.useEffect(() => {
-    console.log("ConfigurableDataTable - requiredFields changed:", requiredFields)
-    console.log("ConfigurableDataTable - visibleColumns:", visibleColumns)
-  }, [requiredFields, visibleColumns])
-  
+
   // Handle errors
   if (fetchResult.isError) {
     throw fetchResult.error
   }
-  
+
   // View save handlers
   const handleSaveAsDefault = async () => {
     try {
@@ -265,7 +260,7 @@ function ConfigurableDataTableLegacy<TData>(props: LegacyConfigurableDataTablePr
   const { t } = useTranslation()
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [editingView, setEditingView] = useState<any>(null)
-  
+
   const {
     entity,
     entityName,
@@ -284,7 +279,7 @@ function ConfigurableDataTableLegacy<TData>(props: LegacyConfigurableDataTablePr
     // actions, // Currently unused
     layout = "fill",
   } = props
-  
+
   // Get table configuration
   const {
     activeView,
@@ -306,7 +301,7 @@ function ConfigurableDataTableLegacy<TData>(props: LegacyConfigurableDataTablePr
     queryPrefix,
     filters,
   })
-  
+
   // View save handlers
   const handleSaveAsDefault = async () => {
     try {
