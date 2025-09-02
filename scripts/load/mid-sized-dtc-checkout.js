@@ -6,11 +6,16 @@ import http from "k6/http"
 // let endpoint = __ENV.K6_ENDPOINT
 // let projectID = __ENV.K6_PROJECT_ID
 
+// let publishableKey =
+//   "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
+// let regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
+// let endpoint = "https://dtc-starter.medusajs.app"
+// let projectId = 4182986
+
 let publishableKey =
-  "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
-let regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
-let endpoint = "https://dtc-starter.medusajs.app"
-let projectId = 4182986
+"pk_50d624e919cfa298e85386577373ae4ebeb5c2d0a5a7588e1e7cb67536ae7f36"
+let regionId = "reg_01K3RNJ7YR58VKM0WXJHHJBMQX"
+let endpoint = "http://localhost:9000"
 
 const params = {
   headers: {
