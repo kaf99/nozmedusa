@@ -47,6 +47,11 @@ export function useColumnState(
       return {}
     }
   )
+  
+  // Debug: Log when visible columns change
+  useEffect(() => {
+    console.log("visibleColumns state updated:", visibleColumns)
+  }, [visibleColumns])
 
   const [columnOrder, setColumnOrder] = useState<string[]>(() => {
     if (activeView?.configuration?.column_order) {
@@ -79,6 +84,7 @@ export function useColumnState(
 
   const handleColumnVisibilityChange = useCallback(
     (visibility: Record<string, boolean>) => {
+      console.log("handleColumnVisibilityChange called with:", visibility)
       setVisibleColumns(visibility)
     },
     []

@@ -176,6 +176,8 @@ export const useUpdateViewConfiguration = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.configurations(entity) })
       queryClient.invalidateQueries({ queryKey: viewsQueryKeys.detail(id) })
+      // Also invalidate active configuration if this view is currently active
+      queryClient.invalidateQueries({ queryKey: viewsQueryKeys.active(entity) })
       options?.onSuccess?.(data, variables, context)
     },
   })
