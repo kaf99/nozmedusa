@@ -1,7 +1,6 @@
 import { BigNumberInput, BigNumberRawValue, IBigNumber } from "@medusajs/types"
 import { BigNumber as BigNumberJS } from "bignumber.js"
 import { isBigNumber, isString } from "../common"
-import { MEDUSA_EPSILON } from "./math"
 
 export class BigNumber implements IBigNumber {
   static DEFAULT_PRECISION = 20
@@ -144,3 +143,7 @@ export class BigNumber implements IBigNumber {
     return this.numeric
   }
 }
+
+export const MEDUSA_EPSILON = new BigNumber(
+  process.env.MEDUSA_EPSILON || "0.0001"
+)
