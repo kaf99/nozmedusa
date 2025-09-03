@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AdminCampaign, AdminPromotion } from "@medusajs/types"
-import { Button, RadioGroup, Text, toast } from "@medusajs/ui"
+import { Button, RadioGroup, toast } from "@medusajs/ui"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
-import { Trans, useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
 import * as zod from "zod"
 import { Form } from "../../../../../components/common/form"
 import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
@@ -14,11 +14,10 @@ import { CampaignDetails } from "./campaign-details"
 import { sdk } from "../../../../../lib/client"
 import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { Combobox } from "../../../../../components/inputs/combobox"
+import { useCampaign } from "../../../../../hooks/api/campaigns"
 
 type EditPromotionFormProps = {
   promotion: AdminPromotion
-  campaigns: AdminCampaign[]
-  promotionCurrencyCode: string
 }
 
 const EditPromotionSchema = zod.object({
@@ -28,14 +27,12 @@ const EditPromotionSchema = zod.object({
 
 export const AddCampaignPromotionFields = ({
   form,
-  campaigns,
   withNewCampaign = true,
   promotionCurrencyCode,
 }: {
   form: any
-  campaigns: AdminCampaign[]
   withNewCampaign?: boolean
-  promotionCurrencyCode: string
+  promotionCurrencyCode?: string
 }) => {
   const { t } = useTranslation()
   const watchCampaignId = useWatch({
@@ -47,8 +44,6 @@ export const AddCampaignPromotionFields = ({
     control: form.control,
     name: "campaign_choice",
   })
-
-  const selectedCampaign = campaigns.find((c) => c.id === watchCampaignId)
 
   const campaignsCombobox = useComboboxData({
     queryFn: (params) =>
@@ -62,9 +57,18 @@ export const AddCampaignPromotionFields = ({
         value: campaign.id,
         disabled:
           campaign.budget?.currency_code &&
-          campaign.budget?.currency_code !== promotionCurrencyCode,
+          campaign.budget?.currency_code?.toLowerCase() !==
+            promotionCurrencyCode?.toLowerCase(), // also cannot add promotion which doesn't have currency defined to a campaign with a currency amount budget
       })),
   })
+
+  const { campaign: selectedCampaign } = useCampaign(
+    watchCampaignId as string,
+    undefined,
+    {
+      enabled: !!watchCampaignId,
+    }
+  )
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -147,14 +151,13 @@ export const AddCampaignPromotionFields = ({
         <CreateCampaignFormFields form={form} fieldScope="campaign." />
       )}
 
-      <CampaignDetails campaign={selectedCampaign} />
+      <CampaignDetails campaign={selectedCampaign as AdminCampaign} />
     </div>
   )
 }
 
 export const AddCampaignPromotionForm = ({
   promotion,
-  campaigns,
 }: EditPromotionFormProps) => {
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
@@ -212,8 +215,8 @@ export const AddCampaignPromotionForm = ({
         <RouteDrawer.Body className="size-full overflow-auto">
           <AddCampaignPromotionFields
             form={form}
-            campaigns={campaigns}
             withNewCampaign={false}
+            promotionCurrencyCode={promotion.application_method?.currency_code}
           />
         </RouteDrawer.Body>
 
