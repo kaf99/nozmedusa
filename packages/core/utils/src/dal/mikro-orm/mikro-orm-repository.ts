@@ -467,11 +467,7 @@ export function mikroOrmBaseRepositoryFactory<const T extends object>(
       if (!("strategy" in findOptions_.options)) {
         if (findOptions_.options.limit != null || findOptions_.options.offset) {
           Object.assign(findOptions_.options, {
-            strategy: LoadStrategy.SELECT_IN,
-          })
-        } else {
-          Object.assign(findOptions_.options, {
-            strategy: LoadStrategy.JOINED,
+            strategy: LoadStrategy.BALANCED,
           })
         }
       }
