@@ -24,6 +24,11 @@ export function MikroOrmBigNumberProperty(
         return value
       },
       set(value: BigNumberInput) {
+        // convert 'null' to null
+        if (value === "null") {
+          value = null as unknown as BigNumberInput
+        }
+
         if (options?.nullable && !isPresent(value)) {
           this.__helper.__data[columnName] = null
           this.__helper.__data[rawColumnName] = null
