@@ -743,7 +743,7 @@ export function defineManyToManyRelationship(
   const manytoManyOptions = {
     owner: isOwner,
     entity: relatedModelName,
-
+    defaultRaw: "", // This is a workaround since we are hacking mikro orm default behavior. The default value here is [Object object] which pass the check here and in turns is returned as a returning field -> @mikro-orm/knex/AbstractSqlDriver.js:462
     ...(pivotTableName
       ? {
           pivotTable: pgSchema
