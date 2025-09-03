@@ -12,22 +12,12 @@ export const PromotionAddCampaign = () => {
   const { t } = useTranslation()
   const { promotion, isPending, isError, error } = usePromotion(id!)
 
-  let campaignQuery = {}
-
-  if (promotion?.application_method?.currency_code) {
-    campaignQuery = {
-      budget: {
-        currency_code: promotion?.application_method?.currency_code,
-      },
-    }
-  }
-
   const {
     campaigns,
     isPending: areCampaignsLoading,
     isError: isCampaignError,
     error: campaignError,
-  } = useCampaigns(campaignQuery)
+  } = useCampaigns({ limit: 9999 }) // todo: pagination
   if (isError || isCampaignError) {
     throw error || campaignError
   }
@@ -39,7 +29,11 @@ export const PromotionAddCampaign = () => {
       </RouteDrawer.Header>
 
       {!isPending && !areCampaignsLoading && promotion && campaigns && (
-        <AddCampaignPromotionForm promotion={promotion} campaigns={campaigns} />
+        <AddCampaignPromotionForm
+          promotion={promotion}
+          campaigns={campaigns}
+          promotionCurrencyCode={promotion.application_method?.currency_code}
+        />
       )}
     </RouteDrawer>
   )

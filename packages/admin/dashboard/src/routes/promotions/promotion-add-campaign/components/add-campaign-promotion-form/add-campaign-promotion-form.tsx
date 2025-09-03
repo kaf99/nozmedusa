@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AdminCampaign, AdminPromotion } from "@medusajs/types"
-import { Button, RadioGroup, Select, Text, toast } from "@medusajs/ui"
+import { Button, RadioGroup, Text, toast } from "@medusajs/ui"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { Trans, useTranslation } from "react-i18next"
@@ -11,10 +11,14 @@ import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useUpdatePromotion } from "../../../../../hooks/api/promotions"
 import { CreateCampaignFormFields } from "../../../../campaigns/common/components/create-campaign-form-fields"
 import { CampaignDetails } from "./campaign-details"
+import { sdk } from "../../../../../lib/client"
+import { useComboboxData } from "../../../../../hooks/use-combobox-data"
+import { Combobox } from "../../../../../components/inputs/combobox"
 
 type EditPromotionFormProps = {
   promotion: AdminPromotion
   campaigns: AdminCampaign[]
+  promotionCurrencyCode: string
 }
 
 const EditPromotionSchema = zod.object({
@@ -26,10 +30,12 @@ export const AddCampaignPromotionFields = ({
   form,
   campaigns,
   withNewCampaign = true,
+  promotionCurrencyCode,
 }: {
   form: any
   campaigns: AdminCampaign[]
   withNewCampaign?: boolean
+  promotionCurrencyCode: string
 }) => {
   const { t } = useTranslation()
   const watchCampaignId = useWatch({
@@ -43,6 +49,22 @@ export const AddCampaignPromotionFields = ({
   })
 
   const selectedCampaign = campaigns.find((c) => c.id === watchCampaignId)
+
+  const campaignsCombobox = useComboboxData({
+    queryFn: (params) =>
+      sdk.admin.campaign.list({
+        ...params,
+      }),
+    queryKey: ["campaigns"],
+    getOptions: (data) =>
+      data.campaigns.map((campaign) => ({
+        label: campaign.name.toUpperCase(),
+        value: campaign.id,
+        disabled:
+          campaign.budget?.currency_code &&
+          campaign.budget?.currency_code !== promotionCurrencyCode,
+      })),
+  })
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -97,54 +119,23 @@ export const AddCampaignPromotionFields = ({
         <Form.Field
           control={form.control}
           name="campaign_id"
-          render={({ field: { onChange, ref, ...field } }) => {
+          render={({ field: { onChange, ...field } }) => {
             return (
               <Form.Item>
-                <Form.Label>
+                <Form.Label tooltip={t("campaigns.fields.campaign_id.hint")}>
                   {t("promotions.form.campaign.existing.title")}
                 </Form.Label>
 
                 <Form.Control>
-                  <Select onValueChange={onChange} {...field}>
-                    <Select.Trigger ref={ref}>
-                      <Select.Value />
-                    </Select.Trigger>
-
-                    <Select.Content>
-                      {!campaigns.length && (
-                        <div className="flex h-[120px] flex-col items-center justify-center gap-2 p-2">
-                          <span className="txt-small text-ui-fg-subtle font-medium">
-                            {t(
-                              "promotions.form.campaign.existing.placeholder.title"
-                            )}
-                          </span>
-                          <span className="txt-small text-ui-fg-muted">
-                            {t(
-                              "promotions.form.campaign.existing.placeholder.desc"
-                            )}
-                          </span>
-                        </div>
-                      )}
-                      {campaigns.map((c) => (
-                        <Select.Item key={c.id} value={c.id}>
-                          {c.name?.toUpperCase()}
-                        </Select.Item>
-                      ))}
-                    </Select.Content>
-                  </Select>
+                  <Combobox
+                    options={campaignsCombobox.options}
+                    searchValue={campaignsCombobox.searchValue}
+                    onSearchValueChange={campaignsCombobox.onSearchValueChange}
+                    onChange={onChange}
+                    {...field}
+                  ></Combobox>
                 </Form.Control>
 
-                <Text
-                  size="small"
-                  leading="compact"
-                  className="text-ui-fg-subtle"
-                >
-                  <Trans
-                    t={t}
-                    i18nKey="campaigns.fields.campaign_id.hint"
-                    components={[<br key="break" />]}
-                  />
-                </Text>
                 <Form.ErrorMessage />
               </Form.Item>
             )
