@@ -126,7 +126,7 @@ moduleIntegrationTestRunner<IOrderModuleService>({
         customer_id: "joe",
       } as CreateOrderDTO
 
-      it.only("should change an order by adding actions to it", async function () {
+      it("should change an order by adding actions to it", async function () {
         const createdOrder = await service.createOrders(input)
         createdOrder.items = createdOrder.items!.sort((a, b) =>
           a.title.localeCompare(b.title)
