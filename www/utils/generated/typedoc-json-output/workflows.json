@@ -39927,7 +39927,7 @@
       "sourceFileName": "../../../../packages/core/types/src/joiner/index.ts",
       "qualifiedName": "__type.serviceName"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/types/src/joiner/index.ts",
       "qualifiedName": "__type.entity"
     },
@@ -39967,7 +39967,7 @@
       "sourceFileName": "../../../../packages/core/types/src/modules-sdk/index.ts",
       "qualifiedName": "__type.dependencies"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/types/src/modules-sdk/index.ts",
       "qualifiedName": "ModuleExports"
     },
@@ -40007,7 +40007,7 @@
       "sourceFileName": "../../../../packages/core/types/src/modules-sdk/index.ts",
       "qualifiedName": "__type.revertMigration"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/types/src/modules-sdk/index.ts",
       "qualifiedName": "options"
     },
@@ -40047,7 +40047,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/transaction-step.ts",
       "qualifiedName": "__type"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/transaction-step.ts",
       "qualifiedName": "__type"
     },
@@ -40087,7 +40087,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "IDistributedTransactionStorage.get"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "key"
     },
@@ -40127,7 +40127,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "options"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "IDistributedTransactionStorage.scheduleRetry"
     },
@@ -40167,7 +40167,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "step"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "IDistributedTransactionStorage.scheduleTransactionTimeout"
     },
@@ -40207,7 +40207,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "timestamp"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "interval"
     },
@@ -40247,7 +40247,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/datastore/abstract-storage.ts",
       "qualifiedName": "IDistributedTransactionStorage.clearExpiredExecutions"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/distributed-transaction.ts",
       "qualifiedName": "TransactionCheckpoint"
     },
@@ -40287,7 +40287,7 @@
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/types.ts",
       "qualifiedName": "TransactionFlow"
     },
-    "6.5.0": {
+    "6.5.2": {
       "sourceFileName": "../../../../packages/core/orchestration/src/transaction/types.ts",
       "qualifiedName": "__type"
     },
