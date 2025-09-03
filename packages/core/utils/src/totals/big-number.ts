@@ -89,7 +89,7 @@ export class BigNumber implements IBigNumber {
       value = this.numeric_
     }
 
-    if (Math.abs(value) <= MEDUSA_EPSILON.numeric) {
+    if (Math.abs(value) <= MEDUSA_EPSILON.numeric_) {
       return 0
     }
 
@@ -125,7 +125,7 @@ export class BigNumber implements IBigNumber {
       ? new BigNumberJS(this.raw_.value).toNumber()
       : this.numeric_
 
-    if (Math.abs(value) <= MEDUSA_EPSILON.numeric) {
+    if (Math.abs(value) <= MEDUSA_EPSILON.numeric_) {
       return 0
     }
 
