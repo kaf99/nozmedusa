@@ -20,7 +20,7 @@ export function setFindMethods<T>(klass: Constructor<T>, entity: any) {
     if (!("strategy" in findOptions_.options)) {
       if (findOptions_.options.limit != null || findOptions_.options.offset) {
         Object.assign(findOptions_.options, {
-          strategy: LoadStrategy.BALANCED,
+          strategy: LoadStrategy.SELECT_IN,
         })
       }
     }
@@ -60,10 +60,7 @@ export function setFindMethods<T>(klass: Constructor<T>, entity: any) {
 
     let defaultVersion = knex.raw(`"${orderAlias}"."version"`)
 
-    if (
-      strategy === LoadStrategy.SELECT_IN ||
-      strategy === LoadStrategy.BALANCED
-    ) {
+    if (strategy === LoadStrategy.SELECT_IN) {
       const sql = manager
         .qb(toMikroORMEntity(Order), "_sub0")
         .select("version")
@@ -102,7 +99,7 @@ export function setFindMethods<T>(klass: Constructor<T>, entity: any) {
 
     if (!("strategy" in findOptions_.options)) {
       Object.assign(findOptions_.options, {
-        strategy: LoadStrategy.BALANCED,
+        strategy: LoadStrategy.SELECT_IN,
       })
     }
 
@@ -132,10 +129,7 @@ export function setFindMethods<T>(klass: Constructor<T>, entity: any) {
 
     let defaultVersion = knex.raw(`"${orderAlias}"."version"`)
     const strategy = config.options.strategy ?? LoadStrategy.JOINED
-    if (
-      strategy === LoadStrategy.SELECT_IN ||
-      strategy === LoadStrategy.BALANCED
-    ) {
+    if (strategy === LoadStrategy.SELECT_IN) {
       defaultVersion = getVersionSubQuery(manager, orderAlias)
     }
 
@@ -146,7 +140,7 @@ export function setFindMethods<T>(klass: Constructor<T>, entity: any) {
       config,
       isRelatedEntity,
       version,
-      strategy === LoadStrategy.SELECT_IN || strategy === LoadStrategy.BALANCED,
+      strategy === LoadStrategy.SELECT_IN,
       manager
     )
 
