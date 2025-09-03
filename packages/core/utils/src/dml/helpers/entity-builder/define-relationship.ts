@@ -765,9 +765,6 @@ export function defineManyToManyRelationship(
   }
 
   ManyToMany(manytoManyOptions)(MikroORMEntity.prototype, relationship.name)
-  // MikroORMEntity.prototype[relationship.name] = new Collection(
-  //   MikroORMEntity.prototype
-  // )
 }
 
 /**

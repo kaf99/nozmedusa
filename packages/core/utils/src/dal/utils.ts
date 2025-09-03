@@ -1,3 +1,5 @@
+import { TransactionPropagation } from "@mikro-orm/core"
+
 export async function transactionWrapper<TManager = unknown>(
   manager: any,
   task: (transactionManager: any) => Promise<any>,
@@ -16,7 +18,9 @@ export async function transactionWrapper<TManager = unknown>(
     return await task(transaction)
   }
 
-  const options = {}
+  const options = {
+    propagation: TransactionPropagation.REQUIRED,
+  }
 
   if (transaction) {
     Object.assign(options, { ctx: transaction })

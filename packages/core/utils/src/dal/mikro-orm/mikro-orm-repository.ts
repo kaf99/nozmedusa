@@ -68,6 +68,7 @@ export class MikroOrmBase {
       ? this.getFreshManager()
       : this.manager_
 
+    freshManager.global = true
     return await transactionWrapper(freshManager, task, options).catch(
       dbErrorMapper
     )
