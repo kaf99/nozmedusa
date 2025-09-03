@@ -68,7 +68,8 @@ export class MikroOrmBase {
       ? this.getFreshManager()
       : this.manager_
 
-    freshManager.global = true
+    freshManager.global = true // Because of the way we manage the DML entity builder. Prevent transaction manager to merge future transaction manager entity map back to the fresh manager
+
     return await transactionWrapper(freshManager, task, options).catch(
       dbErrorMapper
     )
