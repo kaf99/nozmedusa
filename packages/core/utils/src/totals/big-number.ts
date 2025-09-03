@@ -1,6 +1,7 @@
 import { BigNumberInput, BigNumberRawValue, IBigNumber } from "@medusajs/types"
 import { BigNumber as BigNumberJS } from "bignumber.js"
-import { isBigNumber, isString } from "../common"
+import { isBigNumber } from "../common/is-big-number"
+import { isString } from "../common/is-string"
 
 export class BigNumber implements IBigNumber {
   static DEFAULT_PRECISION = 20
@@ -87,11 +88,11 @@ export class BigNumber implements IBigNumber {
     } else {
       value = this.numeric_
     }
-    
+
     if (Math.abs(value) <= MEDUSA_EPSILON.numeric) {
       return 0
     }
-    
+
     return value
   }
 
@@ -123,11 +124,11 @@ export class BigNumber implements IBigNumber {
       : this.raw_
       ? new BigNumberJS(this.raw_.value).toNumber()
       : this.numeric_
-    
+
     if (Math.abs(value) <= MEDUSA_EPSILON.numeric) {
       return 0
     }
-    
+
     return value
   }
 
