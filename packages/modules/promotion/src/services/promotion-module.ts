@@ -194,7 +194,6 @@ export default class PromotionModuleService
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
   async registerUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
     @MedusaContext() sharedContext: Context = {}
@@ -308,7 +307,6 @@ export default class PromotionModuleService
   }
 
   @InjectTransactionManager()
-  @EmitEvents()
   async revertUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
     @MedusaContext() sharedContext: Context = {}
@@ -620,7 +618,6 @@ export default class PromotionModuleService
   ): Promise<PromotionTypes.PromotionDTO[]>
 
   @InjectManager()
-  @EmitEvents()
   // @ts-expect-error
   async createPromotions(
     data:
@@ -1040,7 +1037,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   // @ts-ignore
   async updatePromotionRules(
     data: PromotionTypes.UpdatePromotionRuleDTO[],
@@ -1145,7 +1141,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async addPromotionTargetRules(
     promotionId: string,
     rulesData: PromotionTypes.CreatePromotionRuleDTO[],
@@ -1179,7 +1174,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async addPromotionBuyRules(
     promotionId: string,
     rulesData: PromotionTypes.CreatePromotionRuleDTO[],
@@ -1280,7 +1274,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async removePromotionRules(
     promotionId: string,
     ruleIds: string[],
@@ -1308,7 +1301,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async removePromotionTargetRules(
     promotionId: string,
     ruleIds: string[],
@@ -1383,7 +1375,6 @@ export default class PromotionModuleService
   ): Promise<PromotionTypes.CampaignDTO[]>
 
   @InjectManager()
-  @EmitEvents()
   // @ts-expect-error
   async createCampaigns(
     data: PromotionTypes.CreateCampaignDTO | PromotionTypes.CreateCampaignDTO[],
@@ -1495,7 +1486,6 @@ export default class PromotionModuleService
   ): Promise<PromotionTypes.CampaignDTO[]>
 
   @InjectManager()
-  @EmitEvents()
   // @ts-expect-error
   async updateCampaigns(
     data: PromotionTypes.UpdateCampaignDTO | PromotionTypes.UpdateCampaignDTO[],
@@ -1589,7 +1579,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async addPromotionsToCampaign(
     data: PromotionTypes.AddPromotionsToCampaignDTO,
     @MedusaContext() sharedContext: Context = {}
@@ -1657,7 +1646,6 @@ export default class PromotionModuleService
   }
 
   @InjectManager()
-  @EmitEvents()
   async removePromotionsFromCampaign(
     data: PromotionTypes.AddPromotionsToCampaignDTO,
     @MedusaContext() sharedContext: Context = {}
