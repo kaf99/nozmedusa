@@ -1,5 +1,6 @@
 import rfdc from "rfdc"
 import { BigNumber } from "../totals/big-number"
+import { BigNumber as BigNumberJS } from "bignumber.js"
 /**
  * Faster than JSON.parse(JSON.stringify(obj)) with default sanitize set to true to maintain the same behavior.
  *
@@ -30,7 +31,7 @@ export function clone(
   }
 
   // If no sanitize is provided, we still want to jsonify the big numbers
-  return clone(obj)
+  return clone(sanitizer(obj))
 }
 
 function sanitizer(obj: any): any {
@@ -41,6 +42,10 @@ function sanitizer(obj: any): any {
   // jsonify the big numbers
   if (obj instanceof BigNumber || BigNumber.isBigNumber(obj)) {
     return obj.toJSON()
+  } else if (BigNumberJS.isBigNumber(obj)) {
+    return new BigNumber(
+      new BigNumberJS({ ...obj, _isBigNumber: true })
+    ).toJSON()
   }
 
   if (typeof obj !== "object") {
