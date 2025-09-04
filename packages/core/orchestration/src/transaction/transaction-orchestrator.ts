@@ -1,5 +1,4 @@
 import { ulid } from "ulid"
-import rfdc from "rfdc"
 import {
   DistributedTransaction,
   DistributedTransactionType,
@@ -20,6 +19,7 @@ import {
 } from "./types"
 
 import {
+  clone,
   isDefined,
   isErrorLike,
   isObject,
@@ -691,8 +691,7 @@ export class TransactionOrchestrator extends EventEmitter {
     } else {
       try {
         if (error?.message) {
-          const clone = rfdc()
-          error = clone(error)
+          error = clone(error, { sanitize: false })
         } else {
           error = {
             message: JSON.stringify(error),

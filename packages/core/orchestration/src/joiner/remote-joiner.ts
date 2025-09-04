@@ -8,8 +8,8 @@ import {
   RemoteJoinerQuery,
   RemoteNestedExpands,
 } from "@medusajs/types"
-import rfdc from "rfdc"
 import {
+  clone,
   deduplicate,
   FilterOperatorMap,
   GraphQLUtils,
@@ -172,21 +172,20 @@ export class RemoteJoiner {
       )
     }
 
-    const clone = rfdc()
     const cloneWithoutSchemas = (obj: any): any => {
-      const cloned = clone(obj)
+      const cloned = clone(obj, { sanitize: false })
       const removeSchemas = (o: any) => {
         if (Array.isArray(o)) {
           o.forEach(removeSchemas)
-        } else if (o && typeof o === 'object') {
-          delete o.schema
+        } else if (isObject(o)) {
+          delete (o as any).schema
           Object.values(o).forEach(removeSchemas)
         }
       }
       removeSchemas(cloned)
       return cloned
     }
-    
+
     this.buildReferences(cloneWithoutSchemas(serviceConfigs))
   }
 

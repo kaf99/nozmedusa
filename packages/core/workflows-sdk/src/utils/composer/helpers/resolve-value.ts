@@ -1,5 +1,4 @@
-import { deepCopy, OrchestrationUtils, promiseAll } from "@medusajs/utils"
-import rfdc from "rfdc"
+import { OrchestrationUtils, promiseAll, clone } from "@medusajs/utils"
 
 async function resolveProperty(property, transactionContext) {
   const { invoke: invokeRes } = transactionContext
@@ -58,8 +57,9 @@ export async function resolveValue(input, transactionContext) {
     }
 
     for (const key of Object.keys(inputTOUnwrap)) {
-      parentRef[key] = deepCopy(
-        await resolveProperty(inputTOUnwrap[key], transactionContext)
+      parentRef[key] = clone(
+        await resolveProperty(inputTOUnwrap[key], transactionContext),
+        { sanitize: false }
       )
 
       if (typeof parentRef[key] === "object") {
@@ -79,6 +79,5 @@ export async function resolveValue(input, transactionContext) {
     ? await resolveProperty(copiedInput, transactionContext)
     : await unwrapInput(copiedInput, {})
 
-  const clone = rfdc()
   return clone(result)
 }

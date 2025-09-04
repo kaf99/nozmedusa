@@ -1,5 +1,4 @@
-import { isDefined } from "@medusajs/utils"
-import rfdc from "rfdc"
+import { clone, isDefined } from "@medusajs/utils"
 import { EventEmitter } from "events"
 import { IDistributedTransactionStorage } from "./datastore/abstract-storage"
 import { BaseInMemoryDistributedTransactionStorage } from "./datastore/base-in-memory-storage"
@@ -339,12 +338,9 @@ class DistributedTransaction extends EventEmitter {
       this.getErrors()
     )
 
-    const clone = rfdc({
-      circles: false,
-    })
     const isSerializable = (obj) => {
       try {
-        clone(obj)
+        clone(obj, { circles: false, sanitize: false })
         return true
       } catch {
         return false
@@ -353,7 +349,7 @@ class DistributedTransaction extends EventEmitter {
 
     let rawData
     try {
-      rawData = clone(data)
+      rawData = clone(data, { sanitize: false, circles: false })
     } catch (e) {
       if (!isSerializable(this.context)) {
         // This is a safe guard, we should never reach this point
@@ -396,7 +392,7 @@ class DistributedTransaction extends EventEmitter {
         this.getErrors()
       )
 
-      rawData = clone(data)
+      rawData = clone(data, { sanitize: false, circles: false })
     }
 
     return rawData

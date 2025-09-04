@@ -21,7 +21,6 @@ import {
 } from "@medusajs/framework/types"
 import {
   arrayDifference,
-  deepCopy,
   deepEqualObj,
   EmitEvents,
   getSetDifference,
@@ -35,7 +34,7 @@ import {
   ModulesSdkUtils,
   promiseAll,
 } from "@medusajs/framework/utils"
-import { isObject } from "@medusajs/utils"
+import { clone, isObject } from "@medusajs/utils"
 import {
   Fulfillment,
   FulfillmentProvider,
@@ -1369,8 +1368,8 @@ export default class FulfillmentModuleService
     | InferEntityType<typeof ShippingOption>[]
   > {
     const dataArray = Array.isArray(data)
-      ? data.map((d) => deepCopy(d))
-      : [deepCopy(data)]
+      ? data.map((d) => clone(d))
+      : [clone(data)]
 
     if (!dataArray.length) {
       return []

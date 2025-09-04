@@ -7142,7 +7142,6 @@ __metadata:
     awilix: ^8.0.1
     jest: ^29.7.0
     pg: ^8.13.0
-    rfdc: ^1.4.1
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
@@ -7776,7 +7775,6 @@ __metadata:
     expect-type: ^0.20.0
     jest: ^29.7.0
     pg: ^8.13.0
-    rfdc: ^1.4.1
     rimraf: ^5.0.1
     typescript: ^5.6.2
     ulid: ^2.3.0
