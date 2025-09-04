@@ -64,13 +64,9 @@ export class MikroOrmBase {
       transaction?: TManager
     } = {}
   ): Promise<any> {
-    const freshManager = this.getFreshManager
-      ? this.getFreshManager()
-      : this.manager_
+    this.manager_.global = true // this prevent mikro orm from synchronising the transaction manager entity map back to the manager. Also, it will save us from always forking the manager for each transaction while the transacation manager will fork it again for transaction purpose
 
-    freshManager.global = true // Because of the way we manage the DML entity builder. Prevent transaction manager to merge future transaction manager entity map back to the fresh manager
-
-    return await transactionWrapper(freshManager, task, options).catch(
+    return await transactionWrapper(this.manager_, task, options).catch(
       dbErrorMapper
     )
   }
