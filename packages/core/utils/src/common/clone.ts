@@ -41,11 +41,10 @@ function sanitizer(obj: any): any {
 
   // jsonify the big numbers
   if (obj instanceof BigNumber || BigNumber.isBigNumber(obj)) {
-    return obj.toJSON()
+    return obj.numeric
   } else if (BigNumberJS.isBigNumber(obj)) {
-    return new BigNumber(
-      new BigNumberJS({ ...obj, _isBigNumber: true })
-    ).toJSON()
+    return new BigNumber(new BigNumberJS({ ...obj, _isBigNumber: true }))
+      .numeric
   }
 
   if (typeof obj !== "object") {
