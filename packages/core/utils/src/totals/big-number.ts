@@ -1,6 +1,6 @@
 import { BigNumberInput, BigNumberRawValue, IBigNumber } from "@medusajs/types"
 import { BigNumber as BigNumberJS } from "bignumber.js"
-import { isBigNumber, isString } from "../common"
+import { isBigNumber, isObject, isString } from "../common"
 
 export class BigNumber implements IBigNumber {
   static DEFAULT_PRECISION = 20
@@ -16,13 +16,23 @@ export class BigNumber implements IBigNumber {
     this.setRawValueOrThrow(rawValue, options)
   }
 
+  static isBigNumber(value: any): value is BigNumber {
+    return (
+      value instanceof BigNumber ||
+      (isObject(value) &&
+        "numeric_" in value &&
+        "raw_" in value &&
+        "bignumber_" in value)
+    )
+  }
+
   setRawValueOrThrow(
     rawValue: BigNumberInput | BigNumber,
     { precision }: { precision?: number } = {}
   ) {
     precision ??= BigNumber.DEFAULT_PRECISION
 
-    if (rawValue instanceof BigNumber) {
+    if (rawValue instanceof BigNumber || BigNumber.isBigNumber(rawValue)) {
       Object.assign(this, rawValue)
     } else if (BigNumberJS.isBigNumber(rawValue)) {
       /**

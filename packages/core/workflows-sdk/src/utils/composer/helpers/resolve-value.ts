@@ -1,4 +1,9 @@
-import { OrchestrationUtils, promiseAll, clone } from "@medusajs/utils"
+import {
+  OrchestrationUtils,
+  promiseAll,
+  clone,
+  deepCopy,
+} from "@medusajs/utils"
 
 async function resolveProperty(property, transactionContext) {
   const { invoke: invokeRes } = transactionContext
@@ -57,10 +62,11 @@ export async function resolveValue(input, transactionContext) {
     }
 
     for (const key of Object.keys(inputTOUnwrap)) {
-      parentRef[key] = clone(
-        await resolveProperty(inputTOUnwrap[key], transactionContext),
-        { sanitize: false }
+      const resolvedValue = await resolveProperty(
+        inputTOUnwrap[key],
+        transactionContext
       )
+      parentRef[key] = deepCopy(resolvedValue)
 
       if (typeof parentRef[key] === "object") {
         parentRef[key] = await unwrapInput(parentRef[key], parentRef[key])

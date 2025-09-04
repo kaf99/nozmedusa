@@ -10,6 +10,7 @@ import {
   WorkflowsSdkTypes,
 } from "@medusajs/framework/types"
 import {
+  clone,
   InjectManager,
   InjectSharedContext,
   isDefined,
@@ -153,7 +154,7 @@ export class WorkflowsModuleService<
     > = {},
     @MedusaContext() context: Context = {}
   ) {
-    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+    const options_ = options ? clone(options ?? {}, { sanitize: false }) : {}
 
     const {
       manager,
@@ -228,7 +229,7 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+    const options_ = options ? clone(options ?? {}, { sanitize: false }) : {}
 
     const { manager, transactionManager, ...restContext } = context
 
@@ -256,7 +257,7 @@ export class WorkflowsModuleService<
     },
     @MedusaContext() context: Context = {}
   ) {
-    const options_ = JSON.parse(JSON.stringify(options ?? {}))
+    const options_ = options ? clone(options ?? {}, { sanitize: false }) : {}
 
     const { manager, transactionManager, ...restContext } = context
 

@@ -15,10 +15,16 @@ export class MathBN {
     }
 
     let num_ = num
-    if (num instanceof BigNumber) {
-      num_ = num.bigNumber!
-    } else if (num instanceof BigNumberJS) {
-      num_ = num
+    if (num instanceof BigNumber || BigNumber.isBigNumber(num)) {
+      num_ =
+        "bigNumber" in num
+          ? num.bigNumber!
+          : new BigNumberJS({
+              ...new BigNumber(num).bigNumber!,
+              _isBigNumber: true,
+            }) // serialized big number js back to its instance
+    } else if (num instanceof BigNumberJS || BigNumberJS.isBigNumber(num)) {
+      num_ = num as BigNumberJS
     } else if (isDefined((num as BigNumberRawValue)?.value)) {
       num_ = new BigNumberJS((num as BigNumberRawValue).value)
     } else {

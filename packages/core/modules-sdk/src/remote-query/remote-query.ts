@@ -14,7 +14,7 @@ import {
   RemoteJoinerQuery,
   RemoteNestedExpands,
 } from "@medusajs/types"
-import { isPresent, isString, toPascalCase } from "@medusajs/utils"
+import { clone, isPresent, isString, toPascalCase } from "@medusajs/utils"
 import { MedusaModule } from "../medusa-module"
 
 const BASE_PREFIX = ""
@@ -110,7 +110,7 @@ export class RemoteQuery {
     args: JoinerArgument
     take?: number | null
   } {
-    expand = JSON.parse(JSON.stringify(expand))
+    expand = clone(expand, { sanitize: false })
 
     let fields: Set<string> = new Set()
     let relations: string[] = []

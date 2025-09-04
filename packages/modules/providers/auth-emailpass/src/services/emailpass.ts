@@ -8,6 +8,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   AbstractAuthModuleProvider,
+  clone,
   isString,
   MedusaError,
 } from "@medusajs/framework/utils"
@@ -89,7 +90,7 @@ export class EmailPassAuthService extends AbstractAuthModuleProvider {
       },
     })
 
-    const copy = JSON.parse(JSON.stringify(createdAuthIdentity))
+    const copy = clone(createdAuthIdentity, { sanitize: false })
     const providerIdentity = copy.provider_identities?.find(
       (pi) => pi.provider === this.provider
     )!
@@ -145,7 +146,7 @@ export class EmailPassAuthService extends AbstractAuthModuleProvider {
       const success = await Scrypt.verify(buf, password)
 
       if (success) {
-        const copy = JSON.parse(JSON.stringify(authIdentity))
+        const copy = clone(authIdentity, { sanitize: false })
         const providerIdentity = copy.provider_identities?.find(
           (pi) => pi.provider === this.provider
         )!

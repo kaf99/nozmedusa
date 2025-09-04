@@ -23,6 +23,7 @@ import {
 } from "@medusajs/framework/types"
 import {
   arrayDifference,
+  clone,
   deduplicate,
   EmitEvents,
   GetIsoStringFromDate,
@@ -471,7 +472,7 @@ export default class PricingModuleService
         })
         .filter(Boolean) as PricingTypes.CalculatedPriceSet[]
 
-    return JSON.parse(JSON.stringify(calculatedPrices))
+    return clone(calculatedPrices, { sanitize: false })
   }
 
   // @ts-expect-error

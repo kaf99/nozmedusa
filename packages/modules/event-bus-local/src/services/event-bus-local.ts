@@ -7,7 +7,7 @@ import {
   Message,
   Subscriber,
 } from "@medusajs/framework/types"
-import { AbstractEventBusModuleService } from "@medusajs/framework/utils"
+import { AbstractEventBusModuleService, clone } from "@medusajs/framework/utils"
 import { EventEmitter } from "events"
 import { setTimeout } from "timers/promises"
 
@@ -82,7 +82,7 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
   // This is useful in the event of a distributed transaction where you'd want to emit
   // events only once the transaction ends.
   private async groupOrEmitEvent<T = unknown>(eventData: Message<T>) {
-    const eventData_ = JSON.parse(JSON.stringify(eventData))
+    const eventData_ = clone(eventData, { sanitize: false })
     const { options, ...eventBody } = eventData_
     const eventGroupId = eventBody.metadata?.eventGroupId
 
@@ -114,7 +114,7 @@ export default class LocalEventBusService extends AbstractEventBusModuleService 
 
   async releaseGroupedEvents(eventGroupId: string) {
     let groupedEvents = this.groupedEventsMap_.get(eventGroupId) || []
-    groupedEvents = JSON.parse(JSON.stringify(groupedEvents))
+    groupedEvents = clone(groupedEvents, { sanitize: false })
 
     for (const event of groupedEvents) {
       const { options, ...eventBody } = event

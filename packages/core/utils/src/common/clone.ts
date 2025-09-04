@@ -1,9 +1,13 @@
 import rfdc from "rfdc"
 import { isObject } from "./is-object"
+import { BigNumber } from "../totals/big-number"
 
 /**
  * Faster than JSON.parse(JSON.stringify(obj)) with default sanitize set to true to maintain the same behavior.
- * when sanitize is set to false, Functions, symbols, bigints, Maps, Sets, Dates will remain intact.
+ *
+ * If sanitize is set to false, Functions, symbols, bigints, Maps, Sets, Dates will remain intact.
+ *
+ * No matter the value of sanitize, big numbers will be jsonified.
  *
  * Advantage compare to JSON.parse(JSON.stringify(obj))
  * - Pure cloning: Copies object graph recursively without going through JSON.
@@ -18,20 +22,33 @@ import { isObject } from "./is-object"
  */
 export function clone(
   obj: any,
-  { sanitize }: { sanitize?: boolean } & Parameters<typeof rfdc>[0] = {
+  options: { sanitize?: boolean } & Parameters<typeof rfdc>[0] = {
     sanitize: true,
   }
 ) {
-  sanitize ??= true
+  const { sanitize = true, ...rfdcOptions } = options
 
-  const clone = rfdc()
+  const clone = rfdc(rfdcOptions)
   if (sanitize) {
     return clone(sanitizer(obj))
   }
-  return clone(obj)
+
+  // If no sanitize is provided, we still want to jsonify the big numbers
+  return clone(sanitizer(obj, { bigNumberOnly: true }))
 }
 
-function sanitizer(obj: any): any {
+function sanitizer(
+  obj: any,
+  { bigNumberOnly }: { bigNumberOnly?: boolean } = {}
+): any {
+  // jsonify the big numbers
+  if (
+    bigNumberOnly &&
+    (obj instanceof BigNumber || BigNumber.isBigNumber(obj))
+  ) {
+    return obj.toJSON()
+  }
+
   if (!isObject(obj)) {
     // Strip functions, symbols, bigints
     if (
@@ -45,28 +62,40 @@ function sanitizer(obj: any): any {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(sanitizer)
+    return obj.map((value) => sanitizer(value, { bigNumberOnly }))
   }
 
   // Handle Maps / Sets by converting them to plain objects/arrays (or strip)
-  if (obj instanceof Map) {
-    return Object.fromEntries(
-      Array.from(obj.entries()).map(([k, v]) => [k, sanitizer(v)])
-    )
-  }
-  if (obj instanceof Set) {
-    return Array.from(obj.values()).map(sanitizer)
+  if (!bigNumberOnly) {
+    if (obj instanceof Map) {
+      return Object.fromEntries(
+        Array.from(obj.entries()).map(([k, v]) => [
+          k,
+          sanitizer(v, { bigNumberOnly }),
+        ])
+      )
+    }
+    if (obj instanceof Set) {
+      return Array.from(obj.values()).map((value) =>
+        sanitizer(value, { bigNumberOnly })
+      )
+    }
+
+    // Handle Dates
+    if (obj instanceof Date) {
+      return obj.toISOString()
+    }
   }
 
-  // Handle Dates
-  if (obj instanceof Date) {
-    return obj.toISOString()
+  // Handle BigNumbers
+  if (obj instanceof BigNumber) {
+    return obj.toJSON()
   }
 
   // Plain object
   const clean: Record<string, any> = {}
   for (const [k, v] of Object.entries(obj)) {
-    clean[k] = sanitizer(v)
+    clean[k] = sanitizer(v, { bigNumberOnly })
   }
   return clean
 }

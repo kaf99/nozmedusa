@@ -50,7 +50,9 @@ export function MikroOrmBigNumberProperty(
                 bigNumber = new BigNumber(value)
               }
             } catch (e) {
-              throw new Error(`Cannot set value ${value} for ${columnName}.`)
+              throw new Error(
+                `Cannot set value ${JSON.stringify(value)} for ${columnName}.`
+              )
             }
 
             const raw = bigNumber.raw!

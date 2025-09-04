@@ -3,13 +3,13 @@ import {
   ILinkModule,
   ModuleJoinerConfig,
 } from "@medusajs/framework/types"
-import { isDefined } from "@medusajs/framework/utils"
+import { clone, isDefined } from "@medusajs/framework/utils"
 import { LinkModuleService } from "@services"
 
 export function getModuleService(
   joinerConfig: ModuleJoinerConfig
 ): Constructor<ILinkModule> {
-  const joinerConfig_ = JSON.parse(JSON.stringify(joinerConfig))
+  const joinerConfig_ = clone(joinerConfig, { sanitize: false })
   const databaseConfig = joinerConfig_.databaseConfig
 
   delete joinerConfig_.databaseConfig

@@ -7,6 +7,7 @@ import {
   BigNumber,
   ChangeActionType,
   MathBN,
+  clone,
   isPresent,
   transformPropertiesToBigNumber,
 } from "@medusajs/framework/utils"
@@ -55,9 +56,9 @@ export class OrderChangeProcessing {
     actions: InternalOrderChangeEvent[]
     options: ProcessOptions
   }) {
-    this.order = JSON.parse(JSON.stringify(order))
-    this.transactions = JSON.parse(JSON.stringify(transactions ?? []))
-    this.actions = JSON.parse(JSON.stringify(actions ?? []))
+    this.order = clone(order, { sanitize: false })
+    this.transactions = clone(transactions ?? [], { sanitize: false })
+    this.actions = clone(actions ?? [], { sanitize: false })
     this.options = options
 
     let paid = MathBN.convert(0)
