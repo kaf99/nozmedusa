@@ -121,8 +121,8 @@ export class BigNumber implements IBigNumber {
   }
 
   toJSON(): number {
-    return this.bignumber_
-      ? this.bignumber_?.toNumber()
+    return this.bignumber_ && this.bignumber_?.toNumber
+      ? this.bignumber_.toNumber()
       : this.raw_
       ? new BigNumberJS(this.raw_.value).toNumber()
       : this.numeric_
