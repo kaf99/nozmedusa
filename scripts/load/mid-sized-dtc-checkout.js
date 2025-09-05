@@ -88,12 +88,19 @@ http.setResponseCallback(http.expectedStatuses({ min: 200, max: 401 }))
 export function browseCatalog() {
   return group("Browse Flow", () => {
     // Load homepage data (collections, categories, regions, cart, customer)
-    http.batch([
+    const [regionsRes] = http.batch([
       { method: "GET", url: `${endpoint}/store/regions`, params },
       { method: "GET", url: `${endpoint}/store/collections`, params },
       { method: "GET", url: `${endpoint}/store/product-categories`, params },
       { method: "GET", url: `${endpoint}/store/customers/me`, params },
     ])
+
+    check(regionsRes, { "regions ok": (r) => r.status === 200 })
+    sleep(2 + Math.random() * 3)
+
+    // Pick a random region on every run
+    const regions = JSON.parse(regionsRes.body).regions
+    regionId = regions[Math.floor(Math.random() * regions.length)].id
 
     const productsParams = `region_id=${regionId}&fields=*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags`
 
@@ -167,7 +174,25 @@ export function addToCart() {
     check(res, { "change cart quantity ok": (r) => r.status === 200 })
     sleep(2 + Math.random() * 3)
 
-    return JSON.parse(res.body).cart
+    updatedCart = JSON.parse(res.body).cart
+
+    // Add promotion to approximately 10% of carts
+    if (Math.random() < 0.1) {
+      res = http.post(
+        `${endpoint}/store/carts/${updatedCart.id}/promotions`,
+        JSON.stringify({
+          promo_codes: ["10OFF"],
+        }),
+        params
+      )
+      check(res, { "add promotion ok": (r) => r.status === 200 })
+      sleep(1 + Math.random() * 2)
+
+      // Update cart reference to include promotion
+      updatedCart = JSON.parse(res.body).cart
+    }
+
+    return updatedCart
   })
 }
 
@@ -195,6 +220,17 @@ export function completeCart() {
     check(res, { "view cart ok": (r) => r.status === 200 })
     sleep(2 + Math.random() * 3)
 
+    // Ensure the country code is within the randomly selected region
+    // Go to cart
+    const selectedRegion = http.get(
+      `${endpoint}/store/regions/${regionId}`,
+      params
+    )
+    check(selectedRegion, { "selected region ok": (r) => r.status === 200 })
+    sleep(2 + Math.random() * 3)
+
+    const country = JSON.parse(selectedRegion.body).region.countries[0].iso_2
+
     // Set shipping address
     http.post(
       `${endpoint}/store/carts/${updatedCart.id}`,
@@ -206,8 +242,8 @@ export function completeCart() {
           address_2: "Some alley",
           company: "ACME",
           postal_code: "13456",
-          city: "Berlin",
-          country_code: "de",
+          city: "Wonderland",
+          country_code: country,
           province: "QC",
           phone: "1234567",
         },
