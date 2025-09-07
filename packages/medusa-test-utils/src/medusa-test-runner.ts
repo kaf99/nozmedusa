@@ -267,8 +267,6 @@ class MedusaTestRunner {
       return
     }
 
-    await this.afterEach()
-
     const container = this.globalContainer as MedusaContainer
     const copiedContainer = createMedusaContainer({}, container)
 

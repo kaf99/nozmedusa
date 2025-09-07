@@ -219,45 +219,65 @@ export const dbTestUtilFactory = (): any => ({
     }
   },
 
+  // Cache table list to avoid repeated queries
+  _cachedTables: null,
+
   teardown: async function ({ schema }: { schema?: string } = {}) {
     if (!this.pgConnection_) {
       return
     }
 
+    const runRawQuery = this.pgConnection_.raw.bind(this.pgConnection_)
+    schema ??= "public"
+
     try {
-      const runRawQuery = this.pgConnection_.raw.bind(this.pgConnection_)
-      schema ??= "public"
-
-      await runRawQuery(`SET session_replication_role = 'replica';`)
-      const { rows: tableNames } = await runRawQuery(`SELECT table_name
-                                              FROM information_schema.tables
-                                              WHERE table_schema = '${schema}';`)
-
-      const skipIndexPartitionPrefix = "cat_"
-      const mainPartitionTables = ["index_data", "index_relation"]
-      let hasIndexTables = false
-
-      for (const { table_name } of tableNames) {
-        if (mainPartitionTables.includes(table_name)) {
-          hasIndexTables = true
-        }
-
-        if (
-          table_name.startsWith(skipIndexPartitionPrefix) ||
-          mainPartitionTables.includes(table_name)
-        ) {
-          continue
-        }
-
-        await runRawQuery(`DELETE FROM ${schema}."${table_name}";`)
+      // Use cached table list or query once
+      let tableNames = this._cachedTables
+      if (!tableNames) {
+        const result = await runRawQuery(`
+          SELECT table_name 
+          FROM information_schema.tables 
+          WHERE table_schema = '${schema}'
+            AND table_type = 'BASE TABLE'
+            AND table_name NOT LIKE 'pg_%'
+            AND table_name != 'mikro_orm_migrations'
+        `)
+        tableNames = result.rows
+        this._cachedTables = tableNames // Cache for next time
       }
 
-      if (hasIndexTables) {
-        await runRawQuery(`TRUNCATE TABLE ${schema}.index_data;`)
-        await runRawQuery(`TRUNCATE TABLE ${schema}.index_relation;`)
-      }
+      if (tableNames.length) {
+        // Build table list more efficiently
+        const truncateTables = tableNames
+          .filter(
+            ({ table_name }) =>
+              !table_name.startsWith("cat_") &&
+              !["index_data", "index_relation"].includes(table_name)
+          )
+          .map(({ table_name }) => `"${schema}"."${table_name}"`)
 
-      await runRawQuery(`SET session_replication_role = 'origin';`)
+        // Add index tables if they exist
+        const hasIndexTables = tableNames.some(({ table_name }) =>
+          ["index_data", "index_relation"].includes(table_name)
+        )
+
+        if (hasIndexTables) {
+          truncateTables.push(
+            `"${schema}"."index_data"`,
+            `"${schema}"."index_relation"`
+          )
+        }
+
+        if (truncateTables.length > 0) {
+          await runRawQuery(`
+            SET session_replication_role = 'replica';
+            SET CONSTRAINTS ALL DEFERRED;
+            TRUNCATE ${truncateTables.join(", ")} RESTART IDENTITY CASCADE;
+            SET CONSTRAINTS ALL IMMEDIATE;
+            SET session_replication_role = 'origin';
+          `)
+        }
+      }
     } catch (error) {
       logger.error("Error during database teardown:", error)
       throw error
