@@ -16,6 +16,7 @@
     "@medusajs/core-flows": "workspace:*",
     "@medusajs/customer": "workspace:^",
     "@medusajs/event-bus-local": "workspace:*",
+    "@medusajs/framework": "workspace:*",
     "@medusajs/fulfillment": "workspace:^",
     "@medusajs/fulfillment-manual": "workspace:^",
     "@medusajs/inventory": "workspace:^",
@@ -32,7 +33,6 @@
     "@medusajs/user": "workspace:^",
     "@medusajs/utils": "workspace:^",
     "@medusajs/workflow-engine-inmemory": "workspace:*",
-    "@medusajs/framework": "workspace:^",
     "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3"

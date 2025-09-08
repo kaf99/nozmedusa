@@ -6521,7 +6521,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@medusajs/framework@2.10.1, @medusajs/framework@workspace:^, @medusajs/framework@workspace:packages/core/framework":
+"@medusajs/framework@2.10.1, @medusajs/framework@workspace:*, @medusajs/framework@workspace:packages/core/framework":
   version: 0.0.0-use.local
   resolution: "@medusajs/framework@workspace:packages/core/framework"
   dependencies:
@@ -23995,6 +23995,7 @@ __metadata:
     "@medusajs/core-flows": "workspace:*"
     "@medusajs/customer": "workspace:^"
     "@medusajs/event-bus-local": "workspace:*"
+    "@medusajs/framework": "workspace:*"
     "@medusajs/fulfillment": "workspace:^"
     "@medusajs/fulfillment-manual": "workspace:^"
     "@medusajs/inventory": "workspace:^"
@@ -24034,7 +24035,7 @@ __metadata:
     "@medusajs/currency": "workspace:^"
     "@medusajs/customer": "workspace:^"
     "@medusajs/event-bus-local": "workspace:*"
-    "@medusajs/framework": "workspace:^"
+    "@medusajs/framework": "workspace:*"
     "@medusajs/fulfillment": "workspace:^"
     "@medusajs/fulfillment-manual": "workspace:^"
     "@medusajs/inventory": "workspace:^"
