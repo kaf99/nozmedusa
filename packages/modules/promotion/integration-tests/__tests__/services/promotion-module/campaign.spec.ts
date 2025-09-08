@@ -488,6 +488,41 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
           )
         })
       })
+
+      describe("campaignBudgetUsage", () => {
+        it("should create a campaign budget by attribute usage successfully", async () => {
+          const [createdCampaign] = await service.createCampaigns([
+            {
+              name: "test",
+              campaign_identifier: "test",
+              budget: {
+                type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+                attribute: "customer_id",
+                limit: 5,
+              },
+            },
+          ])
+
+          let campaigns = await service.listCampaigns(
+            {
+              id: [createdCampaign.id],
+            },
+            { relations: ["budget", "budget.usages"] }
+          )
+
+          expect(campaigns).toHaveLength(1)
+
+          expect(campaigns[0]).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: [],
+                limit: 5,
+                type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+              }),
+            })
+          )
+        })
+      })
     })
   },
 })

@@ -3,7 +3,11 @@ import { BaseFilterable } from "../../dal"
 /**
  * The campaign budget's possible types.
  */
-export type CampaignBudgetTypeValues = "spend" | "usage"
+export type CampaignBudgetTypeValues =
+  | "spend"
+  | "usage"
+  | "use_by_attribute"
+  | "spend_by_attribute"
 
 /**
  * The campaign budget details.

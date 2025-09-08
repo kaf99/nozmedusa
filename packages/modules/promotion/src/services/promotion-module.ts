@@ -36,6 +36,7 @@ import {
   ApplicationMethod,
   Campaign,
   CampaignBudget,
+  CampaignBudgetUsage,
   Promotion,
   PromotionRule,
   PromotionRuleValue,
@@ -70,6 +71,7 @@ type InjectedDependencies = {
   promotionRuleValueService: ModulesSdkTypes.IMedusaInternalService<any>
   campaignService: ModulesSdkTypes.IMedusaInternalService<any>
   campaignBudgetService: ModulesSdkTypes.IMedusaInternalService<any>
+  campaignBudgetUsageService: ModulesSdkTypes.IMedusaInternalService<any>
 }
 
 export default class PromotionModuleService
@@ -78,6 +80,7 @@ export default class PromotionModuleService
     ApplicationMethod: { dto: PromotionTypes.ApplicationMethodDTO }
     Campaign: { dto: PromotionTypes.CampaignDTO }
     CampaignBudget: { dto: PromotionTypes.CampaignBudgetDTO }
+    CampaignBudgetUsage: { dto: PromotionTypes.CampaignBudgetUsageDTO }
     PromotionRule: { dto: PromotionTypes.PromotionRuleDTO }
     PromotionRuleValue: { dto: PromotionTypes.PromotionRuleValueDTO }
   }>({
@@ -85,6 +88,7 @@ export default class PromotionModuleService
     ApplicationMethod,
     Campaign,
     CampaignBudget,
+    CampaignBudgetUsage,
     PromotionRule,
     PromotionRuleValue,
   })
@@ -110,6 +114,10 @@ export default class PromotionModuleService
     InferEntityType<typeof CampaignBudget>
   >
 
+  protected campaignBudgetUsageService_: ModulesSdkTypes.IMedusaInternalService<
+    InferEntityType<typeof CampaignBudgetUsage>
+  >
+
   constructor(
     {
       baseRepository,
@@ -119,6 +127,7 @@ export default class PromotionModuleService
       promotionRuleValueService,
       campaignService,
       campaignBudgetService,
+      campaignBudgetUsageService,
     }: InjectedDependencies,
     protected readonly moduleDeclaration: InternalModuleDeclaration
   ) {
@@ -132,6 +141,7 @@ export default class PromotionModuleService
     this.promotionRuleValueService_ = promotionRuleValueService
     this.campaignService_ = campaignService
     this.campaignBudgetService_ = campaignBudgetService
+    this.campaignBudgetUsageService_ = campaignBudgetUsageService
   }
 
   __joinerConfig(): ModuleJoinerConfig {
@@ -176,6 +186,7 @@ export default class PromotionModuleService
   @InjectTransactionManager()
   async registerUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
+    registrationContext: PromotionTypes.CampaignBudgetUsageContext,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<void> {
     const promotionCodes = computedActions
@@ -187,7 +198,7 @@ export default class PromotionModuleService
 
     const existingPromotions = await this.listActivePromotions(
       { code: promotionCodes },
-      { relations: ["campaign", "campaign.budget"] },
+      { relations: ["campaign", "campaign.budget", "campaign.budget.usages"] },
       sharedContext
     )
 

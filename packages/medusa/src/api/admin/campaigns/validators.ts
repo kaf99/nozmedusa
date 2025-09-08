@@ -36,6 +36,7 @@ const CreateCampaignBudget = z
     type: z.nativeEnum(CampaignBudgetType),
     limit: z.number().nullish(),
     currency_code: z.string().nullish(),
+    attribute: z.string().nullish(),
   })
   .strict()
   .refine(
@@ -53,6 +54,16 @@ const CreateCampaignBudget = z
       path: ["currency_code"],
       message: `currency_code should not be present when budget type is ${CampaignBudgetType.USAGE}`,
     }
+  )
+  .refine(
+    (data) =>
+      (data.type !== CampaignBudgetType.USE_BY_ATTRIBUTE &&
+        data.type !== CampaignBudgetType.SPEND_BY_ATTRIBUTE) ||
+      isPresent(data.attribute),
+    (data) => ({
+      path: ["attribute"],
+      message: `campaign budget attribute is required when budget type is ${data.type}`,
+    })
   )
 
 export const UpdateCampaignBudget = z
