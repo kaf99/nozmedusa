@@ -1,7 +1,0 @@
-export * from "./mikro-orm-cli"
-export * from "./mikro-orm-core"
-export * from "./mikro-orm-knex"
-export * from "./mikro-orm-migrations"
-export * from "./mikro-orm-postgresql"
-export * from "./awilix"
-export * from "./pg"

@@ -36,11 +36,11 @@
     "zod": "3.25.76"
   },
   "dependencies": {
+    "@medusajs/deps": "2.10.1",
     "@medusajs/modules-sdk": "2.10.1",
     "@medusajs/orchestration": "2.10.1",
     "@medusajs/types": "2.10.1",
     "@medusajs/utils": "2.10.1",
-    "@medusajs/deps": "2.10.1",
     "ulid": "^2.3.0"
   },
   "peerDependencies": {
