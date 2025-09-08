@@ -10,7 +10,10 @@ import {
   mergeMetadata,
   isDefined,
 } from "@medusajs/framework/utils"
-import { SqlEntityManager, wrap } from "@mikro-orm/postgresql"
+import {
+  SqlEntityManager,
+  wrap,
+} from "@medusajs/framework/mikro-orm/postgresql"
 
 export class ProductRepository extends DALUtils.mikroOrmBaseRepositoryFactory(
   Product

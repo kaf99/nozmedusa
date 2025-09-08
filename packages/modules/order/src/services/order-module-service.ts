@@ -42,7 +42,7 @@ import {
   toMikroORMEntity,
   transformPropertiesToBigNumber,
 } from "@medusajs/framework/utils"
-import { BeforeCreate, OnInit, rel } from "@mikro-orm/core"
+import { BeforeCreate, OnInit, rel } from "@medusajs/framework/mikro-orm/core"
 import {
   Order,
   OrderAddress,
