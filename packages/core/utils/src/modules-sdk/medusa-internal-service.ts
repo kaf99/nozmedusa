@@ -9,7 +9,7 @@ import {
   PerformedActions,
   UpsertWithReplaceConfig,
 } from "@medusajs/types"
-import type { EntityClass, EntitySchema } from "@mikro-orm/core"
+import type { EntityClass, EntitySchema } from "@medusajs/deps/mikro-orm-core"
 import {
   isDefined,
   isObject,

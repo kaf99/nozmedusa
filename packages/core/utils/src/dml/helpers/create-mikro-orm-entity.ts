@@ -6,7 +6,7 @@ import type {
   Infer,
   PropertyType,
 } from "@medusajs/types"
-import { Entity, Filter } from "@mikro-orm/core"
+import { Entity, Filter } from "@medusajs/deps/mikro-orm-core"
 
 import {
   mikroOrmFreeTextSearchFilterOptionsFactory,
