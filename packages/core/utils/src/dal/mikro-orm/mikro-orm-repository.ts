@@ -21,8 +21,8 @@ import {
   FilterQuery as MikroFilterQuery,
   FindOptions as MikroOptions,
   ReferenceKind,
-} from "@medusajs/deps/mikro-orm-core"
-import { SqlEntityManager } from "@medusajs/deps/mikro-orm-postgresql"
+} from "@medusajs/deps/mikro-orm/core"
+import { SqlEntityManager } from "@medusajs/deps/mikro-orm/postgresql"
 import {
   arrayDifference,
   isString,

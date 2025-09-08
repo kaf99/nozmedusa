@@ -19,11 +19,11 @@
   ],
   "exports": {
     ".": "./dist/index.js",
-    "./mikro-orm-cli": "./dist/mikro-orm-cli.js",
-    "./mikro-orm-core": "./dist/mikro-orm-core.js",
-    "./mikro-orm-knex": "./dist/mikro-orm-knex.js",
-    "./mikro-orm-migrations": "./dist/mikro-orm-migrations.js",
-    "./mikro-orm-postgresql": "./dist/mikro-orm-postgresql.js",
+    "./mikro-orm/cli": "./dist/mikro-orm-cli.js",
+    "./mikro-orm/core": "./dist/mikro-orm-core.js",
+    "./mikro-orm/knex": "./dist/mikro-orm-knex.js",
+    "./mikro-orm/migrations": "./dist/mikro-orm-migrations.js",
+    "./mikro-orm/postgresql": "./dist/mikro-orm-postgresql.js",
     "./awilix": "./dist/awilix.js",
     "./pg": "./dist/pg.js"
   },

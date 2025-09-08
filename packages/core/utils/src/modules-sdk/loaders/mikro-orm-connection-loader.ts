@@ -2,7 +2,7 @@ import { Logger, MedusaContainer, ModulesSdkTypes } from "@medusajs/types"
 import {
   PostgreSqlDriver,
   SqlEntityManager,
-} from "@medusajs/deps/mikro-orm-postgresql"
+} from "@medusajs/deps/mikro-orm/postgresql"
 import { asValue } from "@medusajs/deps/awilix"
 import { ContainerRegistrationKeys, MedusaError } from "../../common"
 import { mikroOrmCreateConnection } from "../../dal"
