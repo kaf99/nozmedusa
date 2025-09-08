@@ -1,5 +1,5 @@
 import { BigNumberInput } from "@medusajs/types"
-import { Property } from "@mikro-orm/core"
+import { Property } from "@medusajs/deps/mikro-orm-core"
 import { isDefined, isPresent, trimZeros } from "../../common"
 import { BigNumber } from "../../totals/big-number"
 

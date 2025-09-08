@@ -1,17 +1,17 @@
 import { Constructor } from "@medusajs/types"
-import { MikroORM, Utils } from "@mikro-orm/core"
+import { MikroORM, Utils } from "@medusajs/deps/mikro-orm-core"
 import {
   Migrator as BaseMigrator,
   Migration,
   UmzugMigration,
-} from "@mikro-orm/migrations"
+} from "@medusajs/deps/mikro-orm-migrations"
 import { isFileDisabled, isFileSkipped } from "../../common/define-file-config"
 import { dynamicImport } from "../../common/dynamic-import"
 
 export class CustomDBMigrator extends BaseMigrator {
   static register(orm: MikroORM): void {
     orm.config.registerExtension(
-      "@mikro-orm/migrator",
+      "@mikro-orm/migrations",
       () => new CustomDBMigrator(orm.em as any)
     )
   }
