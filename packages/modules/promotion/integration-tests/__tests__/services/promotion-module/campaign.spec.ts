@@ -526,7 +526,7 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
           )
         })
 
-        it("should requister usage for attribute budget successfully", async () => {
+        it("should requister usage for attribute budget successfully and revert it successfully", async () => {
           const [createdCampaign] = await service.createCampaigns([
             {
               name: "test",
@@ -567,7 +567,7 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
             }
           )
 
-          const campaign = await service.retrieveCampaign(createdCampaign.id, {
+          let campaign = await service.retrieveCampaign(createdCampaign.id, {
             relations: ["budget", "budget.usages"],
           })
 
@@ -581,6 +581,62 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
                   }),
                   expect.objectContaining({
                     attribute_value: "customer-id-2",
+                    used: 1,
+                  }),
+                ]),
+              }),
+            })
+          )
+
+          await service.revertUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
+                    used: 1,
+                  }),
+                  expect.objectContaining({
+                    attribute_value: "customer-id-2",
+                    used: 1,
+                  }),
+                ]),
+              }),
+            })
+          )
+
+          await service.revertUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-2",
+              customer_email: "customer2@email.com",
+            }
+          )
+
+          campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign.budget!.usages!).toHaveLength(1)
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
                     used: 1,
                   }),
                 ]),

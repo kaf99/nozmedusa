@@ -220,6 +220,42 @@ export default class PromotionModuleService
   }
 
   @InjectTransactionManager()
+  protected async revertCampaignBudgetUsageByAttribute_(
+    budgetId: string,
+    attributeValue: string,
+    @MedusaContext() sharedContext: Context = {}
+  ): Promise<void> {
+    const [campaignBudgetUsagePerAttributeValue] =
+      await this.campaignBudgetUsageService_.list(
+        {
+          budget_id: budgetId,
+          attribute_value: attributeValue,
+        },
+        {},
+        sharedContext
+      )
+
+    if (!campaignBudgetUsagePerAttributeValue) {
+      return
+    }
+
+    if (MathBN.lte(campaignBudgetUsagePerAttributeValue.used ?? 0, 1)) {
+      await this.campaignBudgetUsageService_.delete(
+        campaignBudgetUsagePerAttributeValue.id,
+        sharedContext
+      )
+    } else {
+      await this.campaignBudgetUsageService_.update(
+        {
+          id: campaignBudgetUsagePerAttributeValue.id,
+          used: MathBN.sub(campaignBudgetUsagePerAttributeValue.used ?? 0, 1),
+        },
+        sharedContext
+      )
+    }
+  }
+
+  @InjectTransactionManager()
   async registerUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
     registrationContext: PromotionTypes.CampaignBudgetUsageContext,
@@ -441,6 +477,33 @@ export default class PromotionModuleService
           id: campaignBudget.id,
           used: usedValue,
         })
+
+        promotionCodeUsageMap.set(promotion.code!, true)
+      }
+
+      if (campaignBudget.type === CampaignBudgetType.USE_BY_ATTRIBUTE) {
+        const promotionAlreadyUsed =
+          promotionCodeUsageMap.get(promotion.code!) || false
+
+        if (promotionAlreadyUsed) {
+          continue
+        }
+
+        const attribute = campaignBudget.attribute!
+        const attributeValue = registrationContext[attribute]
+
+        if (!attributeValue) {
+          throw new MedusaError(
+            MedusaError.Types.INVALID_ARGUMENT,
+            `Value for attribute: ${attribute} is required for promotions that are part of a "use by attribute" campaign budget.`
+          )
+        }
+
+        await this.revertCampaignBudgetUsageByAttribute_(
+          campaignBudget.id,
+          attributeValue,
+          sharedContext
+        )
 
         promotionCodeUsageMap.set(promotion.code!, true)
       }

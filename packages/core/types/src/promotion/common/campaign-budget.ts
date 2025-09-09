@@ -1,4 +1,5 @@
 import { BaseFilterable } from "../../dal"
+import { CampaignBudgetUsageDTO } from "./campaing-budget-usage"
 
 /**
  * The campaign budget's possible types.
@@ -52,6 +53,11 @@ export interface CampaignBudgetDTO {
    * The attribute of the campaign budget.
    */
   attribute?: string
+
+  /**
+   * The usages of the campaign budget.
+   */
+  usages?: CampaignBudgetUsageDTO[]
 }
 
 /**
