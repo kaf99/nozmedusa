@@ -11,7 +11,7 @@ import { dynamicImport } from "../../common/dynamic-import"
 export class CustomDBMigrator extends BaseMigrator {
   static register(orm: MikroORM): void {
     orm.config.registerExtension(
-      "@medusajs/deps/mikro-orm/migrations",
+      "@mikro-orm/migrator",
       () => new CustomDBMigrator(orm.em as any)
     )
   }
