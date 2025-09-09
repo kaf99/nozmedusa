@@ -9,7 +9,7 @@
 "@medusajs/workflows-sdk": patch
 "create-medusa-app": patch
 "@medusajs/medusa": patch
-"@medusajs/medusa-test-utils": patch
+"@medusajs/test-utils": patch
 "@medusajs/analytics": patch
 "@medusajs/api-key": patch
 "@medusajs/auth": patch
