@@ -59,7 +59,8 @@ export interface IPromotionModuleService extends IModuleService {
    * This method is used to revert the changes made by registerUsage action
    *
    * @param {UsageComputedActions[]} computedActions - The computed actions to adjust their promotion's campaign budget.
-   * @returns {Promise<void>} Resolves when the campaign budgets have been adjusted successfully.
+   * @param {CampaignBudgetUsageContext} registrationContext - The context of the campaign budget usage.
+   * @returns {Promise<void>} Resolves when the campaign budgets have been reverted successfully.
    *
    * @example
    * await promotionModuleService.revertUsage([
@@ -73,7 +74,10 @@ export interface IPromotionModuleService extends IModuleService {
    *   },
    * ])
    */
-  revertUsage(computedActions: UsageComputedActions[]): Promise<void>
+  revertUsage(
+    computedActions: UsageComputedActions[],
+    registrationContext: CampaignBudgetUsageContext
+  ): Promise<void>
 
   /**
    * This method provides the actions to perform on a cart based on the specified promotions

@@ -299,6 +299,7 @@ export default class PromotionModuleService
   @InjectTransactionManager()
   async revertUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
+    registrationContext: PromotionTypes.CampaignBudgetUsageContext,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<void> {
     const promotionCodeUsageMap = new Map<string, boolean>()

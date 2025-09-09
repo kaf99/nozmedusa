@@ -5,11 +5,11 @@ export type CampaignBudgetUsageContext = {
   /**
    * The ID of the customer.
    */
-  customer_id: string
+  customer_id: string | null
   /**
    * The email of the customer.
    */
-  customer_email: string
+  customer_email: string | null
 }
 /**
  * Record of promotion usage as part of a campaign
