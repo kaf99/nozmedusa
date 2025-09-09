@@ -3,7 +3,10 @@ import { Modules } from "@medusajs/framework/utils"
 import { moduleIntegrationTestRunner } from "@medusajs/test-utils"
 import { CampaignBudgetType } from "../../../../../../core/utils/src/promotion/index"
 import { createCampaigns } from "../../../__fixtures__/campaigns"
-import { createPromotions } from "../../../__fixtures__/promotion"
+import {
+  createDefaultPromotion,
+  createPromotions,
+} from "../../../__fixtures__/promotion"
 
 jest.setTimeout(30000)
 
@@ -518,6 +521,69 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
                 usages: [],
                 limit: 5,
                 type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+              }),
+            })
+          )
+        })
+
+        it("should requister usage for attribute budget successfully", async () => {
+          const [createdCampaign] = await service.createCampaigns([
+            {
+              name: "test",
+              campaign_identifier: "test",
+              budget: {
+                type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+                attribute: "customer_id",
+                limit: 5,
+              },
+            },
+          ])
+
+          const createdPromotion = await createDefaultPromotion(service, {
+            campaign_id: createdCampaign.id,
+          })
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-2",
+              customer_email: "customer2@email.com",
+            }
+          )
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          const campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
+                    used: 2,
+                  }),
+                  expect.objectContaining({
+                    attribute_value: "customer-id-2",
+                    used: 1,
+                  }),
+                ]),
               }),
             })
           )

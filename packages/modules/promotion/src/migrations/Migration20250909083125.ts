@@ -1,12 +1,12 @@
 import { Migration } from "@mikro-orm/migrations"
 
-export class Migration20250908113704 extends Migration {
+export class Migration20250909083125 extends Migration {
   override async up(): Promise<void> {
     this.addSql(
       `alter table if exists "promotion_campaign_budget_usage" drop constraint if exists "promotion_campaign_budget_usage_attribute_value_budget_id_unique";`
     )
     this.addSql(
-      `create table if not exists "promotion_campaign_budget_usage" ("id" text not null, "attribute_value" text not null, "used" numeric not null, "budget_id" text not null, "raw_used" jsonb not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "promotion_campaign_budget_usage_pkey" primary key ("id"));`
+      `create table if not exists "promotion_campaign_budget_usage" ("id" text not null, "attribute_value" text not null, "used" numeric not null default 0, "budget_id" text not null, "raw_used" jsonb not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "promotion_campaign_budget_usage_pkey" primary key ("id"));`
     )
     this.addSql(
       `CREATE INDEX IF NOT EXISTS "IDX_promotion_campaign_budget_usage_budget_id" ON "promotion_campaign_budget_usage" (budget_id) WHERE deleted_at IS NULL;`

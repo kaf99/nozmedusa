@@ -15,7 +15,7 @@ export type ComputeActions =
  */
 export type UsageComputedActions = {
   /**
-   * The amount to remove off the shipping method's total.
+   * The amount (of usage or money) to adjust the campaign budget by.
    */
   amount: BigNumberInput
 

@@ -184,6 +184,42 @@ export default class PromotionModuleService
   }
 
   @InjectTransactionManager()
+  protected async registerCampaignBudgetUsageByAttribute_(
+    budgetId: string,
+    attributeValue: string,
+    @MedusaContext() sharedContext: Context = {}
+  ): Promise<void> {
+    const [campaignBudgetUsagePerAttributeValue] =
+      await this.campaignBudgetUsageService_.list(
+        {
+          budget_id: budgetId,
+          attribute_value: attributeValue,
+        },
+        {},
+        sharedContext
+      )
+
+    if (!campaignBudgetUsagePerAttributeValue) {
+      await this.campaignBudgetUsageService_.create(
+        {
+          budget_id: budgetId,
+          attribute_value: attributeValue,
+          used: MathBN.convert(1),
+        },
+        sharedContext
+      )
+    } else {
+      await this.campaignBudgetUsageService_.update(
+        {
+          id: campaignBudgetUsagePerAttributeValue.id,
+          used: MathBN.add(campaignBudgetUsagePerAttributeValue.used ?? 0, 1),
+        },
+        sharedContext
+      )
+    }
+  }
+
+  @InjectTransactionManager()
   async registerUsage(
     computedActions: PromotionTypes.UsageComputedActions[],
     registrationContext: PromotionTypes.CampaignBudgetUsageContext,
@@ -281,11 +317,42 @@ export default class PromotionModuleService
 
         promotionCodeUsageMap.set(promotion.code!, true)
       }
+
+      if (campaignBudget.type === CampaignBudgetType.USE_BY_ATTRIBUTE) {
+        const promotionAlreadyUsed =
+          promotionCodeUsageMap.get(promotion.code!) || false
+
+        if (promotionAlreadyUsed) {
+          continue
+        }
+
+        const attribute = campaignBudget.attribute!
+        const attributeValue = registrationContext[attribute]
+
+        if (!attributeValue) {
+          throw new MedusaError(
+            MedusaError.Types.INVALID_ARGUMENT,
+            `Value for attribute: ${attribute} is required for promotions that are part of a "use by attribute" campaign budget.`
+          )
+        }
+
+        await this.registerCampaignBudgetUsageByAttribute_(
+          campaignBudget.id,
+          attributeValue,
+          sharedContext
+        )
+
+        promotionCodeUsageMap.set(promotion.code!, true)
+      }
     }
 
     if (campaignBudgetMap.size > 0) {
       const campaignBudgetsData: UpdateCampaignBudgetDTO[] = []
       for (const [_, campaignBudgetData] of campaignBudgetMap) {
+        // usages by attribute are updated separatley
+        if (campaignBudgetData.usages) {
+          delete campaignBudgetData.usages
+        }
         campaignBudgetsData.push(campaignBudgetData)
       }
 
