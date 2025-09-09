@@ -8,6 +8,7 @@ permissions:
 jobs:
   team-labeler:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - id: label-the-PR
       uses: actions/labeler@v5
