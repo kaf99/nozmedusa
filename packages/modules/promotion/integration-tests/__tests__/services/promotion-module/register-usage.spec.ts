@@ -1,5 +1,5 @@
 import { IPromotionModuleService } from "@medusajs/framework/types"
-import { Modules } from "@medusajs/framework/utils"
+import { CampaignBudgetType, Modules } from "@medusajs/framework/utils"
 import { moduleIntegrationTestRunner, SuiteOptions } from "@medusajs/test-utils"
 import { createCampaigns } from "../../../__fixtures__/campaigns"
 import { createDefaultPromotion } from "../../../__fixtures__/promotion"
@@ -21,20 +21,19 @@ moduleIntegrationTestRunner({
         it("should register usage for type spend", async () => {
           const createdPromotion = await createDefaultPromotion(service, {})
 
-          await service.registerUsage([
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_express",
-              amount: 200,
-              code: createdPromotion.code!,
-            },
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_standard",
-              amount: 500,
-              code: createdPromotion.code!,
-            },
-          ])
+          await service.registerUsage(
+            [
+              {
+                amount: 200,
+                code: createdPromotion.code!,
+              },
+              {
+                amount: 500,
+                code: createdPromotion.code!,
+              },
+            ],
+            { customer_email: null, customer_id: null }
+          )
 
           const campaign = await service.retrieveCampaign("campaign-id-1", {
             relations: ["budget"],
@@ -54,20 +53,19 @@ moduleIntegrationTestRunner({
             campaign_id: "campaign-id-2",
           })
 
-          await service.registerUsage([
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_express",
-              amount: 200,
-              code: createdPromotion.code!,
-            },
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_standard",
-              amount: 500,
-              code: createdPromotion.code!,
-            },
-          ])
+          await service.registerUsage(
+            [
+              {
+                amount: 200,
+                code: createdPromotion.code!,
+              },
+              {
+                amount: 500,
+                code: createdPromotion.code!,
+              },
+            ],
+            { customer_email: null, customer_id: null }
+          )
 
           const campaign = await service.retrieveCampaign("campaign-id-2", {
             relations: ["budget"],
@@ -84,14 +82,15 @@ moduleIntegrationTestRunner({
 
         it("should not throw an error when compute action with code does not exist", async () => {
           const response = await service
-            .registerUsage([
-              {
-                action: "addShippingMethodAdjustment",
-                shipping_method_id: "shipping_method_express",
-                amount: 200,
-                code: "DOESNOTEXIST",
-              },
-            ])
+            .registerUsage(
+              [
+                {
+                  amount: 200,
+                  code: "DOESNOTEXIST",
+                },
+              ],
+              { customer_email: null, customer_id: null }
+            )
             .catch((e) => e)
 
           expect(response).toEqual(undefined)
@@ -107,20 +106,19 @@ moduleIntegrationTestRunner({
             budget: { used: 1000, limit: 1000 },
           })
 
-          await service.registerUsage([
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_express",
-              amount: 200,
-              code: createdPromotion.code!,
-            },
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_standard",
-              amount: 500,
-              code: createdPromotion.code!,
-            },
-          ])
+          await service.registerUsage(
+            [
+              {
+                amount: 200,
+                code: createdPromotion.code!,
+              },
+              {
+                amount: 500,
+                code: createdPromotion.code!,
+              },
+            ],
+            { customer_email: null, customer_id: null }
+          )
 
           const campaign = await service.retrieveCampaign("campaign-id-2", {
             relations: ["budget"],
@@ -144,20 +142,19 @@ moduleIntegrationTestRunner({
             budget: { used: 900, limit: 1000 },
           })
 
-          await service.registerUsage([
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_express",
-              amount: 100,
-              code: createdPromotion.code!,
-            },
-            {
-              action: "addShippingMethodAdjustment",
-              shipping_method_id: "shipping_method_standard",
-              amount: 100,
-              code: createdPromotion.code!,
-            },
-          ])
+          await service.registerUsage(
+            [
+              {
+                amount: 100,
+                code: createdPromotion.code!,
+              },
+              {
+                amount: 100,
+                code: createdPromotion.code!,
+              },
+            ],
+            { customer_email: null, customer_id: null }
+          )
 
           const campaign = await service.retrieveCampaign("campaign-id-1", {
             relations: ["budget"],
@@ -168,6 +165,125 @@ moduleIntegrationTestRunner({
               budget: expect.objectContaining({
                 limit: 1000,
                 used: 1000,
+              }),
+            })
+          )
+        })
+
+        it("should requister usage for attribute budget successfully and revert it successfully", async () => {
+          const [createdCampaign] = await service.createCampaigns([
+            {
+              name: "test",
+              campaign_identifier: "test",
+              budget: {
+                type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+                attribute: "customer_id",
+                limit: 5,
+              },
+            },
+          ])
+
+          const createdPromotion = await createDefaultPromotion(service, {
+            campaign_id: createdCampaign.id,
+          })
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-2",
+              customer_email: "customer2@email.com",
+            }
+          )
+
+          await service.registerUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          let campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
+                    used: 2,
+                  }),
+                  expect.objectContaining({
+                    attribute_value: "customer-id-2",
+                    used: 1,
+                  }),
+                ]),
+              }),
+            })
+          )
+
+          await service.revertUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-1",
+              customer_email: "customer1@email.com",
+            }
+          )
+
+          campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
+                    used: 1,
+                  }),
+                  expect.objectContaining({
+                    attribute_value: "customer-id-2",
+                    used: 1,
+                  }),
+                ]),
+              }),
+            })
+          )
+
+          await service.revertUsage(
+            [{ amount: 1, code: createdPromotion.code! }],
+            {
+              customer_id: "customer-id-2",
+              customer_email: "customer2@email.com",
+            }
+          )
+
+          campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign.budget!.usages!).toHaveLength(1)
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                usages: expect.arrayContaining([
+                  expect.objectContaining({
+                    attribute_value: "customer-id-1",
+                    used: 1,
+                  }),
+                ]),
               }),
             })
           )
