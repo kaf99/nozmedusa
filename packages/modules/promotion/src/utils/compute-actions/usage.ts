@@ -4,6 +4,7 @@ import {
   CampaignBudgetUsageContext,
   CampaignBudgetUsageDTO,
   ComputeActionContext,
+  InferEntityType,
   PromotionDTO,
 } from "@medusajs/framework/types"
 import {
@@ -11,11 +12,12 @@ import {
   ComputedActions,
   MathBN,
 } from "@medusajs/framework/utils"
+import { Promotion } from "@models"
 
 /**
  * Compute the action for a budget exceeded.
  * @param promotion - the promotion being applied
- * @param amount - amoount can be:
+ * @param amount - amount can be:
  *  1. discounted amount in case of spend budget
  *  2. number of times the promotion has been used in case of usage budget
  *  3. number of times the promotion has been used by a specific attribute value in case of use_by_attribute budget
@@ -23,7 +25,7 @@ import {
  * @returns the exceeded action if the budget is exceeded, otherwise undefined
  */
 export function computeActionForBudgetExceeded(
-  promotion: PromotionDTO,
+  promotion: PromotionDTO | InferEntityType<typeof Promotion>,
   amount: BigNumberInput,
   attributeUsage?: CampaignBudgetUsageDTO
 ): CampaignBudgetExceededAction | void {
