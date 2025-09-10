@@ -1,6 +1,7 @@
 import { IPromotionModuleService } from "@medusajs/framework/types"
 import {
   ApplicationMethodType,
+  CampaignBudgetType,
   Modules,
   PromotionStatus,
   PromotionType,
@@ -2187,6 +2188,144 @@ moduleIntegrationTestRunner({
 
             expect(JSON.parse(JSON.stringify(result))).toEqual([
               { action: "campaignBudgetExceeded", code: "PROMOTION_TEST" },
+            ])
+          })
+
+          it("should compute budget exceeded action when usage by attribute exceeds campaign budget for type use_by_attribute", async () => {
+            const testCampaign = await service.createCampaigns({
+              name: "test",
+              campaign_identifier: "test",
+              budget: {
+                type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+                attribute: "customer_email",
+                limit: 2,
+              },
+            })
+
+            await createDefaultPromotion(service, {
+              campaign_id: testCampaign.id,
+              application_method: {
+                type: ApplicationMethodType.PERCENTAGE,
+                target_type: "items",
+                allocation: "across",
+                value: 10,
+                target_rules: [
+                  {
+                    attribute: "product_category.id",
+                    operator: "eq",
+                    values: ["catg_cotton"],
+                  },
+                ],
+              } as any,
+            })
+
+            let result = await service.computeActions(["PROMOTION_TEST"], {
+              currency_code: "usd",
+              customer: {
+                email: "test@test.com",
+              },
+              items: [
+                {
+                  id: "item_cotton_tshirt",
+                  quantity: 1,
+                  subtotal: 100,
+                  original_total: 100,
+                  is_discountable: true,
+                  product_category: {
+                    id: "catg_cotton",
+                  },
+                  product: {
+                    id: "prod_tshirt",
+                  },
+                },
+              ],
+            })
+
+            expect(JSON.parse(JSON.stringify(result))).toEqual([
+              {
+                action: "addItemAdjustment",
+                code: "PROMOTION_TEST",
+                amount: 10,
+                is_tax_inclusive: false,
+                item_id: "item_cotton_tshirt",
+              },
+            ])
+
+            await service.registerUsage(
+              [{ amount: 10, code: "PROMOTION_TEST" }],
+              {
+                customer_id: null,
+                customer_email: "test@test.com",
+              }
+            )
+
+            await service.registerUsage(
+              [{ amount: 10, code: "PROMOTION_TEST" }],
+              {
+                customer_id: null,
+                customer_email: "test@test.com",
+              }
+            )
+
+            result = await service.computeActions(["PROMOTION_TEST"], {
+              currency_code: "usd",
+              customer: {
+                email: "test@test.com",
+              },
+              items: [
+                {
+                  id: "item_cotton_tshirt",
+                  quantity: 1,
+                  subtotal: 100,
+                  original_total: 100,
+                  is_discountable: true,
+                  product_category: {
+                    id: "catg_cotton",
+                  },
+                  product: {
+                    id: "prod_tshirt",
+                  },
+                },
+              ],
+            })
+
+            expect(JSON.parse(JSON.stringify(result))).toEqual([
+              {
+                action: "campaignBudgetExceeded",
+                code: "PROMOTION_TEST",
+              },
+            ])
+
+            result = await service.computeActions(["PROMOTION_TEST"], {
+              currency_code: "usd",
+              customer: {
+                email: "another@test.com", // another email can sucessfully use the promotion
+              },
+              items: [
+                {
+                  id: "item_cotton_tshirt",
+                  quantity: 1,
+                  subtotal: 100,
+                  original_total: 100,
+                  is_discountable: true,
+                  product_category: {
+                    id: "catg_cotton",
+                  },
+                  product: {
+                    id: "prod_tshirt",
+                  },
+                },
+              ],
+            })
+
+            expect(JSON.parse(JSON.stringify(result))).toEqual([
+              {
+                action: "addItemAdjustment",
+                code: "PROMOTION_TEST",
+                amount: 10,
+                is_tax_inclusive: false,
+                item_id: "item_cotton_tshirt",
+              },
             ])
           })
         })

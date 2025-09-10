@@ -1,5 +1,6 @@
 import {
   CampaignBudgetTypeValues,
+  CampaignBudgetUsageDTO,
   Context,
   DAL,
   FilterablePromotionProps,
@@ -660,6 +661,43 @@ export default class PromotionModuleService
 
       if (!applicationMethod) {
         continue
+      }
+
+      if (
+        promotion.campaign?.budget?.type === CampaignBudgetType.USE_BY_ATTRIBUTE
+      ) {
+        const attribute = promotion.campaign?.budget?.attribute!
+        const budgetUsageContext =
+          ComputeActionUtils.getBudgetUsageContextFromComputeActionContext(
+            applicationContext
+          )
+        const attributeValue = budgetUsageContext[attribute]
+
+        // TODO: do we throw here if attribute is not present? or recompute actions when customer is updated
+        if (attributeValue) {
+          const [campaignBudgetUsagePerAttribute] =
+            (await this.campaignBudgetUsageService_.list(
+              {
+                budget_id: promotion.campaign?.budget?.id,
+                attribute_value: attributeValue,
+              },
+              {},
+              sharedContext
+            )) as unknown as CampaignBudgetUsageDTO[]
+
+          if (campaignBudgetUsagePerAttribute) {
+            const action = ComputeActionUtils.computeActionForBudgetExceeded(
+              promotion,
+              1,
+              campaignBudgetUsagePerAttribute
+            )
+
+            if (action) {
+              computedActions.push(action)
+              continue
+            }
+          }
+        }
       }
 
       const isCurrencyCodeValid =
