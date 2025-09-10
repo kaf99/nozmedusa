@@ -212,6 +212,15 @@ jobs:
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
     services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 1s
+          --health-timeout 10s
+          --health-retries 10
+        ports:
+          - 6379:6379
       postgres:
         image: postgres
         env:
