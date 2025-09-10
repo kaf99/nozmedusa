@@ -19,6 +19,7 @@ import {
  *  1. discounted amount in case of spend budget
  *  2. number of times the promotion has been used in case of usage budget
  *  3. number of times the promotion has been used by a specific attribute value in case of use_by_attribute budget
+ * @param attributeUsage - the attribute usage in case of use_by_attribute budget
  * @returns the exceeded action if the budget is exceeded, otherwise undefined
  */
 export function computeActionForBudgetExceeded(
