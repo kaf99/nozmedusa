@@ -8,7 +8,7 @@ import {
 import { setupTaxStructure } from "../../../../modules/__tests__/fixtures/tax"
 import { medusaTshirtProduct } from "../../../__fixtures__/product"
 
-jest.setTimeout(50000000)
+jest.setTimeout(50000)
 
 const adminHeaders = {
   headers: { "x-medusa-access-token": "test_token" },
@@ -716,7 +716,6 @@ medusaIntegrationTestRunner({
               adminHeaders
             )
 
-            // Simulate concurrent requests
             await Promise.all([
               api
                 .post(
@@ -727,7 +726,6 @@ medusaIntegrationTestRunner({
                   storeHeaders
                 )
                 .catch(() => {}),
-              /*
               api
                 .post(
                   `/store/carts/${cart.id}`,
@@ -737,7 +735,6 @@ medusaIntegrationTestRunner({
                   storeHeaders
                 )
                 .catch(() => {}),
-                */
             ])
 
             const cartAfterPromotion = (
@@ -2725,7 +2722,8 @@ medusaIntegrationTestRunner({
                 application_method: {
                   type: "fixed",
                   target_type: "items",
-                  allocation: "across",
+                  allocation: "each",
+                  max_quantity: 1,
                   value: 100,
                   apply_to_quantity: 1,
                   buy_rules_min_quantity: 1,
@@ -2896,7 +2894,8 @@ medusaIntegrationTestRunner({
                   type: "fixed",
                   currency_code: "usd",
                   target_type: "items",
-                  allocation: "across",
+                  allocation: "each",
+                  max_quantity: 1,
                   value: 100,
                   apply_to_quantity: 1,
                   buy_rules_min_quantity: 1,

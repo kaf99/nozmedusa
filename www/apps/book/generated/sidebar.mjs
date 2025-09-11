@@ -916,6 +916,16 @@ export const generatedSidebars = [
                 "children": [],
                 "chapterTitle": "3.9.1. Execution Number",
                 "number": "3.9.1."
+              },
+              {
+                "loaded": true,
+                "isPathHref": true,
+                "type": "link",
+                "path": "/learn/fundamentals/scheduled-jobs/interval",
+                "title": "Set Interval",
+                "children": [],
+                "chapterTitle": "3.9.2. Set Interval",
+                "number": "3.9.2."
               }
             ],
             "chapterTitle": "3.9. Scheduled Jobs",
@@ -1223,6 +1233,27 @@ export const generatedSidebars = [
             ],
             "chapterTitle": "7.6. Logging",
             "number": "7.6."
+          },
+          {
+            "loaded": true,
+            "isPathHref": true,
+            "type": "link",
+            "path": "/learn/debugging-and-testing/feature-flags",
+            "title": "Feature Flags",
+            "children": [
+              {
+                "loaded": true,
+                "isPathHref": true,
+                "type": "link",
+                "path": "/learn/debugging-and-testing/feature-flags/create",
+                "title": "Create Feature Flag",
+                "children": [],
+                "chapterTitle": "7.7.1. Create Feature Flag",
+                "number": "7.7.1."
+              }
+            ],
+            "chapterTitle": "7.7. Feature Flags",
+            "number": "7.7."
           }
         ],
         "chapterTitle": "7. Debugging & Testing",
