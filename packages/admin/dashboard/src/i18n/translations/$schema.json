@@ -8303,6 +8303,12 @@
                 },
                 "budgetAttributeTooltip": {
                   "type": "string"
+                },
+                "limitBudgetAttributeCustomer": {
+                  "type": "string"
+                },
+                "limitBudgetAttributeEmail": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -8311,7 +8317,9 @@
                 "limit",
                 "used",
                 "budgetAttribute",
-                "budgetAttributeTooltip"
+                "budgetAttributeTooltip",
+                "limitBudgetAttributeCustomer",
+                "limitBudgetAttributeEmail"
               ],
               "additionalProperties": false
             },
