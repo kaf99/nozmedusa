@@ -7,15 +7,9 @@ import http from "k6/http"
 // let projectID = __ENV.K6_PROJECT_ID
 
 let publishableKey =
-  "pk_937f7a595bd4b039bb6bbb95476dd036dd79187f31ef61cf7093f2b81a1f863b"
-let regionId = "reg_01K2ZDG12VKJ64F2NFTNW7Y8AT"
-let endpoint = "https://dtc-starter.medusajs.app"
-let projectId = 4297226
-
-// let publishableKey =
-//   "pk_03823fccbc94952c4e2a6d045adb1b3479389ccacef6e4d5198c5e7b2a9dc4b5"
-// let regionId = "reg_01K4JKNGBA9HXBS57EJFSXY2X7"
-// let endpoint = "http://localhost:9000"
+  "pk_03823fccbc94952c4e2a6d045adb1b3479389ccacef6e4d5198c5e7b2a9dc4b5"
+let regionId = "reg_01K4JKNGBA9HXBS57EJFSXY2X7"
+let endpoint = "http://localhost:9000"
 
 const params = {
   headers: {
@@ -35,8 +29,8 @@ export const options = {
       exec: "browseCatalog",
       startTime: "0s",
       stages: [
-        { duration: "2m", target: 320 },
-        { duration: "8m", target: 320 },
+        { duration: "2m", target: 200 },
+        { duration: "8m", target: 200 },
         { duration: "2m", target: 0 },
       ],
       gracefulRampDown: "30s",
@@ -132,7 +126,7 @@ export function browseCatalog() {
     const regions = JSON.parse(regionsRes.body).regions
     regionId = regions[Math.floor(Math.random() * regions.length)].id
 
-    const productsParams = `region_id=${regionId}&fields=*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags`
+    const productsParams = `region_id=${regionId}&fields=*variants.calculated_price&limit=20`
 
     let res = http.get(`${endpoint}/store/collections`, params)
     check(res, { "collections ok": (r) => r.status === 200 })
@@ -208,7 +202,7 @@ function applyPromotion(cartId) {
 }
 
 function browseMoreProducts() {
-  const productsParams = `region_id=${regionId}&fields=*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags`
+  const productsParams = `region_id=${regionId}&fields=*variants.calculated_price&limit=20`
   const res = http.get(`${endpoint}/store/products?${productsParams}`, params)
   check(res, { "browse more products ok": (r) => r.status === 200 })
   sleep(3 + Math.random() * 4)

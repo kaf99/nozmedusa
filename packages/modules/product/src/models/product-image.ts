@@ -14,6 +14,7 @@ const ProductImage = model
       }),
     }
   )
+  // TODO: add index on product_id
   .indexes([
     {
       name: "IDX_product_image_url",
