@@ -2230,7 +2230,9 @@
         "type": "Type",
         "currency": "Currency",
         "limit": "Limit",
-        "used": "Used"
+        "used": "Used",
+        "budgetAttribute": "Limit usage per",
+        "budgetAttributeTooltip": "Define how many times the promotion can be used by a specific customer or email."
       },
       "type": {
         "spend": {

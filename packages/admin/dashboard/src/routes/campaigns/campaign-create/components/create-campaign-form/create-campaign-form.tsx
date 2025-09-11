@@ -21,8 +21,9 @@ export const CreateCampaignSchema = zod.object({
   starts_at: zod.date().nullable(),
   ends_at: zod.date().nullable(),
   budget: zod.object({
+    attribute: zod.string().nullish(),
     limit: zod.number().min(0).nullish(),
-    type: zod.enum(["spend", "usage"]),
+    type: zod.enum(["spend", "usage", "use_by_attribute"]),
     currency_code: zod.string().nullish(),
   }),
 })
@@ -38,6 +39,17 @@ export const CreateCampaignForm = () => {
   })
 
   const handleSubmit = form.handleSubmit(async (data) => {
+    let type = data.budget.type
+    let attribute = data.budget.attribute
+
+    if (data.budget.attribute === "_none" || !data.budget.attribute) {
+      attribute = null
+    }
+
+    if (attribute) {
+      type = "use_by_attribute"
+    }
+
     await mutateAsync(
       {
         name: data.name,
@@ -46,9 +58,10 @@ export const CreateCampaignForm = () => {
         starts_at: data.starts_at,
         ends_at: data.ends_at,
         budget: {
-          type: data.budget.type,
+          type,
           limit: data.budget.limit ? data.budget.limit : undefined,
           currency_code: data.budget.currency_code,
+          attribute,
         },
       },
       {

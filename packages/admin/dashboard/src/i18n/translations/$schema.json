@@ -8297,9 +8297,22 @@
                 },
                 "used": {
                   "type": "string"
+                },
+                "budgetAttribute": {
+                  "type": "string"
+                },
+                "budgetAttributeTooltip": {
+                  "type": "string"
                 }
               },
-              "required": ["type", "currency", "limit", "used"],
+              "required": [
+                "type",
+                "currency",
+                "limit",
+                "used",
+                "budgetAttribute",
+                "budgetAttributeTooltip"
+              ],
               "additionalProperties": false
             },
             "type": {
