@@ -35,9 +35,17 @@ export function computeActionForBudgetExceeded(
     return
   }
 
+  if (
+    campaignBudget.type === CampaignBudgetType.USE_BY_ATTRIBUTE &&
+    !attributeUsage
+  ) {
+    return
+  }
+
   const campaignBudgetUsed = attributeUsage
     ? attributeUsage.used
     : campaignBudget.used ?? 0
+
   const totalUsed =
     campaignBudget.type === CampaignBudgetType.SPEND
       ? MathBN.add(campaignBudgetUsed, amount)
