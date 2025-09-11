@@ -5949,7 +5949,7 @@ moduleIntegrationTestRunner({
               {
                 code: "BUY50GET1000",
                 type: PromotionType.BUYGET,
-
+                campaign_id: undefined,
                 application_method: {
                   type: "percentage",
                   target_type: "items",
@@ -5981,6 +5981,7 @@ moduleIntegrationTestRunner({
               {
                 code: "BUY10GET200",
                 type: PromotionType.BUYGET,
+                campaign_id: undefined,
                 application_method: {
                   type: "percentage",
                   target_type: "items",
@@ -6048,7 +6049,7 @@ moduleIntegrationTestRunner({
               {
                 code: "BUY50GET1000",
                 type: PromotionType.BUYGET,
-
+                campaign_id: undefined,
                 application_method: {
                   type: "percentage",
                   target_type: "items",
@@ -6080,7 +6081,7 @@ moduleIntegrationTestRunner({
               {
                 code: "BUY10GET200",
                 type: PromotionType.BUYGET,
-
+                campaign_id: undefined,
                 application_method: {
                   type: "percentage",
                   target_type: "items",
