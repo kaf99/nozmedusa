@@ -554,6 +554,8 @@ export default class PromotionModuleService
       const campaignBudgetsData: UpdateCampaignBudgetDTO[] = []
       for (const [_, campaignBudgetData] of campaignBudgetMap) {
         if (campaignBudgetData.usages) {
+          delete campaignBudgetData.usages
+        }
         campaignBudgetsData.push(campaignBudgetData)
       }
 
