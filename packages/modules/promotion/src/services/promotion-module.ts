@@ -401,6 +401,14 @@ export default class PromotionModuleService
           sharedContext
         )
 
+        const newUsedValue = MathBN.add(campaignBudget.used ?? 0, 1)
+
+        // update the global budget usage to keep track but it is not used anywhere atm
+        campaignBudgetMap.set(campaignBudget.id, {
+          id: campaignBudget.id,
+          used: newUsedValue,
+        })
+
         promotionCodeUsageMap.set(promotion.code!, true)
       }
     }
@@ -529,6 +537,14 @@ export default class PromotionModuleService
           attributeValue,
           sharedContext
         )
+        const newUsedValue = MathBN.sub(campaignBudget.used ?? 0, 1)
+        const usedValue = MathBN.lt(newUsedValue, 0) ? 0 : newUsedValue
+
+        // update the global budget usage to keep track but it is not used anywhere atm
+        campaignBudgetMap.set(campaignBudget.id, {
+          id: campaignBudget.id,
+          used: usedValue,
+        })
 
         promotionCodeUsageMap.set(promotion.code!, true)
       }
@@ -537,6 +553,7 @@ export default class PromotionModuleService
     if (campaignBudgetMap.size > 0) {
       const campaignBudgetsData: UpdateCampaignBudgetDTO[] = []
       for (const [_, campaignBudgetData] of campaignBudgetMap) {
+        if (campaignBudgetData.usages) {
         campaignBudgetsData.push(campaignBudgetData)
       }
 
@@ -701,7 +718,6 @@ export default class PromotionModuleService
           )
         const attributeValue = budgetUsageContext[attribute]
 
-        // TODO: do we throw here if attribute is not present? or recompute actions when customer is updated
         if (attributeValue) {
           const [campaignBudgetUsagePerAttribute] =
             (await this.campaignBudgetUsageService_.list(

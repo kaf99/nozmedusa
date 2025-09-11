@@ -218,6 +218,7 @@ moduleIntegrationTestRunner({
           expect(campaign).toEqual(
             expect.objectContaining({
               budget: expect.objectContaining({
+                used: 3, // used 3 times overall
                 usages: expect.arrayContaining([
                   expect.objectContaining({
                     attribute_value: "customer-id-1",
@@ -247,6 +248,7 @@ moduleIntegrationTestRunner({
           expect(campaign).toEqual(
             expect.objectContaining({
               budget: expect.objectContaining({
+                used: 2,
                 usages: expect.arrayContaining([
                   expect.objectContaining({
                     attribute_value: "customer-id-1",
@@ -278,6 +280,7 @@ moduleIntegrationTestRunner({
           expect(campaign).toEqual(
             expect.objectContaining({
               budget: expect.objectContaining({
+                used: 1,
                 usages: expect.arrayContaining([
                   expect.objectContaining({
                     attribute_value: "customer-id-1",
