@@ -418,7 +418,10 @@ export default class PromotionModuleService
       for (const [_, campaignBudgetData] of campaignBudgetMap) {
         // usages by attribute are updated separatley
         if (campaignBudgetData.usages) {
-          delete campaignBudgetData.usages
+          const { usages, ...campaignBudgetDataWithoutUsages } =
+            campaignBudgetData
+          campaignBudgetsData.push(campaignBudgetDataWithoutUsages)
+          continue
         }
         campaignBudgetsData.push(campaignBudgetData)
       }
@@ -554,7 +557,10 @@ export default class PromotionModuleService
       const campaignBudgetsData: UpdateCampaignBudgetDTO[] = []
       for (const [_, campaignBudgetData] of campaignBudgetMap) {
         if (campaignBudgetData.usages) {
-          delete campaignBudgetData.usages
+          const { usages, ...campaignBudgetDataWithoutUsages } =
+            campaignBudgetData
+          campaignBudgetsData.push(campaignBudgetDataWithoutUsages)
+          continue
         }
         campaignBudgetsData.push(campaignBudgetData)
       }
