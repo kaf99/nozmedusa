@@ -170,6 +170,42 @@ moduleIntegrationTestRunner({
           )
         })
 
+        it("should not register usage above limit when exceeded for type spend (single value overflow)", async () => {
+          const createdPromotion = await createDefaultPromotion(service, {})
+
+          await service.updateCampaigns({
+            id: "campaign-id-1",
+            budget: { used: 900, limit: 1000 },
+          })
+
+          await service.registerUsage(
+            [
+              {
+                amount: 200,
+                code: createdPromotion.code!,
+              },
+              {
+                amount: 200,
+                code: createdPromotion.code!,
+              },
+            ],
+            { customer_email: null, customer_id: null }
+          )
+
+          const campaign = await service.retrieveCampaign("campaign-id-1", {
+            relations: ["budget"],
+          })
+
+          expect(campaign).toEqual(
+            expect.objectContaining({
+              budget: expect.objectContaining({
+                limit: 1000,
+                used: 1000,
+              }),
+            })
+          )
+        })
+
         it("should requister usage for attribute budget successfully and revert it successfully", async () => {
           const [createdCampaign] = await service.createCampaigns([
             {

@@ -340,7 +340,7 @@ export default class PromotionModuleService
           campaignBudget.limit &&
           MathBN.gt(newUsedValue, campaignBudget.limit)
         ) {
-          continue
+          campaignBudgetData.used = campaignBudget.limit
         } else {
           campaignBudgetData.used = newUsedValue
         }
