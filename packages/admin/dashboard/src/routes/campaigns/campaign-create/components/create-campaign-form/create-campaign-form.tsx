@@ -39,16 +39,8 @@ export const CreateCampaignForm = () => {
   })
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    let type = data.budget.type
-    let attribute = data.budget.attribute
-
-    if (data.budget.attribute === "_none" || !data.budget.attribute) {
-      attribute = null
-    }
-
-    if (attribute) {
-      type = "use_by_attribute"
-    }
+    const attribute = data.budget.attribute || null
+    const type = attribute ? "use_by_attribute" : data.budget.type
 
     await mutateAsync(
       {
@@ -59,9 +51,9 @@ export const CreateCampaignForm = () => {
         ends_at: data.ends_at,
         budget: {
           type,
+          attribute,
           limit: data.budget.limit ? data.budget.limit : undefined,
           currency_code: data.budget.currency_code,
-          attribute,
         },
       },
       {
