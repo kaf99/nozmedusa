@@ -64,7 +64,6 @@ export interface ICachingModuleService {
    * options stored. e.g you can invalidate the tags X if their options.noAutoInvalidation is true.
    * @param providers - The providers from which to clear the item(s).
    *
-   * @param param0
    */
   clear({
     key,
