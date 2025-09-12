@@ -1048,6 +1048,169 @@ medusaIntegrationTestRunner({
             )
           })
 
+          it("should remove promotion after email is entered which used all the budget limit for that promotion", async () => {
+            const publishableKey = await generatePublishableKey(appContainer)
+            const storeHeaders = generateStoreHeaders({ publishableKey })
+
+            const salesChannel = (
+              await api.post(
+                "/admin/sales-channels",
+                { name: "Webshop", description: "channel" },
+                adminHeaders
+              )
+            ).data.sales_channel
+
+            const region = (
+              await api.post(
+                "/admin/regions",
+                { name: "US", currency_code: "usd", countries: ["us"] },
+                adminHeaders
+              )
+            ).data.region
+
+            const product = (
+              await api.post(
+                "/admin/products",
+                {
+                  ...medusaTshirtProduct,
+                },
+                adminHeaders
+              )
+            ).data.product
+
+            const campaign = (
+              await api.post(
+                `/admin/campaigns`,
+                {
+                  name: "TEST",
+                  budget: {
+                    type: "use_by_attribute",
+                    limit: 1,
+                    attribute: "customer_email",
+                  },
+                  campaign_identifier: "PROMO_CAMPAIGN",
+                },
+                adminHeaders
+              )
+            ).data.campaign
+
+            const response = await api.post(
+              `/admin/promotions`,
+              {
+                code: "TEST_PROMO",
+                type: PromotionType.STANDARD,
+                status: PromotionStatus.ACTIVE,
+                is_automatic: false,
+                application_method: {
+                  target_type: "items",
+                  type: "fixed",
+                  allocation: "each",
+                  currency_code: "usd",
+                  value: 100,
+                  max_quantity: 100,
+                },
+                campaign_id: campaign.id,
+              },
+              adminHeaders
+            )
+
+            let cart = (
+              await api.post(
+                `/store/carts`,
+                {
+                  currency_code: "usd",
+                  sales_channel_id: salesChannel.id,
+                  region_id: region.id,
+                  items: [{ variant_id: product.variants[0].id, quantity: 1 }],
+                  email: "canuseitonce@test.com",
+                  promo_codes: [response.data.promotion.code],
+                },
+                storeHeaders
+              )
+            ).data.cart
+
+            expect(cart).toEqual(
+              expect.objectContaining({
+                promotions: [
+                  expect.objectContaining({
+                    code: response.data.promotion.code,
+                  }),
+                ],
+              })
+            )
+
+            let promotionCampaign = (
+              await api.get(
+                `/admin/campaigns/${campaign.id}?fields=budget.*,budget.usages.*`,
+                adminHeaders
+              )
+            ).data.campaign
+
+            expect(promotionCampaign).toEqual(
+              expect.objectContaining({
+                budget: expect.objectContaining({
+                  used: 0,
+                  limit: 1,
+                  attribute: "customer_email",
+                  type: "use_by_attribute",
+                  usages: [],
+                }),
+              })
+            )
+
+            let paymentCollection = (
+              await api.post(
+                `/store/payment-collections`,
+                { cart_id: cart.id },
+                storeHeaders
+              )
+            ).data.payment_collection
+
+            await api.post(
+              `/store/payment-collections/${paymentCollection.id}/payment-sessions`,
+              { provider_id: "pp_system_default" },
+              storeHeaders
+            )
+
+            await api.post(`/store/carts/${cart.id}/complete`, {}, storeHeaders)
+
+            cart = (
+              await api.post(
+                `/store/carts`,
+                {
+                  currency_code: "usd",
+                  sales_channel_id: salesChannel.id,
+                  region_id: region.id,
+                  items: [{ variant_id: product.variants[0].id, quantity: 1 }],
+                  promo_codes: [response.data.promotion.code],
+                },
+                storeHeaders
+              )
+            ).data.cart
+
+            expect(cart).toEqual(
+              expect.objectContaining({
+                promotions: [
+                  expect.objectContaining({
+                    code: response.data.promotion.code,
+                  }),
+                ],
+              })
+            )
+
+            cart = (
+              await api.post(
+                `/store/carts/${cart.id}`,
+                {
+                  email: "canuseitonce@test.com",
+                },
+                storeHeaders
+              )
+            ).data.cart
+
+            expect(cart.promotions.length).toEqual(0) // prmotion is removed
+          })
+
           it("should add promotion and remove it from cart using update", async () => {
             const publishableKey = await generatePublishableKey(appContainer)
             const storeHeaders = generateStoreHeaders({ publishableKey })
