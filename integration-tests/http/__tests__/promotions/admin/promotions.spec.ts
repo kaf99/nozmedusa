@@ -1291,15 +1291,15 @@ medusaIntegrationTestRunner({
               )
             ).data.cart
 
-            const err = (
-              await api.post(
+            const err = await api
+              .post(
                 `/store/carts/${cart.id}`,
                 {
                   promo_codes: [response.data.promotion.code],
                 },
                 storeHeaders
               )
-            ).catch((e) => e)
+              .catch((e) => e)
 
             expect(err.response.status).toEqual(400)
             expect(err.response.data).toEqual({
