@@ -1,12 +1,23 @@
-import {
+import type {
+  IEventBusModuleService,
+  Logger,
   ModuleProviderExports,
   ModuleServiceInitializeOptions,
 } from "@medusajs/framework/types"
+import CachingProviderService from "../services/cache-provider"
+import { Modules } from "@medusajs/framework/utils"
 
 export const CachingDefaultProvider = "default_provider"
 export const CachingIdentifiersRegistrationName = "caching_providers_identifier"
 
 export const CachingProviderRegistrationPrefix = "lp_"
+
+export type InjectedDependencies = {
+  cachingProviderService: CachingProviderService
+  logger?: Logger
+  [CachingDefaultProvider]: string
+  [Modules.EVENT_BUS]: IEventBusModuleService
+}
 
 export type CachingModuleOptions = Partial<ModuleServiceInitializeOptions> & {
   /**

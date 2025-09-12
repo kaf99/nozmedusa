@@ -162,7 +162,7 @@ export class CacheInvalidationParser {
   buildInvalidationEvents(
     entities: EntityReference[],
     cacheKey: string,
-    operation: "create" | "update" | "delete" = "update"
+    operation: "created" | "updated" | "deleted" = "updated"
   ): InvalidationEvent[] {
     const events: InvalidationEvent[] = []
     const processedEntities = new Set<string>()
@@ -206,7 +206,7 @@ export class CacheInvalidationParser {
     entity: EntityReference,
     relatedEntities: EntityReference[],
     originalKey: string,
-    operation: "create" | "update" | "delete" = "update"
+    operation: "created" | "updated" | "deleted" = "updated"
   ): string[] {
     const keys = new Set<string>([originalKey])
 
@@ -230,13 +230,13 @@ export class CacheInvalidationParser {
     keys.add(`${entity.type}:${entity.id}:${operation}`)
 
     // For delete operations, also invalidate existence checks
-    if (operation === "delete") {
+    if (operation === "deleted") {
       keys.add(`${entity.type}:exists:${entity.id}`)
       keys.add(`${entity.type}:active:*`)
     }
 
     // For create operations, invalidate count caches
-    if (operation === "create") {
+    if (operation === "created") {
       keys.add(`${entity.type}:count`)
       keys.add(`${entity.type}:total:*`)
     }
@@ -249,7 +249,7 @@ export class CacheInvalidationParser {
    */
   generateInvalidationEventName(
     entityType: string,
-    operation: "create" | "update" | "delete" = "update"
+    operation: "created" | "updated" | "deleted" = "updated"
   ): string {
     return `cache.invalidate.${entityType}.${operation}`
   }

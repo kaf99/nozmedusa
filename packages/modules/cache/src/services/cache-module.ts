@@ -1,15 +1,12 @@
 import { MedusaModule } from "@medusajs/framework/modules-sdk"
 import { GraphQLUtils } from "@medusajs/framework/utils"
-import { InternalModuleDeclaration, Logger } from "@medusajs/types"
+import { InternalModuleDeclaration } from "@medusajs/types"
 import { EntityManager } from "@mikro-orm/core"
-import { CachingDefaultProvider } from "@types"
+import { InjectedDependencies } from "@types"
 import CachingProviderService from "./cache-provider"
 
-type InjectedDependencies = {
+type ModuleInjectedDependencies = InjectedDependencies & {
   manager: EntityManager
-  cachingProviderService: CachingProviderService
-  logger?: Logger
-  [CachingDefaultProvider]: string
 }
 
 export default class CachingModuleService {
@@ -18,7 +15,7 @@ export default class CachingModuleService {
   protected defaultProviderId: string
 
   constructor(
-    container: InjectedDependencies,
+    container: ModuleInjectedDependencies,
     protected readonly moduleDeclaration: InternalModuleDeclaration
   ) {
     this.manager = container.manager

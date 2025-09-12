@@ -264,9 +264,9 @@ describe("CacheInvalidationParser", () => {
       // Should always contain collection keys since product changes can impact collections
       expect(events[0].cacheKeys).toContain("Product:collection")
       expect(events[0].cacheKeys).toContain("Product:list:*")
-      // Should contain operation-specific keys (defaults to 'update')
-      expect(events[0].cacheKeys).toContain("Product:update")
-      expect(events[0].cacheKeys).toContain("Product:prod_123:update")
+      // Should contain operation-specific keys (defaults to 'updated')
+      expect(events[0].cacheKeys).toContain("Product:updated")
+      expect(events[0].cacheKeys).toContain("Product:prod_123:updated")
     })
 
     it("should build invalidation events with related entities", () => {
@@ -341,28 +341,28 @@ describe("CacheInvalidationParser", () => {
 
   describe("generateInvalidationEventName", () => {
     it("should generate event names for different operations", () => {
-      expect(parser.generateInvalidationEventName("Product", "create")).toBe(
-        "cache.invalidate.Product.create"
+      expect(parser.generateInvalidationEventName("Product", "created")).toBe(
+        "cache.invalidate.Product.created"
       )
 
-      expect(parser.generateInvalidationEventName("Product", "update")).toBe(
-        "cache.invalidate.Product.update"
+      expect(parser.generateInvalidationEventName("Product", "updated")).toBe(
+        "cache.invalidate.Product.updated"
       )
 
-      expect(parser.generateInvalidationEventName("Product", "delete")).toBe(
-        "cache.invalidate.Product.delete"
+      expect(parser.generateInvalidationEventName("Product", "deleted")).toBe(
+        "cache.invalidate.Product.deleted"
       )
     })
 
-    it("should default to update operation", () => {
+    it("should default to updated operation", () => {
       expect(parser.generateInvalidationEventName("Product")).toBe(
-        "cache.invalidate.Product.update"
+        "cache.invalidate.Product.updated"
       )
     })
   })
 
   describe("integration scenarios", () => {
-    it("should handle a complete product update scenario", () => {
+    it("should handle a complete product updated scenario", () => {
       const productData = {
         id: "prod_123",
         title: "Updated Product Title",
@@ -392,7 +392,7 @@ describe("CacheInvalidationParser", () => {
       // Should identify all nested entities
       expect(entities).toHaveLength(6) // Product, Collection, 2 Categories, Variant, Price
 
-      // Should create events for each entity type
+      // Should created events for each entity type
       expect(events).toHaveLength(6)
 
       // Product event should have all related entities
@@ -400,8 +400,8 @@ describe("CacheInvalidationParser", () => {
       expect(productEvent.relatedEntities).toHaveLength(5)
 
       // Event names should be generated correctly
-      expect(parser.generateInvalidationEventName("Product", "update")).toBe(
-        "cache.invalidate.Product.update"
+      expect(parser.generateInvalidationEventName("Product", "updated")).toBe(
+        "cache.invalidate.Product.updated"
       )
     })
 
@@ -441,51 +441,51 @@ describe("CacheInvalidationParser", () => {
       expect(customerEvent.cacheKeys).toContain("Customer:collection")
     })
 
-    it("should include create-specific cache keys for create operation", () => {
+    it("should include created-specific cache keys for created operation", () => {
       const entities: EntityReference[] = [{ type: "Product", id: "prod_123" }]
 
       const events = parser.buildInvalidationEvents(
         entities,
         "cache:product:prod_123",
-        "create"
+        "created"
       )
 
       const productEvent = events[0]
-      expect(productEvent.cacheKeys).toContain("Product:create")
-      expect(productEvent.cacheKeys).toContain("Product:prod_123:create")
+      expect(productEvent.cacheKeys).toContain("Product:created")
+      expect(productEvent.cacheKeys).toContain("Product:prod_123:created")
       expect(productEvent.cacheKeys).toContain("Product:count")
       expect(productEvent.cacheKeys).toContain("Product:total:*")
     })
 
-    it("should include delete-specific cache keys for delete operation", () => {
+    it("should include deleted-specific cache keys for deleted operation", () => {
       const entities: EntityReference[] = [{ type: "Product", id: "prod_123" }]
 
       const events = parser.buildInvalidationEvents(
         entities,
         "cache:product:prod_123",
-        "delete"
+        "deleted"
       )
 
       const productEvent = events[0]
-      expect(productEvent.cacheKeys).toContain("Product:delete")
-      expect(productEvent.cacheKeys).toContain("Product:prod_123:delete")
+      expect(productEvent.cacheKeys).toContain("Product:deleted")
+      expect(productEvent.cacheKeys).toContain("Product:prod_123:deleted")
       expect(productEvent.cacheKeys).toContain("Product:exists:prod_123")
       expect(productEvent.cacheKeys).toContain("Product:active:*")
     })
 
-    it("should include update-specific cache keys for update operation", () => {
+    it("should include updated-specific cache keys for updated operation", () => {
       const entities: EntityReference[] = [{ type: "Product", id: "prod_123" }]
 
       const events = parser.buildInvalidationEvents(
         entities,
         "cache:product:prod_123",
-        "update"
+        "updated"
       )
 
       const productEvent = events[0]
-      expect(productEvent.cacheKeys).toContain("Product:update")
-      expect(productEvent.cacheKeys).toContain("Product:prod_123:update")
-      // Update should not include create/delete specific keys
+      expect(productEvent.cacheKeys).toContain("Product:updated")
+      expect(productEvent.cacheKeys).toContain("Product:prod_123:updated")
+      // Update should not include created/deleted specific keys
       expect(productEvent.cacheKeys).not.toContain("Product:count")
       expect(productEvent.cacheKeys).not.toContain("Product:exists:prod_123")
     })
