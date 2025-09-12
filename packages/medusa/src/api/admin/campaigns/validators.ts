@@ -57,9 +57,11 @@ const CreateCampaignBudget = z
   )
   .refine(
     (data) =>
-      (data.type !== CampaignBudgetType.USE_BY_ATTRIBUTE &&
-        data.type !== CampaignBudgetType.SPEND_BY_ATTRIBUTE) ||
-      isPresent(data.attribute),
+      isPresent(data.attribute) ||
+      ![
+        CampaignBudgetType.USE_BY_ATTRIBUTE,
+        CampaignBudgetType.SPEND_BY_ATTRIBUTE,
+      ].includes(data.type),
     (data) => ({
       path: ["attribute"],
       message: `campaign budget attribute is required when budget type is ${data.type}`,
