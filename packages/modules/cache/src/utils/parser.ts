@@ -184,7 +184,8 @@ export class CacheInvalidationParser {
       const affectedKeys = this.buildAffectedCacheKeys(
         entity,
         relatedEntities,
-        cacheKey
+        cacheKey,
+        operation
       )
 
       events.push({
@@ -204,7 +205,8 @@ export class CacheInvalidationParser {
   private buildAffectedCacheKeys(
     entity: EntityReference,
     relatedEntities: EntityReference[],
-    originalKey: string
+    originalKey: string,
+    operation: "create" | "update" | "delete" = "update"
   ): string[] {
     const keys = new Set<string>([originalKey])
 
@@ -222,6 +224,22 @@ export class CacheInvalidationParser {
     // Always add collection keys since entity changes can impact collections
     keys.add(`${entity.type}:collection`)
     keys.add(`${entity.type}:list:*`)
+
+    // Add operation-specific keys
+    keys.add(`${entity.type}:${operation}`)
+    keys.add(`${entity.type}:${entity.id}:${operation}`)
+
+    // For delete operations, also invalidate existence checks
+    if (operation === "delete") {
+      keys.add(`${entity.type}:exists:${entity.id}`)
+      keys.add(`${entity.type}:active:*`)
+    }
+
+    // For create operations, invalidate count caches
+    if (operation === "create") {
+      keys.add(`${entity.type}:count`)
+      keys.add(`${entity.type}:total:*`)
+    }
 
     return Array.from(keys)
   }
