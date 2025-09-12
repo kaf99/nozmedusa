@@ -71,7 +71,9 @@ export class DefaultCacheStrategy {
             }
 
             console.log(tags)
-            // TODO call the module clear method
+            // TODO: remove expect error once implemented
+            // @ts-expect-error
+            this.#cacheModule.clear({ tags, noAutoInvalidation: false })
           }
         } else {
           const ids = Array.isArray(eventData.id)
@@ -93,7 +95,9 @@ export class DefaultCacheStrategy {
           }
 
           console.log(tags)
-          // TODO call the module clear method
+          // TODO: remove expect error once implemented
+          // @ts-expect-error
+          this.#cacheModule.clear({ tags, noAutoInvalidation: false })
         }
       }
     })
