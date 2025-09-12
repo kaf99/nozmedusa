@@ -27,7 +27,7 @@ export default async (
     stdTTL: moduleOptions.ttl ?? 3600, // 1 hour default
     maxKeys: moduleOptions.maxKeys ?? 10000,
     checkperiod: moduleOptions.checkPeriod ?? 600, // 10 minutes
-    useClones: moduleOptions.useClones ?? false, // Default to true for safety
+    useClones: moduleOptions.useClones ?? false, // Default to false for speed, true would be slower but safer. we can discuss
   })
 
   logger_.info("Memory cache initialized successfully")
