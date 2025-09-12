@@ -18,11 +18,6 @@ export type JoinerRelationship = {
   args?: Record<string, any>
 }
 
-export type ComputedJoinerRelationship = JoinerRelationship & {
-  primaryKeyArr: string[]
-  foreignKeyArr: string[]
-}
-
 export interface JoinerServiceConfigAlias {
   name: string | string[]
   entity?: string
@@ -110,15 +105,7 @@ export type InternalJoinerServiceConfig = Omit<
   entity?: string
 }
 
-export type ExecutionStage = {
-  service: string
-  entity?: string
-  paths: string[]
-  depth: number
-}
-
 export interface RemoteExpandProperty {
-  executionStages?: ExecutionStage[][]
   property: string
   parent: string
   parentConfig?: InternalJoinerServiceConfig
