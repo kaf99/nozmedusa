@@ -7,16 +7,16 @@ import { MedusaError } from "@medusajs/framework/utils"
 import { CachingProviderRegistrationPrefix } from "../types"
 
 type InjectedDependencies = {
-  [key: `cp_${string}`]: any // ICachingProvider
+  [key: `cp_${string}`]: any // TODO: use interface
   logger?: Logger
 }
 
 export default class CachingProviderService {
-  protected __container__: InjectedDependencies
+  #container: InjectedDependencies
   #logger: Logger
 
   constructor(container: InjectedDependencies) {
-    this.__container__ = container
+    this.#container = container
     this.#logger = container["logger"]
       ? container.logger
       : (console as unknown as Logger)
@@ -34,10 +34,9 @@ export default class CachingProviderService {
     return `${(providerClass as any).identifier}`
   }
 
-  public retrieveProviderRegistration(providerId: string): any {
-    // ICachingProvider
+  public retrieveProvider(providerId: string): any {
     try {
-      return this.__container__[
+      return this.#container[
         `${CachingProviderRegistrationPrefix}${providerId}`
       ]
     } catch (err) {
