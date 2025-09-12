@@ -1,30 +1,23 @@
 import { MedusaModule } from "@medusajs/framework/modules-sdk"
 import { GraphQLUtils, MedusaError } from "@medusajs/framework/utils"
-import { InternalModuleDeclaration } from "@medusajs/types"
-import { EntityManager } from "@mikro-orm/core"
 import { InjectedDependencies } from "@types"
-import CachingProviderService from "./cache-provider"
+import type CachingProviderService from "./cache-provider"
+import type { ICachingModuleService } from "@medusajs/framework/types"
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 
-type ModuleInjectedDependencies = InjectedDependencies & {
-  manager: EntityManager
-}
-
-export default class CachingModuleService {
-  #manager: EntityManager
+export default class CachingModuleService implements ICachingModuleService {
   #providerService: CachingProviderService
   #defaultProviderId: string
 
   #ttl: number
 
   constructor(
-    container: ModuleInjectedDependencies,
+    container: InjectedDependencies,
     protected readonly moduleDeclaration:
       | { options: { ttl?: number } }
       | { ttl?: number }
   ) {
-    this.#manager = container.manager
     this.#providerService = container.cachingProviderService
     // this.#defaultProviderId = container[CachingDefaultProvider]
 
@@ -95,7 +88,7 @@ export default class CachingModuleService {
     }
 
     const provider_ = this.#providerService.retrieveProvider(provider)
-    await provider_.get({ key, tags })
+    return await provider_.get({ key, tags })
   }
 
   async set({

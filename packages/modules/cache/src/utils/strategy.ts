@@ -4,7 +4,7 @@ import {
   toCamelCase,
   upperCaseFirst,
 } from "@medusajs/framework/utils"
-import { type Event } from "@medusajs/framework/types"
+import type { Event, ICachingModuleService } from "@medusajs/framework/types"
 import type { InjectedDependencies } from "@types"
 import crypto from "crypto"
 import stringify from "fast-json-stable-stringify"
@@ -19,7 +19,7 @@ export function objectHash(input: any): string {
 export class DefaultCacheStrategy {
   #cacheInvalidationParser: CacheInvalidationParser
   #container: InjectedDependencies
-  #cacheModule: CachingModuleService // TODO: replace by interface
+  #cacheModule: ICachingModuleService
 
   constructor(
     container: InjectedDependencies,
