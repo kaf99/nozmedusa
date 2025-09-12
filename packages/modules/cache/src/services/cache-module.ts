@@ -1,13 +1,16 @@
 import { MedusaModule } from "@medusajs/framework/modules-sdk"
 import { GraphQLUtils, MedusaError } from "@medusajs/framework/utils"
-import { InjectedDependencies } from "@types"
+import { CachingDefaultProvider, InjectedDependencies } from "@types"
 import type CachingProviderService from "./cache-provider"
 import type { ICachingModuleService } from "@medusajs/framework/types"
+import { DefaultCacheStrategy } from "../utils/strategy"
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000
+const ONE_HOUR_IN_SECOND = 60 * 60 * 100
 
 export default class CachingModuleService implements ICachingModuleService {
+  #container: InjectedDependencies
   #providerService: CachingProviderService
+  #defaultStrategy: DefaultCacheStrategy
   #defaultProviderId: string
 
   #ttl: number
@@ -18,15 +21,16 @@ export default class CachingModuleService implements ICachingModuleService {
       | { options: { ttl?: number } }
       | { ttl?: number }
   ) {
+    this.#container = container
     this.#providerService = container.cachingProviderService
-    // this.#defaultProviderId = container[CachingDefaultProvider]
+    this.#defaultProviderId = container[CachingDefaultProvider]
 
     const moduleOptions =
       "options" in moduleDeclaration
         ? moduleDeclaration.options
         : moduleDeclaration
 
-    this.#ttl = moduleOptions.ttl ?? ONE_HOUR_IN_MS
+    this.#ttl = moduleOptions.ttl ?? ONE_HOUR_IN_SECOND
   }
 
   __hooks = {
@@ -54,9 +58,11 @@ export default class CachingModuleService implements ICachingModuleService {
       typeDefs: mergedSchema,
     })
 
-    const entitiesMap = schema.getTypeMap() as unknown as Map<string, any>
-
-    console.log(JSON.stringify(entitiesMap, null, 2))
+    this.#defaultStrategy = new DefaultCacheStrategy(
+      this.#container,
+      schema,
+      this
+    )
   }
 
   #normalizeProviders(
@@ -78,7 +84,7 @@ export default class CachingModuleService implements ICachingModuleService {
   }: {
     key?: string
     tags?: string[]
-    provider: string
+    provider?: string
   }) {
     if (!key && !tags) {
       throw new MedusaError(
@@ -87,7 +93,9 @@ export default class CachingModuleService implements ICachingModuleService {
       )
     }
 
-    const provider_ = this.#providerService.retrieveProvider(provider)
+    const provider_ = this.#providerService.retrieveProvider(
+      provider ?? this.#defaultProviderId
+    )
     return await provider_.get({ key, tags })
   }
 
@@ -100,7 +108,7 @@ export default class CachingModuleService implements ICachingModuleService {
     options,
   }: {
     key: string
-    data: unknown
+    data: object
     tags?: string[]
     ttl?: number
     providers?:
@@ -114,12 +122,8 @@ export default class CachingModuleService implements ICachingModuleService {
       noAutoInvalidation?: boolean
     }
   }) {
-    if (!key || !data) {
-      throw new MedusaError(
-        MedusaError.Types.INVALID_ARGUMENT,
-        "Key and data must be provided"
-      )
-    }
+    const key_ = key ?? this.#defaultStrategy.computeCacheKey(data)
+    const tags_ = tags ?? (await this.#defaultStrategy.computeTags(data))
 
     let providers_: string[] | { id: string; ttl?: number }[] = [
       { id: this.#defaultProviderId },
@@ -132,8 +136,8 @@ export default class CachingModuleService implements ICachingModuleService {
         providerOptions.id
       )
       await provider.set({
-        key,
-        tags,
+        key: key_,
+        tags: tags_,
         data,
         ttl: ttl_,
         options,
@@ -171,4 +175,6 @@ export default class CachingModuleService implements ICachingModuleService {
       await provider.clear({ key, tags, options })
     }
   }
+
+  // TODO: add compute tags and compute key methods
 }

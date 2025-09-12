@@ -6218,6 +6218,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@medusajs/caching-memory@workspace:packages/modules/providers/cache-memory":
+  version: 0.0.0-use.local
+  resolution: "@medusajs/caching-memory@workspace:packages/modules/providers/cache-memory"
+  dependencies:
+    "@medusajs/framework": 2.10.1
+    "@swc/core": ^1.7.28
+    "@swc/jest": ^0.2.36
+    jest: ^29.7.0
+    node-cache: ^5.1.2
+    rimraf: ^5.0.1
+    typescript: ^5.6.2
+  peerDependencies:
+    "@medusajs/framework": 2.10.1
+  languageName: unknown
+  linkType: soft
+
+"@medusajs/caching-redis@workspace:packages/modules/providers/cache-redis":
+  version: 0.0.0-use.local
+  resolution: "@medusajs/caching-redis@workspace:packages/modules/providers/cache-redis"
+  dependencies:
+    "@medusajs/framework": 2.10.1
+    "@swc/core": ^1.7.28
+    "@swc/jest": ^0.2.36
+    ioredis: ^5.4.1
+    jest: ^29.7.0
+    rimraf: ^5.0.1
+    typescript: ^5.6.2
+  peerDependencies:
+    "@medusajs/framework": 2.10.1
+  languageName: unknown
+  linkType: soft
+
 "@medusajs/caching@workspace:*, @medusajs/caching@workspace:packages/modules/cache":
   version: 0.0.0-use.local
   resolution: "@medusajs/caching@workspace:packages/modules/cache"
@@ -18856,6 +18888,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clone@npm:2.x":
+  version: 2.1.2
+  resolution: "clone@npm:2.1.2"
+  checksum: ed0601cd0b1606bc7d82ee7175b97e68d1dd9b91fd1250a3617b38d34a095f8ee0431d40a1a611122dcccb4f93295b4fdb94942aa763392b5fe44effa50c2d5e
+  languageName: node
+  linkType: hard
+
 "clone@npm:^1.0.2":
   version: 1.0.4
   resolution: "clone@npm:1.0.4"
@@ -27967,6 +28006,15 @@ __metadata:
   version: 3.1.1
   resolution: "node-abort-controller@npm:3.1.1"
   checksum: f7ad0e7a8e33809d4f3a0d1d65036a711c39e9d23e0319d80ebe076b9a3b4432b4d6b86a7fab65521de3f6872ffed36fc35d1327487c48eb88c517803403eda3
+  languageName: node
+  linkType: hard
+
+"node-cache@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "node-cache@npm:5.1.2"
+  dependencies:
+    clone: 2.x
+  checksum: 2f91907510a1276415ae5898269d0765934d5a4f3682c8b1b19964694a9b841c8bd791e1a125d1f89050f412e1da5dd982179d714252b3a7223abb05b8cb24d5
   languageName: node
   linkType: hard
 

@@ -1,13 +1,13 @@
 import {
   Constructor,
-  // ICachingProvider,
+  ICachingProviderService,
   Logger,
 } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
 import { CachingProviderRegistrationPrefix } from "../types"
 
 type InjectedDependencies = {
-  [key: `cp_${string}`]: any // TODO: use interface
+  [key: `cp_${string}`]: ICachingProviderService
   logger?: Logger
 }
 
@@ -23,7 +23,7 @@ export default class CachingProviderService {
   }
 
   static getRegistrationIdentifier(
-    providerClass: Constructor<any> // ICachingProvider
+    providerClass: Constructor<ICachingProviderService>
   ) {
     if (!(providerClass as any).identifier) {
       throw new MedusaError(
@@ -34,7 +34,7 @@ export default class CachingProviderService {
     return `${(providerClass as any).identifier}`
   }
 
-  public retrieveProvider(providerId: string): any {
+  public retrieveProvider(providerId: string): ICachingProviderService {
     try {
       return this.#container[
         `${CachingProviderRegistrationPrefix}${providerId}`

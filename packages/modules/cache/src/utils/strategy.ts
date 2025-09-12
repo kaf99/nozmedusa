@@ -115,10 +115,7 @@ export class DefaultCacheStrategy {
 
   async computeTags(
     input: object | ((input: object) => string[] | Promise<string[]>),
-    {
-      entities,
-      operation,
-    }: {
+    options?: {
       entities?: EntityReference[]
       operation?: "created" | "updated" | "deleted"
     }
@@ -129,7 +126,8 @@ export class DefaultCacheStrategy {
 
     // Parse the input object to identify entities
     const entities_ =
-      entities || this.#cacheInvalidationParser.parseObjectForEntities(input)
+      options?.entities ||
+      this.#cacheInvalidationParser.parseObjectForEntities(input)
 
     if (entities_.length === 0) {
       return []
@@ -142,7 +140,7 @@ export class DefaultCacheStrategy {
     const events = this.#cacheInvalidationParser.buildInvalidationEvents(
       entities_,
       cacheKey,
-      operation
+      options?.operation
     )
 
     // Collect all unique cache keys from all events as tags

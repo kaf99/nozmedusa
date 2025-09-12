@@ -15,7 +15,6 @@ import {
   CachingProviderRegistrationPrefix,
 } from "@types"
 import { aliasTo, asValue } from "awilix"
-// import { InMemoryCachingProvider } from "../providers/in-memory"
 
 const registrationFn = async (klass, container, { id }) => {
   const key = CachingProviderService.getRegistrationIdentifier(klass)
@@ -48,22 +47,6 @@ export default async ({
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   container.registerAdd(CachingIdentifiersRegistrationName, asValue(undefined))
 
-  // InMemoryCachingProvider - default provider
-  // container.register({
-  //   [CachingProviderRegistrationPrefix + InMemoryCachingProvider.identifier]:
-  //     asFunction((cradle) => new InMemoryCachingProvider(), {
-  //       lifetime: Lifetime.SINGLETON,
-  //     }),
-  // })
-  // container.registerAdd(
-  //   CachingIdentifiersRegistrationName,
-  //   asValue(InMemoryCachingProvider.identifier)
-  // )
-  // container.register(
-  //   CachingDefaultProvider,
-  //   asValue(InMemoryCachingProvider.identifier)
-  // )
-
   // Load other providers
   await moduleProviderLoader({
     container,
@@ -83,6 +66,8 @@ export default async ({
   }
 
   if (!hasDefaultProvider) {
-    logger.info(`Caching module: Using "default_provider" as default.`)
+    logger.info(
+      `[caching-module]: no default provider specified. the configured provider will be used as default.`
+    )
   }
 }
