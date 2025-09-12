@@ -389,10 +389,7 @@ export default class PromotionModuleService
         const attributeValue = registrationContext[attribute]
 
         if (!attributeValue) {
-          throw new MedusaError(
-            MedusaError.Types.INVALID_ARGUMENT,
-            `Value for attribute: ${attribute} is required for promotions that are part of a "use by attribute" campaign budget.`
-          )
+          continue
         }
 
         await this.registerCampaignBudgetUsageByAttribute_(
@@ -529,10 +526,7 @@ export default class PromotionModuleService
         const attributeValue = registrationContext[attribute]
 
         if (!attributeValue) {
-          throw new MedusaError(
-            MedusaError.Types.INVALID_ARGUMENT,
-            `Value for attribute: ${attribute} is required for promotions that are part of a "use by attribute" campaign budget.`
-          )
+          continue
         }
 
         await this.revertCampaignBudgetUsageByAttribute_(
