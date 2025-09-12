@@ -720,28 +720,33 @@ export default class PromotionModuleService
           )
         const attributeValue = budgetUsageContext[attribute]
 
-        if (attributeValue) {
-          const [campaignBudgetUsagePerAttribute] =
-            (await this.campaignBudgetUsageService_.list(
-              {
-                budget_id: promotion.campaign?.budget?.id,
-                attribute_value: attributeValue,
-              },
-              {},
-              sharedContext
-            )) as unknown as CampaignBudgetUsageDTO[]
+        if (!attributeValue) {
+          throw new MedusaError(
+            MedusaError.Types.INVALID_DATA,
+            `Attribute value for "${attribute}" is required by promotion campaing budget`
+          )
+        }
 
-          if (campaignBudgetUsagePerAttribute) {
-            const action = ComputeActionUtils.computeActionForBudgetExceeded(
-              promotion,
-              1,
-              campaignBudgetUsagePerAttribute
-            )
+        const [campaignBudgetUsagePerAttribute] =
+          (await this.campaignBudgetUsageService_.list(
+            {
+              budget_id: promotion.campaign?.budget?.id,
+              attribute_value: attributeValue,
+            },
+            {},
+            sharedContext
+          )) as unknown as CampaignBudgetUsageDTO[]
 
-            if (action) {
-              computedActions.push(action)
-              continue
-            }
+        if (campaignBudgetUsagePerAttribute) {
+          const action = ComputeActionUtils.computeActionForBudgetExceeded(
+            promotion,
+            1,
+            campaignBudgetUsagePerAttribute
+          )
+
+          if (action) {
+            computedActions.push(action)
+            continue
           }
         }
       }
