@@ -33,6 +33,7 @@ export interface ICachingModuleService {
    * @param ttl - The time-to-live (TTL) value in seconds. If not provided, the default TTL value
    * is used. The default value is based on the used Cache Module.
    * @param tags - The tags of the items to store. can be used for cross invalidation.
+   * @param options - if specified, will be stored with the item(s).
    * @param providers - The providers from which to store the item(s).
    *
    */
@@ -41,12 +42,16 @@ export interface ICachingModuleService {
     data,
     ttl,
     tags,
+    options,
     providers,
   }: {
     key: string
     data: unknown
     ttl?: number
     tags?: string[]
+    options?: {
+      noAutoInvalidation?: boolean
+    }
     providers?: Providers
   }): Promise<void>
 

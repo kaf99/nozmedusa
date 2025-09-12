@@ -97,7 +97,7 @@ export default class CachingModuleService implements ICachingModuleService {
     ttl,
     tags,
     providers,
-    noAutoInvalidation,
+    options,
   }: {
     key: string
     data: unknown
@@ -110,7 +110,9 @@ export default class CachingModuleService implements ICachingModuleService {
           ttl?: number
         }
       | { id: string; ttl?: number }[]
-    noAutoInvalidation?: boolean
+    options?: {
+      noAutoInvalidation?: boolean
+    }
   }) {
     if (!key || !data) {
       throw new MedusaError(
@@ -134,7 +136,7 @@ export default class CachingModuleService implements ICachingModuleService {
         tags,
         data,
         ttl: ttl_,
-        options: { noAutoInvalidation },
+        options,
       })
     }
   }
