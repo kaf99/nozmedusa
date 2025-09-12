@@ -3,13 +3,12 @@ import {
   ModuleServiceInitializeOptions,
 } from "@medusajs/framework/types"
 
-export const CacheingDefaultProvider = "default_provider"
-export const CacheingIdentifiersRegistrationName =
-  "cacheing_providers_identifier"
+export const CachingDefaultProvider = "default_provider"
+export const CachingIdentifiersRegistrationName = "caching_providers_identifier"
 
-export const CacheingProviderRegistrationPrefix = "lp_"
+export const CachingProviderRegistrationPrefix = "lp_"
 
-export type CacheingModuleOptions = Partial<ModuleServiceInitializeOptions> & {
+export type CachingModuleOptions = Partial<ModuleServiceInitializeOptions> & {
   /**
    * Providers to be registered
    */

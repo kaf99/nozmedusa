@@ -1,30 +1,29 @@
-import { GraphQLUtils, MedusaService } from "@medusajs/framework/utils"
+import { MedusaModule } from "@medusajs/framework/modules-sdk"
+import { GraphQLUtils } from "@medusajs/framework/utils"
 import { InternalModuleDeclaration, Logger } from "@medusajs/types"
 import { EntityManager } from "@mikro-orm/core"
-import { CacheingDefaultProvider } from "@types"
-import CacheingProviderService from "./cache-provider"
-import { MedusaModule } from "@medusajs/framework/modules-sdk"
+import { CachingDefaultProvider } from "@types"
+import CachingProviderService from "./cache-provider"
 
 type InjectedDependencies = {
   manager: EntityManager
-  cacheingProviderService: CacheingProviderService
+  cachingProviderService: CachingProviderService
   logger?: Logger
-  [CacheingDefaultProvider]: string
+  [CachingDefaultProvider]: string
 }
 
-export default class CacheingModuleService extends MedusaService({}) {
+export default class CachingModuleService {
   protected manager: EntityManager
-  protected providerService_: CacheingProviderService
+  protected providerService_: CachingProviderService
   protected defaultProviderId: string
 
   constructor(
     container: InjectedDependencies,
     protected readonly moduleDeclaration: InternalModuleDeclaration
   ) {
-    super(...arguments)
     this.manager = container.manager
-    this.providerService_ = container.cacheingProviderService
-    this.defaultProviderId = container[CacheingDefaultProvider]
+    this.providerService_ = container.cachingProviderService
+    // this.defaultProviderId = container[CachingDefaultProvider]
   }
 
   __hooks = {
@@ -54,6 +53,6 @@ export default class CacheingModuleService extends MedusaService({}) {
 
     const entitiesMap = schema.getTypeMap() as unknown as Map<string, any>
 
-    console.log(entitiesMap)
+    console.log(JSON.stringify(entitiesMap, null, 2))
   }
 }

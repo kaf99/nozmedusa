@@ -1,11 +1,11 @@
 import { Module, Modules } from "@medusajs/framework/utils"
 import { default as loadProviders } from "./loaders/providers"
-import CacheingModuleService from "./services/cache-module"
+import CachingModuleService from "./services/cache-module"
 
 export default Module(Modules.CACHING, {
-  service: CacheingModuleService,
+  service: CachingModuleService,
   loaders: [loadProviders],
 })
 
 // Module options types
-export { CacheingModuleOptions } from "./types"
+export { CachingModuleOptions } from "./types"

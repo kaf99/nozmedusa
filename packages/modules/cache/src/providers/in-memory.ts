@@ -1,1 +1,1 @@
-export const InMemoryCacheingProvider = {}
+export const InMemoryCachingProvider = {}

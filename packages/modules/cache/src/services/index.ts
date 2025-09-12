@@ -1,2 +1,2 @@
-export { default as CacheingModuleService } from "./cache-module"
-export { default as CacheingProviderService } from "./cache-provider"
+export { default as CachingModuleService } from "./cache-module"
+export { default as CachingProviderService } from "./cache-provider"

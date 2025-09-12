@@ -59,7 +59,7 @@ export const MODULE_PACKAGE_NAMES = {
   [Modules.INDEX]: "@medusajs/medusa/index-module",
   [Modules.LOCKING]: "@medusajs/medusa/locking",
   [Modules.SETTINGS]: "@medusajs/medusa/settings",
-  [Modules.CACHING]: "@medusajs/medusa/caching",
+  [Modules.CACHING]: "@medusajs/caching",
 }
 
 export const REVERSED_MODULE_PACKAGE_NAMES = Object.entries(

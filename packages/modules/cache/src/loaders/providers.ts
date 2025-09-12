@@ -8,17 +8,17 @@ import {
   ContainerRegistrationKeys,
   getProviderRegistrationKey,
 } from "@medusajs/framework/utils"
-import { CacheingProviderService } from "@services"
+import { CachingProviderService } from "@services"
 import {
-  CacheingDefaultProvider,
-  CacheingIdentifiersRegistrationName,
-  CacheingProviderRegistrationPrefix,
+  CachingDefaultProvider,
+  CachingIdentifiersRegistrationName,
+  CachingProviderRegistrationPrefix,
 } from "@types"
 import { aliasTo, asValue } from "awilix"
-// import { InMemoryCacheingProvider } from "../providers/in-memory"
+// import { InMemoryCachingProvider } from "../providers/in-memory"
 
 const registrationFn = async (klass, container, { id }) => {
-  const key = CacheingProviderService.getRegistrationIdentifier(klass)
+  const key = CachingProviderService.getRegistrationIdentifier(klass)
 
   if (!id) {
     throw new Error(`No "id" provided for provider ${key}`)
@@ -30,10 +30,10 @@ const registrationFn = async (klass, container, { id }) => {
   })
 
   container.register({
-    [CacheingProviderRegistrationPrefix + id]: aliasTo(regKey),
+    [CachingProviderRegistrationPrefix + id]: aliasTo(regKey),
   })
 
-  container.registerAdd(CacheingIdentifiersRegistrationName, asValue(key))
+  container.registerAdd(CachingIdentifiersRegistrationName, asValue(key))
 }
 
 export default async ({
@@ -46,22 +46,22 @@ export default async ({
   ) & { providers: ModuleProvider[] }
 >): Promise<void> => {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
-  container.registerAdd(CacheingIdentifiersRegistrationName, asValue(undefined))
+  container.registerAdd(CachingIdentifiersRegistrationName, asValue(undefined))
 
-  // InMemoryCacheingProvider - default provider
+  // InMemoryCachingProvider - default provider
   // container.register({
-  //   [CacheingProviderRegistrationPrefix + InMemoryCacheingProvider.identifier]:
-  //     asFunction((cradle) => new InMemoryCacheingProvider(), {
+  //   [CachingProviderRegistrationPrefix + InMemoryCachingProvider.identifier]:
+  //     asFunction((cradle) => new InMemoryCachingProvider(), {
   //       lifetime: Lifetime.SINGLETON,
   //     }),
   // })
   // container.registerAdd(
-  //   CacheingIdentifiersRegistrationName,
-  //   asValue(InMemoryCacheingProvider.identifier)
+  //   CachingIdentifiersRegistrationName,
+  //   asValue(InMemoryCachingProvider.identifier)
   // )
   // container.register(
-  //   CacheingDefaultProvider,
-  //   asValue(InMemoryCacheingProvider.identifier)
+  //   CachingDefaultProvider,
+  //   asValue(InMemoryCachingProvider.identifier)
   // )
 
   // Load other providers
@@ -78,15 +78,11 @@ export default async ({
       if (provider.is_default) {
         hasDefaultProvider = true
       }
-      container.register(CacheingDefaultProvider, asValue(provider.id))
+      container.register(CachingDefaultProvider, asValue(provider.id))
     }
   }
 
   if (!hasDefaultProvider) {
-    logger.info(
-      `Cacheing module: Using "${container.resolve(
-        CacheingDefaultProvider
-      )}" as default.`
-    )
+    logger.info(`Caching module: Using "default_provider" as default.`)
   }
 }

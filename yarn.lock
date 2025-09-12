@@ -6218,7 +6218,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@medusajs/caching@workspace:packages/modules/cache":
+"@medusajs/caching@workspace:*, @medusajs/caching@workspace:packages/modules/cache":
   version: 0.0.0-use.local
   resolution: "@medusajs/caching@workspace:packages/modules/cache"
   dependencies:
@@ -24359,6 +24359,7 @@ __metadata:
     "@medusajs/api-key": "workspace:^"
     "@medusajs/auth": "workspace:*"
     "@medusajs/cache-inmemory": "workspace:*"
+    "@medusajs/caching": "workspace:*"
     "@medusajs/core-flows": "workspace:^"
     "@medusajs/currency": "workspace:^"
     "@medusajs/customer": "workspace:^"

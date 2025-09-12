@@ -1,17 +1,17 @@
 import {
   Constructor,
-  // ICacheingProvider,
+  // ICachingProvider,
   Logger,
 } from "@medusajs/framework/types"
 import { MedusaError } from "@medusajs/framework/utils"
-import { CacheingProviderRegistrationPrefix } from "../types"
+import { CachingProviderRegistrationPrefix } from "../types"
 
 type InjectedDependencies = {
-  [key: `cp_${string}`]: any // ICacheingProvider
+  [key: `cp_${string}`]: any // ICachingProvider
   logger?: Logger
 }
 
-export default class CacheingProviderService {
+export default class CachingProviderService {
   protected __container__: InjectedDependencies
   #logger: Logger
 
@@ -23,27 +23,27 @@ export default class CacheingProviderService {
   }
 
   static getRegistrationIdentifier(
-    providerClass: Constructor<any> // ICacheingProvider
+    providerClass: Constructor<any> // ICachingProvider
   ) {
     if (!(providerClass as any).identifier) {
       throw new MedusaError(
         MedusaError.Types.INVALID_ARGUMENT,
-        `Trying to register a cacheing provider without an identifier.`
+        `Trying to register a caching provider without an identifier.`
       )
     }
     return `${(providerClass as any).identifier}`
   }
 
   public retrieveProviderRegistration(providerId: string): any {
-    // ICacheingProvider
+    // ICachingProvider
     try {
       return this.__container__[
-        `${CacheingProviderRegistrationPrefix}${providerId}`
+        `${CachingProviderRegistrationPrefix}${providerId}`
       ]
     } catch (err) {
       if (err.name === "AwilixResolutionError") {
         const errMessage = `
- Unable to retrieve the cacheing provider with id: ${providerId}
+ Unable to retrieve the caching provider with id: ${providerId}
 Please make sure that the provider is registered in the container and it is configured correctly in your project configuration file.`
 
         // Log full error for debugging
@@ -52,7 +52,7 @@ Please make sure that the provider is registered in the container and it is conf
         throw new Error(errMessage)
       }
 
-      const errMessage = `Unable to retrieve the cacheing provider with id: ${providerId}, the following error occurred: ${err.message}`
+      const errMessage = `Unable to retrieve the caching provider with id: ${providerId}, the following error occurred: ${err.message}`
       this.#logger.error(errMessage)
 
       throw new Error(errMessage)
