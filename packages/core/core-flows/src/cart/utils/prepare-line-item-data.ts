@@ -98,7 +98,7 @@ export function prepareLineItemData(data: PrepareLineItemDataInput) {
     )
   }
 
-  if (item && MathBN.lt(item.quantity, 0)) {
+  if (item && MathBN.lte(item.quantity, 0)) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,
       "Item quantity must be greater than 0"
