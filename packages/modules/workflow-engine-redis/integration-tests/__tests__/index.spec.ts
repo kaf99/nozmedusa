@@ -520,13 +520,15 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
           expect(step1CompensateMockAutoRetriesFalse).toHaveBeenCalledTimes(0)
           expect(step2CompensateMockAutoRetriesFalse).toHaveBeenCalledTimes(0)
 
+          await setTimeout(2000)
+
           await workflowOrcModule.run(workflowId, {
             input: {},
             transactionId,
             throwOnError: false,
           })
 
-          await setTimeout(4000)
+          await setTimeout(2000)
 
           expect(step1InvokeMockAutoRetriesFalse).toHaveBeenCalledTimes(1)
           expect(step2InvokeMockAutoRetriesFalse).toHaveBeenCalledTimes(2)
@@ -539,7 +541,7 @@ moduleIntegrationTestRunner<IWorkflowEngineService>({
             throwOnError: false,
           })
 
-          await setTimeout(4000)
+          await setTimeout(2000)
 
           expect(lastExepectHaveBeenCalledTimes).toEqual(1)
         })

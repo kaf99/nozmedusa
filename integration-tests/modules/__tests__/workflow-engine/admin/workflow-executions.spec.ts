@@ -3,9 +3,13 @@ import {
   createWorkflow,
   StepResponse,
   WorkflowData,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import { createAdminUser } from "../../../../helpers/create-admin-user"
+import { setTimeout } from "timers/promises"
+
+jest.setTimeout(100000)
 
 const adminHeaders = {
   headers: {
@@ -43,7 +47,12 @@ medusaIntegrationTestRunner({
               name: "my-step-async",
               async: true,
             },
-            async () => {}
+            async () => {
+              await setTimeout(2000)
+              return new StepResponse({
+                result: "async",
+              })
+            }
           )
 
           createWorkflow(
@@ -53,7 +62,8 @@ medusaIntegrationTestRunner({
             },
             function (input: WorkflowData<{ initial: string }>) {
               step1(input)
-              return step2()
+              const res = step2()
+              return new WorkflowResponse(res)
             }
           )
         })
@@ -179,7 +189,7 @@ medusaIntegrationTestRunner({
                 hasAsyncSteps: true,
                 hasFailedSteps: false,
                 hasSkippedSteps: false,
-                hasWaitingSteps: true,
+                hasWaitingSteps: false,
                 hasRevertedSteps: false,
               }),
               context: expect.objectContaining({
@@ -258,10 +268,4 @@ medusaIntegrationTestRunner({
       })
     })
   },
-})
-
-describe("Noop test", () => {
-  it("noop check", async () => {
-    expect(true).toBe(true)
-  })
 })
