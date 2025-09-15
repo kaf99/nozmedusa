@@ -24,5 +24,4 @@ runs:
       shell: bash
 
     - run: yarn build
-      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
