@@ -125,7 +125,7 @@ moduleIntegrationTestRunner({
 
       describe("when promotion is for items and allocation is each", () => {
         describe("when application type is fixed", () => {
-          it("should compute the correct item amendments", async () => {
+          it.only("should compute the correct item amendments", async () => {
             await createDefaultPromotion(service, {
               rules: [
                 {

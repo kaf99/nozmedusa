@@ -467,10 +467,10 @@ export default class PromotionModuleService
           $or: [{ code: uniquePromotionCodes }, { is_automatic: true }],
         }
 
-    const promotions = await this.listActivePromotions(
+    const promotions = await this.listActivePromotions_(
       queryFilter,
       {
-        options: { strategy: "balanced" },
+        options: { strategy: "select-in" },
         order: { application_method: { value: "DESC" } },
         relations: [
           "application_method",
@@ -499,9 +499,6 @@ export default class PromotionModuleService
         automaticPromotionCodes.push(promotion.code!)
       }
     }
-
-    const automaticPromotions = promotions.filter((p) => p.is_automatic)
-    const automaticPromotionCodes = automaticPromotions.map((p) => p.code!)
 
     for (const [code, adjustments] of codeAdjustmentMap.entries()) {
       for (const adjustment of adjustments.items) {
