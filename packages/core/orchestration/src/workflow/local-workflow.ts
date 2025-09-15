@@ -1,4 +1,8 @@
-import { Context, LoadedModule, MedusaContainer } from "@medusajs/types"
+import {
+  Context,
+  LoadedModule,
+  MedusaContainer,
+} from "@medusajs/framework/types"
 import {
   createMedusaContainer,
   isDefined,

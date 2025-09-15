@@ -9,7 +9,7 @@ import {
   RemoteJoinerOptions,
   RemoteJoinerQuery,
   RemoteNestedExpands,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import {
   deduplicate,
   FilterOperatorMap,
@@ -479,7 +479,7 @@ export class RemoteJoiner {
       if (Object.keys(service_.fieldAlias!).length) {
         const conflictAliases = Array.from(
           service_.relationships!.keys()
-        ).filter((alias) => fieldAlias[alias])
+        ).filter((alias) => fieldAlias[alias as string])
 
         if (conflictAliases.length) {
           throw new Error(

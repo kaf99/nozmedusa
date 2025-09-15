@@ -38,7 +38,7 @@ import {
   TransactionStepTimeoutError,
   TransactionTimeoutError,
 } from "./errors"
-import { Context } from "@medusajs/types"
+import { Context } from "@medusajs/framework/types"
 
 /**
  * @class TransactionOrchestrator is responsible for managing and executing distributed transactions.
