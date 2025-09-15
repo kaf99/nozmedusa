@@ -1,6 +1,7 @@
 import {
   filterObjectByKeys,
   isDefined,
+  MedusaError,
   PromotionActions,
 } from "@medusajs/framework/utils"
 import {
@@ -241,6 +242,7 @@ export const refreshCartItemsWorkflow = createWorkflow(
       const lineItems = transform(
         { cart, variantsData, calculatedPriceSets },
         ({ cart, variantsData, calculatedPriceSets }) => {
+          const priceNotFound = variantsData
           const items = cart.items.map((item) => {
             let calculatedPriceSet = calculatedPriceSets[item.id]
             if (!calculatedPriceSet) {
