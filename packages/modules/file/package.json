@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/file",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Medusa File module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -50,7 +50,7 @@
     "typescript": "^5.6.2"
   },
   "peerDependencies": {
-    "@medusajs/framework": "2.10.1",
+    "@medusajs/framework": "2.10.2",
     "awilix": "^8.0.1"
   }
 }

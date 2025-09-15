@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/locking",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Locking Module for Medusa",
   "main": "dist/index.js",
   "repository": {

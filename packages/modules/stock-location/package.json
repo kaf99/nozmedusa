@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/stock-location",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Stock Location Module for Medusa",
   "main": "dist/index.js",
   "repository": {

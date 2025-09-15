@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/workflow-engine-redis",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Medusa Workflow Orchestrator module using Redis to track workflows executions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

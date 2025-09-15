@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/customer",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Medusa Customer module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/workflow-engine-inmemory",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Medusa Workflow Orchestrator module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

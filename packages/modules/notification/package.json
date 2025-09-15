@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/notification",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Medusa Notification module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
