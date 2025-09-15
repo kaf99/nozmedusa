@@ -57,13 +57,17 @@ jobs:
       - name: Assert changed
         run: ./scripts/assert-changed-files-actions.sh "packages"
 
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v2
+
       - name: Install dependencies
         uses: ./.github/actions/cache-deps
         with:
           extension: pipeline
 
       - name: Run unit tests
-        run: yarn test:chunk
+        run: yarn test:chunk --maxWorkers=${{ steps.cpu-cores.outputs.count }}
 
   integration-tests-packages-matrix:
     needs: setup
@@ -106,13 +110,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v2
+
       - name: Install dependencies
         uses: ./.github/actions/cache-deps
         with:
           extension: pipeline
 
       - name: Run integration tests
-        run: yarn test:integration:packages:${{ matrix.group }}
+        run: yarn test:integration:packages:${{ matrix.group }} --maxWorkers=${{ steps.cpu-cores.outputs.count }}
         env:
           DB_PASSWORD: postgres
           DB_USERNAME: postgres
@@ -173,13 +181,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v2
+
       - name: Install dependencies
         uses: ./.github/actions/cache-deps
         with:
           extension: pipeline
 
       - name: Run HTTP integration tests
-        run: yarn test:integration:http -- --shard=${{ matrix.shard_index }}/3
+        run: yarn test:integration:http --shard=${{ matrix.shard_index }}/3 --maxWorkers=${{ steps.cpu-cores.outputs.count }}
         env:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
@@ -240,13 +252,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v2
+
       - name: Install dependencies
         uses: ./.github/actions/cache-deps
         with:
           extension: pipeline
 
       - name: Run Modules integration tests
-        run: yarn test:integration:modules -- --shard=${{ matrix.shard_index }}/3
+        run: yarn test:integration:modules --shard=${{ matrix.shard_index }}/3 --maxWorkers=${{ steps.cpu-cores.outputs.count }}
         env:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
