@@ -17,7 +17,6 @@ import {
 import {
   createHook,
   createWorkflow,
-  parallelize,
   transform,
   when,
   WorkflowData,
@@ -303,12 +302,10 @@ export const updateLineItemInCartWorkflow = createWorkflow(
         input: { cart_id: input.cart_id },
       })
 
-      parallelize(
-        emitEventStep({
-          eventName: CartWorkflowEvents.UPDATED,
-          data: { id: input.cart_id },
-        })
-      )
+      emitEventStep({
+        eventName: CartWorkflowEvents.UPDATED,
+        data: { id: input.cart_id },
+      })
     })
 
     releaseLockStep({
