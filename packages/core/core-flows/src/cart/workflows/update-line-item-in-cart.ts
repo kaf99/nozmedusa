@@ -210,8 +210,8 @@ export const updateLineItemInCartWorkflow = createWorkflow(
 
     const variants = when(
       "should-fetch-variants",
-      { variantIds },
-      ({ variantIds }) => {
+      { variantIds, shouldRemoveItem },
+      ({ variantIds, shouldRemoveItem }) => {
         return !!variantIds.length && !shouldRemoveItem
       }
     ).then(() => {
@@ -260,41 +260,44 @@ export const updateLineItemInCartWorkflow = createWorkflow(
         },
       })
 
-      const lineItemUpdate = transform({ input, variants, item }, (data) => {
-        const variant = data.variants?.[0] ?? undefined
-        const item = data.item
+      const lineItemUpdate = transform(
+        { input, variants, item, pricingContext },
+        (data) => {
+          const variant = data.variants?.[0] ?? undefined
+          const item = data.item
 
-        const updateData = {
-          ...data.input.update,
-          unit_price: isDefined(data.input.update.unit_price)
-            ? data.input.update.unit_price
-            : item.unit_price,
-          is_custom_price: isDefined(data.input.update.unit_price)
-            ? true
-            : item.is_custom_price,
-          is_tax_inclusive:
-            item.is_tax_inclusive ||
-            variant?.calculated_price?.is_calculated_price_tax_inclusive,
-        }
+          const updateData = {
+            ...data.input.update,
+            unit_price: isDefined(data.input.update.unit_price)
+              ? data.input.update.unit_price
+              : item.unit_price,
+            is_custom_price: isDefined(data.input.update.unit_price)
+              ? true
+              : item.is_custom_price,
+            is_tax_inclusive:
+              item.is_tax_inclusive ||
+              variant?.calculated_price?.is_calculated_price_tax_inclusive,
+          }
 
-        if (variant && !updateData.is_custom_price) {
-          updateData.unit_price = variant.calculated_price.calculated_amount
-        }
+          if (variant && !updateData.is_custom_price) {
+            updateData.unit_price = variant.calculated_price.calculated_amount
+          }
 
-        if (!isDefined(updateData.unit_price)) {
-          throw new MedusaError(
-            MedusaError.Types.INVALID_DATA,
-            `Line item ${item.title} has no unit price`
-          )
-        }
+          if (!isDefined(updateData.unit_price)) {
+            throw new MedusaError(
+              MedusaError.Types.INVALID_DATA,
+              `Line item ${item.title} has no unit price`
+            )
+          }
 
-        return {
-          data: updateData,
-          selector: {
-            id: data.input.item_id,
-          },
+          return {
+            data: updateData,
+            selector: {
+              id: data.input.item_id,
+            },
+          }
         }
-      })
+      )
 
       updateLineItemsStepWithSelector(lineItemUpdate)
 
