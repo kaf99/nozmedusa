@@ -13,6 +13,7 @@ import {
   createRawPropertiesFromBigNumber,
   decorateCartTotals,
   deduplicate,
+  EmitEvents,
   generateEntityId,
   InjectManager,
   InjectTransactionManager,
@@ -269,6 +270,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartDTO>
 
   @InjectManager()
+  @EmitEvents()
   // @ts-expect-error
   async createCarts(
     data: CartTypes.CreateCartDTO[] | CartTypes.CreateCartDTO,
@@ -340,6 +342,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   // @ts-expect-error
   async updateCarts(
     dataOrIdOrSelector:
@@ -425,6 +428,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartLineItemDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addLineItems(
     cartIdOrData:
       | string
@@ -456,7 +460,7 @@ export default class CartModuleService
     items: CartTypes.CreateLineItemDTO[],
     @MedusaContext() sharedContext: Context = {}
   ): Promise<InferEntityType<typeof LineItem>[]> {
-    const cart = await this.retrieveCart(
+    const cart = await this.cartService_.retrieve(
       cartId,
       { select: ["id"] },
       sharedContext
@@ -504,6 +508,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartLineItemDTO>
 
   @InjectManager()
+  @EmitEvents()
   // @ts-expect-error
   async updateLineItems(
     lineItemIdOrDataOrSelector:
@@ -606,6 +611,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartAddressDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   // @ts-expect-error
   async createAddresses(
     data: CartTypes.CreateAddressDTO[] | CartTypes.CreateAddressDTO,
@@ -645,6 +651,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartAddressDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   // @ts-expect-error
   async updateAddresses(
     data: CartTypes.UpdateAddressDTO[] | CartTypes.UpdateAddressDTO,
@@ -685,6 +692,7 @@ export default class CartModuleService
   ): Promise<CartTypes.CartShippingMethodDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addShippingMethods(
     cartIdOrData:
       | string
@@ -723,7 +731,7 @@ export default class CartModuleService
     data: CartTypes.CreateShippingMethodForSingleCartDTO[],
     @MedusaContext() sharedContext: Context = {}
   ): Promise<InferEntityType<typeof ShippingMethod>[]> {
-    const cart = await this.retrieveCart(
+    const cart = await this.cartService_.retrieve(
       cartId,
       { select: ["id"] },
       sharedContext
@@ -763,6 +771,7 @@ export default class CartModuleService
   ): Promise<CartTypes.LineItemAdjustmentDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addLineItemAdjustments(
     cartIdOrData:
       | string
@@ -793,7 +802,7 @@ export default class CartModuleService
   ): Promise<InferEntityType<typeof LineItemAdjustment>[]> {
     let addedAdjustments: InferEntityType<typeof LineItemAdjustment>[] = []
     if (isString(cartIdOrData)) {
-      const cart = await this.retrieveCart(
+      const cart = await this.cartService_.retrieve(
         cartIdOrData,
         { select: ["id"], relations: ["items"] },
         sharedContext
@@ -827,6 +836,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async upsertLineItemTaxLines(
     taxLines: (
       | CartTypes.CreateLineItemTaxLineDTO
@@ -861,6 +871,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async upsertLineItemAdjustments(
     adjustments: (
       | CartTypes.CreateLineItemAdjustmentDTO
@@ -895,6 +906,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async upsertShippingMethodTaxLines(
     taxLines: (
       | CartTypes.CreateShippingMethodTaxLineDTO
@@ -929,6 +941,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async upsertShippingMethodAdjustments(
     adjustments: (
       | CartTypes.CreateShippingMethodAdjustmentDTO
@@ -963,6 +976,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async setLineItemAdjustments(
     cartId: string,
     adjustments: (
@@ -991,7 +1005,7 @@ export default class CartModuleService
     )[],
     @MedusaContext() sharedContext: Context = {}
   ): Promise<InferEntityType<typeof LineItemAdjustment>[]> {
-    const cart = await this.retrieveCart(
+    const cart = await this.cartService_.retrieve(
       cartId,
       { select: ["id"], relations: ["items.adjustments"] },
       sharedContext
@@ -1036,6 +1050,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async setShippingMethodAdjustments(
     cartId: string,
     adjustments: (
@@ -1064,7 +1079,7 @@ export default class CartModuleService
     )[],
     @MedusaContext() sharedContext: Context = {}
   ): Promise<InferEntityType<typeof ShippingMethodAdjustment>[]> {
-    const cart = await this.retrieveCart(
+    const cart = await this.cartService_.retrieve(
       cartId,
       { select: ["id"], relations: ["shipping_methods.adjustments"] },
       sharedContext
@@ -1122,6 +1137,7 @@ export default class CartModuleService
   ): Promise<CartTypes.ShippingMethodAdjustmentDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addShippingMethodAdjustments(
     cartIdOrData:
       | string
@@ -1160,7 +1176,7 @@ export default class CartModuleService
     let addedAdjustments: InferEntityType<typeof ShippingMethodAdjustment>[] =
       []
     if (isString(cartIdOrData)) {
-      const cart = await this.retrieveCart(
+      const cart = await this.cartService_.retrieve(
         cartIdOrData,
         { select: ["id"], relations: ["shipping_methods"] },
         sharedContext
@@ -1212,6 +1228,7 @@ export default class CartModuleService
   ): Promise<CartTypes.LineItemTaxLineDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addLineItemTaxLines(
     cartIdOrData:
       | string
@@ -1250,7 +1267,18 @@ export default class CartModuleService
     let addedTaxLines: InferEntityType<typeof LineItemTaxLine>[]
     if (isString(cartIdOrData)) {
       // existence check
-      await this.retrieveCart(cartIdOrData, { select: ["id"] }, sharedContext)
+      const cart = await this.cartService_.retrieve(
+        cartIdOrData,
+        { select: ["id"] },
+        sharedContext
+      )
+
+      if (!cart) {
+        throw new MedusaError(
+          MedusaError.Types.INVALID_DATA,
+          `Cart with id ${cartIdOrData} does not exist`
+        )
+      }
 
       const lines = Array.isArray(taxLines) ? taxLines : [taxLines]
 
@@ -1275,6 +1303,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async setLineItemTaxLines(
     cartId: string,
     taxLines: (
@@ -1357,6 +1386,7 @@ export default class CartModuleService
   ): Promise<CartTypes.ShippingMethodTaxLineDTO[]>
 
   @InjectManager()
+  @EmitEvents()
   async addShippingMethodTaxLines(
     cartIdOrData:
       | string
@@ -1397,7 +1427,18 @@ export default class CartModuleService
     let addedTaxLines: InferEntityType<typeof ShippingMethodTaxLine>[]
     if (isString(cartIdOrData)) {
       // existence check
-      await this.retrieveCart(cartIdOrData, { select: ["id"] }, sharedContext)
+      const cart = await this.cartService_.retrieve(
+        cartIdOrData,
+        { select: ["id"] },
+        sharedContext
+      )
+
+      if (!cart) {
+        throw new MedusaError(
+          MedusaError.Types.INVALID_DATA,
+          `Cart with id ${cartIdOrData} does not exist`
+        )
+      }
 
       const lines = Array.isArray(taxLines) ? taxLines : [taxLines]
 
@@ -1422,6 +1463,7 @@ export default class CartModuleService
   }
 
   @InjectManager()
+  @EmitEvents()
   async setShippingMethodTaxLines(
     cartId: string,
     taxLines: (
