@@ -170,12 +170,22 @@ export const refreshCartItemsWorkflow = createWorkflow(
       })
 
       const variantIds = transform({ cart }, (data: { cart: CartDTO }) => {
-        return (data.cart.items ?? []).map((i) => i.variant_id).filter(Boolean)
+        return Array.from(
+          new Set(
+            (data.cart.items ?? []).map((i) => i.variant_id).filter(Boolean)
+          )
+        )
       })
 
       const cartPricingContext = transform(
         { cart, setPricingContextResult },
-        (data): { variantId: string; context: Record<string, unknown> }[] => {
+        (
+          data
+        ): {
+          id: string
+          variantId: string
+          context: Record<string, unknown>
+        }[] => {
           const cart = data.cart
           const baseContext = {
             ...filterObjectByKeys(cart, cartFieldsForPricingContext),
@@ -193,6 +203,7 @@ export const refreshCartItemsWorkflow = createWorkflow(
             .filter((i) => i.variant_id)
             .map((item) => {
               return {
+                id: item.id,
                 variantId: item.variant_id,
                 context: {
                   ...baseContext,
@@ -215,48 +226,61 @@ export const refreshCartItemsWorkflow = createWorkflow(
         data: cartPricingContext,
       })
 
-      const variants = transform(
-        { variantsData, calculatedPriceSets },
-        ({ variantsData, calculatedPriceSets }) => {
-          return variantsData.map((variant) => {
-            variant.calculated_price = calculatedPriceSets[variant.id]
-            return variant
+      // const variants = transform(
+      //   { variantsData, calculatedPriceSets },
+      //   ({ variantsData, calculatedPriceSets }) => {
+      //     return variantsData.map((variant) => {
+      //       variant.calculated_price = calculatedPriceSets[variant.id]
+      //       return variant
+      //     })
+      //   }
+      // )
+
+      // validateVariantPricesStep({ variants })
+
+      const lineItems = transform(
+        { cart, variantsData, calculatedPriceSets },
+        ({ cart, variantsData, calculatedPriceSets }) => {
+          const items = cart.items.map((item) => {
+            let calculatedPriceSet = calculatedPriceSets[item.id]
+            if (!calculatedPriceSet) {
+              calculatedPriceSet = calculatedPriceSets[item.variant_id!]
+            }
+
+            if (!calculatedPriceSet) {
+              throw new MedusaError(
+                MedusaError.Types.INVALID_DATA,
+                `Variants with IDs ${priceNotFound.join(
+                  ", "
+                )} do not have a price`
+              )
+            }
+
+            const input: PrepareLineItemDataInput = {
+              item,
+              variant: variant,
+              cartId: cart.id,
+              unitPrice: item.unit_price,
+              isTaxInclusive: item.is_tax_inclusive,
+            }
+
+            if (variant && !item.is_custom_price) {
+              input.unitPrice = variant.calculated_price?.calculated_amount
+              input.isTaxInclusive =
+                variant.calculated_price?.is_calculated_price_tax_inclusive
+            }
+
+            const preparedItem = prepareLineItemData(input)
+
+            return {
+              selector: { id: item.id },
+              data: preparedItem,
+            }
           })
+
+          return items
         }
       )
-
-      validateVariantPricesStep({ variants })
-
-      const lineItems = transform({ cart, variants }, ({ cart, variants }) => {
-        const items = cart.items.map((item) => {
-          const variant = (variants ?? []).find(
-            (v) => v.id === item.variant_id
-          )!
-
-          const input: PrepareLineItemDataInput = {
-            item,
-            variant: variant,
-            cartId: cart.id,
-            unitPrice: item.unit_price,
-            isTaxInclusive: item.is_tax_inclusive,
-          }
-
-          if (variant && !item.is_custom_price) {
-            input.unitPrice = variant.calculated_price?.calculated_amount
-            input.isTaxInclusive =
-              variant.calculated_price?.is_calculated_price_tax_inclusive
-          }
-
-          const preparedItem = prepareLineItemData(input)
-
-          return {
-            selector: { id: item.id },
-            data: preparedItem,
-          }
-        })
-
-        return items
-      })
 
       updateLineItemsStep({
         id: cart.id,

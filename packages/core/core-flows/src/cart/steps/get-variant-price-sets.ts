@@ -35,6 +35,10 @@ export interface GetVariantPriceSetsStepBulkInput {
    */
   data: {
     /**
+     * The ID of the item.
+     */
+    id: string
+    /**
      * The ID of the variant to get the price set for.
      */
     variantId: string
@@ -51,13 +55,19 @@ interface VariantPriceSetData {
 }
 
 interface PriceCalculationItem {
+  /**
+   * The ID of the item. In case of variants we wont have an item id
+   */
+  id?: string
   variantId: string
   priceSetId: string
   context?: Record<string, unknown>
 }
 
 export interface GetVariantPriceSetsStepOutput {
-  [k: string]: CalculatedPriceSet
+  [k: string]: CalculatedPriceSet & {
+    type: "variant" | "item"
+  }
 }
 
 export const getVariantPriceSetsStepId = "get-variant-price-sets"
@@ -124,7 +134,10 @@ async function processVariantPriceSets(
     for (const item of groupItems) {
       const calculatedPriceSet = priceSetMap.get(item.priceSetId)
       if (calculatedPriceSet) {
-        result[item.variantId] = calculatedPriceSet
+        result[item.id ?? item.variantId] = {
+          ...calculatedPriceSet,
+          type: item.id ? "item" : "variant",
+        }
       }
     }
   }
@@ -196,6 +209,7 @@ function createCalculationItemsFromBulkData(
     const priceSetId = variantToPriceSetId.get(item.variantId)
     if (priceSetId) {
       calculationItems.push({
+        id: item.id,
         variantId: item.variantId,
         priceSetId,
         context: item.context,
