@@ -6,17 +6,23 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       id: cache
       with:
         path: |
           .yarn/cache
-        key: ${{ runner.os }}-yarn-${{inputs.extension}}-v8-${{ hashFiles('**/yarn.lock') }}-3
+          .yarn/install-state.gz
+          node_modules
+          */node_modules
+        key: ${{ runner.os }}-yarn-${{inputs.extension}}-v9-${{ hashFiles('**/yarn.lock') }}-4
         restore-keys: |
+          ${{ runner.os }}-yarn-${{inputs.extension}}-v9-4
           ${{ runner.os }}-yarn-${{inputs.extension}}-v8-3
       # We want to only bootstrap and install if no cache is found.
-    - run: yarn install --immutable
+    - run: yarn install --immutable --inline-builds --network-concurrency 1
+      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
 
     - run: yarn build
+      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
