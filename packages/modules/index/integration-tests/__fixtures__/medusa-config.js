@@ -6,7 +6,7 @@ const {
 const { schema } = require("./schema")
 
 export const dbName =
-  "medusa-index-integration-2024-" + process.env.JEST_WORKER_ID
+  "medusa-index-integration-2024-" + Math.random().toString(36).substring(2, 15)
 const DB_HOST = process.env.DB_HOST ?? "localhost:5432"
 const DB_USERNAME = process.env.DB_USERNAME ?? ""
 const DB_PASSWORD = process.env.DB_PASSWORD ?? ""
