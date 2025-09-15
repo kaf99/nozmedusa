@@ -716,7 +716,7 @@ medusaIntegrationTestRunner({
           })
         })
 
-        it("adding an a negative quantity item should throw an error", async () => {
+        it("handle line item quantity edge cases", async () => {
           const shippingProfile =
             await fulfillmentModule.createShippingProfiles({
               name: "Test",
@@ -814,6 +814,22 @@ medusaIntegrationTestRunner({
               "Invalid request: Value for field 'quantity' too small, expected at least: '0'",
             type: "invalid_data",
           })
+
+          // should remove the item from the cart when quantity is 0
+          const cartResponse = await api.post(
+            `/store/carts/${cart.id}/line-items/${cart.items[0].id}`,
+            {
+              quantity: 0,
+            },
+            storeHeaders
+          )
+
+          expect(cartResponse.status).toEqual(200)
+          expect(cartResponse.data.cart).toEqual(
+            expect.objectContaining({
+              items: expect.arrayContaining([]),
+            })
+          )
         })
 
         it("adding an existing variant should update or create line item depending on metadata", async () => {

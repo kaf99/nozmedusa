@@ -73,7 +73,7 @@ export type StoreUpdateCartLineItemType = z.infer<
   typeof StoreUpdateCartLineItem
 >
 export const StoreUpdateCartLineItem = z.object({
-  quantity: z.number().gt(0),
+  quantity: z.number().gte(0), // can be 0 to remove the item from the cart
   metadata: z.record(z.unknown()).nullish(),
 })
 
