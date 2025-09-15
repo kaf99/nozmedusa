@@ -19,7 +19,7 @@ runs:
           ${{ runner.os }}-yarn-${{inputs.extension}}-v9-4
           ${{ runner.os }}-yarn-${{inputs.extension}}-v8-3
       # We want to only bootstrap and install if no cache is found.
-    - run: yarn install --immutable --inline-builds --network-concurrency 1
+    - run: yarn install --immutable --inline-builds
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
 
