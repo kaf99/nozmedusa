@@ -17,6 +17,7 @@ import {
 import {
   createHook,
   createWorkflow,
+  parallelize,
   transform,
   when,
   WorkflowData,
@@ -304,17 +305,18 @@ export const updateLineItemInCartWorkflow = createWorkflow(
       refreshCartItemsWorkflow.runAsStep({
         input: { cart_id: input.cart_id },
       })
+    })
 
+    parallelize(
+      releaseLockStep({
+        key: input.cart_id,
+        skipOnSubWorkflow: true,
+      }),
       emitEventStep({
         eventName: CartWorkflowEvents.UPDATED,
         data: { id: input.cart_id },
       })
-    })
-
-    releaseLockStep({
-      key: input.cart_id,
-      skipOnSubWorkflow: true,
-    })
+    )
 
     return new WorkflowResponse(void 0, {
       hooks: [validate, setPricingContext] as const,
