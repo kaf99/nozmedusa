@@ -6608,5 +6608,6 @@ export const generatedEditDates = {
   "references/core_flows/Locking/Steps_Locking/functions/core_flows.Locking.Steps_Locking.releaseLockStep/page.mdx": "2025-09-15T09:52:14.220Z",
   "references/core_flows/Locking/Steps_Locking/variables/core_flows.Locking.Steps_Locking.acquireLockStepId/page.mdx": "2025-09-15T09:52:14.218Z",
   "references/core_flows/Locking/Steps_Locking/variables/core_flows.Locking.Steps_Locking.releaseLockStepId/page.mdx": "2025-09-15T09:52:14.219Z",
-  "references/core_flows/Locking/core_flows.Locking.Steps_Locking/page.mdx": "2025-09-15T09:52:14.217Z"
+  "references/core_flows/Locking/core_flows.Locking.Steps_Locking/page.mdx": "2025-09-15T09:52:14.217Z",
+  "app/nextjs-starter/guides/storefront-returns/page.mdx": "2025-09-16T10:58:41.452Z"
 }
