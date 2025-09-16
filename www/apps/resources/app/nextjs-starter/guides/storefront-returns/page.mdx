@@ -667,7 +667,10 @@ export const returnShippingSelectorHighlights = [
 ```tsx title="src/modules/account/components/return-shipping-selector/index.tsx" highlights={returnShippingSelectorHighlights} collapsibleLines="1-11" expandButtonLabel="Show Imports"
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { 
+  useEffect, 
+  useState
+} from "react"
 import { RadioGroup } from "@headlessui/react"
 import { HttpTypes } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
