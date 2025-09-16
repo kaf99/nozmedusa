@@ -15,23 +15,23 @@ jobs:
         image: redis
         options: >-
           --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 1s
+          --health-timeout 10s
+          --health-retries 10
         ports:
           - 6379:6379
 
       postgres:
-        image: postgres
+        image: postgres:15-alpine
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: cli-test
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 1s
+          --health-timeout 10s
+          --health-retries 10
         ports:
           - 5432:5432
 
@@ -64,7 +64,7 @@ jobs:
         run: corepack enable
 
       - name: Install new app dependencies (via resolutions)
-        run: rm -f package-lock.json && yarn install --no-immutable --check-files --inline-builds --frozen-lockfile
+        run: rm -f package-lock.json && yarn install --inline-builds
         env:
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
         working-directory: ../cli-test
