@@ -533,7 +533,11 @@ medusaIntegrationTestRunner({
                 },
               },
             }),
-          ({ data }) => data.length > 0
+          ({ data }) => data.length > 0,
+          {
+            retries: 5,
+            waitSeconds: 1.5,
+          }
         )
         expect(resultset.data.length).toEqual(1)
       })
