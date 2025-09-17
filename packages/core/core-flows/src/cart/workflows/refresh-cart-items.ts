@@ -14,7 +14,7 @@ import { acquireLockStep, releaseLockStep } from "../../locking"
 import { updateLineItemsStep } from "../steps"
 import { cartFieldsForRefreshSteps } from "../utils/fields"
 import { pricingContextResult } from "../utils/schemas"
-import { prepareCartItemsWithPricesWorkflow } from "./get-variant-items-with-prices"
+import { getVariantsAndItemsWithPrices } from "./get-variants-and-items-with-prices"
 import { refreshCartShippingMethodsWorkflow } from "./refresh-cart-shipping-methods"
 import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-collection"
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
@@ -157,7 +157,7 @@ export const refreshCartItemsWorkflow = createWorkflow(
         },
       })
 
-      const { lineItems } = prepareCartItemsWithPricesWorkflow.runAsStep({
+      const { lineItems } = getVariantsAndItemsWithPrices.runAsStep({
         input: {
           cart,
           setPricingContextResult: setPricingContextResult!,

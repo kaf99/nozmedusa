@@ -32,7 +32,7 @@ import {
   PrepareLineItemDataInput,
 } from "../utils/prepare-line-item-data"
 
-interface GetVariantItemsWithPricesWorkflowInput {
+interface GetVariantsAndItemsWithPricesWorkflowInput {
   cart: Partial<CartDTO> & {
     region?: Partial<RegionDTO>
     region_id?: string
@@ -51,7 +51,7 @@ interface GetVariantItemsWithPricesWorkflowInput {
   }
 }
 
-type GetVariantItemsWithPricesWorkflowOutput = {
+type GetVariantsAndItemsWithPricesWorkflowOutput = {
   // The variant can depend on the requested fields and therefore the caller will know better
   variants: (object & {
     calculated_price: {
@@ -66,13 +66,13 @@ type GetVariantItemsWithPricesWorkflowOutput = {
   lineItems: UpdateLineItemWithSelectorDTO[]
 }
 
-export const getVariantItemsWithPricesId =
+export const getVariantsAndItemsWithPricesId =
   "get-variant-items-with-prices-workflow"
-export const prepareCartItemsWithPricesWorkflow = createWorkflow(
-  getVariantItemsWithPricesId,
+export const getVariantsAndItemsWithPrices = createWorkflow(
+  getVariantsAndItemsWithPricesId,
   (
-    input: WorkflowData<GetVariantItemsWithPricesWorkflowInput>
-  ): WorkflowResponse<GetVariantItemsWithPricesWorkflowOutput> => {
+    input: WorkflowData<GetVariantsAndItemsWithPricesWorkflowInput>
+  ): WorkflowResponse<GetVariantsAndItemsWithPricesWorkflowOutput> => {
     const variantIds = transform(
       { cart: input.cart, variantIds: input.variants?.id },
       (data): string[] => {
@@ -152,7 +152,7 @@ export const prepareCartItemsWithPricesWorkflow = createWorkflow(
         cart,
         variantsData,
         calculatedPriceSets,
-      }): GetVariantItemsWithPricesWorkflowOutput => {
+      }): GetVariantsAndItemsWithPricesWorkflowOutput => {
         const priceNotFound: string[] = []
 
         const items = (cart.items ?? []).map((item) => {

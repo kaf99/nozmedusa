@@ -25,7 +25,7 @@ import {
 } from "../../cart/utils/prepare-line-item-data"
 import { pricingContextResult } from "../../cart/utils/schemas"
 import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-variant-inventory"
-import { prepareCartItemsWithPricesWorkflow } from "../../cart/workflows/get-variant-items-with-prices"
+import { getVariantsAndItemsWithPrices } from "../../cart/workflows/get-variants-and-items-with-prices"
 import { useQueryGraphStep } from "../../common"
 import { refreshDraftOrderAdjustmentsWorkflow } from "../../draft-order/workflows/refresh-draft-order-adjustments"
 import { createOrdersStep } from "../steps"
@@ -259,7 +259,7 @@ export const createOrderWorkflow = createWorkflow(
         return !!variantIdsForPriceCalculation.length
       }
     ).then(() => {
-      return prepareCartItemsWithPricesWorkflow.runAsStep({
+      return getVariantsAndItemsWithPrices.runAsStep({
         input: {
           cart: {
             currency_code: input.currency_code,

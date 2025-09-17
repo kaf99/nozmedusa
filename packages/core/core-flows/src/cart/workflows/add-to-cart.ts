@@ -39,7 +39,7 @@ import {
 } from "../utils/prepare-line-item-data"
 import { pricingContextResult } from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
-import { prepareCartItemsWithPricesWorkflow } from "./get-variant-items-with-prices"
+import { getVariantsAndItemsWithPrices } from "./get-variants-and-items-with-prices"
 import { refreshCartItemsWorkflow } from "./refresh-cart-items"
 
 const cartFields = ["completed_at"].concat(cartFieldsForPricingContext)
@@ -170,7 +170,7 @@ export const addToCartWorkflow = createWorkflow(
       }
     ).then(() => {
       const { variants: variantsData, lineItems: items } =
-        prepareCartItemsWithPricesWorkflow.runAsStep({
+        getVariantsAndItemsWithPrices.runAsStep({
           input: {
             cart,
             items: input.items,

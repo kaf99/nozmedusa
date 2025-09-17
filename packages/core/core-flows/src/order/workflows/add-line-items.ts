@@ -20,7 +20,7 @@ import { findSalesChannelStep } from "../../cart/steps/find-sales-channel"
 import { requiredVariantFieldsForInventoryConfirmation } from "../../cart/utils/prepare-confirm-inventory-input"
 import { pricingContextResult } from "../../cart/utils/schemas"
 import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-variant-inventory"
-import { prepareCartItemsWithPricesWorkflow } from "../../cart/workflows/get-variant-items-with-prices"
+import { getVariantsAndItemsWithPrices } from "../../cart/workflows/get-variants-and-items-with-prices"
 import { useRemoteQueryStep } from "../../common"
 import { createOrderLineItemsStep } from "../steps"
 import { productVariantsFields } from "../utils/fields"
@@ -147,21 +147,20 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const { variants, lineItems } =
-      prepareCartItemsWithPricesWorkflow.runAsStep({
-        input: {
-          cart: order,
-          items: input.items,
-          setPricingContextResult: setPricingContextResult!,
-          variants: {
-            id: variantIds,
-            fields: deduplicate([
-              ...productVariantsFields,
-              ...requiredVariantFieldsForInventoryConfirmation,
-            ]),
-          },
+    const { variants, lineItems } = getVariantsAndItemsWithPrices.runAsStep({
+      input: {
+        cart: order,
+        items: input.items,
+        setPricingContextResult: setPricingContextResult!,
+        variants: {
+          id: variantIds,
+          fields: deduplicate([
+            ...productVariantsFields,
+            ...requiredVariantFieldsForInventoryConfirmation,
+          ]),
         },
-      })
+      },
+    })
 
     confirmVariantInventoryWorkflow.runAsStep({
       input: {

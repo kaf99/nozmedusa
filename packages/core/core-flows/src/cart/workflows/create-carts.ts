@@ -29,7 +29,7 @@ import { productVariantsFields } from "../utils/fields"
 import { requiredVariantFieldsForInventoryConfirmation } from "../utils/prepare-confirm-inventory-input"
 import { pricingContextResult } from "../utils/schemas"
 import { confirmVariantInventoryWorkflow } from "./confirm-variant-inventory"
-import { prepareCartItemsWithPricesWorkflow } from "./get-variant-items-with-prices"
+import { getVariantsAndItemsWithPrices } from "./get-variants-and-items-with-prices"
 import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-collection"
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
 import { updateTaxLinesWorkflow } from "./update-tax-lines"
@@ -146,25 +146,24 @@ export const createCartWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const { variants, lineItems } =
-      prepareCartItemsWithPricesWorkflow.runAsStep({
-        input: {
-          cart: {
-            currency_code: input.currency_code,
-            region_id: region.id,
-            customer_id: customerData.customer?.id,
-          },
-          items: input.items,
-          setPricingContextResult: setPricingContextResult!,
-          variants: {
-            id: variantIds,
-            fields: deduplicate([
-              ...productVariantsFields,
-              ...requiredVariantFieldsForInventoryConfirmation,
-            ]),
-          },
+    const { variants, lineItems } = getVariantsAndItemsWithPrices.runAsStep({
+      input: {
+        cart: {
+          currency_code: input.currency_code,
+          region_id: region.id,
+          customer_id: customerData.customer?.id,
         },
-      })
+        items: input.items,
+        setPricingContextResult: setPricingContextResult!,
+        variants: {
+          id: variantIds,
+          fields: deduplicate([
+            ...productVariantsFields,
+            ...requiredVariantFieldsForInventoryConfirmation,
+          ]),
+        },
+      },
+    })
 
     confirmVariantInventoryWorkflow.runAsStep({
       input: {
