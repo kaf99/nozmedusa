@@ -37,7 +37,7 @@ export interface GetVariantPriceSetsStepBulkInput {
     /**
      * The ID of the item.
      */
-    id: string
+    id?: string
     /**
      * The ID of the variant to get the price set for.
      */

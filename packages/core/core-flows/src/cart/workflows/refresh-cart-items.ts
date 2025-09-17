@@ -1,9 +1,4 @@
-import {
-  filterObjectByKeys,
-  isDefined,
-  MedusaError,
-  PromotionActions,
-} from "@medusajs/framework/utils"
+import { isDefined, PromotionActions } from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -12,27 +7,19 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { AdditionalData, CartDTO } from "@medusajs/types"
+import { AdditionalData } from "@medusajs/framework/types"
 import { useQueryGraphStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { acquireLockStep, releaseLockStep } from "../../locking"
-import { getVariantPriceSetsStep, updateLineItemsStep } from "../steps"
-import {
-  cartFieldsForPricingContext,
-  cartFieldsForRefreshSteps,
-  productVariantsFields,
-} from "../utils/fields"
-import {
-  prepareLineItemData,
-  PrepareLineItemDataInput,
-} from "../utils/prepare-line-item-data"
+import { updateLineItemsStep } from "../steps"
+import { cartFieldsForRefreshSteps } from "../utils/fields"
 import { pricingContextResult } from "../utils/schemas"
+import { prepareCartItemsWithPricesWorkflow } from "./get-variant-items-with-prices"
 import { refreshCartShippingMethodsWorkflow } from "./refresh-cart-shipping-methods"
 import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-collection"
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
 import { updateTaxLinesWorkflow } from "./update-tax-lines"
 import { upsertTaxLinesWorkflow } from "./upsert-tax-lines"
-import { prepareCartItemsWithPricesWorkflow } from "./calculate-cart-items-prices"
 
 /**
  * The details of the cart to refresh.
@@ -170,121 +157,12 @@ export const refreshCartItemsWorkflow = createWorkflow(
         },
       })
 
-      const lineItems = prepareCartItemsWithPricesWorkflow.runAsStep({
+      const [, lineItems] = prepareCartItemsWithPricesWorkflow.runAsStep({
         input: {
           cart,
           setPricingContextResult: setPricingContextResult!,
         },
       })
-
-      // const variantIds = transform({ cart }, (data: { cart: CartDTO }) => {
-      //   return Array.from(
-      //     new Set(
-      //       (data.cart.items ?? []).map((i) => i.variant_id).filter(Boolean)
-      //     )
-      //   )
-      // })
-
-      // const cartPricingContext = transform(
-      //   { cart, setPricingContextResult },
-      //   (
-      //     data
-      //   ): {
-      //     id: string
-      //     variantId: string
-      //     context: Record<string, unknown>
-      //   }[] => {
-      //     const cart = data.cart
-      //     const baseContext = {
-      //       ...filterObjectByKeys(cart, cartFieldsForPricingContext),
-      //       ...(data.setPricingContextResult
-      //         ? data.setPricingContextResult
-      //         : {}),
-      //       currency_code: cart.currency_code,
-      //       region_id: cart.region_id,
-      //       region: cart.region,
-      //       customer_id: cart.customer_id,
-      //       customer: cart.customer,
-      //     }
-
-      //     return cart.items
-      //       .filter((i) => i.variant_id)
-      //       .map((item) => {
-      //         return {
-      //           id: item.id,
-      //           variantId: item.variant_id,
-      //           context: {
-      //             ...baseContext,
-      //             quantity: item.quantity,
-      //           },
-      //         }
-      //       })
-      //   }
-      // )
-
-      // const { data: variantsData } = useQueryGraphStep({
-      //   entity: "variants",
-      //   fields: productVariantsFields,
-      //   filters: {
-      //     id: variantIds,
-      //   },
-      // }).config({ name: "fetch-variants" })
-
-      // const calculatedPriceSets = getVariantPriceSetsStep({
-      //   data: cartPricingContext,
-      // })
-
-      // const lineItems = transform(
-      //   { cart, variantsData, calculatedPriceSets },
-      //   ({ cart, variantsData, calculatedPriceSets }) => {
-      //     const priceNotFound: string[] = []
-
-      //     const items = cart.items.map((item) => {
-      //       let calculatedPriceSet = calculatedPriceSets[item.id]
-      //       if (!calculatedPriceSet) {
-      //         calculatedPriceSet = calculatedPriceSets[item.variant_id!]
-      //       }
-
-      //       if (!calculatedPriceSet) {
-      //         priceNotFound.push(item.variant_id!)
-      //       }
-
-      //       const variant = variantsData.find((v) => v.id === item.variant_id)
-
-      //       const input: PrepareLineItemDataInput = {
-      //         item,
-      //         variant: variant,
-      //         cartId: cart.id,
-      //         unitPrice: item.unit_price,
-      //         isTaxInclusive: item.is_tax_inclusive,
-      //       }
-
-      //       if (variant && !item.is_custom_price) {
-      //         input.unitPrice = calculatedPriceSet.calculated_amount
-      //         input.isTaxInclusive =
-      //           calculatedPriceSet.is_calculated_price_tax_inclusive
-      //       }
-
-      //       const preparedItem = prepareLineItemData(input)
-
-      //       return {
-      //         selector: { id: item.id },
-      //         data: preparedItem,
-      //       }
-      //     })
-
-      //     if (priceNotFound.length > 0) {
-      //       throw new MedusaError(
-      //         MedusaError.Types.INVALID_DATA,
-      //         `Variants with IDs ${priceNotFound.join(
-      //           ", "
-      //         )} do not have a price`
-      //       )
-      //     }
-
-      //     return items
-      //   }
-      // )
 
       updateLineItemsStep({
         id: cart.id,

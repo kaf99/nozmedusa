@@ -11,7 +11,7 @@ import { cartFieldsForPricingContext } from "../utils/fields"
 import {
   AdditionalData,
   ListShippingOptionsForCartWorkflowInput,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 import { filterObjectByKeys, isDefined } from "@medusajs/framework/utils"
 import { pricingContextResult } from "../utils/schemas"
 

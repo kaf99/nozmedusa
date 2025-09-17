@@ -15,7 +15,7 @@ import {
   OrderPreviewDTO,
   RegisterOrderChangeDTO,
   UpdateOrderDTO,
-} from "@medusajs/types"
+} from "@medusajs/framework/types"
 
 import { emitEventStep, useQueryGraphStep } from "../../common"
 import {

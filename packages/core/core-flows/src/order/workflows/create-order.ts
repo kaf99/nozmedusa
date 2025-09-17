@@ -1,6 +1,5 @@
 import { AdditionalData, CreateOrderDTO } from "@medusajs/framework/types"
 import {
-  MedusaError,
   PromotionActions,
   deduplicate,
   isDefined,
@@ -15,12 +14,10 @@ import {
   transform,
   when,
 } from "@medusajs/framework/workflows-sdk"
-import { getVariantPriceSetsStep } from "../../cart"
 import { findOneOrAnyRegionStep } from "../../cart/steps/find-one-or-any-region"
 import { findOrCreateCustomerStep } from "../../cart/steps/find-or-create-customer"
 import { findSalesChannelStep } from "../../cart/steps/find-sales-channel"
 import { validateLineItemPricesStep } from "../../cart/steps/validate-line-item-prices"
-import { validateVariantPricesStep } from "../../cart/steps/validate-variant-prices"
 import { requiredVariantFieldsForInventoryConfirmation } from "../../cart/utils/prepare-confirm-inventory-input"
 import {
   PrepareLineItemDataInput,
@@ -28,6 +25,7 @@ import {
 } from "../../cart/utils/prepare-line-item-data"
 import { pricingContextResult } from "../../cart/utils/schemas"
 import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-variant-inventory"
+import { prepareCartItemsWithPricesWorkflow } from "../../cart/workflows/get-variant-items-with-prices"
 import { useQueryGraphStep } from "../../common"
 import { refreshDraftOrderAdjustmentsWorkflow } from "../../draft-order/workflows/refresh-draft-order-adjustments"
 import { createOrdersStep } from "../steps"
@@ -208,22 +206,6 @@ export const createOrderWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const pricingContext = transform(
-      { input, region, customerData, setPricingContextResult },
-      (data) => {
-        if (!data.region) {
-          throw new MedusaError(MedusaError.Types.NOT_FOUND, "Region not found")
-        }
-
-        return {
-          ...(data.setPricingContextResult ? data.setPricingContextResult : {}),
-          currency_code: data.input.currency_code ?? data.region.currency_code,
-          region_id: data.region.id,
-          customer_id: data.customerData.customer?.id,
-        }
-      }
-    )
-
     /**
      * Only fetch variants with calculated prices if needed, otherwise only fetch variants without
      * calculated prices.
@@ -277,63 +259,26 @@ export const createOrderWorkflow = createWorkflow(
         return !!variantIdsForPriceCalculation.length
       }
     ).then(() => {
-      const calculatePricesContext = transform(
-        { items: input.items, variantIdsForPriceCalculation, pricingContext },
-        (data) => {
-          const baseContext = data.pricingContext
-
-          return data.variantIdsForPriceCalculation
-            ?.map((variant) => {
-              // Since we retrieve the variant ids from the item, it is not possible to not find the item back from the variant id.
-              const item = data.items?.find(
-                (item) => item.variant_id === variant
-              )!
-
-              return {
-                variantId: variant,
-                context: {
-                  ...baseContext,
-                  quantity: item.quantity,
-                },
-              }
-            })
-            .filter(Boolean)
-        }
-      )
-
-      const { data: variants } = useQueryGraphStep({
-        entity: "variants",
-        fields: deduplicate([
-          ...productVariantsFields,
-          ...requiredVariantFieldsForInventoryConfirmation,
-        ]),
-        filters: {
-          id: variantIdsForPriceCalculation,
+      const [variants] = prepareCartItemsWithPricesWorkflow.runAsStep({
+        input: {
+          cart: {
+            currency_code: input.currency_code,
+            region_id: region.id,
+            customer_id: customerData.customer?.id,
+          },
+          items: input.items,
+          setPricingContextResult: setPricingContextResult!,
+          variants: {
+            id: variantIdsForPriceCalculation,
+            fields: deduplicate([
+              ...productVariantsFields,
+              ...requiredVariantFieldsForInventoryConfirmation,
+            ]),
+          },
         },
-      }).config({ name: "query-variants-to-calculate-prices" })
-
-      const calculatedPriceSets = getVariantPriceSetsStep({
-        data: calculatePricesContext,
       })
 
-      const reconstructedVariants = transform(
-        {
-          variants,
-          calculatedPriceSets,
-        },
-        (data) => {
-          return data.variants.map((variant) => {
-            variant.calculated_price = data.calculatedPriceSets[variant.id]
-            return variant
-          })
-        }
-      )
-
-      validateVariantPricesStep({ variants: reconstructedVariants }).config({
-        name: "validate-variants-with-calculated-price",
-      })
-
-      return reconstructedVariants
+      return variants
     })
 
     /**

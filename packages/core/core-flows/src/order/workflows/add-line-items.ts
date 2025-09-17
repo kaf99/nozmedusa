@@ -1,9 +1,10 @@
 import {
   AdditionalData,
+  ConfirmVariantInventoryWorkflowInputDTO,
   OrderLineItemDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import { deduplicate, isDefined, MedusaError } from "@medusajs/framework/utils"
+import { deduplicate, isDefined } from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
@@ -17,7 +18,6 @@ import { findOneOrAnyRegionStep } from "../../cart/steps/find-one-or-any-region"
 import { findOrCreateCustomerStep } from "../../cart/steps/find-or-create-customer"
 import { findSalesChannelStep } from "../../cart/steps/find-sales-channel"
 import { validateLineItemPricesStep } from "../../cart/steps/validate-line-item-prices"
-import { validateVariantPricesStep } from "../../cart/steps/validate-variant-prices"
 import { requiredVariantFieldsForInventoryConfirmation } from "../../cart/utils/prepare-confirm-inventory-input"
 import {
   prepareLineItemData,
@@ -25,10 +25,10 @@ import {
 } from "../../cart/utils/prepare-line-item-data"
 import { pricingContextResult } from "../../cart/utils/schemas"
 import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-variant-inventory"
-import { useQueryGraphStep, useRemoteQueryStep } from "../../common"
+import { prepareCartItemsWithPricesWorkflow } from "../../cart/workflows/get-variant-items-with-prices"
+import { useRemoteQueryStep } from "../../common"
 import { createOrderLineItemsStep } from "../steps"
 import { productVariantsFields } from "../utils/fields"
-import { getVariantPriceSetsStep } from "../../cart"
 
 function prepareLineItems(data) {
   const items = (data.input.items ?? []).map((item) => {
@@ -178,22 +178,6 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const pricingContext = transform(
-      { input, region, customerData, order, setPricingContextResult },
-      (data) => {
-        if (!data.region) {
-          throw new MedusaError(MedusaError.Types.NOT_FOUND, "Region not found")
-        }
-
-        return {
-          ...(data.setPricingContextResult ? data.setPricingContextResult : {}),
-          currency_code: data.order.currency_code ?? data.region.currency_code,
-          region_id: data.region.id,
-          customer_id: data.customerData.customer?.id,
-        }
-      }
-    )
-
     const variants = when(
       "fetch-variants-with-calculated-price",
       { variantIds },
@@ -201,51 +185,20 @@ export const addOrderLineItemsWorkflow = createWorkflow(
         return !!variantIds.length
       }
     ).then(() => {
-      const { data: variantsData } = useQueryGraphStep({
-        entity: "variants",
-        fields: deduplicate([
-          ...productVariantsFields,
-          ...requiredVariantFieldsForInventoryConfirmation,
-        ]),
-        filters: {
-          id: variantIds,
+      const [variants] = prepareCartItemsWithPricesWorkflow.runAsStep({
+        input: {
+          cart: order,
+          items: input.items,
+          setPricingContextResult: setPricingContextResult!,
+          variants: {
+            id: variantIds,
+            fields: deduplicate([
+              ...productVariantsFields,
+              ...requiredVariantFieldsForInventoryConfirmation,
+            ]),
+          },
         },
       })
-
-      const calculatedPriceContext = transform(
-        { pricingContext, items: input.items },
-        (data): { variantId: string; context: Record<string, unknown> }[] => {
-          const baseContext = data.pricingContext
-
-          return (data.items ?? [])
-            .filter((i) => i.variant_id)
-            .map((item) => {
-              return {
-                variantId: item.variant_id!,
-                context: {
-                  ...baseContext,
-                  quantity: item.quantity,
-                },
-              }
-            })
-        }
-      )
-
-      const calculatedPriceSets = getVariantPriceSetsStep({
-        data: calculatedPriceContext,
-      })
-
-      const variants = transform(
-        { variantsData, calculatedPriceSets },
-        ({ variantsData, calculatedPriceSets }) => {
-          return variantsData.map((variant) => {
-            variant.calculated_price = calculatedPriceSets[variant.id]
-            return variant
-          })
-        }
-      )
-
-      validateVariantPricesStep({ variants })
 
       return variants
     })
@@ -253,7 +206,8 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     confirmVariantInventoryWorkflow.runAsStep({
       input: {
         sales_channel_id: salesChannel.id,
-        variants: variants!,
+        variants:
+          variants as unknown as ConfirmVariantInventoryWorkflowInputDTO["variants"],
         items: input.items!,
       },
     })

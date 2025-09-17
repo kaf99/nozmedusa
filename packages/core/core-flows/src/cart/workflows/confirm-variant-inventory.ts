@@ -5,7 +5,7 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { BigNumberInput } from "@medusajs/types"
+import { BigNumberInput } from "@medusajs/framework/types"
 import { confirmInventoryStep } from "../steps"
 import { prepareConfirmInventoryInput } from "../utils/prepare-confirm-inventory-input"
 
