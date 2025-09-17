@@ -51,9 +51,9 @@ interface GetVariantItemsWithPricesWorkflowInput {
   }
 }
 
-type GetVariantItemsWithPricesWorkflowOutput = [
+type GetVariantItemsWithPricesWorkflowOutput = {
   // The variant can depend on the requested fields and therefore the caller will know better
-  (object & {
+  variants: (object & {
     calculated_price: {
       calculated_price: {
         price_list_type: string
@@ -62,9 +62,9 @@ type GetVariantItemsWithPricesWorkflowOutput = [
       original_amount: BigNumberInput
       calculated_amount: BigNumberInput
     }
-  })[],
-  UpdateLineItemWithSelectorDTO[]
-]
+  })[]
+  lineItems: UpdateLineItemWithSelectorDTO[]
+}
 
 export const getVariantItemsWithPricesId =
   "get-variant-items-with-prices-workflow"
@@ -201,7 +201,7 @@ export const prepareCartItemsWithPricesWorkflow = createWorkflow(
           )
         }
 
-        return [variantsData, items]
+        return { variants: variantsData, lineItems: items }
       }
     )
 

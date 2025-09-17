@@ -169,7 +169,7 @@ export const addToCartWorkflow = createWorkflow(
         return !!variantIds.length
       }
     ).then(() => {
-      const [variantsData, lineItemsData] =
+      const { variants: variantsData, lineItems: items } =
         prepareCartItemsWithPricesWorkflow.runAsStep({
           input: {
             cart,
@@ -185,8 +185,8 @@ export const addToCartWorkflow = createWorkflow(
           },
         })
 
-      const lineItems = transform({ lineItemsData }, ({ lineItemsData }) => {
-        return lineItemsData.map((item) => {
+      const lineItems = transform({ items }, ({ items }) => {
+        return items.map((item) => {
           return item.data as CreateLineItemForCartDTO
         })
       })

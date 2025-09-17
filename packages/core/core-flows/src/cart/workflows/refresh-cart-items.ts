@@ -157,7 +157,7 @@ export const refreshCartItemsWorkflow = createWorkflow(
         },
       })
 
-      const [, lineItems] = prepareCartItemsWithPricesWorkflow.runAsStep({
+      const { lineItems } = prepareCartItemsWithPricesWorkflow.runAsStep({
         input: {
           cart,
           setPricingContextResult: setPricingContextResult!,

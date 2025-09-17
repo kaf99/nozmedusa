@@ -252,14 +252,14 @@ export const createOrderWorkflow = createWorkflow(
     /**
      * Fetch all variants for which we need to calculate the price.
      */
-    const variantsWithCalculatedPrice = when(
+    const variantsAndItemsWithCalculatedPrice = when(
       "fetch-variants-with-calculated-price",
       { variantIdsForPriceCalculation },
       ({ variantIdsForPriceCalculation }) => {
         return !!variantIdsForPriceCalculation.length
       }
     ).then(() => {
-      const [variants] = prepareCartItemsWithPricesWorkflow.runAsStep({
+      return prepareCartItemsWithPricesWorkflow.runAsStep({
         input: {
           cart: {
             currency_code: input.currency_code,
@@ -277,8 +277,6 @@ export const createOrderWorkflow = createWorkflow(
           },
         },
       })
-
-      return variants
     })
 
     /**
@@ -287,12 +285,12 @@ export const createOrderWorkflow = createWorkflow(
     const variants = transform(
       {
         variantsWithoutCalculatedPrice,
-        variantsWithCalculatedPrice,
+        variantsAndItemsWithCalculatedPrice,
       },
       (data) => {
         return [
           ...data.variantsWithoutCalculatedPrice,
-          ...(data.variantsWithCalculatedPrice ?? []),
+          ...(data.variantsAndItemsWithCalculatedPrice?.variants ?? []),
         ]
       }
     )
@@ -310,7 +308,18 @@ export const createOrderWorkflow = createWorkflow(
       getOrderInput
     )
 
-    const lineItems = transform({ input, variants }, prepareLineItems)
+    const lineItems = transform(
+      { input, variants, variantsAndItemsWithCalculatedPrice },
+      (data) => {
+        const itemsForVariantWithoutCalculatedPrice = prepareLineItems(data)
+        const itemsForVariantWithCalculatedPrice =
+          variantsAndItemsWithCalculatedPrice?.lineItems ?? []
+        return [
+          ...itemsForVariantWithoutCalculatedPrice,
+          ...itemsForVariantWithCalculatedPrice,
+        ]
+      }
+    )
 
     validateLineItemPricesStep({ items: lineItems })
 

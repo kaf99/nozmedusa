@@ -1,60 +1,29 @@
 import {
   AdditionalData,
   ConfirmVariantInventoryWorkflowInputDTO,
+  CreateOrderLineItemDTO,
   OrderLineItemDTO,
   OrderWorkflow,
 } from "@medusajs/framework/types"
-import { deduplicate, isDefined } from "@medusajs/framework/utils"
+import { deduplicate } from "@medusajs/framework/utils"
 import {
   createHook,
   createWorkflow,
   parallelize,
   transform,
-  when,
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { findOneOrAnyRegionStep } from "../../cart/steps/find-one-or-any-region"
 import { findOrCreateCustomerStep } from "../../cart/steps/find-or-create-customer"
 import { findSalesChannelStep } from "../../cart/steps/find-sales-channel"
-import { validateLineItemPricesStep } from "../../cart/steps/validate-line-item-prices"
 import { requiredVariantFieldsForInventoryConfirmation } from "../../cart/utils/prepare-confirm-inventory-input"
-import {
-  prepareLineItemData,
-  PrepareLineItemDataInput,
-} from "../../cart/utils/prepare-line-item-data"
 import { pricingContextResult } from "../../cart/utils/schemas"
 import { confirmVariantInventoryWorkflow } from "../../cart/workflows/confirm-variant-inventory"
 import { prepareCartItemsWithPricesWorkflow } from "../../cart/workflows/get-variant-items-with-prices"
 import { useRemoteQueryStep } from "../../common"
 import { createOrderLineItemsStep } from "../steps"
 import { productVariantsFields } from "../utils/fields"
-
-function prepareLineItems(data) {
-  const items = (data.input.items ?? []).map((item) => {
-    const variant = data.variants?.find((v) => v.id === item.variant_id)
-
-    const input: PrepareLineItemDataInput = {
-      item,
-      variant: variant,
-      unitPrice: item.unit_price,
-      isTaxInclusive:
-        item.is_tax_inclusive ??
-        variant?.calculated_price?.is_calculated_price_tax_inclusive,
-      isCustomPrice: isDefined(item?.unit_price),
-      taxLines: item.tax_lines ?? [],
-      adjustments: item.adjustments ?? [],
-    }
-
-    if (variant && !isDefined(input.unitPrice)) {
-      input.unitPrice = variant.calculated_price?.calculated_amount
-    }
-
-    return prepareLineItemData(input)
-  })
-
-  return items
-}
 
 /**
  * The created order line items.
@@ -178,14 +147,8 @@ export const addOrderLineItemsWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const variants = when(
-      "fetch-variants-with-calculated-price",
-      { variantIds },
-      ({ variantIds }) => {
-        return !!variantIds.length
-      }
-    ).then(() => {
-      const [variants] = prepareCartItemsWithPricesWorkflow.runAsStep({
+    const { variants, lineItems } =
+      prepareCartItemsWithPricesWorkflow.runAsStep({
         input: {
           cart: order,
           items: input.items,
@@ -200,9 +163,6 @@ export const addOrderLineItemsWorkflow = createWorkflow(
         },
       })
 
-      return variants
-    })
-
     confirmVariantInventoryWorkflow.runAsStep({
       input: {
         sales_channel_id: salesChannel.id,
@@ -212,13 +172,15 @@ export const addOrderLineItemsWorkflow = createWorkflow(
       },
     })
 
-    const lineItems = transform({ input, variants }, prepareLineItems)
-
-    validateLineItemPricesStep({ items: lineItems })
+    const items = transform({ lineItems }, (data) => {
+      return data.lineItems.map((item) => {
+        return item.data as CreateOrderLineItemDTO
+      })
+    })
 
     return new WorkflowResponse(
       createOrderLineItemsStep({
-        items: lineItems,
+        items: items,
       }) satisfies OrderAddLineItemWorkflowOutput,
       {
         hooks: [setPricingContext] as const,

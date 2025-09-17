@@ -146,24 +146,25 @@ export const createCartWorkflow = createWorkflow(
     )
     const setPricingContextResult = setPricingContext.getResult()
 
-    const [variants, lineItems] = prepareCartItemsWithPricesWorkflow.runAsStep({
-      input: {
-        cart: {
-          currency_code: input.currency_code,
-          region_id: region.id,
-          customer_id: customerData.customer?.id,
+    const { variants, lineItems } =
+      prepareCartItemsWithPricesWorkflow.runAsStep({
+        input: {
+          cart: {
+            currency_code: input.currency_code,
+            region_id: region.id,
+            customer_id: customerData.customer?.id,
+          },
+          items: input.items,
+          setPricingContextResult: setPricingContextResult!,
+          variants: {
+            id: variantIds,
+            fields: deduplicate([
+              ...productVariantsFields,
+              ...requiredVariantFieldsForInventoryConfirmation,
+            ]),
+          },
         },
-        items: input.items,
-        setPricingContextResult: setPricingContextResult!,
-        variants: {
-          id: variantIds,
-          fields: deduplicate([
-            ...productVariantsFields,
-            ...requiredVariantFieldsForInventoryConfirmation,
-          ]),
-        },
-      },
-    })
+      })
 
     confirmVariantInventoryWorkflow.runAsStep({
       input: {
