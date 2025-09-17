@@ -65,9 +65,7 @@ interface PriceCalculationItem {
 }
 
 export interface GetVariantPriceSetsStepOutput {
-  [k: string]: CalculatedPriceSet & {
-    type: "variant" | "item"
-  }
+  [k: string]: CalculatedPriceSet
 }
 
 export const getVariantPriceSetsStepId = "get-variant-price-sets"
@@ -134,10 +132,7 @@ async function processVariantPriceSets(
     for (const item of groupItems) {
       const calculatedPriceSet = priceSetMap.get(item.priceSetId)
       if (calculatedPriceSet) {
-        result[item.id ?? item.variantId] = {
-          ...calculatedPriceSet,
-          type: item.id ? "item" : "variant",
-        }
+        result[item.id ?? item.variantId] = calculatedPriceSet
       }
     }
   }
