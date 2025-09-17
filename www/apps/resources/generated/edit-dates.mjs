@@ -104,7 +104,7 @@ export const generatedEditDates = {
   "app/deployment/medusa-application/railway/page.mdx": "2025-04-17T08:28:58.981Z",
   "app/deployment/storefront/vercel/page.mdx": "2025-05-20T07:51:40.712Z",
   "app/deployment/page.mdx": "2025-06-24T08:50:10.114Z",
-  "app/integrations/page.mdx": "2025-08-07T06:06:50.604Z",
+  "app/integrations/page.mdx": "2025-09-17T08:08:37.954Z",
   "app/medusa-cli/page.mdx": "2024-08-28T11:25:32.382Z",
   "app/medusa-container-resources/page.mdx": "2025-07-31T13:24:15.786Z",
   "app/medusa-workflows-reference/page.mdx": "2025-01-20T08:21:29.962Z",
@@ -6048,7 +6048,7 @@ export const generatedEditDates = {
   "app/troubleshooting/workflow-errors/step-x-defined/page.mdx": "2025-03-21T07:09:02.741Z",
   "app/troubleshooting/workflow-errors/when-then/page.mdx": "2025-03-21T08:35:45.145Z",
   "app/how-to-tutorials/tutorials/abandoned-cart/page.mdx": "2025-06-26T11:45:57.112Z",
-  "app/integrations/guides/algolia/page.mdx": "2025-06-26T12:33:36.673Z",
+  "app/integrations/guides/algolia/page.mdx": "2025-09-17T07:36:03.845Z",
   "app/integrations/guides/magento/page.mdx": "2025-05-20T07:51:40.716Z",
   "app/js-sdk/auth/overview/page.mdx": "2025-03-28T08:05:32.622Z",
   "app/how-to-tutorials/tutorials/loyalty-points/page.mdx": "2025-06-26T11:58:07.874Z",
@@ -6608,5 +6608,6 @@ export const generatedEditDates = {
   "references/core_flows/Locking/Steps_Locking/functions/core_flows.Locking.Steps_Locking.releaseLockStep/page.mdx": "2025-09-15T09:52:14.220Z",
   "references/core_flows/Locking/Steps_Locking/variables/core_flows.Locking.Steps_Locking.acquireLockStepId/page.mdx": "2025-09-15T09:52:14.218Z",
   "references/core_flows/Locking/Steps_Locking/variables/core_flows.Locking.Steps_Locking.releaseLockStepId/page.mdx": "2025-09-15T09:52:14.219Z",
-  "references/core_flows/Locking/core_flows.Locking.Steps_Locking/page.mdx": "2025-09-15T09:52:14.217Z"
+  "references/core_flows/Locking/core_flows.Locking.Steps_Locking/page.mdx": "2025-09-15T09:52:14.217Z",
+  "app/integrations/guides/meilisearch/page.mdx": "2025-09-17T08:34:58.966Z"
 }
