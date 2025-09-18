@@ -1,3 +1,4 @@
+import { AdditionalData } from "@medusajs/framework/types"
 import { isDefined, PromotionActions } from "@medusajs/framework/utils"
 import {
   createHook,
@@ -7,7 +8,6 @@ import {
   WorkflowData,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { AdditionalData } from "@medusajs/framework/types"
 import { useQueryGraphStep } from "../../common"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { acquireLockStep, releaseLockStep } from "../../locking"
@@ -178,7 +178,7 @@ export const refreshCartItemsWorkflow = createWorkflow(
     }).config({ name: "refetch–cart" })
 
     refreshCartShippingMethodsWorkflow.runAsStep({
-      input: { cart: refetchedCart },
+      input: { cart: refetchedCart, additional_data: input.additional_data },
     })
 
     when("force-refresh-update-tax-lines", { input }, ({ input }) => {
