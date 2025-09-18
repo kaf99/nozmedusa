@@ -124,16 +124,12 @@ export const addToCartWorkflow = createWorkflow(
       skipOnSubWorkflow: true,
     })
 
-    const cartQuery = useQueryGraphStep({
+    const { data: cart } = useQueryGraphStep({
       entity: "cart",
       filters: { id: input.cart_id },
       fields: cartFields,
-      options: { throwIfKeyNotFound: true },
+      options: { throwIfKeyNotFound: true, isList: false },
     }).config({ name: "get-cart" })
-
-    const cart = transform({ cartQuery }, ({ cartQuery }) => {
-      return cartQuery.data[0]
-    })
 
     validateCartStep({ cart })
     const validate = createHook("validate", {
@@ -311,7 +307,11 @@ export const addToCartWorkflow = createWorkflow(
     )
 
     refreshCartItemsWorkflow.runAsStep({
-      input: { cart_id: cart.id, items: allItems, additional_data: input.additional_data },
+      input: {
+        cart_id: cart.id,
+        items: allItems,
+        additional_data: input.additional_data,
+      },
     })
 
     parallelize(
