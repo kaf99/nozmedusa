@@ -1307,10 +1307,12 @@ function buildSchemaFromFilterableLinks(
             ObjectTypeDefinition(node) {
               if (node.name.value === typeName) {
                 const fields =
-                  node.fields?.map((field) => {
-                    const fieldType = GraphQLUtils.print(field.type)
-                    return `${field.name.value}: ${fieldType}`
-                  }) || []
+                  node.fields
+                    ?.map((field) => {
+                      const fieldType = GraphQLUtils.print(field.type)
+                      return `${field.name.value}: ${fieldType}`
+                    })
+                    .filter((v): v is string => !!v) || []
 
                 extendedTypes.set(typeName, [config.serviceName!, fields])
                 foundType = true
@@ -1358,10 +1360,15 @@ function buildSchemaFromFilterableLinks(
 
       const fieldDefinitions = fields
         .map((field) => {
+          if (field.trim().startsWith("id")) {
+            return
+          }
+
           const type = getGqlType(entity, field) ?? "String"
 
           return `    ${field}: ${type}`
         })
+        .filter((v): v is string => !!v)
         .join("\n")
 
       const idType = getIdFieldType(entity, moduleJoinerConfigs)
@@ -1397,7 +1404,7 @@ function buildSchemaFromFilterableLinks(
   const extendedTypesSchema = Array.from(extendedTypes.entries())
     .map(([typeName, [serviceName, fields]]) => {
       const fieldDefinitions = fields
-        .filter((field) => field.trim() && field.trim() !== "id: ID!")
+        .filter((field) => field.trim() && !field.trim().startsWith("id"))
         .join("\n        ")
 
       if (!fieldDefinitions) return ""
