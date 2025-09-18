@@ -1222,59 +1222,82 @@ function buildSchemaFromFilterableLinks(
     const basicTypes = new Set<string>()
     const extendedTypes = new Map<string, [string, string[]]>()
 
-    // Find all types referenced in the built schema that aren't defined
-    const referencedTypeNames = new Set<string>()
-    const definedTypes = new Set<string>()
+    if (!builtSchema) {
+      return { basicTypes, extendedTypes }
+    }
 
-    // Extract defined types from the built schema
-    const definedTypeMatches = builtSchema.match(/type\s+(\w+)\s+@?/g) || []
-    definedTypeMatches.forEach((match) => {
-      const typeNameMatch = match.match(/type\s+(\w+)/)
-      if (typeNameMatch) {
-        definedTypes.add(typeNameMatch[1])
-      }
+    // Parse the built schema using GraphQL utilities
+    const builtSchemaDoc = GraphQLUtils.parse(builtSchema)
+    const definedTypes = new Set<string>()
+    const referencedTypes = new Set<string>()
+
+    // Find all defined types in the built schema
+    GraphQLUtils.visit(builtSchemaDoc, {
+      ObjectTypeDefinition(node) {
+        definedTypes.add(node.name.value)
+      },
     })
 
-    // Extract referenced types from field definitions in the built schema
-    const fieldMatches = builtSchema.match(/\s+\w+:\s*\[?(\w+)\]?[!]?/g) || []
-    fieldMatches.forEach((match) => {
-      const typeMatch = match.match(/:\s*\[?(\w+)\]?[!]?/)
-      if (typeMatch) {
-        const typeName = typeMatch[1]
+    // Find all referenced types in field definitions
+    GraphQLUtils.visit(builtSchemaDoc, {
+      FieldDefinition(node) {
+        const fieldType = GraphQLUtils.getNamedType(node.type as any)
+        const typeName =
+          (fieldType as any).type?.name?.value ?? (fieldType as any).name?.value
+
+        // Check if it's an array type (not supported for filtering)
+        if (
+          GraphQLUtils.isListType(node.type) ||
+          (GraphQLUtils.isNonNullType(node.type) &&
+            GraphQLUtils.isListType((node.type as any).type))
+        ) {
+          throw new Error(
+            `Field "${node.name.value}" is an array/many relationship which is not supported for filtering.`
+          )
+        }
+
         // Only add if it's not a scalar type and not already defined
         if (
+          !GraphQLUtils.isScalarType({ name: { value: typeName } }) &&
           !["String", "Int", "Float", "Boolean", "ID"].includes(typeName) &&
           !definedTypes.has(typeName)
         ) {
-          referencedTypeNames.add(typeName)
+          referencedTypes.add(typeName)
         }
-      }
+      },
     })
 
     // For each referenced type, find its definition in the module schemas
-    for (const typeName of referencedTypeNames) {
+    for (const typeName of referencedTypes) {
       basicTypes.add(typeName)
 
-      // Extract all fields for this type from the source schema
+      // Find the type definition in module configs using GraphQL parsing
       for (const config of moduleJoinerConfigs) {
         if (!config.schema) continue
 
-        const typeMatch = config.schema.match(
-          new RegExp(`type\\s+${typeName}\\s*\\{([^}]+)\\}`, "g")
-        )
-        if (typeMatch) {
-          const fieldsMatch = typeMatch[0].match(/\{([^}]+)\}/)
-          if (fieldsMatch) {
-            const fieldsText = fieldsMatch[1]
-            const fields = fieldsText
-              .split("\n")
-              .map((line) => line.trim())
-              .filter((line) => line && !line.startsWith("//"))
-              .map((line) => line.replace(/,$/, ""))
+        try {
+          const configSchemaDoc = GraphQLUtils.parse(config.schema)
+          let foundType = false
 
-            extendedTypes.set(typeName, [config.serviceName!, fields])
-          }
-          break
+          GraphQLUtils.visit(configSchemaDoc, {
+            ObjectTypeDefinition(node) {
+              if (node.name.value === typeName) {
+                const fields =
+                  node.fields?.map((field) => {
+                    const fieldType = GraphQLUtils.print(field.type)
+                    return `${field.name.value}: ${fieldType}`
+                  }) || []
+
+                extendedTypes.set(typeName, [config.serviceName!, fields])
+                foundType = true
+              }
+            },
+          })
+
+          if (foundType) break
+        } catch (error) {
+          // Skip invalid schemas
+          continue
         }
       }
     }
