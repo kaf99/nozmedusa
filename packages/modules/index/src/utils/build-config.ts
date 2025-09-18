@@ -1211,6 +1211,39 @@ function buildSchemaFromFilterableLinks(
     return entities
   })
 
+  // Helper function to get the actual id field type from a type definition
+  const getIdFieldType = (
+    typeName: string,
+    moduleJoinerConfigs: ModuleJoinerConfig[]
+  ): string => {
+    for (const config of moduleJoinerConfigs) {
+      if (!config.schema) continue
+
+      try {
+        const configSchemaDoc = GraphQLUtils.parse(config.schema)
+        let idType = "ID!" // default fallback
+
+        GraphQLUtils.visit(configSchemaDoc, {
+          ObjectTypeDefinition(node) {
+            if (node.name.value === typeName) {
+              const idField = node.fields?.find(
+                (field) => field.name.value === "id"
+              )
+              if (idField) {
+                idType = GraphQLUtils.print(idField.type)
+              }
+            }
+          },
+        })
+
+        return idType
+      } catch (error) {
+        continue
+      }
+    }
+    return "ID!" // fallback if not found
+  }
+
   // Helper function to find referenced types that need basic definitions based on the built schema
   const getReferencedTypesNeedingDefinition = (
     moduleJoinerConfigs: ModuleJoinerConfig[],
@@ -1331,9 +1364,10 @@ function buildSchemaFromFilterableLinks(
         })
         .join("\n")
 
+      const idType = getIdFieldType(entity, moduleJoinerConfigs)
       return `
       type ${entity} ${events} {
-        id: ID!
+        id: ${idType}
       }
 
       extend type ${entity} {
@@ -1350,12 +1384,13 @@ function buildSchemaFromFilterableLinks(
 
   // Generate basic type definitions for referenced types
   const basicTypesSchema = Array.from(basicTypes)
-    .map(
-      (typeName) => `
+    .map((typeName) => {
+      const idType = getIdFieldType(typeName, moduleJoinerConfigs)
+      return `
       type ${typeName} {
-        id: ID!
+        id: ${idType}
       }`
-    )
+    })
     .join("\n\n")
 
   // Generate extend type definitions for referenced types
