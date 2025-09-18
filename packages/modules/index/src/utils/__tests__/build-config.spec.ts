@@ -1838,8 +1838,8 @@ describe("buildSchemaObjectRepresentation", () => {
 
   it("should throw an error when an entity with listeners doesn't have a corresponding module", () => {
     const indexSchema = `
-      type Product @Listeners(values: ["product.created"]) { 
-        id: ID! 
+      type Product @Listeners(values: ["product.created"]) {
+        id: ID!
         title: String!
       }
     `
@@ -1852,6 +1852,592 @@ describe("buildSchemaObjectRepresentation", () => {
       buildSchemaObjectRepresentation(indexSchema)
     }).toThrow(
       /unable to retrieve the module that corresponds to the entity Product/
+    )
+  })
+
+  it("should handle link modules between Order and Vendor entities with filterable scalar properties", () => {
+    const orderSchema = `
+      type Order {
+        id: ID!
+        display_id: String!
+        currency_code: String!
+      }
+    `
+
+    const vendorSchema = `
+      type Vendor {
+        id: ID!
+        name: String!
+        email: String!
+      }
+    `
+
+    const orderVendorLinkSchema = `
+      type OrderVendorLink {
+        id: ID!
+        order_id: ID!
+        vendor_id: ID!
+        order: Order!
+        vendor: Vendor!
+      }
+
+      extend type Order {
+        vendor_link: OrderVendorLink!
+        vendor: Vendor!
+      }
+
+      extend type Vendor {
+        order_link: OrderVendorLink!
+        orders: [Order!]
+      }
+    `
+
+    const orderModuleJoinerConfig = {
+      serviceName: "OrderService",
+      schema: orderSchema,
+      alias: [
+        {
+          name: "order",
+          entity: "Order",
+        },
+      ],
+      linkableKeys: {
+        order_id: "Order",
+      },
+    }
+
+    const vendorModuleJoinerConfig = {
+      serviceName: "VendorService",
+      schema: vendorSchema,
+      alias: [
+        {
+          name: "vendor",
+          entity: "Vendor",
+        },
+      ],
+      linkableKeys: {
+        vendor_id: "Vendor",
+      },
+    }
+
+    const orderVendorLinkModuleJoinerConfig = {
+      serviceName: "OrderVendorLinkService",
+      isLink: true,
+      schema: orderVendorLinkSchema,
+      alias: [
+        {
+          name: "order_vendor_link",
+          entity: "OrderVendorLink",
+        },
+      ],
+      relationships: [
+        {
+          alias: "order",
+          serviceName: "OrderService",
+          foreignKey: "order_id",
+          entity: "Order",
+          filterable: ["display_id", "currency_code"],
+        },
+        {
+          alias: "vendor",
+          serviceName: "VendorService",
+          foreignKey: "vendor_id",
+          entity: "Vendor",
+          filterable: ["name", "email"],
+        },
+      ],
+      extends: [
+        {
+          serviceName: "OrderService",
+          entity: "Order",
+          fieldAlias: {
+            vendor: "vendor_link.order",
+          },
+          relationship: {
+            alias: "vendor_link",
+            foreignKey: "id",
+            primaryKey: "order_id",
+            serviceName: "OrderVendorLinkService",
+          },
+        },
+        {
+          serviceName: "VendorService",
+          entity: "Vendor",
+          fieldAlias: {
+            orders: "order_link.order",
+          },
+          relationship: {
+            isList: true,
+            alias: "order_link",
+            foreignKey: "id",
+            primaryKey: "vendor_id",
+            serviceName: "OrderVendorLinkService",
+          },
+        },
+      ],
+    }
+
+    ;(MedusaModule.getAllJoinerConfigs as jest.Mock).mockReturnValue([
+      orderModuleJoinerConfig,
+      vendorModuleJoinerConfig,
+      orderVendorLinkModuleJoinerConfig,
+    ])
+
+    const indexSchema = `
+      
+    `
+
+    const { objectRepresentation, entitiesMap } =
+      buildSchemaObjectRepresentation(indexSchema)
+
+    // Verify entitiesMap structure
+    expect(entitiesMap).toEqual(
+      expect.objectContaining({
+        Order: expect.objectContaining({
+          name: "Order",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            display_id: expect.objectContaining({
+              name: "display_id",
+            }),
+            currency_code: expect.objectContaining({
+              name: "currency_code",
+            }),
+            vendor: expect.objectContaining({
+              name: "vendor",
+            }),
+            vendor_link: expect.objectContaining({
+              name: "vendor_link",
+            }),
+          },
+        }),
+        Vendor: expect.objectContaining({
+          name: "Vendor",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            name: expect.objectContaining({
+              name: "name",
+            }),
+            email: expect.objectContaining({
+              name: "email",
+            }),
+            orders: expect.objectContaining({
+              name: "orders",
+            }),
+            order_link: expect.objectContaining({
+              name: "order_link",
+            }),
+          },
+        }),
+        OrderVendorLink: expect.objectContaining({
+          name: "OrderVendorLink",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            order_id: expect.objectContaining({
+              name: "order_id",
+            }),
+            vendor_id: expect.objectContaining({
+              name: "vendor_id",
+            }),
+            order: expect.objectContaining({
+              name: "order",
+            }),
+            vendor: expect.objectContaining({
+              name: "vendor",
+            }),
+          },
+        }),
+      })
+    )
+
+    // Verify that all entities exist in the objectRepresentation
+    expect(objectRepresentation["Order"]).toBeDefined()
+    expect(objectRepresentation["Order"].entity).toBe("Order")
+    expect(objectRepresentation["Order"].listeners).toEqual([
+      "OrderService.order.created",
+      "OrderService.order.updated",
+      "OrderService.order.deleted",
+    ])
+    expect(objectRepresentation["Order"].alias).toBe("order")
+    expect(objectRepresentation["Order"].moduleConfig).toBe(
+      orderModuleJoinerConfig
+    )
+    expect(objectRepresentation["Order"].fields).toEqual([
+      "id",
+      "display_id",
+      "currency_code",
+      "vendor_link.id",
+    ])
+
+    expect(objectRepresentation["Vendor"]).toBeDefined()
+    expect(objectRepresentation["Vendor"].entity).toBe("Vendor")
+    expect(objectRepresentation["Vendor"].listeners).toEqual([
+      "VendorService.vendor.created",
+      "VendorService.vendor.updated",
+      "VendorService.vendor.deleted",
+    ])
+    expect(objectRepresentation["Vendor"].alias).toBe("vendor")
+    expect(objectRepresentation["Vendor"].moduleConfig).toBe(
+      vendorModuleJoinerConfig
+    )
+    expect(objectRepresentation["Vendor"].fields).toEqual([
+      "id",
+      "name",
+      "email",
+      "order_link.id",
+    ])
+
+    expect(objectRepresentation["OrderVendorLink"]).toBeDefined()
+    expect(objectRepresentation["OrderVendorLink"].entity).toBe(
+      "OrderVendorLink"
+    )
+    expect(objectRepresentation["OrderVendorLink"].listeners).toEqual([
+      "OrderVendorLink.attached",
+      "OrderVendorLink.detached",
+    ])
+    expect(objectRepresentation["OrderVendorLink"].alias).toBe(
+      "order_vendor_link"
+    )
+    expect(objectRepresentation["OrderVendorLink"].moduleConfig).toBe(
+      orderVendorLinkModuleJoinerConfig
+    )
+    expect(objectRepresentation["OrderVendorLink"].fields).toEqual([
+      "id",
+      "order_id",
+      "vendor_id",
+    ])
+
+    // Check that links between services are properly set up
+    expect(objectRepresentation._serviceNameModuleConfigMap).toEqual(
+      expect.objectContaining({
+        OrderService: orderModuleJoinerConfig,
+        VendorService: vendorModuleJoinerConfig,
+        OrderVendorLinkService: orderVendorLinkModuleJoinerConfig,
+      })
+    )
+  })
+
+  it("should handle link modules between Order and Vendor entities with filterable scalar properties and shipping address", () => {
+    const orderSchema = `
+      type OrderAddress {
+        id: ID!
+        street: String!
+        city: String!
+        zip_code: String!
+      }
+
+      type Order {
+        id: ID!
+        display_id: String!
+        currency_code: String!
+        shipping_address: OrderAddress!
+      }
+    `
+
+    const vendorSchema = `
+      type Vendor {
+        id: ID!
+        name: String!
+        email: String!
+      }
+    `
+
+    const orderVendorLinkSchema = `
+      type OrderVendorLink {
+        id: ID!
+        order_id: ID!
+        vendor_id: ID!
+        order: Order!
+        vendor: Vendor!
+      }
+
+      extend type Order {
+        vendor_link: OrderVendorLink!
+        vendor: Vendor!
+      }
+
+      extend type Vendor {
+        order_link: OrderVendorLink!
+        orders: [Order!]
+      }
+    `
+
+    const orderModuleJoinerConfig = {
+      serviceName: "OrderService",
+      schema: orderSchema,
+      alias: [
+        {
+          name: "order",
+          entity: "Order",
+        },
+        {
+          name: "order_address",
+          entity: "OrderAddress",
+        },
+      ],
+      linkableKeys: {
+        order_id: "Order",
+      },
+    }
+
+    const vendorModuleJoinerConfig = {
+      serviceName: "VendorService",
+      schema: vendorSchema,
+      alias: [
+        {
+          name: "vendor",
+          entity: "Vendor",
+        },
+      ],
+      linkableKeys: {
+        vendor_id: "Vendor",
+      },
+    }
+
+    const orderVendorLinkModuleJoinerConfig = {
+      serviceName: "OrderVendorLinkService",
+      isLink: true,
+      schema: orderVendorLinkSchema,
+      alias: [
+        {
+          name: "order_vendor_link",
+          entity: "OrderVendorLink",
+        },
+      ],
+      relationships: [
+        {
+          alias: "order",
+          serviceName: "OrderService",
+          foreignKey: "order_id",
+          entity: "Order",
+          filterable: ["display_id", "currency_code", "shipping_address"],
+        },
+        {
+          alias: "vendor",
+          serviceName: "VendorService",
+          foreignKey: "vendor_id",
+          entity: "Vendor",
+          filterable: ["name", "email"],
+        },
+      ],
+      extends: [
+        {
+          serviceName: "OrderService",
+          entity: "Order",
+          fieldAlias: {
+            vendor: "vendor_link.order",
+          },
+          relationship: {
+            alias: "vendor_link",
+            foreignKey: "id",
+            primaryKey: "order_id",
+            serviceName: "OrderVendorLinkService",
+          },
+        },
+        {
+          serviceName: "VendorService",
+          entity: "Vendor",
+          fieldAlias: {
+            orders: "order_link.order",
+          },
+          relationship: {
+            isList: true,
+            alias: "order_link",
+            foreignKey: "id",
+            primaryKey: "vendor_id",
+            serviceName: "OrderVendorLinkService",
+          },
+        },
+      ],
+    }
+
+    ;(MedusaModule.getAllJoinerConfigs as jest.Mock).mockReturnValue([
+      orderModuleJoinerConfig,
+      vendorModuleJoinerConfig,
+      orderVendorLinkModuleJoinerConfig,
+    ])
+
+    const indexSchema = `
+
+    `
+
+    const { objectRepresentation, entitiesMap } =
+      buildSchemaObjectRepresentation(indexSchema)
+
+    // Verify entitiesMap structure
+    expect(entitiesMap).toEqual(
+      expect.objectContaining({
+        OrderAddress: expect.objectContaining({
+          name: "OrderAddress",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            street: expect.objectContaining({
+              name: "street",
+            }),
+            city: expect.objectContaining({
+              name: "city",
+            }),
+            zip_code: expect.objectContaining({
+              name: "zip_code",
+            }),
+          },
+        }),
+        Order: expect.objectContaining({
+          name: "Order",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            display_id: expect.objectContaining({
+              name: "display_id",
+            }),
+            currency_code: expect.objectContaining({
+              name: "currency_code",
+            }),
+            shipping_address: expect.objectContaining({
+              name: "shipping_address",
+            }),
+            vendor: expect.objectContaining({
+              name: "vendor",
+            }),
+            vendor_link: expect.objectContaining({
+              name: "vendor_link",
+            }),
+          },
+        }),
+        Vendor: expect.objectContaining({
+          name: "Vendor",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            name: expect.objectContaining({
+              name: "name",
+            }),
+            email: expect.objectContaining({
+              name: "email",
+            }),
+            orders: expect.objectContaining({
+              name: "orders",
+            }),
+            order_link: expect.objectContaining({
+              name: "order_link",
+            }),
+          },
+        }),
+        OrderVendorLink: expect.objectContaining({
+          name: "OrderVendorLink",
+          _fields: {
+            id: expect.objectContaining({
+              name: "id",
+            }),
+            order_id: expect.objectContaining({
+              name: "order_id",
+            }),
+            vendor_id: expect.objectContaining({
+              name: "vendor_id",
+            }),
+            order: expect.objectContaining({
+              name: "order",
+            }),
+            vendor: expect.objectContaining({
+              name: "vendor",
+            }),
+          },
+        }),
+      })
+    )
+
+    // Verify that all entities exist in the objectRepresentation
+    expect(objectRepresentation["OrderAddress"]).toBeDefined()
+    expect(objectRepresentation["OrderAddress"].entity).toBe("OrderAddress")
+    expect(objectRepresentation["OrderAddress"].listeners).toEqual([
+      "OrderService.order-address.created",
+      "OrderService.order-address.updated",
+      "OrderService.order-address.deleted",
+    ])
+    expect(objectRepresentation["OrderAddress"].alias).toBe("order_address")
+    expect(objectRepresentation["OrderAddress"].moduleConfig).toBe(
+      orderModuleJoinerConfig
+    )
+    expect(objectRepresentation["OrderAddress"].fields).toEqual([
+      "id",
+      "street",
+      "city",
+      "zip_code",
+    ])
+
+    expect(objectRepresentation["Order"]).toBeDefined()
+    expect(objectRepresentation["Order"].entity).toBe("Order")
+    expect(objectRepresentation["Order"].listeners).toEqual([
+      "OrderService.order.created",
+      "OrderService.order.updated",
+      "OrderService.order.deleted",
+    ])
+    expect(objectRepresentation["Order"].alias).toBe("order")
+    expect(objectRepresentation["Order"].moduleConfig).toBe(
+      orderModuleJoinerConfig
+    )
+    expect(objectRepresentation["Order"].fields).toEqual([
+      "id",
+      "display_id",
+      "currency_code",
+      "vendor_link.id",
+    ])
+
+    expect(objectRepresentation["Vendor"]).toBeDefined()
+    expect(objectRepresentation["Vendor"].entity).toBe("Vendor")
+    expect(objectRepresentation["Vendor"].listeners).toEqual([
+      "VendorService.vendor.created",
+      "VendorService.vendor.updated",
+      "VendorService.vendor.deleted",
+    ])
+    expect(objectRepresentation["Vendor"].alias).toBe("vendor")
+    expect(objectRepresentation["Vendor"].moduleConfig).toBe(
+      vendorModuleJoinerConfig
+    )
+    expect(objectRepresentation["Vendor"].fields).toEqual([
+      "id",
+      "name",
+      "email",
+      "order_link.id",
+    ])
+
+    expect(objectRepresentation["OrderVendorLink"]).toBeDefined()
+    expect(objectRepresentation["OrderVendorLink"].entity).toBe(
+      "OrderVendorLink"
+    )
+    expect(objectRepresentation["OrderVendorLink"].listeners).toEqual([
+      "OrderVendorLink.attached",
+      "OrderVendorLink.detached",
+    ])
+    expect(objectRepresentation["OrderVendorLink"].alias).toBe(
+      "order_vendor_link"
+    )
+    expect(objectRepresentation["OrderVendorLink"].moduleConfig).toBe(
+      orderVendorLinkModuleJoinerConfig
+    )
+    expect(objectRepresentation["OrderVendorLink"].fields).toEqual([
+      "id",
+      "order_id",
+      "vendor_id",
+    ])
+
+    // Check that links between services are properly set up
+    expect(objectRepresentation._serviceNameModuleConfigMap).toEqual(
+      expect.objectContaining({
+        OrderService: orderModuleJoinerConfig,
+        VendorService: vendorModuleJoinerConfig,
+        OrderVendorLinkService: orderVendorLinkModuleJoinerConfig,
+      })
     )
   })
 })

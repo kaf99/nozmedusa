@@ -7,8 +7,11 @@ import {
 } from "@medusajs/framework/types"
 import {
   buildModuleResourceEventName,
+  camelToSnakeCase,
   CommonEvents,
   GraphQLUtils,
+  isObject,
+  isString,
   kebabCase,
   lowerCaseFirst,
 } from "@medusajs/framework/utils"
@@ -1138,7 +1141,22 @@ function buildSchemaFromFilterableLinks(
           fieldAliasMap[extend.serviceName] = Object.keys(
             extend.fieldAlias ?? {}
           )
-          fieldAliasMap[extend.serviceName].push(extend.relationship.alias)
+            .flatMap((key) => {
+              const fieldsAliases = extend.fieldAlias ?? {}
+              if (
+                isString(fieldsAliases[key]) ||
+                isObject(fieldsAliases[key])
+              ) {
+                return key
+              }
+
+              return
+            })
+            .filter((v): v is string => !!v)
+
+          if (extend.relationship.alias) {
+            fieldAliasMap[extend.serviceName].push(extend.relationship.alias)
+          }
         }
 
         const serviceName = relationship.serviceName
@@ -1146,12 +1164,37 @@ function buildSchemaFromFilterableLinks(
           serviceName,
           entity: relationship.entity,
           fields: Array.from(
-            new Set(
-              relationship.filterable.concat(fieldAliasMap[serviceName] ?? [])
-            )
-          ),
+            new Set([
+              ...relationship.filterable.concat(
+                fieldAliasMap[serviceName] ?? []
+              ),
+            ])
+          ).filter(Boolean),
           schema,
         })
+
+        // Add the link module entity
+        if (!entities.some((e) => e.serviceName === config.serviceName)) {
+          entities.push({
+            serviceName: config.serviceName,
+            entity: config.alias![0].entity,
+            fields: Array.from(
+              new Set([
+                "id",
+                ...config.relationships.flatMap((relationship) => [
+                  relationship.foreignKey,
+                  camelToSnakeCase(lowerCaseFirst(relationship.alias)),
+                ]),
+                // ...config.extends!.map((extend) => {
+                //   return camelToSnakeCase(
+                //     lowerCaseFirst(extend.relationship.alias)
+                //   )
+                // }),
+              ])
+            ).filter(Boolean),
+            schema: config.schema,
+          })
+        }
       }
 
       return entities
@@ -1166,12 +1209,83 @@ function buildSchemaFromFilterableLinks(
       entities.push({
         serviceName: config.serviceName,
         entity: alias.entity,
-        fields: Array.from(new Set(alias.filterable)),
+        fields: Array.from(new Set(alias.filterable)).filter(Boolean),
         schema,
       })
     }
     return entities
   })
+
+  // Helper function to find referenced types that need basic definitions based on the built schema
+  const getReferencedTypesNeedingDefinition = (
+    moduleJoinerConfigs: ModuleJoinerConfig[],
+    builtSchema: string
+  ): {
+    basicTypes: Set<string>
+    extendedTypes: Map<string, [string, string[]]>
+  } => {
+    const basicTypes = new Set<string>()
+    const extendedTypes = new Map<string, [string, string[]]>()
+
+    // Find all types referenced in the built schema that aren't defined
+    const referencedTypeNames = new Set<string>()
+    const definedTypes = new Set<string>()
+
+    // Extract defined types from the built schema
+    const definedTypeMatches = builtSchema.match(/type\s+(\w+)\s+@?/g) || []
+    definedTypeMatches.forEach((match) => {
+      const typeNameMatch = match.match(/type\s+(\w+)/)
+      if (typeNameMatch) {
+        definedTypes.add(typeNameMatch[1])
+      }
+    })
+
+    // Extract referenced types from field definitions in the built schema
+    const fieldMatches = builtSchema.match(/\s+\w+:\s*\[?(\w+)\]?[!]?/g) || []
+    fieldMatches.forEach((match) => {
+      const typeMatch = match.match(/:\s*\[?(\w+)\]?[!]?/)
+      if (typeMatch) {
+        const typeName = typeMatch[1]
+        // Only add if it's not a scalar type and not already defined
+        if (
+          !["String", "Int", "Float", "Boolean", "ID"].includes(typeName) &&
+          !definedTypes.has(typeName)
+        ) {
+          referencedTypeNames.add(typeName)
+        }
+      }
+    })
+
+    // For each referenced type, find its definition in the module schemas
+    for (const typeName of referencedTypeNames) {
+      basicTypes.add(typeName)
+
+      // Extract all fields for this type from the source schema
+      for (const config of moduleJoinerConfigs) {
+        if (!config.schema) continue
+
+        const typeMatch = config.schema.match(
+          new RegExp(`type\\s+${typeName}\\s*\\{([^}]+)\\}`, "g")
+        )
+        if (typeMatch) {
+          const fieldsMatch = typeMatch[0].match(/\{([^}]+)\}/)
+          if (fieldsMatch) {
+            const fieldsText = fieldsMatch[1]
+            const fields = fieldsText
+              .split("\n")
+              .map((line) => line.trim())
+              .filter((line) => line && !line.startsWith("//"))
+              .map((line) => line.replace(/,$/, ""))
+
+            extendedTypes.set(typeName, [config.serviceName!, fields])
+          }
+          break
+        }
+      }
+    }
+
+    return { basicTypes, extendedTypes }
+  }
 
   const getGqlType = (entity, field) => {
     const fieldRef = (servicesEntityMap[entity] as any)?._fields?.[field]
@@ -1212,14 +1326,51 @@ function buildSchemaFromFilterableLinks(
       type ${entity} ${events} {
         id: ID!
       }
-        
+
       extend type ${entity} {
-${fieldDefinitions}
-}`
+        ${fieldDefinitions}
+      }`
     })
     .join("\n\n")
 
-  return schema
+  // Extract referenced types that need basic definitions based on the built schema
+  const { basicTypes, extendedTypes } = getReferencedTypesNeedingDefinition(
+    moduleJoinerConfigs,
+    schema
+  )
+
+  // Generate basic type definitions for referenced types
+  const basicTypesSchema = Array.from(basicTypes)
+    .map(
+      (typeName) => `
+      type ${typeName} {
+        id: ID!
+      }`
+    )
+    .join("\n\n")
+
+  // Generate extend type definitions for referenced types
+  const extendedTypesSchema = Array.from(extendedTypes.entries())
+    .map(([typeName, [serviceName, fields]]) => {
+      const fieldDefinitions = fields
+        .filter((field) => field.trim() && field.trim() !== "id: ID!")
+        .join("\n        ")
+
+      if (!fieldDefinitions) return ""
+
+      const normalizedEntity = lowerCaseFirst(kebabCase(typeName))
+      const events = `@Listeners(values: ["${serviceName}.${normalizedEntity}.created", "${serviceName}.${normalizedEntity}.updated", "${serviceName}.${normalizedEntity}.deleted"])`
+
+      return `
+      extend type ${typeName} ${events} {
+        ${fieldDefinitions}
+      }`
+    })
+    .filter(Boolean)
+    .join("\n\n")
+
+  const parts = [basicTypesSchema, extendedTypesSchema, schema].filter(Boolean)
+  return parts.join("\n\n")
 }
 
 /**
