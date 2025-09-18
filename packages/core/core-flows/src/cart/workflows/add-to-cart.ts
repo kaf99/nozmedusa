@@ -162,7 +162,7 @@ export const addToCartWorkflow = createWorkflow(
 
     const setPricingContextResult = setPricingContext.getResult()
 
-    const [variantsData, lineItemsData] = when(
+    const { variants: variantsData, lineItems: lineItemsData } = when(
       "should-calculate-prices",
       { variantIds },
       ({ variantIds }) => {
@@ -191,7 +191,7 @@ export const addToCartWorkflow = createWorkflow(
         })
       })
 
-      return [variantsData, lineItems]
+      return { variants: variantsData, lineItems }
     })
 
     const fetchedVariants = when(
