@@ -1185,11 +1185,6 @@ function buildSchemaFromFilterableLinks(
                   relationship.foreignKey,
                   camelToSnakeCase(lowerCaseFirst(relationship.alias)),
                 ]),
-                // ...config.extends!.map((extend) => {
-                //   return camelToSnakeCase(
-                //     lowerCaseFirst(extend.relationship.alias)
-                //   )
-                // }),
               ])
             ).filter(Boolean),
             schema: config.schema,
