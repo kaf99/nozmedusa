@@ -1245,16 +1245,7 @@ function buildSchemaFromFilterableLinks(
         const typeName =
           (fieldType as any).type?.name?.value ?? (fieldType as any).name?.value
 
-        // Check if it's an array type (not supported for filtering)
-        if (
-          GraphQLUtils.isListType(node.type) ||
-          (GraphQLUtils.isNonNullType(node.type) &&
-            GraphQLUtils.isListType((node.type as any).type))
-        ) {
-          throw new Error(
-            `Field "${node.name.value}" is an array/many relationship which is not supported for filtering.`
-          )
-        }
+        // TODO: Throw if circular ref many to many detected? for now we can document
 
         // Only add if it's not a scalar type and not already defined
         if (
