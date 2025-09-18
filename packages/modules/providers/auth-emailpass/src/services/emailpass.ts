@@ -12,7 +12,7 @@ import {
   MedusaError,
 } from "@medusajs/framework/utils"
 import Scrypt from "scrypt-kdf"
-import { isObjectEmpty } from "@medusajs/utils"
+import { isPresent } from "@medusajs/utils"
 
 type InjectedDependencies = {
   logger: Logger
@@ -178,7 +178,7 @@ export class EmailPassAuthService extends AbstractAuthModuleProvider {
       })
 
       // If app_metadata is not defined or empty, it means no actor was assigned to the auth_identity yet (still "claimable")
-      if (!identity.app_metadata || isObjectEmpty(identity.app_metadata)) {
+      if (!identity.app_metadata || isPresent(identity.app_metadata)) {
         const updatedAuthIdentity = await this.upsertAuthIdentity('update', {
           email,
           password,
