@@ -181,9 +181,8 @@ async function start(args: {
     })
 
     try {
-      const { shutdown, gqlSchema, container, modules } = await loaders({
+      const { shutdown, gqlSchema, container, modules, app } = await loaders({
         directory,
-        expressApp: app,
       })
 
       if (generateTypes) {

@@ -23,7 +23,7 @@ import {
 } from "@medusajs/framework/utils"
 import { WorkflowLoader } from "@medusajs/framework/workflows"
 import { asValue } from "awilix"
-import { Express, NextFunction, Request, Response } from "express"
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
 import { join } from "path"
 import requestIp from "request-ip"
 import { v4 } from "uuid"
@@ -32,7 +32,6 @@ import apiLoader from "./api"
 
 type Options = {
   directory: string
-  expressApp: Express
   skipLoadingEntryPoints?: boolean
 }
 
@@ -84,9 +83,8 @@ async function jobsLoader(
 async function loadEntrypoints(
   plugins: PluginDetails[],
   container: MedusaContainer,
-  expressApp: Express,
   rootDirectory: string
-) {
+): Promise<{ app: FastifyInstance; shutdown: () => Promise<void> }> {
   const configModule: ConfigModule = container.resolve(
     ContainerRegistrationKeys.CONFIG_MODULE
   )
@@ -97,41 +95,38 @@ async function loadEntrypoints(
   }
 
   if (isWorkerMode(configModule)) {
-    return async () => {}
+    return { app: null as any, shutdown: async () => {} }
   }
+
+  const { app, shutdown } = await expressLoader({
+    container,
+  })
 
   /**
    * The scope and the ip address must be fetched before we execute any other
    * middleware
    */
-  expressApp.use((req: Request, res: Response, next: NextFunction) => {
-    req.scope = container.createScope() as MedusaContainer
-    req.requestId = (req.headers["x-request-id"] as string) ?? v4()
-    next()
-  })
+  app.addHook(
+    "preHandler",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      ;(request as any).scope = container.createScope() as MedusaContainer
+      ;(request as any).requestId = (request.headers["x-request-id"] as string) ?? v4()
 
-  // Add additional information to context of request
-  expressApp.use((req: Request, res: Response, next: NextFunction) => {
-    const ipAddress = requestIp.getClientIp(req) as string
-    ;(req as any).request_context = {
-      ip_address: ipAddress,
+      const ipAddress = requestIp.getClientIp(request as any) as string
+      ;(request as any).request_context = {
+        ip_address: ipAddress,
+      }
     }
-    next()
-  })
+  )
 
-  const { shutdown } = await expressLoader({
-    app: expressApp,
-    container,
-  })
-
-  await adminLoader({ app: expressApp, configModule, rootDirectory, plugins })
+  await adminLoader({ app: app as any, configModule, rootDirectory, plugins })
   await apiLoader({
     container,
     plugins,
-    app: expressApp,
+    app: app as any,
   })
 
-  return shutdown
+  return { app, shutdown }
 }
 
 export async function initializeContainer(
@@ -161,11 +156,10 @@ export async function initializeContainer(
 
 export default async ({
   directory: rootDirectory,
-  expressApp,
   skipLoadingEntryPoints = false,
 }: Options): Promise<{
   container: MedusaContainer
-  app: Express
+  app: FastifyInstance
   modules: Record<string, LoadedModule | LoadedModule[]>
   shutdown: () => Promise<void>
   gqlSchema?: GraphQLSchema
@@ -200,9 +194,9 @@ export default async ({
   const workflowLoader = new WorkflowLoader(workflowsSourcePaths, container)
   await workflowLoader.load()
 
-  const entrypointsShutdown = skipLoadingEntryPoints
-    ? () => {}
-    : await loadEntrypoints(plugins, container, expressApp, rootDirectory)
+  const entrypointsResult = skipLoadingEntryPoints
+    ? { app: null as any, shutdown: async () => {} }
+    : await loadEntrypoints(plugins, container, rootDirectory)
 
   const { createDefaultsWorkflow } = await import("@medusajs/core-flows")
   await createDefaultsWorkflow(container).run()
@@ -220,13 +214,13 @@ export default async ({
       container.dispose(),
       // @ts-expect-error "Do we want to call `client.destroy` "
       pgConnection?.context?.destroy(),
-      entrypointsShutdown(),
+      entrypointsResult.shutdown(),
     ])
   }
 
   return {
     container,
-    app: expressApp,
+    app: entrypointsResult.app,
     shutdown,
     modules,
     gqlSchema,

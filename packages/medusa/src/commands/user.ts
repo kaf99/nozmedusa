@@ -1,6 +1,5 @@
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { track } from "@medusajs/telemetry"
-import express from "express"
 import loaders from "../loaders"
 
 export default async function ({
@@ -12,7 +11,6 @@ export default async function ({
   invite,
 }) {
   track("CLI_USER", { with_id: !!id })
-  const app = express()
   try {
     /**
      * Enabling worker mode to prevent discovering/loading
@@ -22,7 +20,6 @@ export default async function ({
 
     const { container } = await loaders({
       directory,
-      expressApp: app,
       skipLoadingEntryPoints: true,
     })
     const logger = container.resolve(ContainerRegistrationKeys.LOGGER)

@@ -12,7 +12,7 @@ export const config = {
       storeCors: "http://localhost:8000",
       adminCors: "http://localhost:7001",
       jwtSecret: "supersecret",
-      cookieSecret: "superSecret",
+      cookieSecret: "superSecretsuperSecretsuperSecretsuperSecret",
     },
   },
   featureFlags: {},

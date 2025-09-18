@@ -116,7 +116,7 @@ export class ConfigManager {
         }`
       )
 
-      http.cookieSecret = "supersecret"
+      http.cookieSecret = "supersecretsupersecretsupersecretsupersecret"
     }
 
     return http

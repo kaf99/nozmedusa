@@ -3,7 +3,7 @@ import {
   createMedusaContainer,
 } from "@medusajs/utils"
 import { asValue } from "awilix"
-import express from "express"
+import fastify from "fastify"
 import { resolve } from "path"
 import { logger as defaultLogger } from "../../logger"
 import {
@@ -253,11 +253,11 @@ describe("RoutesLoader", function () {
       expect(res.text).toBe("GET /admin/protected")
     })
 
-    it.skip("should return 401 when admin is not authenticated", async () => {
+    it("should return 401 when admin is not authenticated", async () => {
       const res = await request("GET", "/admin/protected")
 
       expect(res.status).toBe(401)
-      expect(res.text).toBe("Unauthorized")
+      expect(res.text).toBe('{"message":"Unauthorized"}')
     })
 
     it("should return 200 when admin route is opted out of authentication", async () => {
@@ -334,7 +334,7 @@ describe("RoutesLoader", function () {
   })
 
   describe("Duplicate parameters", function () {
-    const app = express()
+    const app = fastify()
 
     it("should throw if a route contains the same parameter multiple times", async function () {
       const rootDir = resolve(

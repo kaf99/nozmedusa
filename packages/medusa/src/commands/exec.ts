@@ -1,6 +1,5 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, dynamicImport, isFileSkipped, } from "@medusajs/framework/utils"
-import express from "express"
 import { existsSync } from "fs"
 import path from "path"
 import loaders, { initializeContainer } from "../loaders"
@@ -17,7 +16,6 @@ export default async function exec({ file, args }: Options) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
   logger.info(`Executing script at ${file}...`)
-  const app = express()
   const directory = process.cwd()
 
   try {
@@ -42,7 +40,6 @@ export default async function exec({ file, args }: Options) {
 
     const { container } = await loaders({
       directory,
-      expressApp: app,
       skipLoadingEntryPoints: true,
     })
 

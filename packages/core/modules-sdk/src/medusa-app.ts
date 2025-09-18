@@ -549,7 +549,15 @@ async function MedusaApp_({
       if (action === "revert") {
         await MedusaModule.migrateDown(migrationOptions)
       } else if (action === "run") {
-        await MedusaModule.migrateUp(migrationOptions)
+        try {
+          await MedusaModule.migrateUp(migrationOptions)
+        } catch (e) {
+          console.error(
+            `Error migrating up module ${moduleResolution.definition.key}`,
+            e
+          )
+          throw e
+        }
       } else {
         await MedusaModule.migrateGenerate(migrationOptions)
       }

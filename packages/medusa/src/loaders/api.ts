@@ -1,12 +1,12 @@
 import { ConfigModule } from "@medusajs/framework/config"
 import { ApiLoader } from "@medusajs/framework/http"
 import { MedusaContainer, PluginDetails } from "@medusajs/framework/types"
-import { Express } from "express"
+import { FastifyInstance } from "fastify"
 import { join } from "path"
 import qs from "qs"
 
 type Options = {
-  app: Express
+  app: FastifyInstance
   plugins: PluginDetails[]
   container: MedusaContainer
 }
@@ -14,14 +14,13 @@ type Options = {
 export default async ({ app, container, plugins }: Options) => {
   // This is a workaround for the issue described here: https://github.com/expressjs/express/issues/3454
   // We parse the url and get the qs to be parsed and override the query prop from the request
-  app.use(function (req, res, next) {
-    const parsedUrl = req.url.split("?")
+  app.addHook('preHandler', async (request, reply) => {
+    const parsedUrl = request.url.split("?")
     parsedUrl.shift()
     const queryParamsStr = parsedUrl.join("?")
     if (queryParamsStr) {
-      req.query = qs.parse(queryParamsStr, { arrayLimit: Infinity })
+      ;(request as any).query = qs.parse(queryParamsStr, { arrayLimit: Infinity })
     }
-    next()
   })
 
   const sourcePaths: string[] = []

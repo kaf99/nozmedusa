@@ -1,7 +1,6 @@
 import { logger } from "@medusajs/framework/logger"
 import { MedusaContainer } from "@medusajs/framework/types"
 import { GracefulShutdownServer, promiseAll } from "@medusajs/framework/utils"
-import express from "express"
 import getPort from "get-port"
 import { resolve } from "path"
 import { applyEnvVarsToProcess, execOrTimeout } from "./utils"
@@ -10,15 +9,13 @@ async function bootstrapApp({
   cwd,
   env = {},
 }: { cwd?: string; env?: Record<any, any> } = {}) {
-  const app = express()
   applyEnvVarsToProcess(env)
 
   const loaders = require("@medusajs/medusa/loaders/index").default
 
   try {
-    const { container, shutdown } = await loaders({
+    const { container, app, shutdown } = await loaders({
       directory: resolve(cwd || process.cwd()),
-      expressApp: app,
     })
 
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : await getPort()
@@ -43,7 +40,7 @@ export async function startApp({
   container: MedusaContainer
   port: number
 }> {
-  let expressServer: any
+  let fastifyServer: any
   let medusaShutdown: () => Promise<void> = async () => void 0
   let container: MedusaContainer
 
@@ -64,7 +61,7 @@ export async function startApp({
     const shutdown = async () => {
       try {
         const shutdownPromise = promiseAll([
-          expressServer?.shutdown(),
+          fastifyServer?.shutdown(),
           medusaShutdown(),
         ])
 
@@ -76,7 +73,7 @@ export async function startApp({
       } catch (error) {
         logger.error("Error during shutdown:", error)
         try {
-          await expressServer?.shutdown()
+          await fastifyServer?.shutdown()
           await medusaShutdown()
         } catch (cleanupError) {
           logger.error("Error during forced cleanup:", cleanupError)
@@ -86,14 +83,9 @@ export async function startApp({
     }
 
     return await new Promise((resolve, reject) => {
-      const server = app
-        .listen(port)
-        .on("error", async (err) => {
-          logger.error("Error starting server:", err)
-          await shutdown()
-          return reject(err)
-        })
-        .on("listening", () => {
+      app
+        .listen({ port, host: "0.0.0.0" })
+        .then((address) => {
           process.send?.(port)
 
           resolve({
@@ -102,16 +94,21 @@ export async function startApp({
             port,
           })
         })
+        .catch(async (err) => {
+          logger.error("Error starting server:", err)
+          await shutdown()
+          return reject(err)
+        })
 
-      expressServer = GracefulShutdownServer.create(server)
+      fastifyServer = GracefulShutdownServer.create(app.server)
     })
   } catch (error) {
     logger.error("Error in startApp:", error)
-    if (expressServer) {
+    if (fastifyServer) {
       try {
-        await expressServer.shutdown()
+        await fastifyServer.shutdown()
       } catch (cleanupError) {
-        logger.error("Error cleaning up express server:", cleanupError)
+        logger.error("Error cleaning up fastify server:", cleanupError)
       }
     }
     if (medusaShutdown) {

@@ -17,7 +17,7 @@ import { resolveExports } from "./resolve-exports"
 import { tryConvertToNumber } from "./try-convert-to-number"
 
 const MEDUSA_CLOUD_EXECUTION_CONTEXT = "medusa-cloud"
-const DEFAULT_SECRET = "supersecret"
+const DEFAULT_SECRET = "superSecretsuperSecretsuperSecretsuperSecret"
 const DEFAULT_ADMIN_URL = "/"
 const DEFAULT_STORE_CORS = "http://localhost:8000"
 const DEFAULT_DATABASE_URL = "postgres://localhost/medusa-starter-default"

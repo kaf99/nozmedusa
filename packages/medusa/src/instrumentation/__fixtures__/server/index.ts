@@ -5,7 +5,7 @@ import {
 } from "@medusajs/modules-sdk"
 import { ContainerRegistrationKeys, generateJwtToken } from "@medusajs/utils"
 import { asValue } from "awilix"
-import express from "express"
+import fastify from "fastify"
 import querystring from "querystring"
 import supertest from "supertest"
 
@@ -33,7 +33,7 @@ function asArray(resolvers) {
  * @param {String} rootDir - The root directory of the project
  */
 export const createServer = async (rootDir) => {
-  const app = express()
+  const app = fastify()
 
   const moduleResolutions = {}
   Object.entries(ModulesDefinition).forEach(([moduleKey, module]) => {
@@ -72,25 +72,27 @@ export const createServer = async (rootDir) => {
     manager: asValue({}),
   })
 
-  app.set("trust proxy", 1)
-  app.use((req, _res, next) => {
-    req["session"] = {}
-    const data = req.get("Cookie")
+  app.addHook("preHandler", async (request, reply) => {
+    ;(request as any)["session"] = {}
+    const data = request.headers.cookie
     if (data) {
-      req["session"] = {
-        ...req["session"],
-        ...JSON.parse(data),
+      try {
+        ;(request as any)["session"] = {
+          ...(request as any)["session"],
+          ...JSON.parse(data),
+        }
+      } catch (e) {
+        // Ignore invalid JSON in cookie
       }
     }
-    next()
   })
 
   await featureFlagsLoader()
   await moduleLoader({ container, moduleResolutions, logger: defaultLogger })
 
-  app.use((req, res, next) => {
-    ;(req as MedusaRequest).scope = container.createScope() as MedusaContainer
-    next()
+  app.addHook("preHandler", async (request, reply) => {
+    ;(request as unknown as MedusaRequest).scope =
+      container.createScope() as MedusaContainer
   })
 
   await new ApiLoader({
@@ -99,7 +101,8 @@ export const createServer = async (rootDir) => {
     container,
   }).load()
 
-  const superRequest = supertest(app)
+  await app.ready()
+  const superRequest = supertest(app.server)
 
   return {
     request: async (method, url, opts: any = {}) => {
