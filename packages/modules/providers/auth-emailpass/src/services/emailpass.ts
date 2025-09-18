@@ -174,7 +174,7 @@ export class EmailPassAuthService extends AbstractAuthModuleProvider {
       })
 
       // If app_metadata is not defined or empty, it means no actor was assigned to the auth_identity yet (still "claimable")
-      if (isPresent(identity.app_metadata)) {
+      if (!isPresent(identity.app_metadata)) {
         const updatedAuthIdentity = await this.upsertAuthIdentity('update', {
           email,
           password,
