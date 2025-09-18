@@ -13,7 +13,7 @@ async function bootstrapApp({
   const app = express()
   applyEnvVarsToProcess(env)
 
-  // Register a health check endpoint. Ideally this also checks the readiness of the service, rather than just returning a static response.
+  // Register a health check endpoint
   app.get("/health", (_, res) => {
     res.status(200).send("OK")
   })
