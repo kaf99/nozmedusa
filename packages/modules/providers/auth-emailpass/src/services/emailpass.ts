@@ -6,11 +6,7 @@ import {
   EmailPassAuthProviderOptions,
   Logger,
 } from "@medusajs/framework/types"
-import {
-  AbstractAuthModuleProvider,
-  isString,
-  MedusaError,
-} from "@medusajs/framework/utils"
+import { AbstractAuthModuleProvider, isString, MedusaError, } from "@medusajs/framework/utils"
 import Scrypt from "scrypt-kdf"
 import { isPresent } from "@medusajs/utils"
 
@@ -178,7 +174,7 @@ export class EmailPassAuthService extends AbstractAuthModuleProvider {
       })
 
       // If app_metadata is not defined or empty, it means no actor was assigned to the auth_identity yet (still "claimable")
-      if (!identity.app_metadata || isPresent(identity.app_metadata)) {
+      if (isPresent(identity.app_metadata)) {
         const updatedAuthIdentity = await this.upsertAuthIdentity('update', {
           email,
           password,
