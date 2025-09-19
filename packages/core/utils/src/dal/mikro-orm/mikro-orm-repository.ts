@@ -466,6 +466,7 @@ export function mikroOrmBaseRepositoryFactory<const T extends object>(
 
       if (!("strategy" in findOptions_.options)) {
         if (findOptions_.options.limit != null || findOptions_.options.offset) {
+          // TODO: from 7+ it will be the default strategy
           Object.assign(findOptions_.options, {
             strategy: LoadStrategy.BALANCED,
           })
