@@ -63,6 +63,7 @@ export function InjectTransactionManager(
           return await originalMethod.apply(this, args)
         },
         {
+          manager: originalContext?.manager,
           transaction: originalContext?.transactionManager,
           isolationLevel: (originalContext as Context)?.isolationLevel,
           enableNestedTransactions:
