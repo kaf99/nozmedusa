@@ -28,10 +28,10 @@
   "license": "MIT",
   "devDependencies": {
     "@medusajs/types": "2.10.3",
-    "@mikro-orm/core": "6.5.3",
-    "@mikro-orm/knex": "6.5.3",
-    "@mikro-orm/migrations": "6.5.3",
-    "@mikro-orm/postgresql": "6.5.3",
+    "@mikro-orm/core": "6.5.4",
+    "@mikro-orm/knex": "6.5.4",
+    "@mikro-orm/migrations": "6.5.4",
+    "@mikro-orm/postgresql": "6.5.4",
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
     "awilix": "^8.0.1",
@@ -49,10 +49,10 @@
     "ulid": "^2.3.0"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "6.5.3",
-    "@mikro-orm/knex": "6.5.3",
-    "@mikro-orm/migrations": "6.5.3",
-    "@mikro-orm/postgresql": "6.5.3",
+    "@mikro-orm/core": "6.5.4",
+    "@mikro-orm/knex": "6.5.4",
+    "@mikro-orm/migrations": "6.5.4",
+    "@mikro-orm/postgresql": "6.5.4",
     "awilix": "^8.0.1",
     "express": "^4.21.0",
     "pg": "^8.16.3"
