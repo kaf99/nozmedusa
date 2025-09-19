@@ -1,6 +1,6 @@
 {
   "name": "@medusajs/test-utils",
-  "version": "2.10.2",
+  "version": "2.10.3",
   "description": "Test utils for Medusa",
   "main": "dist/index.js",
   "repository": {
