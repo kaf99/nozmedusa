@@ -118,6 +118,14 @@ export class RedisDistributedTransactionStorage
     await this.worker?.close()
     await this.jobWorker?.close()
 
+    // Clean up repeatable jobs
+    const repeatableJobs = (await this.cleanerQueue_?.getRepeatableJobs()) ?? []
+    for (const job of repeatableJobs) {
+      if (job.id === REPEATABLE_CLEARER_JOB_ID) {
+        await this.cleanerQueue_?.removeRepeatableByKey(job.key)
+      }
+    }
+
     await this.cleanerWorker_?.close()
   }
 
@@ -190,7 +198,7 @@ export class RedisDistributedTransactionStorage
         async () => {
           await this.clearExpiredExecutions()
         },
-        { connection: this.redisClient }
+        workerOptions
       )
 
       await this.cleanerQueue_?.add(
