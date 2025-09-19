@@ -1,8 +1,4 @@
-import {
-  Context,
-  LoadedModule,
-  MedusaContainer,
-} from "@medusajs/framework/types"
+import { Context, LoadedModule, MedusaContainer } from "@medusajs/types"
 import { createMedusaContainer } from "@medusajs/utils"
 import { asValue } from "awilix"
 

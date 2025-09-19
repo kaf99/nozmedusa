@@ -1,4 +1,4 @@
-import { RemoteJoinerQuery } from "@medusajs/framework/types"
+import { RemoteJoinerQuery } from "@medusajs/types"
 
 export function toRemoteJoinerQuery(
   obj: any,

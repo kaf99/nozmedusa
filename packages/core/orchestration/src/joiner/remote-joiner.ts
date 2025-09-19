@@ -9,7 +9,7 @@ import {
   RemoteJoinerOptions,
   RemoteJoinerQuery,
   RemoteNestedExpands,
-} from "@medusajs/framework/types"
+} from "@medusajs/types"
 import {
   deduplicate,
   FilterOperatorMap,
