@@ -65,10 +65,7 @@ export class MikroOrmBase {
       transaction?: TManager
     } = {}
   ): Promise<any> {
-    const manager = this.getActiveManager<SqlEntityManager>({
-      manager: options.manager,
-      transactionManager: options.transaction,
-    })
+    const manager = this.getFreshManager()
 
     return await transactionWrapper(manager, task, options).catch(dbErrorMapper)
   }
