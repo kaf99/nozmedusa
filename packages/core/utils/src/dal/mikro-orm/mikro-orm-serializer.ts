@@ -15,10 +15,10 @@ import {
 const STATIC_OPTIONS_SHAPE = {
   populate: true as string[] | boolean,
   exclude: undefined as string[] | undefined,
-  preventCircularRef: true,
-  skipNull: undefined,
-  ignoreSerializers: undefined,
-  forceObject: true,
+  preventCircularRef: true as boolean,
+  skipNull: undefined as boolean | undefined,
+  ignoreSerializers: undefined as boolean | undefined,
+  forceObject: true as boolean,
 }
 
 const EMPTY_ARRAY: readonly string[] = Object.freeze([])
