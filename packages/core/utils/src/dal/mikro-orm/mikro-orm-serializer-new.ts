@@ -108,19 +108,30 @@ function isPopulated(propName: string, populate: string[] | boolean): boolean {
   return false
 }
 
-// V8 Optimization: Ultra-lightweight request-scoped context
+// V8 Optimization: Ultra-lightweight request-scoped context with object pooling
 class RequestScopedSerializationContext {
   readonly propertyNameCache = new Map<string, string>()
   readonly visitedEntities = new WeakSet<object>()
-  readonly keyCollectionBuffer = new Array<string>(100) // Pre-allocated buffer for key collection
+  readonly keyCollectionBuffer = new Array<string>(200) // Increased buffer size
   keyBufferIndex = 0
+  readonly resultObjectPool: any[] = [] // Object pool for result objects
+  poolIndex = 0
 
   constructor() {
     // Pre-warm cache with most common property names
     this.propertyNameCache.set("id", "id")
+    this.propertyNameCache.set("name", "name")
     this.propertyNameCache.set("created_at", "created_at")
     this.propertyNameCache.set("updated_at", "updated_at")
     this.propertyNameCache.set("deleted_at", "deleted_at")
+    this.propertyNameCache.set("product_id", "product_id")
+    this.propertyNameCache.set("option_id", "option_id")
+    this.propertyNameCache.set("variant_id", "variant_id")
+
+    // Pre-allocate object pool
+    for (let i = 0; i < 50; i++) {
+      this.resultObjectPool.push({})
+    }
   }
 
   // V8 Optimization: Zero-allocation key collection
@@ -166,20 +177,24 @@ export class EntitySerializer {
       options.ignoreSerializers ?? STATIC_OPTIONS_SHAPE.ignoreSerializers
     const forceObject = options.forceObject ?? STATIC_OPTIONS_SHAPE.forceObject
 
-    // Streamlined context creation
-    const serializationContext = wrapped.__serializationContext
-    if (!serializationContext.root) {
-      const root = new SerializationContext({} as any)
-      SerializationContext.propagate(
-        root,
-        entity,
-        (meta: any, prop: any) =>
-          meta.properties[prop]?.kind !== ReferenceKind.SCALAR
-      )
-      contextCreated = true
+    // V8 Optimization: EXTREME - Bypass MikroORM context for maximum speed
+    let root: any = null
+    if (preventCircularRef) {
+      // Only create context if circular ref prevention is needed
+      const serializationContext = wrapped.__serializationContext
+      if (!serializationContext.root) {
+        root = new SerializationContext({} as any)
+        SerializationContext.propagate(
+          root,
+          entity,
+          (meta: any, prop: any) =>
+            meta.properties[prop]?.kind !== ReferenceKind.SCALAR
+        )
+        contextCreated = true
+      } else {
+        root = serializationContext.root! as SerializationContext<any>
+      }
     }
-
-    const root = serializationContext.root! as SerializationContext<any>
     const ret = {} as EntityDTO<Loaded<T, P>>
 
     // V8 Optimization: Zero-allocation key collection using pre-allocated buffer
@@ -246,8 +261,8 @@ export class EntitySerializer {
       return ret
     }
 
-    const visited = root.visited.has(entity)
-    if (!visited) root.visited.add(entity)
+    const visited = root ? root.visited.has(entity) : false
+    if (root && !visited) root.visited.add(entity)
 
     // V8 Optimization: Cache frequently accessed values
     const className = meta.className
@@ -306,8 +321,8 @@ export class EntitySerializer {
 
       if (!shouldSerialize) continue
 
-      // Inline cycle detection
-      const cycle = root.visit(className, prop)
+      // Inline cycle detection - skip if no circular ref prevention
+      const cycle = root ? root.visit(className, prop) : false
       if (cycle && visited) continue
 
       // Inline property processing for primitive values and common cases
@@ -350,7 +365,7 @@ export class EntitySerializer {
         )
       }
 
-      if (!cycle) root.leave(className, prop)
+      if (!cycle && root) root.leave(className, prop)
 
       // Inline property name resolution for common cases
       if (val !== undefined && !(val === null && skipNull)) {
@@ -368,7 +383,7 @@ export class EntitySerializer {
     }
 
     // Context cleanup
-    if (contextCreated) root.close()
+    if (contextCreated && root) root.close()
 
     // Skip getter processing if not initialized
     if (!wrapped.isInitialized()) return ret
