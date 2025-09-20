@@ -1,8 +1,3 @@
-/**
- * Ultra-optimized mikro orm serializer targeting sub-50ms for 1000 complex entities
- * Applied V8 optimizations: hidden classes, inline caching, minimal allocations
- */
-
 import {
   Collection,
   EntityDTO,
@@ -57,7 +52,6 @@ function isVisible(
 }
 
 function isPopulated(propName: string, populate: string[] | boolean): boolean {
-  // Branch prediction: most common case first
   if (populate === true) return true
   if (populate === false || !Array.isArray(populate)) return false
 
@@ -82,7 +76,6 @@ class RequestScopedSerializationContext {
   keyBufferIndex = 0
 
   constructor() {
-    // Pre-warm cache with most common property names
     this.propertyNameCache.set("id", "id")
     this.propertyNameCache.set("created_at", "created_at")
     this.propertyNameCache.set("updated_at", "updated_at")
@@ -144,7 +137,7 @@ export class EntitySerializer {
     const ret = {} as EntityDTO<Loaded<T, P>>
 
     ctx.resetKeyBuffer()
-    const seenKeys = new Set<string>() // Only for deduplication
+    const seenKeys = new Set<string>()
 
     const primaryKeys = meta.primaryKeys
     const entityKeys = Object.keys(entity)
@@ -209,7 +202,6 @@ export class EntitySerializer {
     for (let i = 0; i < allKeysLength; i++) {
       const prop = allKeys[i]
 
-      // Inline visibility check for maximum performance
       let isPropertyVisible = false
       if (populate === true) {
         isPropertyVisible = true
@@ -238,7 +230,6 @@ export class EntitySerializer {
       const propMeta = metaProperties[prop]
       let shouldSerialize = true
 
-      // Inline circular reference check
       if (
         propMeta &&
         preventCircularRef &&
@@ -258,16 +249,13 @@ export class EntitySerializer {
 
       if (!shouldSerialize) continue
 
-      // Inline cycle detection
       const cycle = root.visit(className, prop)
       if (cycle && visited) continue
 
-      // Inline property processing for primitive values and common cases
       const propValue = entity[prop as keyof T]
 
       let val: any
 
-      // Fast path for primitive values (most common case)
       if (
         propValue === null ||
         propValue === undefined ||
@@ -276,18 +264,14 @@ export class EntitySerializer {
         typeof propValue === "boolean"
       ) {
         val = propValue
-      }
-      // Function handling
-      else if (typeof propValue === "function") {
+      } else if (typeof propValue === "function") {
         const returnValue = (propValue as any)()
         if (!ignoreSerializers && propMeta?.serializer) {
           val = propMeta.serializer(returnValue)
         } else {
           val = returnValue
         }
-      }
-      // Complex object handling - fall back to method call
-      else {
+      } else {
         val = this.processProperty<T>(
           prop as keyof T & string,
           entity,
@@ -304,7 +288,6 @@ export class EntitySerializer {
 
       if (!cycle) root.leave(className, prop)
 
-      // Inline property name resolution for common cases
       if (val !== undefined && !(val === null && skipNull)) {
         let propName: string
         if (propMeta?.serializedName) {
@@ -319,13 +302,10 @@ export class EntitySerializer {
       }
     }
 
-    // Context cleanup
     if (contextCreated) root.close()
 
-    // Skip getter processing if not initialized
     if (!wrapped.isInitialized()) return ret
 
-    // Optimized getter processing
     const metaProps = meta.props
     const metaPropsLength = metaProps.length
 
@@ -383,7 +363,6 @@ export class EntitySerializer {
     ctx?: RequestScopedSerializationContext
   ): string {
     if (!ctx) {
-      // Fallback to direct computation if no context (shouldn't happen in normal flow)
       const property = meta.properties[prop]
       if (property?.serializedName) {
         return property.serializedName as string
@@ -400,7 +379,6 @@ export class EntitySerializer {
     const cached = ctx.propertyNameCache.get(cacheKey)
     if (cached !== undefined) return cached
 
-    // Fast property resolution
     const property = meta.properties[prop]
     let result: string
 
@@ -431,7 +409,7 @@ export class EntitySerializer {
     const entityConstructorName = entity.constructor.name
     const newParents =
       parents.length > 0
-        ? [...parents, entityConstructorName] // Keep spread only when necessary
+        ? [...parents, entityConstructorName]
         : [entityConstructorName]
 
     const dotIndex = prop.indexOf(DOT)
@@ -451,7 +429,6 @@ export class EntitySerializer {
       return returnValue
     }
 
-    // Handle custom serializers if not ignored
     if (!ignoreSerializers && property?.serializer) {
       return property.serializer(propValue)
     }
@@ -487,7 +464,6 @@ export class EntitySerializer {
       )
     }
 
-    // Handle embedded objects
     if (property?.kind === ReferenceKind.EMBEDDED) {
       if (Array.isArray(propValue)) {
         const result = new Array(propValue.length)
@@ -501,12 +477,10 @@ export class EntitySerializer {
       }
     }
 
-    // Custom type handling
     if (property?.customType) {
       return property.customType.toJSON(propValue, wrapped.__platform)
     }
 
-    // Default normalization
     return wrapped.__platform.normalizePrimaryKey(
       propValue as unknown as IPrimaryKey
     ) as unknown as T[keyof T]
@@ -516,7 +490,6 @@ export class EntitySerializer {
     populate: string[] | boolean,
     prop: string
   ): string[] | boolean {
-    // Fast path for wildcard or boolean populate
     if (!Array.isArray(populate) || populate.includes(WILDCARD)) {
       return populate
     }
@@ -615,12 +588,10 @@ export class EntitySerializer {
     const items = col.getItems(false)
     const itemsLength = items.length
 
-    // Fast path for empty collections
     if (itemsLength === 0) return [] as unknown as T[keyof T]
 
     const result = new Array(itemsLength)
 
-    // Inline population check for maximum performance
     let shouldPopulateCollection = false
     if (populate === true) {
       shouldPopulateCollection = true
@@ -643,7 +614,6 @@ export class EntitySerializer {
     }
 
     if (!shouldPopulateCollection) {
-      // Ultra-fast path: just return primary keys without helper calls
       for (let i = 0; i < itemsLength; i++) {
         const item = items[i]
         const wrapped = helper(item)
@@ -652,7 +622,6 @@ export class EntitySerializer {
       return result as unknown as T[keyof T]
     }
 
-    // Inline child populate extraction for maximum performance
     let childPopulate: string[] | boolean = populate
     if (Array.isArray(populate) && !populate.includes(WILDCARD)) {
       const propPrefix = prop + DOT
@@ -671,7 +640,6 @@ export class EntitySerializer {
       childPopulate = childPopulateArray.length > 0 ? childPopulateArray : false
     }
 
-    // Inline child options creation
     const childOptions = {
       populate: childPopulate,
       exclude,
@@ -731,7 +699,6 @@ export const mikroOrmSerializer = <TOutput extends object>(
       return data as TOutput
     }
 
-    // Array case
     const dataLength = data.length
     if (dataLength === 0) {
       return [] as unknown as TOutput
