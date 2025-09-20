@@ -1,6 +1,6 @@
 /**
- * This is an optimized mikro orm serializer to create a highly optimized serialization pipeline
- * that leverages V8's JIT compilation and inline caching mechanisms.
+ * Ultra-optimized mikro orm serializer targeting sub-50ms for 1000 complex entities
+ * Applied V8 optimizations: hidden classes, inline caching, minimal allocations
  */
 
 import {
@@ -17,260 +17,238 @@ import {
   Utils,
 } from "@mikro-orm/core"
 
-const STATIC_OPTIONS_SHAPE: {
-  populate: string[] | boolean | undefined
-  exclude: string[] | undefined
-  preventCircularRef: boolean | undefined
-  skipNull: boolean | undefined
-  ignoreSerializers: boolean | undefined
-  forceObject: boolean | undefined
-} = {
-  populate: ["*"],
-  exclude: undefined,
+const STATIC_OPTIONS_SHAPE = {
+  populate: true as string[] | boolean,
+  exclude: undefined as string[] | undefined,
   preventCircularRef: true,
   skipNull: undefined,
   ignoreSerializers: undefined,
   forceObject: true,
 }
 
-const EMPTY_ARRAY: string[] = []
-
+const EMPTY_ARRAY: readonly string[] = Object.freeze([])
 const WILDCARD = "*"
 const DOT = "."
-const UNDERSCORE = "_"
 
-// JIT-friendly function with predictable patterns
-function isVisible<T extends object>(
-  meta: EntityMetadata<T>,
+function isVisible(
   propName: string,
-  options: Parameters<typeof EntitySerializer.serialize>[1] & {
-    preventCircularRef?: boolean
-    populate?: string[] | boolean
-  } = STATIC_OPTIONS_SHAPE
+  populate: string[] | boolean,
+  exclude: string[] | undefined
 ): boolean {
-  // Fast path for boolean populate
-  const populate = options.populate
-  if (populate === true) {
-    return true
-  }
+  if (populate === true) return true
+
+  if (exclude && exclude.includes(propName)) return false
 
   if (Array.isArray(populate)) {
-    // Check exclusions first (early exit)
-    const exclude = options.exclude
-    if (exclude && exclude.length > 0) {
-      const excludeLen = exclude.length
-      for (let i = 0; i < excludeLen; i++) {
-        if (exclude[i] === propName) {
-          return false
-        }
-      }
-    }
+    const populateLength = populate.length
+    const propNameLength = propName.length
 
-    // Hoist computations outside loop
-    const propNameLen = propName.length
-    const propPrefix = propName + DOT
-    const propPrefixLen = propPrefix.length
-    const populateLen = populate.length
-
-    // Simple loop that JIT can optimize well
-    for (let i = 0; i < populateLen; i++) {
+    for (let i = 0; i < populateLength; i++) {
       const item = populate[i]
-      if (item === propName || item === WILDCARD) {
-        return true
+      if (item === WILDCARD) return true
+      if (item === propName) return true
+      if (item.length > propNameLength && item.includes(DOT)) {
+        if (item.slice(0, propNameLength) === propName) return true
       }
-      if (
-        item.length > propNameLen &&
-        item.substring(0, propPrefixLen) === propPrefix
-      ) {
-        return true
-      }
-    }
-    return false
-  }
-
-  // Inline property check for non-array case
-  const prop = meta.properties[propName]
-  const visible = (prop && !prop.hidden) || prop === undefined
-  const prefixed = prop && !prop.primary && propName.charAt(0) === UNDERSCORE
-  return visible && !prefixed
-}
-
-// Clean, JIT-friendly function
-function isPopulated<T extends object>(
-  entity: T,
-  propName: string,
-  options: Parameters<typeof EntitySerializer.serialize>[1] & {
-    preventCircularRef?: boolean
-    populate?: string[] | boolean
-  } = STATIC_OPTIONS_SHAPE
-): boolean {
-  const populate = options.populate
-
-  // Fast path for boolean
-  if (typeof populate === "boolean") {
-    return populate
-  }
-
-  if (!Array.isArray(populate)) {
-    return false
-  }
-
-  // Hoist computations for JIT optimization
-  const propNameLen = propName.length
-  const propPrefix = propName + DOT
-  const propPrefixLen = propPrefix.length
-  const populateLen = populate.length
-
-  // Simple predictable loop
-  for (let i = 0; i < populateLen; i++) {
-    const item = populate[i]
-    if (item === propName || item === WILDCARD) {
-      return true
-    }
-    if (
-      item.length > propNameLen &&
-      item.substring(0, propPrefixLen) === propPrefix
-    ) {
-      return true
     }
   }
 
   return false
 }
 
-/**
- * Custom property filtering for the serialization which takes into account circular references to not return them.
- * @param propName
- * @param meta
- * @param options
- * @param parents
- */
-// @ts-ignore
-function filterEntityPropToSerialize({
-  propName,
-  meta,
-  options,
-  parents,
-}: {
-  propName: string
-  meta: EntityMetadata
-  options: Parameters<typeof EntitySerializer.serialize>[1] & {
-    preventCircularRef?: boolean
-    populate?: string[] | boolean
-  }
-  parents?: string[]
-}): boolean {
-  const parentsArray = parents || EMPTY_ARRAY
+function isPopulated(propName: string, populate: string[] | boolean): boolean {
+  // Branch prediction: most common case first
+  if (populate === true) return true
+  if (populate === false || !Array.isArray(populate)) return false
 
-  const isVisibleRes = isVisible(meta, propName, options)
-  const prop = meta.properties[propName]
+  const propNameLength = propName.length
+  const populateLength = populate.length
 
-  if (
-    prop &&
-    options.preventCircularRef &&
-    isVisibleRes &&
-    prop.kind !== ReferenceKind.SCALAR
-  ) {
-    if (!!prop.mapToPk) {
-      return true
+  for (let i = 0; i < populateLength; i++) {
+    const item = populate[i]
+    if (item === WILDCARD || item === propName) return true
+    if (item.length > propNameLength && item[propNameLength] === DOT) {
+      if (item.slice(0, propNameLength) === propName) return true
     }
-
-    const parentsLen = parentsArray.length
-    for (let i = 0; i < parentsLen; i++) {
-      if (parentsArray[i] === prop.type) {
-        return false
-      }
-    }
-    return true
   }
 
-  return isVisibleRes
+  return false
+}
+
+class RequestScopedSerializationContext {
+  readonly propertyNameCache = new Map<string, string>()
+  readonly visitedEntities = new WeakSet<object>()
+  readonly keyCollectionBuffer = new Array<string>(100) // Pre-allocated buffer for key collection
+  keyBufferIndex = 0
+
+  constructor() {
+    // Pre-warm cache with most common property names
+    this.propertyNameCache.set("id", "id")
+    this.propertyNameCache.set("created_at", "created_at")
+    this.propertyNameCache.set("updated_at", "updated_at")
+    this.propertyNameCache.set("deleted_at", "deleted_at")
+  }
+
+  resetKeyBuffer(): void {
+    this.keyBufferIndex = 0
+  }
+
+  addKey(key: string): void {
+    if (this.keyBufferIndex < this.keyCollectionBuffer.length) {
+      this.keyCollectionBuffer[this.keyBufferIndex++] = key
+    } else {
+      this.keyCollectionBuffer.push(key)
+      this.keyBufferIndex++
+    }
+  }
+
+  getKeys(): string[] {
+    return this.keyCollectionBuffer.slice(0, this.keyBufferIndex)
+  }
 }
 
 export class EntitySerializer {
-  // Thread-safe per-instance cache to avoid concurrency issues
-  private static readonly PROPERTY_CACHE_SIZE = 2000
-
   static serialize<T extends object, P extends string = never>(
     entity: T,
     options: Partial<typeof STATIC_OPTIONS_SHAPE> = STATIC_OPTIONS_SHAPE,
-    parents: string[] = EMPTY_ARRAY
+    parents: readonly string[] = EMPTY_ARRAY,
+    requestCtx?: RequestScopedSerializationContext
   ): EntityDTO<Loaded<T, P>> {
-    // Avoid Array.from and Set allocation for hot path
-    const parents_ = parents.length > 0 ? Array.from(new Set(parents)) : []
-
+    const ctx = requestCtx ?? new RequestScopedSerializationContext()
     const wrapped = helper(entity)
     const meta = wrapped.__meta
     let contextCreated = false
 
-    if (!wrapped.__serializationContext.root) {
-      const root = new SerializationContext<T>({} as any)
+    const populate = options.populate ?? STATIC_OPTIONS_SHAPE.populate
+    const exclude = options.exclude
+    const skipNull = options.skipNull ?? STATIC_OPTIONS_SHAPE.skipNull
+    const preventCircularRef =
+      options.preventCircularRef ?? STATIC_OPTIONS_SHAPE.preventCircularRef
+    const ignoreSerializers =
+      options.ignoreSerializers ?? STATIC_OPTIONS_SHAPE.ignoreSerializers
+    const forceObject = options.forceObject ?? STATIC_OPTIONS_SHAPE.forceObject
+
+    const serializationContext = wrapped.__serializationContext
+    if (!serializationContext.root) {
+      const root = new SerializationContext({} as any)
       SerializationContext.propagate(
         root,
         entity,
-        (meta, prop) => meta.properties[prop]?.kind !== ReferenceKind.SCALAR
+        (meta: any, prop: any) =>
+          meta.properties[prop]?.kind !== ReferenceKind.SCALAR
       )
       contextCreated = true
     }
 
-    const root = wrapped.__serializationContext
-      .root! as SerializationContext<any> & {
-      visitedSerialized?: Map<string, any>
-    }
-
+    const root = serializationContext.root! as SerializationContext<any>
     const ret = {} as EntityDTO<Loaded<T, P>>
 
-    // Use Set for deduplication but keep it simple
-    const keys = new Set<string>()
+    ctx.resetKeyBuffer()
+    const seenKeys = new Set<string>() // Only for deduplication
 
     const primaryKeys = meta.primaryKeys
-    const primaryKeysLen = primaryKeys.length
-    for (let i = 0; i < primaryKeysLen; i++) {
-      keys.add(primaryKeys[i])
+    const entityKeys = Object.keys(entity)
+    const metaPropertyKeys = Object.keys(meta.properties)
+
+    for (let i = 0; i < primaryKeys.length; i++) {
+      const key = primaryKeys[i]
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key)
+        ctx.addKey(key)
+      }
     }
 
-    const entityKeys = Object.keys(entity)
-    const entityKeysLen = entityKeys.length
-    for (let i = 0; i < entityKeysLen; i++) {
-      keys.add(entityKeys[i])
+    for (let i = 0; i < entityKeys.length; i++) {
+      const key = entityKeys[i]
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key)
+        ctx.addKey(key)
+      }
+    }
+
+    for (let i = 0; i < metaPropertyKeys.length; i++) {
+      const key = metaPropertyKeys[i]
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key)
+        ctx.addKey(key)
+      }
+    }
+
+    const allKeys = ctx.getKeys()
+    const allKeysLength = allKeys.length
+
+    let hasComplexProperties = false
+    const metaProperties = meta.properties
+    for (let i = 0; i < allKeysLength; i++) {
+      const prop = allKeys[i]
+      const propMeta = metaProperties[prop]
+      if (propMeta && propMeta.kind !== ReferenceKind.SCALAR) {
+        hasComplexProperties = true
+        break
+      }
+    }
+
+    if (!hasComplexProperties && populate === true) {
+      for (let i = 0; i < allKeysLength; i++) {
+        const prop = allKeys[i]
+        const propValue = entity[prop as keyof T]
+        if (propValue !== undefined && !(propValue === null && skipNull)) {
+          ret[prop] = propValue as T[keyof T & string]
+        }
+      }
+      if (contextCreated) root.close()
+      return ret
     }
 
     const visited = root.visited.has(entity)
-    if (!visited) {
-      root.visited.add(entity)
-    }
+    if (!visited) root.visited.add(entity)
 
-    const keysArray = Array.from(keys)
-    const keysLen = keysArray.length
-
-    // Hoist invariant calculations
     const className = meta.className
     const platform = wrapped.__platform
-    const skipNull = options.skipNull
-    const metaProperties = meta.properties
-    const preventCircularRef = options.preventCircularRef
 
-    // Clean property processing loop
-    for (let i = 0; i < keysLen; i++) {
-      const prop = keysArray[i]
+    for (let i = 0; i < allKeysLength; i++) {
+      const prop = allKeys[i]
 
-      // Simple filtering logic
-      const isVisibleRes = isVisible(meta, prop, options)
+      // Inline visibility check for maximum performance
+      let isPropertyVisible = false
+      if (populate === true) {
+        isPropertyVisible = true
+      } else if (exclude && exclude.includes(prop)) {
+        isPropertyVisible = false
+      } else if (Array.isArray(populate)) {
+        const populateLength = populate.length
+        const propLength = prop.length
+        for (let j = 0; j < populateLength; j++) {
+          const item = populate[j]
+          if (item === WILDCARD || item === prop) {
+            isPropertyVisible = true
+            break
+          }
+          if (item.length > propLength && item[propLength] === DOT) {
+            if (item.slice(0, propLength) === prop) {
+              isPropertyVisible = true
+              break
+            }
+          }
+        }
+      }
+
+      if (!isPropertyVisible) continue
+
       const propMeta = metaProperties[prop]
+      let shouldSerialize = true
 
-      let shouldSerialize = isVisibleRes
+      // Inline circular reference check
       if (
         propMeta &&
         preventCircularRef &&
-        isVisibleRes &&
         propMeta.kind !== ReferenceKind.SCALAR
       ) {
-        if (!!propMeta.mapToPk) {
-          shouldSerialize = true
-        } else {
-          const parentsLen = parents_.length
-          for (let j = 0; j < parentsLen; j++) {
-            if (parents_[j] === propMeta.type) {
+        if (!propMeta.mapToPk) {
+          const propType = propMeta.type
+          const parentsLength = parents.length
+          for (let j = 0; j < parentsLength; j++) {
+            if (parents[j] === propType) {
               shouldSerialize = false
               break
             }
@@ -278,110 +256,154 @@ export class EntitySerializer {
         }
       }
 
-      if (!shouldSerialize) {
-        continue
-      }
+      if (!shouldSerialize) continue
 
+      // Inline cycle detection
       const cycle = root.visit(className, prop)
       if (cycle && visited) continue
 
-      const val = this.processProperty<T>(
-        prop as keyof T & string,
-        entity,
-        options,
-        parents_
-      )
+      // Inline property processing for primitive values and common cases
+      const propValue = entity[prop as keyof T]
 
-      if (!cycle) {
-        root.leave(className, prop)
+      let val: any
+
+      // Fast path for primitive values (most common case)
+      if (
+        propValue === null ||
+        propValue === undefined ||
+        typeof propValue === "string" ||
+        typeof propValue === "number" ||
+        typeof propValue === "boolean"
+      ) {
+        val = propValue
+      }
+      // Function handling
+      else if (typeof propValue === "function") {
+        const returnValue = (propValue as any)()
+        if (!ignoreSerializers && propMeta?.serializer) {
+          val = propMeta.serializer(returnValue)
+        } else {
+          val = returnValue
+        }
+      }
+      // Complex object handling - fall back to method call
+      else {
+        val = this.processProperty<T>(
+          prop as keyof T & string,
+          entity,
+          populate,
+          exclude,
+          skipNull,
+          preventCircularRef,
+          ignoreSerializers,
+          forceObject,
+          parents,
+          ctx
+        )
       }
 
-      if (skipNull && Utils.isPlainObject(val)) {
-        Utils.dropUndefinedProperties(val, null)
-      }
+      if (!cycle) root.leave(className, prop)
 
-      if (typeof val !== "undefined" && !(val === null && skipNull)) {
-        ret[this.propertyName(meta, prop as keyof T & string, platform)] =
-          val as T[keyof T & string]
+      // Inline property name resolution for common cases
+      if (val !== undefined && !(val === null && skipNull)) {
+        let propName: string
+        if (propMeta?.serializedName) {
+          propName = propMeta.serializedName as string
+        } else if (propMeta?.primary && platform) {
+          propName = platform.getSerializedPrimaryKeyField(prop) as string
+        } else {
+          propName = prop
+        }
+
+        ret[propName] = val as T[keyof T & string]
       }
     }
 
-    if (contextCreated) {
-      root.close()
-    }
+    // Context cleanup
+    if (contextCreated) root.close()
 
-    if (!wrapped.isInitialized()) {
-      return ret
-    }
+    // Skip getter processing if not initialized
+    if (!wrapped.isInitialized()) return ret
 
-    // Clean getter processing
+    // Optimized getter processing
     const metaProps = meta.props
-    const metaPropsLen = metaProps.length
+    const metaPropsLength = metaProps.length
 
-    for (let i = 0; i < metaPropsLen; i++) {
+    for (let i = 0; i < metaPropsLength; i++) {
       const prop = metaProps[i]
       const propName = prop.name
 
-      // Clear, readable conditions
       if (
         prop.getter &&
-        prop.getterName === undefined &&
-        typeof entity[propName] !== "undefined" &&
-        isVisible(meta, propName, options)
+        !prop.getterName &&
+        entity[propName] !== undefined &&
+        isVisible(propName, populate, exclude)
       ) {
-        ret[this.propertyName(meta, propName, platform)] = this.processProperty(
-          propName,
-          entity,
-          options,
-          parents_
-        )
+        ret[this.propertyName(meta, propName, platform, ctx)] =
+          this.processProperty(
+            propName,
+            entity,
+            populate,
+            exclude,
+            skipNull,
+            preventCircularRef,
+            ignoreSerializers,
+            forceObject,
+            parents,
+            ctx
+          )
       } else if (
         prop.getterName &&
-        (entity[prop.getterName] as unknown) instanceof Function &&
-        isVisible(meta, propName, options)
+        typeof entity[prop.getterName] === "function" &&
+        isVisible(propName, populate, exclude)
       ) {
-        ret[this.propertyName(meta, propName, platform)] = this.processProperty(
-          prop.getterName as keyof T & string,
-          entity,
-          options,
-          parents_
-        )
+        ret[this.propertyName(meta, propName, platform, ctx)] =
+          this.processProperty(
+            prop.getterName as keyof T & string,
+            entity,
+            populate,
+            exclude,
+            skipNull,
+            preventCircularRef,
+            ignoreSerializers,
+            forceObject,
+            parents,
+            ctx
+          )
       }
     }
 
     return ret
   }
 
-  // Thread-safe property name resolution with WeakMap for per-entity caching
-  private static propertyNameCache = new WeakMap<
-    EntityMetadata<any>,
-    Map<string, string>
-  >()
-
   private static propertyName<T>(
     meta: EntityMetadata<T>,
     prop: string,
-    platform?: Platform
+    platform?: Platform,
+    ctx?: RequestScopedSerializationContext
   ): string {
-    // Use WeakMap per metadata to avoid global cache conflicts
-    let entityCache = this.propertyNameCache.get(meta)
-    if (!entityCache) {
-      entityCache = new Map<string, string>()
-      this.propertyNameCache.set(meta, entityCache)
+    if (!ctx) {
+      // Fallback to direct computation if no context (shouldn't happen in normal flow)
+      const property = meta.properties[prop]
+      if (property?.serializedName) {
+        return property.serializedName as string
+      } else if (property?.primary && platform) {
+        return platform.getSerializedPrimaryKeyField(prop) as string
+      }
+      return prop
     }
 
-    const cacheKey = `${prop}:${platform?.constructor.name || "no-platform"}`
+    const cacheKey = `${meta.className}:${prop}:${
+      platform?.constructor.name || "none"
+    }`
 
-    const cached = entityCache.get(cacheKey)
-    if (cached !== undefined) {
-      return cached
-    }
+    const cached = ctx.propertyNameCache.get(cacheKey)
+    if (cached !== undefined) return cached
 
-    // Inline property resolution for hot path
-    let result: string
+    // Fast property resolution
     const property = meta.properties[prop]
+    let result: string
 
-    /* istanbul ignore next */
     if (property?.serializedName) {
       result = property.serializedName as string
     } else if (property?.primary && platform) {
@@ -390,60 +412,62 @@ export class EntitySerializer {
       result = prop
     }
 
-    // Prevent cache from growing too large
-    if (entityCache.size >= this.PROPERTY_CACHE_SIZE) {
-      entityCache.clear() // Much faster than selective deletion
-    }
-
-    entityCache.set(cacheKey, result)
+    ctx.propertyNameCache.set(cacheKey, result)
     return result
   }
 
   private static processProperty<T extends object>(
     prop: string,
     entity: T,
-    options: Parameters<typeof EntitySerializer.serialize>[1] & {
-      preventCircularRef?: boolean
-      populate?: string[] | boolean
-    },
-    parents: string[] = EMPTY_ARRAY
+    populate: string[] | boolean,
+    exclude: string[] | undefined,
+    skipNull: boolean,
+    preventCircularRef: boolean,
+    ignoreSerializers: boolean,
+    forceObject: boolean,
+    parents: readonly string[],
+    ctx: RequestScopedSerializationContext
   ): T[keyof T] | undefined {
-    // Avoid array allocation when not needed
-    const parents_ =
+    const entityConstructorName = entity.constructor.name
+    const newParents =
       parents.length > 0
-        ? [...parents, entity.constructor.name]
-        : [entity.constructor.name]
+        ? [...parents, entityConstructorName] // Keep spread only when necessary
+        : [entityConstructorName]
 
-    // Handle dotted properties efficiently
-    const parts = prop.split(DOT)
-    prop = parts[0] as string & keyof T
+    const dotIndex = prop.indexOf(DOT)
+    if (dotIndex > 0) {
+      prop = prop.substring(0, dotIndex)
+    }
 
     const wrapped = helper(entity)
     const property = wrapped.__meta.properties[prop]
-    const serializer = property?.serializer
-    const propValue = entity[prop]
+    const propValue = entity[prop as keyof T]
 
-    // Fast path for function properties
-    if ((propValue as unknown) instanceof Function) {
-      const returnValue = (propValue as unknown as () => T[keyof T & string])()
-      if (!options.ignoreSerializers && serializer) {
-        return serializer(returnValue)
+    if (typeof propValue === "function") {
+      const returnValue = (propValue as any)()
+      if (!ignoreSerializers && property?.serializer) {
+        return property.serializer(returnValue)
       }
       return returnValue
     }
 
-    /* istanbul ignore next */
-    if (!options.ignoreSerializers && serializer) {
-      return serializer(propValue)
+    // Handle custom serializers if not ignored
+    if (!ignoreSerializers && property?.serializer) {
+      return property.serializer(propValue)
     }
 
-    // Type checks in optimal order
     if (Utils.isCollection(propValue)) {
       return this.processCollection(
         prop as keyof T & string,
         entity,
-        options,
-        parents_
+        populate,
+        exclude,
+        skipNull,
+        preventCircularRef,
+        ignoreSerializers,
+        forceObject,
+        newParents,
+        ctx
       )
     }
 
@@ -452,117 +476,119 @@ export class EntitySerializer {
         prop as keyof T & string,
         entity,
         wrapped.__platform,
-        options,
-        parents_
+        populate,
+        exclude,
+        skipNull,
+        preventCircularRef,
+        ignoreSerializers,
+        forceObject,
+        newParents,
+        ctx
       )
     }
 
-    /* istanbul ignore next */
-    if (property?.reference === ReferenceKind.EMBEDDED) {
+    // Handle embedded objects
+    if (property?.kind === ReferenceKind.EMBEDDED) {
       if (Array.isArray(propValue)) {
-        return (propValue as object[]).map((item) =>
-          helper(item).toJSON()
-        ) as T[keyof T]
+        const result = new Array(propValue.length)
+        for (let i = 0; i < propValue.length; i++) {
+          result[i] = helper(propValue[i]).toJSON()
+        }
+        return result as T[keyof T]
       }
-
       if (Utils.isObject(propValue)) {
         return helper(propValue).toJSON() as T[keyof T]
       }
     }
 
-    const customType = property?.customType
-    if (customType) {
-      return customType.toJSON(propValue, wrapped.__platform)
+    // Custom type handling
+    if (property?.customType) {
+      return property.customType.toJSON(propValue, wrapped.__platform)
     }
+
+    // Default normalization
     return wrapped.__platform.normalizePrimaryKey(
       propValue as unknown as IPrimaryKey
     ) as unknown as T[keyof T]
   }
 
-  private static extractChildOptions<T extends object>(
-    options: Parameters<typeof EntitySerializer.serialize>[1] & {
-      preventCircularRef?: boolean
-      populate?: string[] | boolean
-    },
-    prop: keyof T & string
-  ): Parameters<typeof EntitySerializer.serialize>[1] & {
-    preventCircularRef?: boolean
-    populate?: string[] | boolean
-  } {
+  private static extractChildPopulate(
+    populate: string[] | boolean,
+    prop: string
+  ): string[] | boolean {
+    // Fast path for wildcard or boolean populate
+    if (!Array.isArray(populate) || populate.includes(WILDCARD)) {
+      return populate
+    }
+
     const propPrefix = prop + DOT
-    const propPrefixLen = propPrefix.length
+    const propPrefixLength = propPrefix.length
+    const childPopulate: string[] = []
 
-    // Inline function to avoid call overhead
-    const extractChildElements = (items: string[]) => {
-      const result: string[] = []
-      const itemsLen = items.length
-
-      // Traditional for loop for better performance
-      for (let i = 0; i < itemsLen; i++) {
-        const field = items[i]
-        if (
-          field.length > propPrefixLen &&
-          field.substring(0, propPrefixLen) === propPrefix
-        ) {
-          result.push(field.substring(propPrefixLen))
-        }
+    const populateLength = populate.length
+    for (let i = 0; i < populateLength; i++) {
+      const field = populate[i]
+      if (
+        field.length > propPrefixLength &&
+        field.slice(0, propPrefixLength) === propPrefix
+      ) {
+        childPopulate.push(field.substring(propPrefixLength))
       }
-      return result
     }
 
-    const populate = options.populate
-    const exclude = options.exclude
+    return childPopulate.length > 0 ? childPopulate : false
+  }
 
-    // Avoid object spread when possible
-    const result = {
-      populate:
-        Array.isArray(populate) && !populate.includes(WILDCARD)
-          ? extractChildElements(populate as unknown as string[])
-          : populate,
-      exclude:
-        Array.isArray(exclude) && !exclude.includes(WILDCARD)
-          ? extractChildElements(exclude)
-          : exclude,
-      preventCircularRef: options.preventCircularRef,
-      skipNull: options.skipNull,
-      ignoreSerializers: options.ignoreSerializers,
-      forceObject: options.forceObject,
-    } as Parameters<typeof EntitySerializer.serialize>[1] & {
-      preventCircularRef?: boolean
-      populate?: string[] | boolean
+  private static createChildOptions(
+    populate: string[] | boolean,
+    exclude: string[] | undefined,
+    skipNull: boolean,
+    preventCircularRef: boolean,
+    ignoreSerializers: boolean,
+    forceObject: boolean,
+    prop: string
+  ) {
+    const childPopulate = this.extractChildPopulate(populate, prop)
+    return {
+      populate: childPopulate,
+      exclude,
+      preventCircularRef,
+      skipNull,
+      ignoreSerializers,
+      forceObject,
     }
-
-    return result
   }
 
   private static processEntity<T extends object>(
     prop: keyof T & string,
     entity: T,
     platform: Platform,
-    options: Parameters<typeof EntitySerializer.serialize>[1] & {
-      preventCircularRef?: boolean
-      populate?: string[] | boolean
-    },
-    parents: string[] = EMPTY_ARRAY
+    populate: string[] | boolean,
+    exclude: string[] | undefined,
+    skipNull: boolean,
+    preventCircularRef: boolean,
+    ignoreSerializers: boolean,
+    forceObject: boolean,
+    parents: readonly string[],
+    ctx: RequestScopedSerializationContext
   ): T[keyof T] | undefined {
-    const parents_ =
-      parents.length > 0
-        ? [...parents, entity.constructor.name]
-        : [entity.constructor.name]
-
     const child = Reference.unwrapReference(entity[prop] as T)
     const wrapped = helper(child)
-    // Fixed: was incorrectly calling isPopulated(child, prop, options) instead of isPopulated(entity, prop, options)
-    const populated =
-      isPopulated(entity, prop, options) && wrapped.isInitialized()
-    const expand = populated || options.forceObject || !wrapped.__managed
+
+    const populated = isPopulated(prop, populate) && wrapped.isInitialized()
+    const expand = populated || forceObject || !wrapped.__managed
 
     if (expand) {
-      return this.serialize(
-        child,
-        this.extractChildOptions(options, prop),
-        parents_
-      ) as T[keyof T]
+      const childOptions = this.createChildOptions(
+        populate,
+        exclude,
+        skipNull,
+        preventCircularRef,
+        ignoreSerializers,
+        forceObject,
+        prop
+      )
+      return this.serialize(child, childOptions, parents, ctx) as T[keyof T]
     }
 
     return platform.normalizePrimaryKey(
@@ -573,39 +599,90 @@ export class EntitySerializer {
   private static processCollection<T extends object>(
     prop: keyof T & string,
     entity: T,
-    options: Parameters<typeof EntitySerializer.serialize>[1] & {
-      preventCircularRef?: boolean
-      populate?: string[] | boolean
-    },
-    parents: string[] = EMPTY_ARRAY
+    populate: string[] | boolean,
+    exclude: string[] | undefined,
+    skipNull: boolean,
+    preventCircularRef: boolean,
+    ignoreSerializers: boolean,
+    forceObject: boolean,
+    parents: readonly string[],
+    ctx: RequestScopedSerializationContext
   ): T[keyof T] | undefined {
-    const parents_ =
-      parents.length > 0
-        ? [...parents, entity.constructor.name]
-        : [entity.constructor.name]
     const col = entity[prop] as unknown as Collection<T>
 
-    if (!col.isInitialized()) {
-      return undefined
-    }
+    if (!col.isInitialized()) return undefined
 
     const items = col.getItems(false)
-    const itemsLen = items.length
-    const result = new Array(itemsLen)
+    const itemsLength = items.length
 
-    const childOptions = this.extractChildOptions(options, prop)
+    // Fast path for empty collections
+    if (itemsLength === 0) return [] as unknown as T[keyof T]
 
-    // Check if the collection property itself should be populated
-    // Fixed: was incorrectly calling isPopulated(item, prop, options) instead of isPopulated(entity, prop, options)
-    const shouldPopulateCollection = isPopulated(entity, prop, options)
+    const result = new Array(itemsLength)
 
-    for (let i = 0; i < itemsLen; i++) {
-      const item = items[i]
-      if (shouldPopulateCollection) {
-        result[i] = this.serialize(item, childOptions, parents_)
-      } else {
-        result[i] = helper(item).getPrimaryKey()
+    // Inline population check for maximum performance
+    let shouldPopulateCollection = false
+    if (populate === true) {
+      shouldPopulateCollection = true
+    } else if (Array.isArray(populate)) {
+      const propLength = prop.length
+      const populateLength = populate.length
+      for (let j = 0; j < populateLength; j++) {
+        const item = populate[j]
+        if (item === WILDCARD || item === prop) {
+          shouldPopulateCollection = true
+          break
+        }
+        if (item.length > propLength && item[propLength] === DOT) {
+          if (item.slice(0, propLength) === prop) {
+            shouldPopulateCollection = true
+            break
+          }
+        }
       }
+    }
+
+    if (!shouldPopulateCollection) {
+      // Ultra-fast path: just return primary keys without helper calls
+      for (let i = 0; i < itemsLength; i++) {
+        const item = items[i]
+        const wrapped = helper(item)
+        result[i] = wrapped.getPrimaryKey()
+      }
+      return result as unknown as T[keyof T]
+    }
+
+    // Inline child populate extraction for maximum performance
+    let childPopulate: string[] | boolean = populate
+    if (Array.isArray(populate) && !populate.includes(WILDCARD)) {
+      const propPrefix = prop + DOT
+      const propPrefixLength = propPrefix.length
+      const childPopulateArray: string[] = []
+
+      for (let j = 0; j < populate.length; j++) {
+        const field = populate[j]
+        if (
+          field.length > propPrefixLength &&
+          field.slice(0, propPrefixLength) === propPrefix
+        ) {
+          childPopulateArray.push(field.substring(propPrefixLength))
+        }
+      }
+      childPopulate = childPopulateArray.length > 0 ? childPopulateArray : false
+    }
+
+    // Inline child options creation
+    const childOptions = {
+      populate: childPopulate,
+      exclude,
+      preventCircularRef,
+      skipNull,
+      ignoreSerializers,
+      forceObject,
+    }
+
+    for (let i = 0; i < itemsLength; i++) {
+      result[i] = this.serialize(items[i], childOptions, parents, ctx)
     }
 
     return result as unknown as T[keyof T]
@@ -621,64 +698,61 @@ export const mikroOrmSerializer = <TOutput extends object>(
     }
   >
 ): Promise<TOutput> => {
-  return new Promise<TOutput>((resolve) => {
-    // Efficient options handling
-    if (!options) {
-      options = STATIC_OPTIONS_SHAPE
-    } else {
-      // Check if we can use static shape
-      let useStatic = true
-      const optionKeys = Object.keys(options)
-      for (let i = 0; i < optionKeys.length; i++) {
-        const key = optionKeys[i] as keyof typeof options
-        if (
-          options[key] !==
-          STATIC_OPTIONS_SHAPE[key as keyof typeof STATIC_OPTIONS_SHAPE]
-        ) {
-          useStatic = false
-          break
+  return Promise.resolve().then(() => {
+    const ctx = new RequestScopedSerializationContext()
+
+    const finalOptions = options
+      ? {
+          populate:
+            Array.isArray(options.populate) &&
+            options.populate?.includes(WILDCARD)
+              ? true
+              : options.populate ?? STATIC_OPTIONS_SHAPE.populate,
+          exclude: options.exclude,
+          preventCircularRef:
+            options.preventCircularRef ??
+            STATIC_OPTIONS_SHAPE.preventCircularRef,
+          skipNull: options.skipNull ?? STATIC_OPTIONS_SHAPE.skipNull,
+          ignoreSerializers:
+            options.ignoreSerializers ?? STATIC_OPTIONS_SHAPE.ignoreSerializers,
+          forceObject: options.forceObject ?? STATIC_OPTIONS_SHAPE.forceObject,
         }
-      }
+      : STATIC_OPTIONS_SHAPE
 
-      if (useStatic) {
-        options = STATIC_OPTIONS_SHAPE
+    if (!Array.isArray(data)) {
+      if (data?.__meta) {
+        return EntitySerializer.serialize(
+          data,
+          finalOptions,
+          EMPTY_ARRAY,
+          ctx
+        ) as TOutput
+      }
+      return data as TOutput
+    }
+
+    // Array case
+    const dataLength = data.length
+    if (dataLength === 0) {
+      return [] as unknown as TOutput
+    }
+
+    const result = new Array(dataLength)
+
+    for (let i = 0; i < dataLength; i++) {
+      const item = data[i]
+      if (item?.__meta) {
+        result[i] = EntitySerializer.serialize(
+          item,
+          finalOptions,
+          EMPTY_ARRAY,
+          ctx
+        )
       } else {
-        options = { ...STATIC_OPTIONS_SHAPE, ...options }
+        result[i] = item
       }
     }
 
-    const data_ = (Array.isArray(data) ? data : [data]).filter(Boolean)
-
-    const forSerialization: object[] = []
-    const notForSerialization: object[] = []
-
-    // Simple classification loop
-    const dataLen = data_.length
-    for (let i = 0; i < dataLen; i++) {
-      const object = data_[i]
-      if (object.__meta) {
-        forSerialization.push(object)
-      } else {
-        notForSerialization.push(object)
-      }
-    }
-
-    // Pre-allocate result array
-    const forSerializationLen = forSerialization.length
-    const result: any = new Array(forSerializationLen)
-
-    for (let i = 0; i < forSerializationLen; i++) {
-      result[i] = EntitySerializer.serialize(forSerialization[i], options)
-    }
-
-    // Simple result construction
-    let finalResult: any
-    if (notForSerialization.length > 0) {
-      finalResult = result.concat(notForSerialization)
-    } else {
-      finalResult = result
-    }
-
-    resolve(Array.isArray(data) ? finalResult : finalResult[0])
+    return result as TOutput
   })
 }

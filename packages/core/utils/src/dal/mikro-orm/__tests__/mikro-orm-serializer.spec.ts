@@ -8,8 +8,8 @@ import {
   ProductOptionValue,
   ProductVariant,
 } from "../__fixtures__/utils"
+import { mikroOrmSerializer as mikroOrmSerializerOld } from "../mikro-orm-serializer-old"
 import { mikroOrmSerializer } from "../mikro-orm-serializer"
-import { mikroOrmSerializerNew } from "../mikro-orm-serializer-new"
 
 jest.setTimeout(60000)
 
@@ -205,11 +205,13 @@ describe("mikroOrmSerializer", () => {
     })
   })
 
-  it.only("should compare request-scoped serializer performance", async () => {
+  it("should compare the original and new serializer performance", async () => {
     const logs: string[] = []
-    logs.push("🔬 Comparing serializer performance...")
+    logs.push(
+      "🔬 Comparing serializer performance across different dataset sizes..."
+    )
 
-    // Generate test dataset - smaller for comparison
+    // Generate test dataset
     function generateComparisonProducts(count: number): Product[] {
       const products: Product[] = []
 
@@ -267,225 +269,251 @@ describe("mikroOrmSerializer", () => {
       return products
     }
 
-    const testProducts = generateComparisonProducts(20000)
-
-    logs.push(`📊 Testing with ${testProducts.length} products`)
-    logs.push(`   Each with 3 options, 9 option values, 2 variants`)
-
     // Test configurations
     const testConfigs = [
       {
         name: "Original",
-        serializer: mikroOrmSerializer,
+        serializer: mikroOrmSerializerOld,
       },
       {
         name: "New-optimized",
-        serializer: mikroOrmSerializerNew,
+        serializer: mikroOrmSerializer,
       },
     ]
 
-    logs.push("\n🏃‍♂️ Performance Comparison:")
-    logs.push("=".repeat(80))
+    // Test different dataset sizes
+    const testSizes = [10, 100, 1000, 10000]
 
-    const results: Array<{ name: string; time: number; speedup: number }> = []
+    logs.push("📊 Each dataset contains products with:")
+    logs.push("   - 3 options per product")
+    logs.push("   - 9 option values total (3 per option)")
+    logs.push("   - 2 variants per product")
+    logs.push("   - Complex nested relationships")
 
-    for (const config of testConfigs) {
-      logs.push(`\n📋 Testing: ${config.name}`)
-      logs.push("-".repeat(50))
+    const allResults: Array<{
+      size: number
+      results: Array<{ name: string; time: number; speedup: number }>
+    }> = []
 
-      // Run test 3 times and take average
-      const times: number[] = []
-      for (let run = 0; run < 1; run++) {
-        const start = performance.now()
-        const result = await config.serializer(testProducts)
-        const time = performance.now() - start
-        times.push(time)
+    for (const size of testSizes) {
+      logs.push(`\n${"=".repeat(80)}`)
+      logs.push(`🎯 TESTING ${size.toLocaleString()} PRODUCTS`)
+      logs.push(`${"=".repeat(80)}`)
 
-        // Verify result is correct
-        expect(result).toHaveLength(20000)
-        // Validate complete structure of first result
-        const firstResult = result[0]
-        expect(firstResult).toEqual(
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            options: expect.any(Array),
-            variants: expect.any(Array),
-          })
-        )
+      const testProducts = generateComparisonProducts(size)
+      const sizeResults: Array<{
+        name: string
+        time: number
+        speedup: number
+      }> = []
 
-        // Validate options array structure (should have 3 options)
-        expect(firstResult.options).toHaveLength(3)
-        expect(firstResult.options[0]).toEqual(
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            values: expect.arrayContaining([
+      for (const config of testConfigs) {
+        logs.push(`\n📋 Testing: ${config.name}`)
+        logs.push("-".repeat(50))
+
+        // Run test multiple times for accuracy
+        const times: number[] = []
+        const runs = size <= 1000 ? 3 : 1 // More runs for smaller datasets
+
+        for (let run = 0; run < runs; run++) {
+          const start = performance.now()
+          const result = await config.serializer(testProducts)
+          const time = performance.now() - start
+          times.push(time)
+
+          // Verify result is correct
+          expect(result).toHaveLength(size)
+
+          // Only validate structure on first run to save time
+          if (run === 0) {
+            const firstResult = result[0]
+            expect(firstResult).toEqual(
               expect.objectContaining({
                 id: expect.any(String),
                 name: expect.any(String),
-                option_id: expect.any(String),
-                variants: expect.any(Array),
-              }),
-            ]),
-          })
-        )
-
-        // Validate each option has 3 values
-        firstResult.options.forEach((option: any) => {
-          expect(option.values).toHaveLength(3)
-          option.values.forEach((value: any) => {
-            expect(value).toEqual(
-              expect.objectContaining({
-                id: expect.any(String),
-                name: expect.any(String),
-                option_id: expect.any(String),
+                options: expect.any(Array),
                 variants: expect.any(Array),
               })
             )
-          })
-        })
 
-        // Validate variants array structure (should have 2 variants)
-        expect(firstResult.variants).toHaveLength(2)
-        expect(firstResult.variants[0]).toEqual(
-          expect.objectContaining({
-            id: expect.any(String),
-            name: expect.any(String),
-            options: expect.arrayContaining([
+            // Validate options array structure (should have 3 options)
+            expect(firstResult.options).toHaveLength(3)
+            expect(firstResult.options[0]).toEqual(
               expect.objectContaining({
                 id: expect.any(String),
                 name: expect.any(String),
-                option_id: expect.any(String),
-                option: expect.objectContaining({
-                  id: expect.any(String),
-                  name: expect.any(String),
-                }),
-              }),
-            ]),
-          })
-        )
-
-        // Validate each variant has exactly 2 option values assigned
-        firstResult.variants.forEach((variant: any) => {
-          expect(variant.options).toHaveLength(2)
-          variant.options.forEach((optionValue: any) => {
-            expect(optionValue).toEqual(
-              expect.objectContaining({
-                id: expect.any(String),
-                name: expect.any(String),
-                option_id: expect.any(String),
-                option: expect.objectContaining({
-                  id: expect.any(String),
-                  name: expect.any(String),
-                }),
+                values: expect.arrayContaining([
+                  expect.objectContaining({
+                    id: expect.any(String),
+                    name: expect.any(String),
+                    option_id: expect.any(String),
+                    variants: expect.any(Array),
+                  }),
+                ]),
               })
             )
-          })
+
+            // Validate each option has 3 values
+            firstResult.options.forEach((option: any) => {
+              expect(option.values).toHaveLength(3)
+              option.values.forEach((value: any) => {
+                expect(value).toEqual(
+                  expect.objectContaining({
+                    id: expect.any(String),
+                    name: expect.any(String),
+                    option_id: expect.any(String),
+                    variants: expect.any(Array),
+                  })
+                )
+              })
+            })
+
+            // Validate variants array structure (should have 2 variants)
+            expect(firstResult.variants).toHaveLength(2)
+            expect(firstResult.variants[0]).toEqual(
+              expect.objectContaining({
+                id: expect.any(String),
+                name: expect.any(String),
+                options: expect.arrayContaining([
+                  expect.objectContaining({
+                    id: expect.any(String),
+                    name: expect.any(String),
+                    option_id: expect.any(String),
+                    option: expect.objectContaining({
+                      id: expect.any(String),
+                      name: expect.any(String),
+                    }),
+                  }),
+                ]),
+              })
+            )
+
+            // Validate each variant has exactly 2 option values assigned
+            firstResult.variants.forEach((variant: any) => {
+              expect(variant.options).toHaveLength(2)
+              variant.options.forEach((optionValue: any) => {
+                expect(optionValue).toEqual(
+                  expect.objectContaining({
+                    id: expect.any(String),
+                    name: expect.any(String),
+                    option_id: expect.any(String),
+                    option: expect.objectContaining({
+                      id: expect.any(String),
+                      name: expect.any(String),
+                    }),
+                  })
+                )
+              })
+            })
+          }
+        }
+
+        const avgTime =
+          times.reduce((sum, time) => sum + time, 0) / times.length
+        const minTime = Math.min(...times)
+        const maxTime = Math.max(...times)
+
+        logs.push(`   Average: ${avgTime.toFixed(2)}ms`)
+        logs.push(`   Range: ${minTime.toFixed(2)}ms - ${maxTime.toFixed(2)}ms`)
+        logs.push(
+          `   Throughput: ${(size / (avgTime / 1000)).toFixed(0)} products/sec`
+        )
+
+        sizeResults.push({
+          name: config.name,
+          time: avgTime,
+          speedup: 0, // Will calculate after all tests for this size
         })
       }
 
-      const avgTime = times.reduce((sum, time) => sum + time, 0) / times.length
-      const minTime = Math.min(...times)
-      const maxTime = Math.max(...times)
-
-      logs.push(`   Average: ${avgTime.toFixed(2)}ms`)
-      logs.push(`   Range: ${minTime.toFixed(2)}ms - ${maxTime.toFixed(2)}ms`)
-
-      results.push({
-        name: config.name,
-        time: avgTime,
-        speedup: 0, // Will calculate after all tests
+      // Calculate speedups relative to original for this size
+      const baselineTime = sizeResults[0].time
+      sizeResults.forEach((result) => {
+        result.speedup = baselineTime / result.time
       })
+
+      logs.push(
+        `\n🎯 Performance Summary for ${size.toLocaleString()} products:`
+      )
+      logs.push("-".repeat(80))
+      logs.push(
+        `${"Configuration".padEnd(30)} ${"Time".padEnd(12)} ${"Speedup".padEnd(
+          12
+        )} ${"Throughput"}`
+      )
+      logs.push("-".repeat(80))
+
+      sizeResults.forEach((result) => {
+        const speedupText =
+          result.speedup === 1
+            ? "baseline"
+            : `${result.speedup.toFixed(1)}x faster`
+        const throughput = `${(size / (result.time / 1000)).toFixed(
+          0
+        )} products/sec`
+        logs.push(
+          `${result.name.padEnd(30)} ${result.time
+            .toFixed(2)
+            .padStart(8)}ms    ${speedupText.padEnd(12)} ${throughput}`
+        )
+      })
+
+      // Check if sub-50ms target achieved
+      const bestForSize = sizeResults.reduce((best, current) =>
+        current.time < best.time ? current : best
+      )
+
+      if (size === 1000) {
+        if (bestForSize.time < 50) {
+          logs.push(
+            `\n   ✅ Sub-50ms target achieved for 1000 products! (${bestForSize.time.toFixed(
+              2
+            )}ms)`
+          )
+        } else {
+          logs.push(
+            `\n   ⚠️  Sub-50ms target missed for 1000 products: ${bestForSize.time.toFixed(
+              2
+            )}ms`
+          )
+        }
+      }
+
+      allResults.push({ size, results: sizeResults })
     }
 
-    // Calculate speedups relative to original
-    const baselineTime = results[0].time
-    results.forEach((result) => {
-      result.speedup = baselineTime / result.time
-    })
+    logs.push(`\n\n${"=".repeat(100)}`)
+    logs.push("📊 COMPREHENSIVE PERFORMANCE ANALYSIS")
+    logs.push(`${"=".repeat(100)}`)
 
-    logs.push("\n🎯 Performance Summary:")
-    logs.push("=".repeat(80))
-    logs.push(`${"Configuration".padEnd(50)} ${"Time".padEnd(12)} ${"Speedup"}`)
-    logs.push("-".repeat(80))
-
-    results.forEach((result) => {
-      const speedupText =
-        result.speedup === 1
-          ? "baseline"
-          : `${result.speedup.toFixed(1)}x faster`
-      logs.push(
-        `${result.name.padEnd(50)} ${result.time
-          .toFixed(2)
-          .padStart(8)}ms    ${speedupText}`
-      )
-    })
-
-    logs.push("\n📈 Key Insights:")
-
-    const bestConfig = results.reduce((best, current) =>
-      current.time < best.time ? current : best
-    )
+    // Performance scaling analysis
+    logs.push("\n📈 Performance Scaling Analysis:")
+    logs.push("-".repeat(60))
     logs.push(
-      `   Fastest: ${bestConfig.name} (${bestConfig.time.toFixed(2)}ms)`
+      `${"Size".padEnd(12)} ${"Original (ms)".padEnd(
+        15
+      )} ${"Optimized (ms)".padEnd(16)} ${"Speedup".padEnd(10)} ${"Time Saved"}`
     )
+    logs.push("-".repeat(60))
 
-    const requestScopedWithCircular = results.find((r) =>
-      r.name.includes("Request-scoped")
-    )
-    const originalWithCircular = results.find((r) =>
-      r.name.includes("Original")
-    )
-
-    if (requestScopedWithCircular && originalWithCircular) {
-      const improvement =
-        ((originalWithCircular.time - requestScopedWithCircular.time) /
-          originalWithCircular.time) *
-        100
-      if (improvement > 5) {
+    allResults.forEach(({ size, results }) => {
+      const original = results.find((r) => r.name === "Original")
+      const optimized = results.find((r) => r.name === "New-optimized")
+      if (original && optimized) {
+        const improvement =
+          ((original.time - optimized.time) / original.time) * 100
         logs.push(
-          `   Request-scoped improves circular ref handling by ${improvement.toFixed(
-            1
-          )}%`
-        )
-      } else {
-        logs.push(
-          `   Request-scoped performance similar to original (${improvement.toFixed(
-            1
-          )}% difference)`
+          `${size.toLocaleString().padEnd(12)} ${original.time
+            .toFixed(2)
+            .padEnd(15)} ${optimized.time
+            .toFixed(2)
+            .padEnd(16)} ${optimized.speedup.toFixed(1)}x${" ".repeat(
+            6
+          )} ${improvement.toFixed(1)}%`
         )
       }
-    }
+    })
 
-    const noCircularRefBest = results
-      .filter((r) => r.name.includes("New-optimized"))
-      .reduce((best, current) => (current.time < best.time ? current : best))
-    logs.push(
-      `   Best optimized: ${
-        noCircularRefBest.name
-      } (${noCircularRefBest.speedup.toFixed(1)}x speedup)`
-    )
-
-    logs.push("\n💡 Recommendations:")
-    if (bestConfig.name.includes("New-optimized")) {
-      logs.push(
-        "   - New-optimized provides best performance with full compatibility"
-      )
-      logs.push("   - Maintains all safety features while maximizing speed")
-    }
-    if (bestConfig.time < 50) {
-      logs.push("   ✅ Sub-50ms target achieved!")
-    } else {
-      logs.push(
-        `   ⚠️  Target: sub-50ms, Current best: ${bestConfig.time.toFixed(2)}ms`
-      )
-    }
-
-    logs.push("=".repeat(80))
-    logs.push("✅ Performance comparison completed")
-
-    // Output all logs at once
     console.log(logs.join("\n"))
   }, 45000)
 })
