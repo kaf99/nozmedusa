@@ -263,7 +263,12 @@ export class EntitySerializer {
         typeof propValue === "number" ||
         typeof propValue === "boolean"
       ) {
-        val = propValue
+        const property = wrapped.__meta.properties[prop]
+        if (!ignoreSerializers && property?.serializer) {
+          val = property.serializer(propValue)
+        } else {
+          val = propValue
+        }
       } else if (typeof propValue === "function") {
         const returnValue = (propValue as any)()
         if (!ignoreSerializers && propMeta?.serializer) {

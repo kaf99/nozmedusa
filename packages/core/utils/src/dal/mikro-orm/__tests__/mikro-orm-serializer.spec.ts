@@ -313,7 +313,7 @@ describe("mikroOrmSerializer", () => {
 
         // Run test multiple times for accuracy
         const times: number[] = []
-        const runs = size <= 1000 ? 3 : 1 // More runs for smaller datasets
+        const runs = 5
 
         for (let run = 0; run < runs; run++) {
           const start = performance.now()
