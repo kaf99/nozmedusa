@@ -399,9 +399,9 @@ export class EntitySerializer {
     entity: T,
     populate: string[] | boolean,
     exclude: string[] | undefined,
-    skipNull: boolean,
+    skipNull: boolean | undefined,
     preventCircularRef: boolean,
-    ignoreSerializers: boolean,
+    ignoreSerializers: boolean | undefined,
     forceObject: boolean,
     parents: readonly string[],
     ctx: RequestScopedSerializationContext
@@ -515,9 +515,9 @@ export class EntitySerializer {
   private static createChildOptions(
     populate: string[] | boolean,
     exclude: string[] | undefined,
-    skipNull: boolean,
-    preventCircularRef: boolean,
-    ignoreSerializers: boolean,
+    skipNull: boolean | undefined,
+    preventCircularRef: boolean | undefined,
+    ignoreSerializers: boolean | undefined,
     forceObject: boolean,
     prop: string
   ) {
@@ -538,9 +538,9 @@ export class EntitySerializer {
     platform: Platform,
     populate: string[] | boolean,
     exclude: string[] | undefined,
-    skipNull: boolean,
+    skipNull: boolean | undefined,
     preventCircularRef: boolean,
-    ignoreSerializers: boolean,
+    ignoreSerializers: boolean | undefined,
     forceObject: boolean,
     parents: readonly string[],
     ctx: RequestScopedSerializationContext
@@ -574,9 +574,9 @@ export class EntitySerializer {
     entity: T,
     populate: string[] | boolean,
     exclude: string[] | undefined,
-    skipNull: boolean,
-    preventCircularRef: boolean,
-    ignoreSerializers: boolean,
+    skipNull: boolean | undefined,
+    preventCircularRef: boolean | undefined,
+    ignoreSerializers: boolean | undefined,
     forceObject: boolean,
     parents: readonly string[],
     ctx: RequestScopedSerializationContext
